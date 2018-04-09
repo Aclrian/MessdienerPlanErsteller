@@ -1,10 +1,9 @@
-package net.aclrian.frame.old;
+package net.aclrian.messdiener.window.auswaehlen;
 
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -17,8 +16,6 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 
 import net.aclrian.messdiener.deafault.Messdiener;
-import net.aclrian.messdiener.utils.Util;
-import net.aclrian.messdiener.window.WMainFrame;
 //special thanks to https://learn-java-by-example.com/java/add-checkbox-items-jlist/
 public class AlleMedisPane {
 
@@ -55,6 +52,7 @@ public class AlleMedisPane {
 
 		list.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent event) {
+				@SuppressWarnings("unchecked")
 				JList<CheckboxListItem> list = (JList<CheckboxListItem>) event.getSource();
 
 				// Get index of item clicked
@@ -95,11 +93,6 @@ public class AlleMedisPane {
 	}
 
 }
-
-
-
-// Represents items in the list that can be selected
-
 class CheckboxListItem {
 	private String label;
 	private boolean isSelected = false;
@@ -121,9 +114,12 @@ class CheckboxListItem {
 	}
 }
 
-// Handles rendering cells in the list using a check box
-
 class CheckboxListRenderer extends JCheckBox implements ListCellRenderer<CheckboxListItem> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2374514268224025896L;
 
 	@Override
 	public Component getListCellRendererComponent(JList<? extends CheckboxListItem> list, CheckboxListItem value,
@@ -137,3 +133,9 @@ class CheckboxListRenderer extends JCheckBox implements ListCellRenderer<Checkbo
 		return this;
 	}
 }
+// Represents items in the list that can be selected
+
+
+
+// Handles rendering cells in the list using a check box
+

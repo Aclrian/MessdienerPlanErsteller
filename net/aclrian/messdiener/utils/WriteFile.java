@@ -10,7 +10,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import net.aclrian.messdiener.deafault.Messdiener;
+import net.aclrian.messdiener.deafault.Messverhalten;
+import net.aclrian.messdiener.deafault.StandartMesse;
+import net.aclrian.messdiener.window.WMainFrame;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 /**
@@ -35,7 +40,7 @@ public class WriteFile {
  * speichert den Messdiener
  * @throws IOException wirft IOException bei bspw. zu wenig Rechten
  */
-	public void toXML() throws IOException {
+	public void toXML(WMainFrame wmf) throws IOException {
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty("indent", "yes");
@@ -71,35 +76,22 @@ public class WriteFile {
 
 			Element mv = document.createElement("Messverhalten");
 			Messverhalten dv = this.me.getDienverhalten();
-
-			Element di_ab = document.createElement("Dienstag_Abend");
-			di_ab.appendChild(document.createTextNode(String.valueOf(dv.getBestimmtes(EnumdeafaultMesse.Di_abend))));
-			mv.appendChild(di_ab);
-
-			Element sa_hochzeit = document.createElement("Samstag_14:00");
-			sa_hochzeit.appendChild(/* 108 */ document
-					.createTextNode(String.valueOf(dv.getBestimmtes(EnumdeafaultMesse.Sam_hochzeit))));
-			mv.appendChild(sa_hochzeit);
-
-			Element sa_abend = document.createElement("Samstag_Abend");
-			sa_abend.appendChild(
-					document.createTextNode(String.valueOf(dv.getBestimmtes(EnumdeafaultMesse.Sam_abend))));
-			mv.appendChild(sa_abend);
-
-			Element so_morgen = document.createElement("Sontag_Morgen");
-			so_morgen.appendChild(
-					document.createTextNode(String.valueOf(dv.getBestimmtes(EnumdeafaultMesse.Son_morgen))));
-			mv.appendChild(so_morgen);
-			Element so_taufe = document.createElement("Sontag_Taufe");
-			so_taufe.appendChild(
-					document.createTextNode(String.valueOf(dv.getBestimmtes(EnumdeafaultMesse.Son_taufe))));
-			mv.appendChild(so_taufe);
-			Element so_abend = document.createElement("Sontag_Abend");
-			so_abend.appendChild(
-					document.createTextNode(String.valueOf(dv.getBestimmtes(EnumdeafaultMesse.Son_abend))));
-			mv.appendChild(so_abend);
-
+			
+			for (int i = 0; i < wmf.getStandardmessen().size(); i++) {
+				StandartMesse messe = wmf.getStandardmessen().get(i);
+				System.out.println(messe);
+				if (wmf.getSonstiges().isSonstiges(messe)) {
+					continue;
+				}
+				boolean kwm = dv.getBestimmtes(messe, wmf);
+				String s = messe.toReduziertenString();
+				Element kwmesse = document.createElement(s);
+				kwmesse.appendChild(document.createTextNode(String.valueOf(kwm)));
+				mv.appendChild(kwmesse);
+			}
 			employee.appendChild(mv);
+			
+			
 			Element leiter = document.createElement("Leiter");
 			leiter.appendChild(document.createTextNode(String.valueOf(this.me.isIstLeiter())));
 			employee.appendChild(leiter);

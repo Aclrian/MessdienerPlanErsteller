@@ -1,10 +1,10 @@
 package net.aclrian.messdiener.deafault;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Comparator;
 
 import net.aclrian.messdiener.utils.Erroropener;
-import net.aclrian.messdiener.utils.Messverhalten;
+import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.utils.WriteFile;
 import net.aclrian.messdiener.window.WMainFrame;
 
@@ -23,6 +23,35 @@ public class Messdiener {
 	private int Eintritt = 2000;
 	private boolean istLeiter = false;
 	private Messdaten daten;
+	public final static Comparator<Messdiener> compForMedis = new Comparator<Messdiener>() {
+
+		@Override
+		public int compare(Messdiener o1, Messdiener o2) {
+			return o1.makeId().compareToIgnoreCase(o2.makeId());
+		}
+	};
+	public static final Comparator<? super Messdiener> einteilen = new Comparator<Messdiener>() {
+		@Override
+		public int compare(Messdiener o1, Messdiener o2) {
+			double max1 = o1.getMessdatenDaten().getMax_messen();
+			int anz1 = o1.getMessdatenDaten().getAnz_messen();
+			double max2 = o2.getMessdatenDaten().getMax_messen();
+			int anz2 = o2.getMessdatenDaten().getAnz_messen();
+			double eins = anz1 / max1;
+			int ein = (int) eins;
+			String S1 = String.valueOf(ein);
+			double zwei = anz2 / max2;
+			int zwe = (int) zwei;
+			String S2 = String.valueOf(zwe);
+			return S1.compareToIgnoreCase(S2);
+			// return o1.makeId().compareToIgnoreCase(o2.makeId());
+		}
+	};
+
+	@Override
+	public String toString() {
+		return makeId();
+	}
 
 	/**
 	 * Konstruktor
@@ -60,7 +89,7 @@ public class Messdiener {
 	 * setzt Standart Werte
 	 */
 	private void setDeafault() {
-		setzeAllesNeu("Vorname", "Nachname", 2000, this.istLeiter, new Messverhalten());
+		setzeAllesNeu("Vorname", "Nachname", 2000, this.istLeiter, new Messverhalten(null));
 		for (int i = 0; i < Freunde.length; i++) {
 			Freunde[i] = "";
 		}
@@ -108,7 +137,7 @@ public class Messdiener {
 		if ((eintritt < 2200) && (eintritt > 1900)) {
 			this.Eintritt = eintritt;
 		} else {
-			new Erroropener("Hast du dich beim Eintrittsjahr vertippt?", null);
+			new Erroropener("Hast du dich beim Eintrittsjahr vertippt?");
 		}
 	}
 
@@ -118,14 +147,15 @@ public class Messdiener {
 
 	/**
 	 * Mit dieser Methode wird der Messdiener als .xml Datei lokal gespeichert
+	 * 
 	 * @param pfad
 	 */
-	public void makeXML(String pfad) {
+	public void makeXML(String pfad, WMainFrame wmf) {
 		WriteFile wf = new WriteFile(this, pfad);
 		try {
-		wf.toXML();
+			wf.toXML(wmf);
 		} catch (IOException e) {
-			System.err.println(e.getMessage());
+			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -143,11 +173,11 @@ public class Messdiener {
 	}
 
 	public int getEintritt() {
-	return this.Eintritt;
+		return this.Eintritt;
 	}
 
 	public String[] getGeschwister() {
-	return this.Geschwister;
+		return this.Geschwister;
 	}
 
 	public String[] getFreunde() {
@@ -178,12 +208,11 @@ public class Messdiener {
 		this.daten = new Messdaten(this, wmf, aktdatum);
 	}
 
-	/*public void setLeer(Messe messe) {
-		this.Vorname = "LEERV";
-		this.Nachname = "NLEER";
-		this.Eintritt= -1;
-		setIstLeiter(istLeiter);
-		this.dienverhalten = new Messverhalten();
-		
-	}*/
+	/*
+	 * public void setLeer(Messe messe) { this.Vorname = "LEERV"; this.Nachname =
+	 * "NLEER"; this.Eintritt= -1; setIstLeiter(istLeiter); this.dienverhalten = new
+	 * Messverhalten();
+	 * 
+	 * }
+	 */
 }

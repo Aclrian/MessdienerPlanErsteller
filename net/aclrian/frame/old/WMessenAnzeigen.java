@@ -1,11 +1,9 @@
-package net.aclrian.messdiener.window.planerstellen;
+package net.aclrian.frame.old;
 
 import java.awt.Checkbox;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,8 +13,8 @@ import javax.swing.border.EmptyBorder;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
-import net.aclrian.messdiener.utils.EnumMesseTyp;
-import net.aclrian.messdiener.utils.EnumOrt;
+import net.aclrian.messdiener.utils.Utilities;
+
 import javax.swing.JTextField;
 
 public class WMessenAnzeigen extends JFrame {
@@ -42,9 +40,11 @@ public class WMessenAnzeigen extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+	@Deprecated
 	public WMessenAnzeigen(Messe m) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 312, 298);
+		setTitle("Zeigt die ausgew\u00E4lte Messe an");
+		setBounds(Utilities.setFrameMittig(312, 298));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
