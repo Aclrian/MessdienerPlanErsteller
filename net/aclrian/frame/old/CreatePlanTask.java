@@ -1,31 +1,25 @@
-package net.aclrian.messdiener.utils;
+package net.aclrian.frame.old;
 
 import java.awt.Toolkit;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
-
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
-import net.aclrian.messdiener.window.WMainFrame;
-import net.aclrian.messdiener.window.planerstellen.ProgressBarDemo;
+import net.aclrian.messdiener.deafault.Sonstiges;
 
 public class CreatePlanTask extends SwingWorker<Void, Void> {
 
 	private Messdiener[] me;
 	private ArrayList<Messe> m;
 	public ProgressBarDemo pbd;
-	private WMainFrame wmf;
 
-	public CreatePlanTask(Messdiener[] medis, ArrayList<Messe> messen, ProgressBarDemo pbd, WMainFrame wmf) {
-		this.wmf = wmf;
+	public CreatePlanTask(Messdiener[] medis, ArrayList<Messe> messen, ProgressBarDemo pbd) {
 		this.pbd = pbd;
 		this.setMessdiener(medis);
 		this.setMessen(messen);
@@ -51,33 +45,21 @@ public class CreatePlanTask extends SwingWorker<Void, Void> {
 	public Void doInBackground() {
 		float progress = 0;
 		setProgress(1);
-		System.out.println(m.size() + "§§§");
 		float einzelnes = (m.size() + 1);
 		einzelnes = 100 / einzelnes;
 		SimpleDateFormat dstart = new SimpleDateFormat("MM*dd-yyyy");
 		String anhang = "-23:59";
 		Date start = m.get(0).getDate();
-		System.out.println("ffff");
 		String starts = dstart.format(start) + anhang;
 		SimpleDateFormat dzurueck = new SimpleDateFormat("MM*dd-yyyy-hh:mm");
 		String[] sm = starts.split("*");
-		try{
-		for (String string : sm) {
-			System.out.println(string);
-		}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println(sm[0] +"%%%");
 		Integer ms = Integer.parseInt(sm[0]);
 		ms=ms+6;
 		starts = String.valueOf(ms)+"*"+sm[1];
-		System.out.println(starts + "!!!");
 		try {
 			start = dzurueck.parse(starts);
 		} catch (ParseException e1) {
-			System.err.println("DU;M");
+			e1.printStackTrace();
 		}
 		
 		for (int i = 0; i < m.size(); i++) {
@@ -100,10 +82,6 @@ public class CreatePlanTask extends SwingWorker<Void, Void> {
 			setProgress((int) progress);
 		}
 		setProgress(100);
-		for (Messe messe : m) {
-	//		System.out.println(messe.ausgeben());
-		}
-		System.out.println("dfggffff");
 		return null;
 	}
 
@@ -118,15 +96,14 @@ public class CreatePlanTask extends SwingWorker<Void, Void> {
 		int z = ran.nextInt(me.length);
 		Messdiener medi = me[z];
 	//	System.out.println(medi.makeId());
-		if (medi.getMessdatenDaten().kannnoch()) {
-			if (m.getEnumdfMesse() != EnumdeafaultMesse.Sonstiges) {
-				if (medi.getDienverhalten().getBestimmtes(m.getEnumdfMesse())) {
+		if (medi.getMessdatenDaten().kann(m.getDate())) {
+			if (new Sonstiges().equals(m.getStandardMesse())) {
+				if (medi.getDienverhalten().getBestimmtes(m.getStandardMesse(), null)) {
 					m.einteilen(medi);
 					int i = ran.nextInt(10);
 					if (i <= 3) {
-						einteilen(m, medi.getMessdatenDaten().getPrioAnvertraute(), 2);
+						einteilen(m, medi.getMessdatenDaten().getGeschwister(), 2);
 					}
-
 				}
 			} else {
 				m.einteilen(medi);
@@ -149,7 +126,6 @@ public class CreatePlanTask extends SwingWorker<Void, Void> {
 
 	private void einteilen(Messe m, ArrayList<Messdiener> anvertraute, int secondndchance) {
 		if (m.istFertig()) {
-			System.out.println(m.ausgeben() + "\nwar ein Erfolg!");
 			return;
 		}
 		Random ran = new Random();

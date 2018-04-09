@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 import java.util.Date;
 import java.awt.event.ActionEvent;
 
-public class WWMessenFrame extends JFrame {
+public class WMessenFrame extends JFrame {
 
 	/**
 	 * 
@@ -28,7 +28,7 @@ public class WWMessenFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public WWMessenFrame(WMainFrame wmf) {
+	public WMessenFrame(WMainFrame wmf) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("W\u00E4hle den Zeitraum fuer den neuen Plan");
 		setBounds(Utilities.setFrameMittig(433, 192));
@@ -70,5 +70,15 @@ public class WWMessenFrame extends JFrame {
 		d[0] = dateChooser.getDate();
 		d[1] = dc.getDate();
 		return d;		
+	}
+	@Override
+	public void setVisible(boolean arg0) {
+		
+		super.setVisible(arg0);
+		if (arg0) {
+			setAlwaysOnTop(true);
+			setAlwaysOnTop(false);
+		}
+		
 	}
 }

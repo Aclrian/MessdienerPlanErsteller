@@ -6,43 +6,66 @@ import javax.swing.JOptionPane;
 /**
  * Eine klassische Aclrian Klasse: DER ERROROPENER <br>
  * Er zeigt schnelle Fehlermeldungen an!</br>
- * 
+ *
  * @author Aclrian
  *
  */
 public class Erroropener {
+	private class MyThread implements Runnable {
+		String s;
+
+		public MyThread(String s) {
+			this.s = s;
+		}
+
+		@Override
+		public void run() {
+			JOptionPane.showMessageDialog(new JFrame(), s, "Fehler!", 0);
+		}
+	}
+
+
 	/**
 	 * oeffnet einen JOptionFrame mit vorgegebenen Werten
+	 * 
 	 * @param error
 	 */
 	public Erroropener(String error) {
-		boolean isrunning = true;
+		//this.error = error;
 		if (error == "unvollstaendigeeingabe") {
-			JOptionPane.showMessageDialog(new JFrame(), "Bitte alle Felder eintragen!", "Fehler!", 0);
-			isrunning = false;
+			error = "Bitte alle Felder eintragen!";
 		} else if (error == "Wochentag") {
-			JOptionPane.showMessageDialog(new JFrame(), "Bitte den Wochentag groß und richtig schreiben!\nbspw. Montag",
-					"Fehler!", 0);
-			isrunning = false;
-		} else if (error == "Stunde der Messe groesser als 24") {
-			JOptionPane.showMessageDialog(new JFrame(), error, "Fehler!", 0);
-			isrunning = false;
-		} else if (error == "Minute der Messe groesser als 60") {
-			JOptionPane.showMessageDialog(new JFrame(), error, "Fehler!", 0);
-			isrunning = false;
-		} else if (error == "E-mail ist nicht gueltig.") {
-			JOptionPane.showMessageDialog(new JFrame(), error, "Fehler!", 0);
-			isrunning = false;
+			error = "Bitte den Wochentag gross und richtig schreiben!\nbspw. Montag";
 		}
-		if (isrunning)
-			JOptionPane.showMessageDialog(new JFrame(), "Unbekannter Fehlercode: \"" + error + '"', "Fehler!", 0);
+		MyThread mt = new MyThread(error);
+		Thread t = new Thread(mt);
+		t.start();
 	}
-/**
- * 
- * @param error gibt einen direkten Fehler aus
- * @param direktefehlercodeausgabe darf null sein
- */
-	public Erroropener(String error, Object direktefehlercodeausgabe) {
-		JOptionPane.showMessageDialog(new JFrame(), error, "Fehler!", 0);
+
+	/*
+	 * 
+	 * @param error gibt einen direkten Fehler aus
+	 * 
+	 * @param direktefehlercodeausgabe darf null sein
+	 *
+	 * public Erroropener(String error, Object direktefehlercodeausgabe) { new
+	 * MyThread(error); }
+	 */
+
+	/**
+	 *
+	 * error gibt einen direkten Fehler aus
+	 * 
+	 * @param direktefehlercodeausgabe
+	 *            darf null sein
+	 * 
+	 * @param fehlerausgabe
+	 *            in Konsole als throwable
+	 * 
+	 * @throws Exception
+	 */
+	public Erroropener(String error, Object object, Object object2) throws Exception {
+		throw new Exception(error);
 	}
+
 }

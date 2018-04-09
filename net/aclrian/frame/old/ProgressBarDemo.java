@@ -59,7 +59,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package net.aclrian.messdiener.window.planerstellen;
+package net.aclrian.frame.old;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -67,7 +67,6 @@ import javax.swing.*;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
-import net.aclrian.messdiener.utils.CreatePlanTask;
 import net.aclrian.messdiener.window.WMainFrame;
 
 import java.beans.*;
@@ -76,14 +75,16 @@ import java.util.Random;
 
 public class ProgressBarDemo extends JPanel implements ActionListener, PropertyChangeListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -789884376856485780L;
 	private JProgressBar progressBar;
 	private JButton startButton;
 	private JTextArea taskOutput;
 	private CreatePlanTask task;
 	private Messdiener[] medis;
 	private ArrayList<Messe> messen;
-	private String savepath;
-	private WMainFrame wmf;
 
 	class Task extends SwingWorker<Void, Void> {
 		/*
@@ -124,7 +125,6 @@ public class ProgressBarDemo extends JPanel implements ActionListener, PropertyC
 		super(new BorderLayout());
 		this.medis = medis;
 		this.messen = messen;
-		this.wmf = wmf;
 		// Create the demo's UI.
 		startButton = new JButton("Start");
 		startButton.setActionCommand("start");
@@ -156,7 +156,7 @@ public class ProgressBarDemo extends JPanel implements ActionListener, PropertyC
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		// Instances of javax.swing.SwingWorker are not reusuable, so
 		// we create new instances as needed.
-		task = new CreatePlanTask(medis, messen, this, wmf);
+		task = new CreatePlanTask(medis, messen, this);
 		// new Task();
 		task.addPropertyChangeListener(this);
 		task.execute();
