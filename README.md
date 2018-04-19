@@ -1,2 +1,2 @@
--# MessdienerPlanErsteller
--Erstellt einen Messplan für Messdiener
+# MessdienerPlanErsteller
+Erstellt einen Messplan für Messdiener
