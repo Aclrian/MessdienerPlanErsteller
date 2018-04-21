@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
-import com.aclrian.messdiener.differenzierung.Pfarrei;
-import com.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
+import net.aclrian.messdiener.differenzierung.Pfarrei;
+import net.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
@@ -48,6 +48,7 @@ public class WMainFrame extends JFrame {
 	 */
 	private static final long serialVersionUID = 2278649234963113093L;
 	public static final String textdatei = "//.messdienerOrdnerPfad.txt";
+	public static final String VersionID = "b553";
 	// public static final int Max_einteilen = 3;
 	public static String pfarredateiendung = ".xml.pfarrei";
 	private Sonstiges sonstiges = new Sonstiges();

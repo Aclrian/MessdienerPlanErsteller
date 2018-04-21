@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-import com.aclrian.messdiener.differenzierung.Einstellungen;
+import net.aclrian.messdiener.differenzierung.Einstellungen;
 
 import net.aclrian.messdiener.deafault.Messdaten;
 /*
