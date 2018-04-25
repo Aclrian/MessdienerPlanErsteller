@@ -33,6 +33,7 @@ import net.aclrian.messdiener.window.medierstellen.WWAnvertrauteFrame;
 import net.aclrian.messdiener.window.planerstellen.WMessenHinzufuegen;
 import net.aclrian.messdiener.window.planerstellen.WWMessenFrame;
 //import javax.swing.JCheckBox;
+import net.aclrian.update.net.aclrian.update.VersionIDHandler;
 
 /**
  * Hiermit startet alles: Es wird eine Benutzeroberfläche zum Erstellen eines
@@ -79,11 +80,12 @@ public class WMainFrame extends JFrame {
 			
 			@Override
 			public void run() {
-				JOptionPane.showMessageDialog(new JFrame(), "Es koennte eine Weile dauern...", "Habe Geduld!", JOptionPane.INFORMATION_MESSAGE);
-				
+				VersionIDHandler vh  = new VersionIDHandler();
+				vh.act();
 			}
 		};
 		Thread t = new Thread(r2);
+		r2.run();
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
