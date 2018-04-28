@@ -71,14 +71,4 @@ public class WMessenFrame extends JFrame {
 		d[1] = dc.getDate();
 		return d;		
 	}
-	@Override
-	public void setVisible(boolean arg0) {
-		
-		super.setVisible(arg0);
-		if (arg0) {
-			setAlwaysOnTop(true);
-			setAlwaysOnTop(false);
-		}
-		
-	}
 }

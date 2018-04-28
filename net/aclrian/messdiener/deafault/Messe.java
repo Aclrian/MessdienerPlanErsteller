@@ -52,7 +52,7 @@ public class Messe {
 	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, String titel,
 			WMainFrame wmf) {
 		if (wmf.getPfarrei().getOrte().contains(ort) && wmf.getPfarrei().getTypen().contains(typ)) {
-			bearbeiten(hochamt, anz_messdiener, date, kirche, typ, wmf);
+			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, wmf);
 			this.titel = titel;
 		}else{
 			Utilities.logging(getClass(), getClass().getEnclosingConstructor(), "da ging was schief");
@@ -89,7 +89,7 @@ public class Messe {
 	 */
 	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, WMainFrame wmf) {
 		if (wmf.getPfarrei().getOrte().contains(ort) && wmf.getPfarrei().getTypen().contains(typ)) {
-			bearbeiten(hochamt, anz_messdiener, date, kirche, typ, wmf);
+			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, wmf);
 		}else{
 			Utilities.logging(getClass(), getClass().getEnclosingConstructor(), "da ging was schief");
 		}
@@ -257,12 +257,14 @@ public class Messe {
 	}
 
 	public String getIDHTML() {
-		String rtn = "";
+		StringBuffer rtn = new StringBuffer("<html>");
+		rtn.append("<font>");
 		if (!getWochentag().equals("")) {
-			rtn = "<html><body>" + getWochentag() + " " + dfeee.format(date) + "&emsp;" + dftime.format(date) + " Uhr "
-					+ typ + " " + kirche + "</body></html>";
+			rtn.append("<b>" + getWochentag() + " " + dfeee.format(date) + "&emsp;" + dftime.format(date) + " Uhr "); 
+			rtn.append(typ + " " + kirche);
+			rtn.append("</b></font></html>");
 		}
-		return rtn;
+		return rtn.toString();
 	}
 
 	/*
@@ -288,32 +290,32 @@ public class Messe {
 
 	public String htmlAusgeben() {
 		String rtn = getIDHTML();
-		rtn.substring(0, 14);
-
+		rtn = rtn.substring(0, rtn.length()-7);
+		rtn +="<br>";
 		for (int i = 0; i < medis.size(); i++) {
 			try {
 				rtn += medis.get(i).getVorname() + " " + medis.get(i).getNachnname() + ", ";
 			} catch (NullPointerException e) {
 				rtn += ",";
 			}
-
 		}
 		if (rtn.endsWith(", ")) {
 			rtn = rtn.substring(0, rtn.length() - 2);
 		}
-		rtn += "\n";
+		rtn +="</br>";
+		//rtn += "\n";
 		for (int i = 0; i < leiter.size(); i++) {
 			try {
-				rtn += medis.get(i).makeId() + ",";
+				rtn += leiter.get(i).makeId() + ", ";
 			} catch (NullPointerException e) {
-				rtn += ",";
+				rtn += ", ";
 			}
 		}
-		if (rtn.endsWith(";")) {
-			rtn = rtn.substring(0, rtn.length() - 1);
+		if (rtn.endsWith(", ")) {
+			rtn = rtn.substring(0, rtn.length() - 2);
 		}
 
-		rtn += "</body></html>";
+		rtn += "</html>";
 		return rtn;
 	}
 
