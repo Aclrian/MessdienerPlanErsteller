@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
-import com.aclrian.messdiener.differenzierung.Einstellungen;
-import com.aclrian.messdiener.differenzierung.Setting;
+import net.aclrian.messdiener.differenzierung.Einstellungen;
+import net.aclrian.messdiener.differenzierung.Setting;
 
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;

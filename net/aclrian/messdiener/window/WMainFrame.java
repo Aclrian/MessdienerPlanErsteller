@@ -12,13 +12,12 @@ import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
-import com.aclrian.messdiener.differenzierung.Pfarrei;
-import com.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
+import net.aclrian.messdiener.differenzierung.Pfarrei;
+import net.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
@@ -33,6 +32,7 @@ import net.aclrian.messdiener.window.medierstellen.WWAnvertrauteFrame;
 import net.aclrian.messdiener.window.planerstellen.WMessenHinzufuegen;
 import net.aclrian.messdiener.window.planerstellen.WWMessenFrame;
 //import javax.swing.JCheckBox;
+import net.aclrian.update.net.aclrian.update.VersionIDHandler;
 
 /**
  * Hiermit startet alles: Es wird eine Benutzeroberfläche zum Erstellen eines
@@ -48,6 +48,7 @@ public class WMainFrame extends JFrame {
 	 */
 	private static final long serialVersionUID = 2278649234963113093L;
 	public static final String textdatei = "//.messdienerOrdnerPfad.txt";
+	public static final String VersionID = "b589";
 	// public static final int Max_einteilen = 3;
 	public static String pfarredateiendung = ".xml.pfarrei";
 	private Sonstiges sonstiges = new Sonstiges();
@@ -78,11 +79,12 @@ public class WMainFrame extends JFrame {
 			
 			@Override
 			public void run() {
-				JOptionPane.showMessageDialog(new JFrame(), "Es koennte eine Weile dauern...", "Habe Geduld!", JOptionPane.INFORMATION_MESSAGE);
-				
+				VersionIDHandler vh  = new VersionIDHandler();
+				vh.act();
 			}
 		};
 		Thread t = new Thread(r2);
+		r2.run();
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
@@ -123,7 +125,7 @@ public class WMainFrame extends JFrame {
 	}
 
 	/*
-	 ** Hiermit sollen Konsolenausgaben gemacht werden (Alternative zu
+	 ** Hiermit sollen vor langer Zeit mal Konsolenausgaben gemacht werden (Alternative zu
 	 * System.out.println();) / public static final Logger log =
 	 * Logger.getLogger("net.aclrian.messdiener.window" +
 	 * WMainFrame.class.getName());
@@ -351,16 +353,6 @@ public class WMainFrame extends JFrame {
 	}
 
 	public void neuerPlan() {
-Runnable r2 = new Runnable() {
-			
-			@Override
-			public void run() {
-				JOptionPane.showMessageDialog(new JFrame(), "Es k�nnte eine Weile dauern...", "Habe Geduld!", JOptionPane.INFORMATION_MESSAGE);
-				
-			}
-		};
-		Thread t = new Thread(r2);
-		t.start();
 		try {
 			if (util.getSavepath().equals("")) {
 				util = new DateienVerwalter();
@@ -377,7 +369,6 @@ Runnable r2 = new Runnable() {
 		mediarraymitMessdaten = mediarray;
 		mf = new WWMessenFrame(this);
 		mf.setVisible(true);
-		t.interrupt();
 	}
 
 	public void setMediarray(ArrayList<Messdiener> mediarray) {

@@ -3,11 +3,17 @@ package net.aclrian.messdiener.window.planerstellen;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -15,8 +21,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.xml.bind.JAXBException;
 
-import com.aclrian.messdiener.differenzierung.Einstellungen;
+import org.apache.log4j.BasicConfigurator;
+import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
+import org.docx4j.model.structure.SectionWrapper;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.docx4j.openpackaging.exceptions.InvalidFormatException;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.WordprocessingML.FooterPart;
+import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
+import org.docx4j.relationships.Relationship;
+import org.docx4j.wml.FooterReference;
+import org.docx4j.wml.Ftr;
+import org.docx4j.wml.HdrFtrRef;
+import org.docx4j.wml.P;
+import org.docx4j.wml.SectPr;
 
 import net.aclrian.messdiener.deafault.Messdaten;
 /*
@@ -31,6 +52,7 @@ import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
 import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
+import net.aclrian.messdiener.differenzierung.Einstellungen;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.window.WMainFrame;
@@ -44,7 +66,7 @@ public class WMessenErstellen extends JFrame {
 	private JPanel contentPane;
 	private Messdiener[] me;
 	// private ArrayList<Messe> m;
-	private JEditorPane editorPane = new JEditorPane();
+	private JEditorPane editorPane = new JEditorPane("text/html", "");
 	private final ArrayList<Messe> messen;
 	private ArrayList<Messdiener> hauptarray = new ArrayList<Messdiener>();
 
@@ -58,7 +80,7 @@ public class WMessenErstellen extends JFrame {
 	public WMessenErstellen(Messdiener[] me, ArrayList<Messe> m, WMainFrame wmf) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Messen anzeigen");
-		setBounds(Utilities.setFrameMittig(987, 450));
+		setBounds(Utilities.setFrameMittig(987, 460));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -66,24 +88,35 @@ public class WMessenErstellen extends JFrame {
 		this.me = me;
 		this.messen = m;
 		neuerAlgorythmus(wmf);
-		String s = "";
-		for (Messe messe : m) {
-			s += "\n" + messe.ausgeben();
+		StringBuffer s = new StringBuffer("<html>");
+		for (int i = 0; i<m.size(); i++) {
+			Messe messe = m.get(i);
+			String m1 = messe.htmlAusgeben();
+			m1 = m1.substring(6, m1.length()-7);
+			if (i == 0) {
+				Date start = messe.getDate();
+				Date ende = m.get(m.size()-1).getDate();
+				SimpleDateFormat df = new SimpleDateFormat("dd. MMM", Locale.GERMAN);
+				String text = "Messdienerplan vom " + df.format(start) + " bis " + df.format(ende);
+				s.append("<h1>"+text+"</h1>");
+			}
+			s.append("<br>" + m1+ "</br>");
 		}
-		s.substring(2);
+		s.append("</html>");
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 7, 679, 381);
 		contentPane.add(scrollPane);
+		HTMLEditorKit editorkit = new HTMLEditorKit();
+		editorPane.setEditorKit(editorkit);
 		scrollPane.setViewportView(editorPane);
 
-		editorPane.setText("<html><body></body></html>");
-		editorPane.setText(s);
+		editorPane.setText(s.toString());
 
 		JLabel lblFertig = new JLabel("Der fertig generierte Messdienerplan:");
 		scrollPane.setColumnHeaderView(lblFertig);
 
-		JButton btnZumWorddokument = new JButton("Zum Worddokument //TODO");
+		JButton btnZumWorddokument = new JButton("Zum Worddokument (im Aufbau)");
 		btnZumWorddokument.setVisible(true);
 		btnZumWorddokument.setBounds(10, 394, 257, 23);
 		contentPane.add(btnZumWorddokument);
@@ -91,11 +124,16 @@ public class WMessenErstellen extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// word(wmf);
+				try {
+					word();
+				} catch (IOException | Docx4JException | JAXBException e1) {
+					new Erroropener("Konnte die Word-Datei nicht speichern.");
+					e1.printStackTrace();
+				}
 
 			}
 		});
-		JButton btnZumPdfdokument = new JButton("Zum PDF-Dokument //TODO");
+		JButton btnZumPdfdokument = new JButton("Zum PDF-Dokument (in Planung)");
 		btnZumPdfdokument.setVisible(true);
 		btnZumPdfdokument.setBounds(443, 394, 257, 23);
 		btnZumPdfdokument.addActionListener(new ActionListener() {
@@ -247,43 +285,122 @@ public class WMessenErstellen extends JFrame {
 		editorPane.setText(statistic);
 	}
 
-	public void word(WMainFrame wmf) {
-		// DateienVerwalter util = wmf.getEDVVerwalter();
-		// Date[] d = wmf.getDates();
+	public void word() throws IOException, Docx4JException, JAXBException {
+		//html save
+		BasicConfigurator.configure();
+		FileWriter fw = new FileWriter(System.getProperty("user.home")+'\\'+ "tmp.html");
+		String code = editorPane.getText();
+		code = code.replaceAll("\n", "");
+		code = code.replaceAll("<br>", "<br></br>");
+		code = code.replaceAll("     ", "");//fünf Leeeeerzeichen zu einem
+		fw.write(code);
+		fw.flush();
+		fw.close();
+		File f = new File(System.getProperty("user.home")+'\\'+ "tmp.html");
+		//html to docx
+		WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
 
-		// SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-		/*
-		 * File file = new File(
-		 * 
-		 * // EMPTY_DOC_URL.openStream());
-		 * util.getPlanSavepath().getAbsolutePath() + df.format(d[0]) + "-" +
-		 * df.format(d[1]) + ".doc"); if (!file.exists()) { try {
-		 * file.createNewFile(); } catch (IOException e) { e.printStackTrace();
-		 * } }
-		 * 
-		 * // --------------------------------------- /* WordprocessingMLPackage
-		 * wordPackage = null; MainDocumentPart mainDocumentPart = null; boolean
-		 * error = false; try { wordPackage =
-		 * WordprocessingMLPackage.createPackage(); mainDocumentPart =
-		 * wordPackage.getMainDocumentPart();
-		 * mainDocumentPart.addStyledParagraphOfText("Title", "Hello World!");
-		 * mainDocumentPart.addParagraphOfText("Welcome To Baeldung");
-		 * wordPackage.save(file); // template =
-		 * WordprocessingMLPackage.load(new // FileInputStream(file)); } catch
-		 * (Docx4JException e1) { // Auto-generated catch block error = true;
-		 * e1.printStackTrace(); } if (!error) { String[] data =
-		 * editorPane.getText().split("\r\n"); for (String string : data) {
-		 * mainDocumentPart.addParagraphOfText(string); } }
-		 *
-		 * /* XWPFDocument doc = null; XWPFParagraph para = null; boolean error
-		 * = false; try { doc = new XWPFDocument(new FileInputStream(file));
-		 * para = doc.createParagraph();
-		 * para.setAlignment(ParagraphAlignment.LEFT); } catch
-		 * (EmptyFileException e) { System.err.println(file.exists());
-		 * System.err.println(file.getAbsoluteFile()); } catch (IOException e) {
-		 * // Auto-generated catch block error = true; e.printStackTrace(); }
-		 */
-		// 7 if (!error) {
+        NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
+        wordMLPackage.getMainDocumentPart().addTargetPart(ndp);
+        ndp.unmarshalDefaultNumbering();
+
+        XHTMLImporterImpl xHTMLImporter = new XHTMLImporterImpl(
+                wordMLPackage);
+        xHTMLImporter.setHyperlinkStyle("Hyperlink");
+        wordMLPackage.getMainDocumentPart().getContent().addAll(
+                xHTMLImporter.convert(f, null));
+
+       addFooter(wordMLPackage);
+        
+        
+        File output = new java.io.File(System.getProperty("user.dir")
+                + "\\html_output.docx");
+        wordMLPackage.save(output);
+        System.out.println("done");
+
+        System.out.println("file path where it is stored is" + " "
+                + output.getAbsolutePath());
+        f.deleteOnExit();
+	}
+	
+	private static void addFooter(WordprocessingMLPackage wordMLPackage) throws InvalidFormatException {
+		org.docx4j.wml.ObjectFactory factory = new org.docx4j.wml.ObjectFactory();
+		 Ftr ftr = factory.createFtr();
+
+	        FooterPart footerPart;
+	        Relationship relationship;
+	            footerPart = new FooterPart();
+	            footerPart.setPackage(wordMLPackage);
+	            footerPart.setJaxbElement(ftr);
+	            relationship = wordMLPackage.getMainDocumentPart().addTargetPart(footerPart);
+
+	        // ftr.getContent().clear();
+
+	        // for (TextParagraphConfiguration textParagraphConfiguration : paragraphs)
+	        // {
+	        //     P p = WordParagraphUtil.createParagraph(textParagraphConfiguration);
+	        //     p.getPPr().setSpacing(NO_SPACING);
+	        //     ftr.getContent().add(p);
+	        // }
+	        P p =  factory.createP();
+	        p.setTextId("Ersstellt vom MessdienerplanErsteller @Aclrian Version: " + WMainFrame.VersionID);
+	        ftr.getContent().add(p);
+
+	        List<SectionWrapper> sections = wordMLPackage.getDocumentModel().getSections();
+
+	        for (SectionWrapper sectionWrapper : sections)
+	        {
+	            SectPr sectPr = sectionWrapper.getSectPr();
+	            // There is always a section wrapper, but it might not contain a
+	            // sectPr
+	            if (sectPr == null)
+	            {
+	                sectPr = factory.createSectPr();
+	                wordMLPackage.getMainDocumentPart().addObject(sectPr);
+	                sectionWrapper.setSectPr(sectPr);
+	            }
+
+	            FooterReference footerReference = factory.createFooterReference();
+	            footerReference.setId(relationship.getId());
+	            footerReference.setType(HdrFtrRef.DEFAULT);
+	            sectPr.getEGHdrFtrReferences().add(footerReference);
+	        }
+		
+	}
+
+	public static void main(String[] args) {
+		try {
+			does();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		} catch (Docx4JException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+	private static void does() throws JAXBException, Docx4JException {
+		WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
+
+        NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
+        wordMLPackage.getMainDocumentPart().addTargetPart(ndp);
+        ndp.unmarshalDefaultNumbering();
+        
+        XHTMLImporterImpl xHTMLImporter = new XHTMLImporterImpl(
+                wordMLPackage);
+        xHTMLImporter.setHyperlinkStyle("Hyperlink");
+        wordMLPackage.getMainDocumentPart().getContent().addAll(
+                xHTMLImporter.convert(new File(System.getProperty("user.home")+'\\'+ "tmp.html"), null));
+
+        addFooter(wordMLPackage);
+        
+        File output = new java.io.File(System.getProperty("user.dir")
+                + "\\html_output.docx");
+        wordMLPackage.save(output);
+        System.out.println("done");
+
+        System.out.println("file path where it is stored is" + " "
+                + output.getAbsolutePath());
 	}
 
 	public void neuerAlgorythmus(WMainFrame wmf) {
