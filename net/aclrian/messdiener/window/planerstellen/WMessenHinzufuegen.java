@@ -548,6 +548,8 @@ public class WMessenHinzufuegen extends JFrame {
 						m = new Messe(hochamt, anz_medis, datummituhrzeit, ort, typ, mainframe);
 					}
 				} catch (NullPointerException e) {
+					e.printStackTrace();
+					
 					m = new Messe(hochamt, anz_medis, datummituhrzeit, ort, typ, mainframe);
 				}
 			}
