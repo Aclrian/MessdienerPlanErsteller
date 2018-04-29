@@ -194,7 +194,7 @@ public class Messe {
 	}
 
 	public void einteilen(Messdiener medi) {
-		if (medi.getMessdatenDaten().kann(getDate())) {
+		if (medi.getMessdatenDaten().kann(getDate(),false)) {
 			medi.getMessdatenDaten().einteilen(getDate(), isHochamt());
 			medis.add(medi);
 			medis.sort(Messdiener.compForMedis);
@@ -347,7 +347,7 @@ public class Messe {
 
 	public void LeiterEinteilen(Messdiener leiter) {
 		if (leiter.isIstLeiter()) {
-			if (leiter.getMessdatenDaten().kann(getDate())) {
+			if (leiter.getMessdatenDaten().kann(getDate(),false)) {
 				this.leiter.add(leiter);
 			}
 		}

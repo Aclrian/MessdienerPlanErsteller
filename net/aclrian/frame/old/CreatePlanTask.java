@@ -96,7 +96,7 @@ public class CreatePlanTask extends SwingWorker<Void, Void> {
 		int z = ran.nextInt(me.length);
 		Messdiener medi = me[z];
 	//	System.out.println(medi.makeId());
-		if (medi.getMessdatenDaten().kann(m.getDate())) {
+		if (medi.getMessdatenDaten().kann(m.getDate(),false)) {//',false' added for compalitation
 			if (new Sonstiges().equals(m.getStandardMesse())) {
 				if (medi.getDienverhalten().getBestimmtes(m.getStandardMesse(), null)) {
 					m.einteilen(medi);

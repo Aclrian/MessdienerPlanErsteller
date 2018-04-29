@@ -1,6 +1,8 @@
 package net.aclrian.messdiener.deafault;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -24,6 +26,7 @@ public class Messdaten {
 	private int max_messen;
 	private ArrayList<Date> eingeteilt = new ArrayList<Date>();
 	private ArrayList<Date> ausgeteilt = new ArrayList<Date>();
+	private ArrayList<Date> pause	   = new ArrayList<Date>();
 
 	public Messdaten(Messdiener m, WMainFrame wmf, int aktdatum) {
 		geschwister = new ArrayList<Messdiener>();
@@ -60,9 +63,10 @@ public class Messdaten {
 					freunde.add(medi);
 				}
 			}
-			max_messen = berecheMax(m.getEintritt(), aktdatum, m.isIstLeiter(), wmf.getPfarrei().getSettings());
-			anz_messen = 0;
 		}
+		max_messen = berecheMax(m.getEintritt(), aktdatum, m.isIstLeiter(), wmf.getPfarrei().getSettings());
+		anz_messen = 0;
+		insgesamtEingeteilt = 0;
 	}
 
 	public void austeilen(Date d) {
@@ -93,8 +97,9 @@ public class Messdaten {
 
 	public void einteilen(Date date, boolean hochamt) {
 		try {
-			if (kann(date)) {
+			if (kann(date, false)) {
 				eingeteilt.add(date);
+				pause.add(gettheNextDay(date));
 				anz_messen++;
 				insgesamtEingeteilt++;
 				if (hochamt) {
@@ -161,8 +166,8 @@ public class Messdaten {
 		return max_messen;
 	}
 	
-	public boolean kann(Date date) {
-		boolean eins = kanndann(date);
+	public boolean kann(Date date, boolean zwang) {
+		boolean eins = kanndann(date,zwang);
 		boolean zwei = kannnoch();
 		if (eins == zwei == true) {
 			return eins;
@@ -171,15 +176,37 @@ public class Messdaten {
 		}
 	}
 
-	public boolean kanndann(Date date) {
-		if (eingeteilt.contains(date)) {
+	public boolean kanndann(Date date, boolean zwang) {
+		if (eingeteilt.isEmpty() && ausgeteilt.isEmpty()) {
+			if(zwang || pause.isEmpty()) {
+			return true;
+			}
+		}
+		System.out.println(eingeteilt.toString() + ausgeteilt.toString() +pause.toString()+ ":" + date.toString());
+		if (contains(date,eingeteilt) || contains(gettheNextDay(date), eingeteilt)) {
 			return false;
 		}
-		if (ausgeteilt.contains(date)) {
+		if (contains(date,ausgeteilt) || contains(gettheNextDay(date), ausgeteilt)) {
 			// System.out.print(date + " kann dann nicht! " + getGeschwister().get(0));
 			return false;
 		}
+		if (!zwang) {
+			if (contains(date,pause) || contains(gettheNextDay(date), pause)) {
+				return false;
+			}
+		}
 		return true;
+	}
+
+	private boolean contains(Date date, ArrayList<Date> array) {
+		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+		String sdate = df.format(date);
+		for (Date d : array) {
+			if (df.format(d).equals(sdate)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean kannnoch() {
@@ -192,8 +219,10 @@ public class Messdaten {
 
 	public void einteilenZwang(Date date, boolean hochamt) {
 		try {
-			if (!ausgeteilt.contains(date)) {
+			if (!contains(date,ausgeteilt)) {
 				eingeteilt.add(date);
+				//Date day = gettheNextDay(date);
+				//pause.add(day);
 				anz_messen++;
 				insgesamtEingeteilt++;
 				if (hochamt) {
@@ -204,6 +233,13 @@ public class Messdaten {
 			e.printStackTrace();
 		}
 
+	}
+
+	private Date gettheNextDay(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DATE, 1);
+		return cal.getTime();
 	}
 
 	public void loescheAbwesendeDaten() {
