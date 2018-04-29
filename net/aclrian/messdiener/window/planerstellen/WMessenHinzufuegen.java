@@ -542,7 +542,7 @@ public class WMessenHinzufuegen extends JFrame {
 		} else {
 			if (cannotparse == false) {
 				try {
-					if (!titel.equals("")) {
+					if (titel != null || !titel.equals("")) {
 						m = new Messe(hochamt, anz_medis, datummituhrzeit, ort, typ, titel, mainframe);
 					} else {
 						m = new Messe(hochamt, anz_medis, datummituhrzeit, ort, typ, mainframe);
