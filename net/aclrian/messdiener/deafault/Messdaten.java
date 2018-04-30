@@ -261,4 +261,9 @@ public class Messdaten {
 	public int getkannnochAnz() {
 		return max_messen - anz_messen;
 	}
+	
+	public double getSortierenDouble(){
+		double rtn = getAnz_messen()/getMax_messen();
+		return rtn;
+	}
 }

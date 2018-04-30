@@ -33,18 +33,27 @@ public class Messdiener {
 	public static final Comparator<? super Messdiener> einteilen = new Comparator<Messdiener>() {
 		@Override
 		public int compare(Messdiener o1, Messdiener o2) {
-			double max1 = o1.getMessdatenDaten().getMax_messen();
-			int anz1 = o1.getMessdatenDaten().getAnz_messen();
-			double max2 = o2.getMessdatenDaten().getMax_messen();
-			int anz2 = o2.getMessdatenDaten().getAnz_messen();
-			double eins = anz1 / max1;
-			int ein = (int) eins;
-			String S1 = String.valueOf(ein);
-			double zwei = anz2 / max2;
-			int zwe = (int) zwei;
-			String S2 = String.valueOf(zwe);
-			return S1.compareToIgnoreCase(S2);
-			// return o1.makeId().compareToIgnoreCase(o2.makeId());
+			double d1 = o1.getMessdatenDaten().getSortierenDouble();// anz/max 0 kommt zuerst dann 0,5 --> 1
+			double d2 = o2.getMessdatenDaten().getSortierenDouble();
+			if (d1 < d2) {
+				// d1 vor d2
+				return -1;
+			} else if (d1 > d2) {
+				// d2 vor d1
+				return 1;
+
+			} else {
+		/*		if (o1.getMessdatenDaten().getMax_messen() < o2.getMessdatenDaten().getMax_messen()) {
+					// d1 vor d2
+					return -1;
+
+				} else if (o1.getMessdatenDaten().getMax_messen() > o2.getMessdatenDaten().getMax_messen()) {
+					// d2 vor d1
+				}
+*///TODO help what to do?
+				return 0;
+				// return o1.makeId().compareToIgnoreCase(o2.makeId());
+			}
 		}
 	};
 
@@ -155,7 +164,7 @@ public class Messdiener {
 		try {
 			wf.toXML(wmf);
 		} catch (IOException e) {
-			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),e.getMessage());
+			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), e.getMessage());
 			e.printStackTrace();
 		}
 	}
