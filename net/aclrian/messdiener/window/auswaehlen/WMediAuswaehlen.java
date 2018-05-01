@@ -63,7 +63,7 @@ public class WMediAuswaehlen extends JFrame {
 		
 		Container c = amp.getMedisinList();
 		panel.add(c);
-
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setVisible(true);
 	}
 

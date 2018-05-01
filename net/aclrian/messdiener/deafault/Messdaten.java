@@ -110,6 +110,21 @@ public class Messdaten {
 			e.printStackTrace();
 		}
 	}
+	public void einteilenVorzeitig(Date date, boolean hochamt, Messdiener medi, WMainFrame wmf) {
+		try {
+			if (kannvorzeitg(date, medi.isIstLeiter(), wmf)) {
+				eingeteilt.add(date);
+				pause.add(gettheNextDay(date));
+				anz_messen++;
+				insgesamtEingeteilt++;
+				if (hochamt) {
+					anz_messen--;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public int getAnz_messen() {
 		return anz_messen;
@@ -164,6 +179,19 @@ public class Messdaten {
 
 	public int getMax_messenInt() {
 		return max_messen;
+	}
+	
+	public boolean kannvorzeitg(Date date, boolean leiter, WMainFrame wmf) {
+		boolean eins = kanndann(date,false);
+		boolean zwei = kannnoch();
+		if (leiter && wmf.getPfarrei().getSettings().getDaten()[1].getAnz_dienen() == 0) {
+			zwei = true;
+		}
+		if (eins == zwei == true) {
+			return eins;
+		} else {
+			return false;
+		}
 	}
 	
 	public boolean kann(Date date, boolean zwang) {

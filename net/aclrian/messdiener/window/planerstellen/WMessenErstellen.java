@@ -310,6 +310,10 @@ public class WMessenErstellen extends JFrame {
 			hauptarray.add(messdiener);
 		}
 		hauptarray.sort(Messdiener.einteilen);
+		for (int i = 0; i < hauptarray.size(); i++) {
+			System.out.println(hauptarray.get(i).getMessdatenDaten().getAnz_messen() + "/" + hauptarray.get(i).getMessdatenDaten().getMax_messen());
+		}
+		System.out.println("-------");
 		// Dap und zvmzwm fruehzeitg erkennen und beheben
 		// ArrayList<ArrayList<E>>
 		for (StandartMesse sm : wmf.getStandardmessen()) {
@@ -579,8 +583,23 @@ public class WMessenErstellen extends JFrame {
 		Collections.shuffle(al);
 		Collections.shuffle(al2);
 		al.sort(Messdiener.einteilen);
+		for (int i = 0; i < al.size(); i++) {
+			System.out.println(al.get(i).getMessdatenDaten().getAnz_messen() + "/" + al.get(i).getMessdatenDaten().getMax_messen());
+		}
+		System.out.println("-------");
+		
 		al2.sort(Messdiener.einteilen);
+		for (int i = 0; i < al2.size(); i++) {
+			System.out.println(al2.get(i).getMessdatenDaten().getAnz_messen() + "/" + al2.get(i).getMessdatenDaten().getMax_messen());
+		}
+		System.out.println("-------");
+		
 		al.addAll(al2);
+		for (int i = 0; i < al.size(); i++) {
+			System.out.println(al.get(i).getMessdatenDaten().getAnz_messen() + "/" + al.get(i).getMessdatenDaten().getMax_messen());
+		}
+		System.out.println("-------");
+		
 		return al;
 	}
 

@@ -303,10 +303,10 @@ public class Messe {
 			rtn = rtn.substring(0, rtn.length() - 2);
 		}
 		rtn +="</br>";
-		//rtn += "\n";
+		rtn += "<br>";
 		for (int i = 0; i < leiter.size(); i++) {
 			try {
-				rtn += leiter.get(i).makeId() + ", ";
+				rtn += leiter.get(i).getVorname() + " " + leiter.get(i).getNachnname() + ", ";
 			} catch (NullPointerException e) {
 				rtn += ", ";
 			}
@@ -314,7 +314,7 @@ public class Messe {
 		if (rtn.endsWith(", ")) {
 			rtn = rtn.substring(0, rtn.length() - 2);
 		}
-
+		rtn +="</br>";
 		rtn += "</html>";
 		return rtn;
 	}
@@ -396,10 +396,16 @@ public class Messe {
 		}
 	}
 
-	public void vorzeitigEiteilen(Messdiener medi, Date d) {
-		medi.getMessdatenDaten().einteilen(d, isHochamt());
-		medis.add(medi);
-		medis.sort(Messdiener.compForMedis);
+	public void vorzeitigEiteilen(Messdiener medi, WMainFrame wmf) {
+		if (medi.getMessdatenDaten().kannvorzeitg(date, medi.isIstLeiter(), wmf)){
+			medi.getMessdatenDaten().einteilenVorzeitig(getDate(), isHochamt(), medi, wmf);
+			if (medi.isIstLeiter()) {
+			leiter.add(medi);
+			}else {
+			medis.add(medi);
+			}
+			medis.sort(Messdiener.compForMedis);
+		}
 	}
 
 	public int getnochbenoetigte() {
