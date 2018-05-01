@@ -1,5 +1,8 @@
 package net.aclrian.messdiener.window;
 
+
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 //import java.awt.event.ItemEvent;
@@ -16,13 +19,12 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
-import net.aclrian.messdiener.differenzierung.Pfarrei;
-import net.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
-
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
 import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
+import net.aclrian.messdiener.differenzierung.Pfarrei;
+import net.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
 import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
@@ -31,8 +33,7 @@ import net.aclrian.messdiener.window.medierstellen.WMediBearbeitenFrame;
 import net.aclrian.messdiener.window.medierstellen.WWAnvertrauteFrame;
 import net.aclrian.messdiener.window.planerstellen.WMessenHinzufuegen;
 import net.aclrian.messdiener.window.planerstellen.WWMessenFrame;
-//import javax.swing.JCheckBox;
-import net.aclrian.update.net.aclrian.update.VersionIDHandler;
+import net.aclrian.update.VersionIDHandler;
 
 /**
  * Hiermit startet alles: Es wird eine Benutzeroberfläche zum Erstellen eines
@@ -48,7 +49,7 @@ public class WMainFrame extends JFrame {
 	 */
 	private static final long serialVersionUID = 2278649234963113093L;
 	public static final String textdatei = "//.messdienerOrdnerPfad.txt";
-	public static final String VersionID = "b589";
+	public static final String VersionID = "b591";
 	// public static final int Max_einteilen = 3;
 	public static String pfarredateiendung = ".xml.pfarrei";
 	private Sonstiges sonstiges = new Sonstiges();
@@ -153,6 +154,7 @@ public class WMainFrame extends JFrame {
 		double hoehe = 240;
 		setBounds(Utilities.setFrameMittig(weite, hoehe));
 		setTitle("Messdiener Kaarst");
+		this.setIconImage(getIcon(this));
 		cp = new JPanel();
 		cp.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(cp);
@@ -432,6 +434,11 @@ public class WMainFrame extends JFrame {
 	//	this.chckbxZeigeKonsole.setSelected(false);
 		this.cc =false;
 	}*/
+	
+	
+	public static Image getIcon(WMainFrame wmf) {
+		return Toolkit.getDefaultToolkit().getImage(wmf.getClass().getResource("title.png"));
+	}
 	
 	@Override
 	public void setVisible(boolean arg0) {

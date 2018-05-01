@@ -409,16 +409,20 @@ public class WMessenHinzufuegen extends JFrame {
 	}
 
 	public void getAusgewaehlte(ArrayList<Messdiener> list) {
+		try {
+			ausgewaehlte.get(0).getEintritt();
+		} catch (NullPointerException e) {
+			ausgewaehlte = new ArrayList<Messdiener>();
+		}catch (IndexOutOfBoundsException e) {
+			// do nothing
+		}try {
 		for (Messdiener messdiener : list) {
 			ausgewaehlte.add(messdiener);
 		}
-		btnAbbrechen.setEnabled(true);
-		btnAnzeigen.setEnabled(true);
-		btnMesseHinzufgen.setEnabled(true);
-		btnMessenEntfernen.setEnabled(true);
-		btnPlanErstellen.setEnabled(true);
-		btnSetzeManuell.setEnabled(true);
-		btnSpeichern.setEnabled(true);
+		} catch (NullPointerException e) {
+			ausgewaehlte = null;
+		}
+		this.setEnabled(true);
 	}
 
 	public ArrayList<Messdiener> getMediarray() {
@@ -427,13 +431,7 @@ public class WMessenHinzufuegen extends JFrame {
 
 	public void manuellEinteilen(boolean selected) {
 		WMediAuswaehlen wma = new WMediAuswaehlen(hauptarray, selected, this);
-		btnAbbrechen.setEnabled(false);
-		btnAnzeigen.setEnabled(false);
-		btnMesseHinzufgen.setEnabled(false);
-		btnMessenEntfernen.setEnabled(false);
-		btnPlanErstellen.setEnabled(false);
-		btnSetzeManuell.setEnabled(false);
-		btnSpeichern.setEnabled(false);
+		this.setEnabled(false);
 		if (selected) {
 			nurleiter = EnumBoolean.True;
 		} else {
@@ -559,7 +557,7 @@ public class WMessenHinzufuegen extends JFrame {
 				if (messdiener.isIstLeiter()) {
 					m.LeiterEinteilen(messdiener);
 				}
-				m.vorzeitigEiteilen(messdiener, datummituhrzeit);
+				m.vorzeitigEiteilen(messdiener, mainframe);
 			}
 
 			ausgewaehlte = null;

@@ -1,4 +1,4 @@
-package net.aclrian.update.net.aclrian.update;
+package net.aclrian.update;
 
 import java.awt.Desktop;
 import java.awt.Font;

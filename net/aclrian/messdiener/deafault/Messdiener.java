@@ -35,6 +35,21 @@ public class Messdiener {
 		public int compare(Messdiener o1, Messdiener o2) {
 			double d1 = o1.getMessdatenDaten().getSortierenDouble();// anz/max 0 kommt zuerst dann 0,5 --> 1
 			double d2 = o2.getMessdatenDaten().getSortierenDouble();
+			if (d1 == d2) {
+				if (d1 == 0) {
+					int i1 = o1.getMessdatenDaten().getMax_messenInt();
+					int i2 = o2.getMessdatenDaten().getMax_messenInt();
+					if (i1 == i2) {
+						return 0;
+					}
+					if (i1 < i2) {
+						return 1;
+					}
+					if (i1 > i2) {
+						return -1;
+					}
+				}
+			}
 			if (d1 < d2) {
 				// d1 vor d2
 				return -1;
