@@ -45,6 +45,7 @@ import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.differenzierung.Setting.Attribut;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
+import net.aclrian.messdiener.window.References;
 import net.aclrian.messdiener.window.WMainFrame;
 import java.awt.Font;
 import javax.swing.SwingConstants;
@@ -92,7 +93,7 @@ public class WriteFile_Pfarrei extends JFrame {
 	private JPanel panel_1;
 	private ArrayList<StandartMesse> sm = new ArrayList<StandartMesse>();
 	public static final String[] columnNames = { "Tag", "Ort", "Stunde", "Minute", "Typ", "Anzahl" };
-	public static final String[] columnNames2 = { "Einf\u00FChrungsjahr", "Anzahl" };
+	public static final String[] columnNames2 = { "Einf"+References.ue+"hrungsjahr", "Anzahl" };
 	private DefaultTableModel dmmm = new DefaultTableModel() {
 		/**
 		 * 
@@ -135,6 +136,7 @@ public class WriteFile_Pfarrei extends JFrame {
 	public void start(WMainFrame wmf) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Getting start...");
+		setIconImage(WMainFrame.getIcon(new References()));
 		setBounds(0, 0, 615, 365);
 		setBounds(Utilities.setFrameMittig(623, 375));
 		getContentPane().setLayout(null);
@@ -150,7 +152,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		btnSpeichern.setBounds(476, 302, 117, 25);
 		getContentPane().add(btnSpeichern);
 
-		btnZurck = new JButton("Zur\u00FCck");
+		btnZurck = new JButton("Zur"+References.ue+"ck");
 		btnZurck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				zurueck();
@@ -203,7 +205,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		stdmessen_panel.add(panel_1);
 		panel_1.setLayout(null);
 
-		JLabel stdmessen_lblEintragNummer = new JLabel("Ausgew\u00E4hlten Eintrag");
+		JLabel stdmessen_lblEintragNummer = new JLabel("Ausgew"+References.ae+"hlten Eintrag");
 		stdmessen_lblEintragNummer.setBounds(12, 0, 160, 25);
 		panel_1.add(stdmessen_lblEintragNummer);
 
@@ -215,7 +217,7 @@ public class WriteFile_Pfarrei extends JFrame {
 				bearbeiten(i);
 				} catch (Exception e2) {
 					e2.printStackTrace();
-					new Erroropener("Treffe zun\u00E4chst eine Auswahl");
+					new Erroropener("Treffe zun"+References.ae+"chst eine Auswahl");
 				}
 			}
 		});
@@ -229,7 +231,7 @@ public class WriteFile_Pfarrei extends JFrame {
 					int i = stdmessen_table.getSelectedRow();
 					loeschen(i);
 					} catch (Exception e2) {
-						new Erroropener("Treffe zun\u00E4chst eine Auswahl");
+						new Erroropener("Treffe zun"+References.ae+"chst eine Auswahl");
 					}
 			} 
 		});
@@ -291,7 +293,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		stdmessen_lblWochentag.setBounds(12, 17, 93, 25);
 		stdmessen_panel.add(stdmessen_lblWochentag);
 
-		stdmessen_spinnerstdlblAnz = new JLabel("Anzahl der ben\u00F6tigten Messdiener");
+		stdmessen_spinnerstdlblAnz = new JLabel("Anzahl der ben"+References.oe+"tigten Messdiener");
 		stdmessen_spinnerstdlblAnz.setBounds(229, 59, 261, 20);
 		stdmessen_panel.add(stdmessen_spinnerstdlblAnz);
 
@@ -310,7 +312,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		stdmessen_panel.add(btnUpdate);
 
 		ortetypenpanel.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)),
-				"Standard Orte und standard Messetypen hizuf\u00FCgen", TitledBorder.LEADING, TitledBorder.TOP, null,
+				"Standard Orte und standard Messetypen hizuf"+References.ue+"gen", TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51)));
 		ortetypenpanel.setBounds(12, 12, 581, 278);
 		getContentPane().add(ortetypenpanel);
@@ -340,7 +342,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		typenfeld.setBounds(435, 52, 114, 25);
 		ortetypenpanel.add(typenfeld);
 
-		orterm = new JButton("L\u00F6schen");
+		orterm = new JButton("L"+References.oe+"schen");
 		orterm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ortrm();
@@ -349,7 +351,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		orterm.setBounds(12, 232, 114, 25);
 		ortetypenpanel.add(orterm);
 
-		typenrm = new JButton("L\u00F6schen");
+		typenrm = new JButton("L"+References.oe+"schen");
 		typenrm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				typrm();
@@ -459,7 +461,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		separator_2.setBounds(8, 173, 319, 7);
 		einstellungenpanel.add(separator_2);
 		
-		chckbxErhhenHochmter = new JCheckBox("Erh\u00F6hen Hoch\u00E4mter die Anzahl");
+		chckbxErhhenHochmter = new JCheckBox("Erh"+References.oe+"hen Hoch"+References.ae+"mter die Anzahl");
 		chckbxErhhenHochmter.setHorizontalAlignment(SwingConstants.LEFT);
 		chckbxErhhenHochmter.setSelected(true);
 		chckbxErhhenHochmter.setBounds(26, 142, 271, 23);
@@ -499,7 +501,7 @@ public class WriteFile_Pfarrei extends JFrame {
 
 	public WriteFile_Pfarrei(Pfarrei pf, WMainFrame wmf) {
 		start(wmf);
-		setTitle("Einstellungen von " + pf.getName() + " ueberarbeiten");
+		setTitle("Einstellungen von " + pf.getName() + " "+References.ue+"berarbeiten");
 		textField.setText(pf.getName());
 		orte = pf.getOrte();
 		for(String s : orte) {
@@ -557,7 +559,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		try {
 			this.setEinstellungenfromGUI();
 		} catch (Exception e) {
-			new Erroropener("Unzulaessige Eingabe in der Tabelle");
+			new Erroropener("Unzul"+References.ae+"ssige Eingabe in der Tabelle");
 			error = true;
 		}
 		if (error) {
@@ -775,7 +777,7 @@ public class WriteFile_Pfarrei extends JFrame {
 			dlmorte.remove(i);
 			orte.remove(s);
 		} else {
-			new Erroropener("Vorher etwas auswaehlen");
+			new Erroropener("Vorher etwas ausw"+References.ae+"hlen");
 		}
 	}
 
@@ -786,7 +788,7 @@ public class WriteFile_Pfarrei extends JFrame {
 			dlmtype.remove(i);
 			typen.remove(s);
 		} else {
-			new Erroropener("Vorher etwas auswaehlen");
+			new Erroropener("Vorher etwas ausw"+References.ae+"hlen");
 		}
 	}
 

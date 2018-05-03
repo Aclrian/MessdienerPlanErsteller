@@ -29,6 +29,7 @@ import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.ReadFile;
 import net.aclrian.messdiener.utils.Utilities;
+import net.aclrian.messdiener.window.References;
 import net.aclrian.messdiener.window.WMainFrame;
 import net.aclrian.messdiener.window.auswaehlen.ATable;
 import javax.swing.ScrollPaneConstants;
@@ -53,7 +54,7 @@ public class WMediBearbeitenFrame extends JFrame {
 	private JTextField textFieldVorname;
 	private JTextField textFieldNachname;
 	private JButton btnNeuerMedi = new JButton("Neuer Medi");
-	private JButton btnffneMedi = new JButton("\u00D6ffne Medi");
+	private JButton btnffneMedi = new JButton(References.Oe+"ffne Medi");
 	private JLabel lblVorname = new JLabel("Vorname");
 	private JCheckBox chckbxLeiter = new JCheckBox("Leiter");
 	private JLabel lblNachname = new JLabel("Nachname");
@@ -83,6 +84,7 @@ public class WMediBearbeitenFrame extends JFrame {
 		setTitle("Messdienerverwaltung");
 		int weite = 595;
 		int hoehe = 320;
+		setIconImage(WMainFrame.getIcon(new References()));
 		setBounds(Utilities.setFrameMittig(weite, hoehe));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -170,7 +172,7 @@ public class WMediBearbeitenFrame extends JFrame {
 		btnSpeichern.setBounds(289, 123, 132, 35);
 		panel.add(btnSpeichern);
 
-		JButton btnspeichernundSchlieen = new JButton("<html><body>Speichern </br>& Schli\u00DFen</body></html>");
+		JButton btnspeichernundSchlieen = new JButton("<html><body>Speichern </br>& Schli"+References.ss+"en</body></html>");
 		btnspeichernundSchlieen.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnspeichernundSchlieen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -204,7 +206,7 @@ public class WMediBearbeitenFrame extends JFrame {
 	public void speichernundschliessen(WMainFrame wmf) {
 		DateienVerwalter u = wmf.getEDVVerwalter();
 		if (textFieldVorname.getText().equals("") || textFieldNachname.getText().equals("")) {
-			new Erroropener("Unvollstaendige Eingabe!");
+			new Erroropener("Unvollst"+References.ae+"ndige Eingabe!");
 		} else {
 			Messdiener me = getMeVonEingabe(wmf);
 			if (mobenWurdeGeoeffntet) {
@@ -235,7 +237,7 @@ public class WMediBearbeitenFrame extends JFrame {
 			JFrame f = new JFrame();
 			JOptionPane.showMessageDialog(f, "Erfolgreich gespeichert!", "Gespeichert!",
 					JOptionPane.INFORMATION_MESSAGE);
-			moben = me;
+			moben = null;
 			setzeleer(wmf);
 			chckbxLeiter.setSelected(false);
 			// this.mobenWurdeGeoeffntet= true;
@@ -277,10 +279,9 @@ public class WMediBearbeitenFrame extends JFrame {
 		}
 		if (nullpointer == false) {
 			return true;
-
 		} else {
 			new Erroropener(
-					"Du solltest den Messdiner erst einmal speichern, damit das Programm auch wirklich weiss, wie der Messdiener heisst!");
+					"Du solltest den Messdiner erst einmal speichern, damit das Programm auch wirklich wei"+References.GROssenSZ+", wie der Messdiener hei"+References.ss+"t!");
 			return false;
 		}
 
@@ -320,7 +321,7 @@ public class WMediBearbeitenFrame extends JFrame {
 	public void speichern(WMainFrame wmf) {
 		DateienVerwalter u = wmf.getEDVVerwalter();
 		if (textFieldVorname.getText().equals("") || textFieldNachname.getText().equals("")) {
-			new Erroropener("Unvollstaendige Eingabe!");
+			new Erroropener("Unvollst"+References.ae+"ndige Eingabe!");
 		} else {
 			Messdiener me = getMeVonEingabe(wmf);
 			if (mobenWurdeGeoeffntet) {
@@ -351,7 +352,7 @@ public class WMediBearbeitenFrame extends JFrame {
 			me.makeXML(savepath, wmf);
 			JFrame f = new JFrame();
 			JOptionPane.showMessageDialog(f,
-					"Erfolgreich gespeichert! Du kannst nun einen neuen Messdiener anlegen. Wenn du den alten bearbeiten willst musst du ihn erst  wieder oeffnen!",
+					"Erfolgreich gespeichert! Du kannst nun einen neuen Messdiener anlegen. Wenn du den alten bearbeiten willst musst du ihn erst  wieder "+References.oe+"ffnen!",
 					"Gespeichert!", JOptionPane.INFORMATION_MESSAGE);
 			moben = me;
 			textFieldVorname.setText("");

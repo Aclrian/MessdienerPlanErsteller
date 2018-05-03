@@ -2,6 +2,10 @@ package net.aclrian.messdiener.window.console;
 
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
+
+import net.aclrian.messdiener.window.References;
+import net.aclrian.messdiener.window.WMainFrame;
+
 import java.awt.BorderLayout;
 
 public class AFrame extends JFrame {
@@ -14,7 +18,7 @@ public class AFrame extends JFrame {
 
 	public AFrame() {
 		setTitle("Konsolen-Ausgabe");
-		
+		setIconImage(WMainFrame.getIcon(new References()));
 		textArea = new JTextArea();
 		textArea.setEditable(false);
 		getContentPane().add(textArea, BorderLayout.CENTER);

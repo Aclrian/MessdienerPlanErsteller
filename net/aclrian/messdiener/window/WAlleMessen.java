@@ -76,7 +76,7 @@ public class WAlleMessen extends JFrame {
 	private JLabel lblBis = new JLabel("bis:");
 	private JButton btnPlanErstellen = new JButton("");
 	private JLabel lblVon = new JLabel("von:");
-	private JButton messestandarterzeugen = new JButton("\u2193");
+	private JButton messestandarterzeugen = new JButton(References.pfeilrunter);
 	private DefaultListModel<String> dfmesse = new DefaultListModel<String>();
 	private JList<String> listmesse = new JList<String>();
 	private JScrollPane messescrollPanel = new JScrollPane();

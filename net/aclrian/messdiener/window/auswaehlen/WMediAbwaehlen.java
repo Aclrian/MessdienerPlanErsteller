@@ -20,6 +20,8 @@ import com.toedter.calendar.JDateChooser;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.utils.Utilities;
+import net.aclrian.messdiener.window.References;
+import net.aclrian.messdiener.window.WMainFrame;
 import net.aclrian.messdiener.window.planerstellen.WMessenHinzufuegen;
 
 public class WMediAbwaehlen extends JFrame {
@@ -39,6 +41,7 @@ public class WMediAbwaehlen extends JFrame {
 
 	public WMediAbwaehlen(Messdiener m, boolean neusetzen, WMessenHinzufuegen wmh) {
 		wmh.setEnabled(false);
+		this.setIconImage(WMainFrame.getIcon(new References()));
 		this.m = m;
 		if (neusetzen) {
 			m.getMessdatenDaten().loescheAbwesendeDaten();
@@ -108,13 +111,12 @@ public class WMediAbwaehlen extends JFrame {
 		LocalDate lstart = anfang.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate lstopp = ende.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		int days = (int) ChronoUnit.DAYS.between(lstopp, lstart);
-		System.out.println(days + "sdsadg!");
 		Calendar ical = Calendar.getInstance();
 		ical.setTime(ende);
 		for (int i = 0; i <= days; i++) {
 			m.getMessdatenDaten().austeilen(ical.getTime());
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
-					"Der Messdiener " + m.makeId() + " wurde fuer den " + df.format(ical.getTime()) + " ausgeteilt.");
+					"Der Messdiener " + m.makeId() + " wurde f"+References.ue+"r den " + df.format(ical.getTime()) + " ausgeteilt.");
 			ical.add(Calendar.DATE, 1);
 		}
 		panel.setVisible(false);

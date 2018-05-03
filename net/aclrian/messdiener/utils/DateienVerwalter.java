@@ -82,8 +82,10 @@ System.out.println(f.toString() + "!");
 	public String waehleOrdner() throws NullPointerException {
 		// throw new ArrayIndexOutOfBoundsException();
 		JFileChooser f = new JFileChooser();
+		
 		String s = "Ordner w\u00E4hlen, in dem alles gespeichert werden soll:";
 		f.setDialogTitle(s);
+		f.setApproveButtonText("Auswaehlen");
 		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int i = f.getBounds().width + 100;
 		f.setBounds(f.getBounds().x, f.getBounds().y, i, f.getBounds().height);
@@ -296,8 +298,8 @@ System.out.println(f.toString() + "!");
 		this.savepath = savepath;
 	}
 	
-	public void erneuereSavepath(String savepath) {
-		this.savepath = savepath;
+	public void erneuereSavepath() {
+		this.savepath = "";
 		getSpeicherort();
 	}
 
