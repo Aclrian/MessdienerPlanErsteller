@@ -39,6 +39,7 @@ import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.differenzierung.Einstellungen;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
+import net.aclrian.messdiener.window.References;
 import net.aclrian.messdiener.window.WMainFrame;
 
 public class WMessenErstellen extends JFrame {
@@ -66,6 +67,7 @@ public class WMessenErstellen extends JFrame {
 	public WMessenErstellen(Messdiener[] me, ArrayList<Messe> m, WMainFrame wmf) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Messen anzeigen");
+		setIconImage(WMainFrame.getIcon(new References()));
 		setBounds(Utilities.setFrameMittig(987, 460));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -368,13 +370,13 @@ public class WMessenErstellen extends JFrame {
 			}
 		}
 		// DAV UND ZWMZVM ENDE
-		Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "Ueberpruefung zu ende!");
+		Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), References.Ue+"berpruefung zu ende!");
 		// neuer Monat:
 		Calendar start = Calendar.getInstance();
 		start.setTime(messen.get(0).getDate());
 		start.add(Calendar.MONTH, 1);
 		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-		Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "naechster Monat bei: " + df.format(start.getTime()));
+		Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "n"+References.ae+"chster Monat bei: " + df.format(start.getTime()));
 		// EIGENTLICHER ALGORYTHMUS
 		for (Messe me : messen) {
 
@@ -387,7 +389,7 @@ public class WMessenErstellen extends JFrame {
 					messdiener.getMessdatenDaten().naechsterMonat();
 				}
 			}
-			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"Messe ferting: " + me.getID());
+			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"Messe fertig: " + me.getID());
 			if (wmf.getSonstiges().isSonstiges(me.getStandardMesse())) {
 				this.einteilen(me, EnumAction.EinfachEinteilen, wmf);
 			} else {
@@ -408,7 +410,7 @@ public class WMessenErstellen extends JFrame {
 				medis = beheben(m, wmf);
 				zwang = true;
 			}
-			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "\t" + medis.size() + " fuer " + m.getnochbenoetigte());
+			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "\t" + medis.size() + " f"+References.ue+"r " + m.getnochbenoetigte());
 			for (int j = 0; j < medis.size(); j++) {
 				einteilen(m, medis.get(j), zwang);
 			}
@@ -423,7 +425,7 @@ public class WMessenErstellen extends JFrame {
 				medis2 = beheben(m, wmf);
 				zwang2 = true;
 			}
-			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "\t" + medis2.size() + " fuer " + m.getnochbenoetigte());
+			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "\t" + medis2.size() + " f"+References.ue+"r " + m.getnochbenoetigte());
 			for (int j = 0; j < medis2.size(); j++) {
 				einteilen(m, medis2.get(j), zwang2);
 			}
@@ -510,7 +512,7 @@ public class WMessenErstellen extends JFrame {
 			for (Messdiener messdiener : prov) {
 				new Erroropener("<html><body>Bei der Messe: " + m.getID()
 						+ "<br></br>herrscht Messdiener-Knappheit</br><br>Daher wird wohl" + messdiener.makeId()
-						+ "einspringen muessen, weil er generell kann.</br></body></html>");
+						+ "einspringen m"+References.ue+"ssen, weil er generell kann.</br></body></html>");
 			}
 			rtn.addAll(prov);
 			// Wenn wirklich keiner mehr kann
@@ -525,8 +527,8 @@ public class WMessenErstellen extends JFrame {
 					int ii = e.getDaten()[id].getAnz_dienen();
 					if (ii!=0 && i < m.getnochbenoetigte()) {
 						new Erroropener("<html><body>Bei der Messe: " + m.getID()
-								+ "<br></br>herrscht GROssE Messdiener-Knappheit</br><br>Daher wird wohl"
-								+ messdiener.makeId() + "einspringen muessen.</br></body></html>");
+								+ "<br></br>herrscht GRO"+References.GROssenSZ+"E Messdiener-Knappheit</br><br>Daher wird wohl"
+								+ messdiener.makeId() + "einspringen m"+References.ue+"ssen.</br></body></html>");
 						rtn.add(messdiener);
 					}
 				}
@@ -624,7 +626,7 @@ public class WMessenErstellen extends JFrame {
 		@Override
 		public String getMessage() {
 			String s = super.getMessage();
-			s += "Zu wenige Moegliche Messdiener bei: " + m.getID();
+			s += "Zu wenige M"+References.oe+"gliche Messdiener bei: " + m.getID();
 
 			return s;
 		}

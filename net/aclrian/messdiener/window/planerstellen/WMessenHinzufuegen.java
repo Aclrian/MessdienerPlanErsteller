@@ -39,6 +39,7 @@ import net.aclrian.messdiener.deafault.Messe;
 import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
+import net.aclrian.messdiener.window.References;
 import net.aclrian.messdiener.window.WMainFrame;
 import net.aclrian.messdiener.window.auswaehlen.WMediAbwaehlen;
 import net.aclrian.messdiener.window.auswaehlen.WMediAuswaehlen;
@@ -58,7 +59,7 @@ public class WMessenHinzufuegen extends JFrame {
 	private JScrollPane scrollPane = new JScrollPane();
 	private JList<String> list = new JList<String>();
 	private JLabel lblAlleMessen = new JLabel("Alle Messen");
-	private JButton btnMesseHinzufgen = new JButton("<html><body>Messe<br>hinzuf\u00FCgen</body></html>");
+	private JButton btnMesseHinzufgen = new JButton("<html><body>Messe<br>hinzuf"+References.ue+"gen</body></html>");
 	private JButton btnMessenEntfernen = new JButton("<html><body>Messe<br>entfernen</body></html>");
 	private JPanel panel = new JPanel();
 	private Checkbox chbxHochamt = new Checkbox("Hochamt");
@@ -98,7 +99,8 @@ public class WMessenHinzufuegen extends JFrame {
 	public WMessenHinzufuegen(Date anfang, Date ende, WMainFrame wmf) {
 		mainframe = wmf;
 		setMediarray(wmf.getMediarraymitMessdaten());
-		setTitle("Hier koennen noch Messen hinzugef\u00fcgt werden:");
+		setIconImage(WMainFrame.getIcon(new References()));
+		setTitle("Hier koennen noch Messen hinzugef"+References.ue+"gt werden:");
 		titel = "";
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(Utilities.setFrameMittig(773, 595));
@@ -304,7 +306,7 @@ public class WMessenHinzufuegen extends JFrame {
 		vorher.add(b);
 
 		JLabel lblJeNachdemWie = new JLabel(
-				"<html>\r\n<body>\r\nJe nachdem, wie gro\u00DF der Absatand<br>\r\nzwischen den Daten ist, <br>\r\nk\u00F6nnte es eine Weile dauern!<br>\r\n</body>\r\n</html>");
+				"<html>\r\n<body>\r\nJe nachdem, wie gro"+References.ss+" der Absatand<br>\r\nzwischen den Daten ist, <br>\r\nk\u00F6nnte es eine Weile dauern!<br>\r\n</body>\r\n</html>");
 		lblJeNachdemWie.setBounds(269, 11, 222, 124);
 		vorher.add(lblJeNachdemWie);
 
@@ -341,7 +343,7 @@ public class WMessenHinzufuegen extends JFrame {
 			wmab = new WMediAbwaehlen(hauptarray.get(i - 1), neusetzen, this);
 		} catch (IndexOutOfBoundsException e) {
 			catchy = true;
-			new Erroropener("Bitte Messdiener auswaehlen!");
+			new Erroropener("Bitte Messdiener ausw"+References.ae+"hlen!");
 		}
 		if (!catchy) {
 			wmab.setVisible(true);
@@ -451,7 +453,7 @@ public class WMessenHinzufuegen extends JFrame {
 			btnAnzeigen.setEnabled(false);
 
 		} else {
-			new Erroropener("Du musst eine Messe auswaehlen!");
+			new Erroropener("Du musst eine Messe ausw"+References.ae+"hlen!");
 		}
 		/*
 		 * Messe m = messen.get(list.getSelectedIndex()); WMessenAnzeigen wma = new
@@ -461,7 +463,7 @@ public class WMessenHinzufuegen extends JFrame {
 
 	public void messtitel() {
 		JFrame f = new JFrame();
-		String s = JOptionPane.showInputDialog(f, "Bitte den Messtitel eingeben:", "Messe hinzufuegen",
+		String s = JOptionPane.showInputDialog(f, "Bitte den Messtitel eingeben:", "Messe hinzuf"+References.ue+"gen",
 				JOptionPane.QUESTION_MESSAGE);
 		try {
 			titel = s;

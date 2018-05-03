@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 import com.toedter.calendar.JDateChooser;
 
 import net.aclrian.messdiener.utils.Utilities;
+import net.aclrian.messdiener.window.References;
 import net.aclrian.messdiener.window.WMainFrame;
 
 import javax.swing.JLabel;
@@ -30,7 +31,8 @@ public class WMessenFrame extends JFrame {
 	 */
 	public WMessenFrame(WMainFrame wmf) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setTitle("W\u00E4hle den Zeitraum fuer den neuen Plan");
+		setTitle("W"+References.ae+"hle den Zeitraum f"+References.ue+"r den neuen Plan");
+		setIconImage(WMainFrame.getIcon(new References()));
 		setBounds(Utilities.setFrameMittig(433, 192));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

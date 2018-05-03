@@ -1,5 +1,8 @@
 package net.aclrian.messdiener.window.console;
 
+//import net.aclrian.messdiener.window.References;
+//import net.aclrian.messdiener.window.WMainFrame;
+
 //
 // A simple Java Console for your application (Swing version)
 // Requires Java 1.1.5 or higher
@@ -36,6 +39,7 @@ public class Console{}/* extends WindowAdapter implements WindowListener, Runnab
 	{
 		// create all components and add them
 		frame=new JFrame("Java Konsole");
+		frame.setIconImage(WMainFrame.getIcon(new References()));
 		//GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		//GraphicsDevice gd = env.getScreenDevices()[2];
 		//Dimension screenSize = new Dimension(gd.getDisplayMode().getWidth(), gd.getDisplayMode().getHeight());

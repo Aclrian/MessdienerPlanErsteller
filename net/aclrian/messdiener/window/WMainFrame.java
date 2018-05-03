@@ -36,7 +36,7 @@ import net.aclrian.messdiener.window.planerstellen.WWMessenFrame;
 import net.aclrian.update.VersionIDHandler;
 
 /**
- * Hiermit startet alles: Es wird eine Benutzeroberfläche zum Erstellen eines
+ * Hiermit startet alles: Es wird eine Benutzeroberflaeche zum Erstellen eines
  * Messdiender und eiunes Messdienerplans erzeugt
  *
  * @author Aclrian
@@ -154,7 +154,7 @@ public class WMainFrame extends JFrame {
 		double hoehe = 240;
 		setBounds(Utilities.setFrameMittig(weite, hoehe));
 		setTitle("Messdiener Kaarst");
-		this.setIconImage(getIcon(this));
+		this.setIconImage(getIcon(new References()));
 		cp = new JPanel();
 		cp.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(cp);
@@ -184,14 +184,14 @@ public class WMainFrame extends JFrame {
 		});
 
 		JLabel lblWarnung = new JLabel(
-				"<html>Bevor man einen Messdiener loescht, indem man seine Datei loescht,<br />sollte man dafuer sorgen, dass seine Freunde und Geschwister nicht mehr seine Freunde und Geschwister sind!</html>\n ");
+				"<html>Bevor man einen Messdiener l"+References.oe+"scht, indem man seine Datei loescht,<br />sollte man dafuer sorgen, dass seine Freunde und Geschwister nicht mehr seine Freunde und Geschwister sind!</html>\n ");
 		lblWarnung.setBounds(18, 153, 574, 45);
 		cp.setLayout(null);
 		cp.add(btnMessdienrer);
 		cp.add(btnNeuerPlan);
 		cp.add(lblWarnung);
 
-		JButton btnSpeicherortndern = new JButton("<html>Speicherort<br />\u00E4ndern</html>");
+		JButton btnSpeicherortndern = new JButton("<html>Speicherort<br />"+References.ae+"ndern</html>");
 		btnSpeicherortndern.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -390,6 +390,7 @@ public class WMainFrame extends JFrame {
 		s += textdatei;
 		File f = new File(s);
 		f.delete();
+		util.erneuereSavepath();
 		util.getSpeicherort();
 		savepath = util.getSavepath();
 		erneuern();
@@ -436,8 +437,8 @@ public class WMainFrame extends JFrame {
 	}*/
 	
 	
-	public static Image getIcon(WMainFrame wmf) {
-		return Toolkit.getDefaultToolkit().getImage(wmf.getClass().getResource("title.png"));
+	public static Image getIcon(References ref) {
+		return Toolkit.getDefaultToolkit().getImage(ref.getClass().getResource("title.png"));
 	}
 	
 	@Override
