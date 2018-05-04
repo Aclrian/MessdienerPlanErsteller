@@ -31,6 +31,7 @@ import javax.swing.border.EmptyBorder;
 import com.toedter.calendar.JDateChooser;
 
 import net.aclrian.messdiener.panels.MediAnzeigen;
+import net.aclrian.messdiener.utils.References;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.window.medierstellen.WMediBearbeitenFrame;
 

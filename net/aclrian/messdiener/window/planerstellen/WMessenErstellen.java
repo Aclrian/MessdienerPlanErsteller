@@ -38,8 +38,8 @@ import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.differenzierung.Einstellungen;
 import net.aclrian.messdiener.utils.Erroropener;
+import net.aclrian.messdiener.utils.References;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.References;
 import net.aclrian.messdiener.window.WMainFrame;
 
 public class WMessenErstellen extends JFrame {
@@ -288,8 +288,8 @@ public class WMessenErstellen extends JFrame {
 		FileWriter fw = new FileWriter(System.getProperty("user.home")+'\\'+ "tmp.html");
 		String code = editorPane.getText();
 		code = code.replaceAll("\n", "");
-		code = code.replaceAll("<br>", "<br></br>");
-		code = code.replaceAll("     ", "");//fünf Leeeeerzeichen zu einem
+		//code = code.replaceAll("<br>", "<br></br>");
+		code = code.replaceAll("     ", " ");//fünf Leeeeerzeichen zu einem
 		fw.write(code);
 		fw.flush();
 		fw.close();
@@ -297,14 +297,14 @@ public class WMessenErstellen extends JFrame {
 		//html to docx
         
         
-        File output = new java.io.File(System.getProperty("user.dir")
+        File output = new java.io.File(System.getProperty("user.home")
                 + "\\html_output.docx");
     //    wordMLPackage.save(output);
         System.out.println("done");
 
         System.out.println("file path where it is stored is" + " "
                 + output.getAbsolutePath());
-        f.deleteOnExit();
+        //f.deleteOnExit();
 	}
 
 	public void neuerAlgorythmus(WMainFrame wmf) {
@@ -630,6 +630,11 @@ public class WMessenErstellen extends JFrame {
 
 			return s;
 		}
+	}
+	
+	
+	public String getText() {
+		return editorPane.getText();
 	}
 	/*
 	 * private void alterAlgorthythmus(ArrayList<Messe> m) { Calendar start =
