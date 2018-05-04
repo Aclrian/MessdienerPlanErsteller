@@ -16,9 +16,9 @@ import javax.swing.WindowConstants;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.utils.Erroropener;
+import net.aclrian.messdiener.utils.References;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.utils.WriteFile;
-import net.aclrian.messdiener.window.References;
 import net.aclrian.messdiener.window.WMainFrame;
 
 /**

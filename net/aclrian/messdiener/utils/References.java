@@ -1,4 +1,4 @@
-package net.aclrian.messdiener.window;
+package net.aclrian.messdiener.utils;
 
 public class References {
 	public static char aclrianscheVergesslichkeit = ' ';

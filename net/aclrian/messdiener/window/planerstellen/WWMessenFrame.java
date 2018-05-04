@@ -5,8 +5,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import com.toedter.calendar.JDateChooser;
 
+import net.aclrian.messdiener.utils.References;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.References;
 import net.aclrian.messdiener.window.WMainFrame;
 
 import javax.swing.JLabel;

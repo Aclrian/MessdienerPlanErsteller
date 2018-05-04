@@ -54,7 +54,7 @@ public class Messe {
 		if (wmf.getPfarrei().getOrte().contains(ort) && wmf.getPfarrei().getTypen().contains(typ)) {
 			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, wmf);
 			this.titel = titel;
-		}else{
+		} else {
 			Utilities.logging(getClass(), getClass().getEnclosingConstructor(), "da ging was schief");
 		}
 
@@ -70,7 +70,7 @@ public class Messe {
 		}
 		if (isdrin) {
 			bearbeiten(false, sm.getAnz_messdiener(), d, sm.getOrt(), sm.getTyp(), wmf);
-		}else{
+		} else {
 			Utilities.logging(getClass(), getClass().getEnclosingConstructor(), "da ging was schief");
 		}
 	}
@@ -90,7 +90,7 @@ public class Messe {
 	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, WMainFrame wmf) {
 		if (wmf.getPfarrei().getOrte().contains(ort) && wmf.getPfarrei().getTypen().contains(typ)) {
 			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, wmf);
-		}else{
+		} else {
 			Utilities.logging(getClass(), getClass().getEnclosingConstructor(), "da ging was schief");
 		}
 
@@ -178,8 +178,7 @@ public class Messe {
 	 * @param kirche
 	 * @param type
 	 */
-	public void bearbeiten(boolean hochamt, int anz_messdiener, Date date, String kirche, String type,
-			WMainFrame wmf) {
+	public void bearbeiten(boolean hochamt, int anz_messdiener, Date date, String kirche, String type, WMainFrame wmf) {
 		setWochentag(df.format(date));
 		setHochamt(hochamt);
 		setKirche(kirche);
@@ -187,14 +186,13 @@ public class Messe {
 		setDate(date);
 		setAnz_messdiener(anz_messdiener, wmf);
 		/*
-		 * for (int i = 0; i < anz_messdiener; i++) { Messdiener me = new
-		 * Messdiener(); me.setLeer(this); medis.add(me);
-		 * medis.sort(Messdiener.compForMedis);}
+		 * for (int i = 0; i < anz_messdiener; i++) { Messdiener me = new Messdiener();
+		 * me.setLeer(this); medis.add(me); medis.sort(Messdiener.compForMedis);}
 		 */
 	}
 
 	public void einteilen(Messdiener medi) {
-		if (medi.getMessdatenDaten().kann(getDate(),false)) {
+		if (medi.getMessdatenDaten().kann(getDate(), false)) {
 			medi.getMessdatenDaten().einteilen(getDate(), isHochamt());
 			medis.add(medi);
 			medis.sort(Messdiener.compForMedis);
@@ -244,12 +242,12 @@ public class Messe {
 			}
 		} else {
 			if (!getWochentag().equals("")) {
-				rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr "
-						+ typ + " " + kirche;
+				rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + typ + " "
+						+ kirche;
 			} else {
 				if (!getWochentag().equals("")) {
-					rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr "
-							+ typ + " " + kirche;
+					rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + typ + " "
+							+ kirche;
 				}
 			}
 		}
@@ -260,7 +258,7 @@ public class Messe {
 		StringBuffer rtn = new StringBuffer("<html>");
 		rtn.append("<font>");
 		if (!getWochentag().equals("")) {
-			rtn.append("<b>" + getWochentag() + " " + dfeee.format(date) + "&emsp;" + dftime.format(date) + " Uhr "); 
+			rtn.append("<b>" + getWochentag() + " " + dfeee.format(date) + "&emsp;" + dftime.format(date) + " Uhr ");
 			rtn.append(typ + " " + kirche);
 			rtn.append("</b></font></html>");
 		}
@@ -269,9 +267,9 @@ public class Messe {
 
 	/*
 	 * public String getDeutschenWochentag() { switch (Wochentag) { case "Mon":
-	 * return "Mo"; case "Tue": return "Di"; case "Wed": return "Mi"; case
-	 * "Thu": return "Do"; case "Fri": return "Fr"; case "Sat": return "Sa";
-	 * case "Son": return Wochentag;
+	 * return "Mo"; case "Tue": return "Di"; case "Wed": return "Mi"; case "Thu":
+	 * return "Do"; case "Fri": return "Fr"; case "Sat": return "Sa"; case "Son":
+	 * return Wochentag;
 	 *
 	 * default: new Erroropener("Wochentag"); return ""; } }
 	 */
@@ -290,31 +288,20 @@ public class Messe {
 
 	public String htmlAusgeben() {
 		String rtn = getIDHTML();
-		rtn = rtn.substring(0, rtn.length()-7);
-		rtn +="<br>";
-		for (int i = 0; i < medis.size(); i++) {
-			try {
-				rtn += medis.get(i).getVorname() + " " + medis.get(i).getNachnname() + ", ";
-			} catch (NullPointerException e) {
-				rtn += ",";
-			}
+		rtn = rtn.substring(0, rtn.length() - 7);
+		rtn += "<br></br>";
+		// rtn += "<br><font size=\"1\" color=\"white\">|</font></br>";
+		medis.sort(Messdiener.compForMedis);
+		leiter.sort(Messdiener.compForMedis);
+		ArrayList<Messdiener> out = medis;
+		out.addAll(leiter);
+		for (int i = 0; i < out.size(); i++) {
+			rtn += out.get(i).getVorname() + " " + out.get(i).getNachnname() + ", ";
 		}
 		if (rtn.endsWith(", ")) {
 			rtn = rtn.substring(0, rtn.length() - 2);
 		}
-		rtn +="</br>";
-		rtn += "<br>";
-		for (int i = 0; i < leiter.size(); i++) {
-			try {
-				rtn += leiter.get(i).getVorname() + " " + leiter.get(i).getNachnname() + ", ";
-			} catch (NullPointerException e) {
-				rtn += ", ";
-			}
-		}
-		if (rtn.endsWith(", ")) {
-			rtn = rtn.substring(0, rtn.length() - 2);
-		}
-		rtn +="</br>";
+		rtn += "<br></br>";
 		rtn += "</html>";
 		return rtn;
 	}
@@ -347,7 +334,7 @@ public class Messe {
 
 	public void LeiterEinteilen(Messdiener leiter) {
 		if (leiter.isIstLeiter()) {
-			if (leiter.getMessdatenDaten().kann(getDate(),false)) {
+			if (leiter.getMessdatenDaten().kann(getDate(), false)) {
 				this.leiter.add(leiter);
 			}
 		}
@@ -397,12 +384,12 @@ public class Messe {
 	}
 
 	public void vorzeitigEiteilen(Messdiener medi, WMainFrame wmf) {
-		if (medi.getMessdatenDaten().kannvorzeitg(date, medi.isIstLeiter(), wmf)){
+		if (medi.getMessdatenDaten().kannvorzeitg(date, medi.isIstLeiter(), wmf)) {
 			medi.getMessdatenDaten().einteilenVorzeitig(getDate(), isHochamt(), medi, wmf);
 			if (medi.isIstLeiter()) {
-			leiter.add(medi);
-			}else {
-			medis.add(medi);
+				leiter.add(medi);
+			} else {
+				medis.add(medi);
 			}
 			medis.sort(Messdiener.compForMedis);
 		}
