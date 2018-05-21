@@ -1,10 +1,9 @@
 package net.aclrian.messdiener.window.planerstellen;
 
+import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +22,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.xml.bind.JAXBException;
+
+import org.docx4j.openpackaging.exceptions.Docx4JException;
+
+import net.aclrian.convertFiles.Converter;
 import net.aclrian.messdiener.deafault.Messdaten;
 /*
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -41,6 +45,7 @@ import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.References;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.window.WMainFrame;
+import java.awt.Panel;
 
 public class WMessenErstellen extends JFrame {
 
@@ -56,6 +61,7 @@ public class WMessenErstellen extends JFrame {
 	private ArrayList<Messdiener> hauptarray = new ArrayList<Messdiener>();
 	private DefaultListModel<Messdiener> dlm = new DefaultListModel<Messdiener>();
 	private JList<Messdiener> list = new JList<>(dlm);
+	private Converter con;
 	
 	private enum EnumAction {
 		EinfachEinteilen(), TypeBeachten();
@@ -114,46 +120,57 @@ public class WMessenErstellen extends JFrame {
 
 		JLabel lblFertig = new JLabel("Der fertig generierte Messdienerplan:");
 		scrollPane.setColumnHeaderView(lblFertig);
+		
+		Panel panel = new Panel();
+		panel.setBounds(10, 387, 679, 33);
+		contentPane.add(panel);
+				panel.setLayout(null);
+		
+				JButton btnZumWorddokument = new JButton("Als Worddokument "+ References.oe+"ffnen (Beta)");
+				btnZumWorddokument.setBounds(19, 5, 254, 23);
+				panel.add(btnZumWorddokument);
+				
+						JButton btnStatistik = new JButton("Statistik");
+						btnStatistik.setBounds(292, 5, 92, 23);
+						panel.add(btnStatistik);
+						JButton btnZumPdfdokument = new JButton("Als PDF-Dokument "+ References.oe+"ffnen (Beta)");
+						btnZumPdfdokument.setBounds(403, 5, 254, 23);
+						panel.add(btnZumPdfdokument);
+						btnZumPdfdokument.setVisible(true);
+						btnZumPdfdokument.addActionListener(new ActionListener() {
 
-		JButton btnZumWorddokument = new JButton("Zum Worddokument (im Aufbau)");
-		btnZumWorddokument.setVisible(true);
-		btnZumWorddokument.setBounds(10, 394, 257, 23);
-		contentPane.add(btnZumWorddokument);
-		btnZumWorddokument.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								pdf();
+							}
+						});
+						btnStatistik.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent arg0) {
+								statistic();
+							}
+						});
+				btnZumWorddokument.setVisible(true);
+				btnZumWorddokument.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					word();
-				} catch (IOException e1) {
-					new Erroropener("Konnte die Word-Datei nicht speichern.");
-					e1.printStackTrace();
-				}
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						try {
+							word();
+						} catch (IOException e1) {
+							new Erroropener("Konnte die Word-Datei nicht speichern.");
+							e1.printStackTrace();
+						}
 
-			}
-		});
-		JButton btnZumPdfdokument = new JButton("Zum PDF-Dokument (in Planung)");
-		btnZumPdfdokument.setVisible(true);
-		btnZumPdfdokument.setBounds(443, 394, 257, 23);
-		btnZumPdfdokument.addActionListener(new ActionListener() {
+					}
+				});
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// pdf(wmf, m);
-			}
-		});
-		contentPane.add(btnZumPdfdokument);
-
-		JButton btnStatistik = new JButton("Statistik");
-		btnStatistik.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				statistic();
-			}
-		});
-		btnStatistik.setBounds(281, 392, 117, 25);
-		contentPane.add(btnStatistik);
-
+		try {
+			con = new Converter(this);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		//---------------.-------------
 		Toolkit.getDefaultToolkit().beep();
 	}
 
@@ -236,38 +253,19 @@ public class WMessenErstellen extends JFrame {
 		return rtn;
 	}
 
-	public void pdf(WMainFrame wmf, ArrayList<Messe> messen) {
-		/*
-		 * DateienVerwalter util = wmf.getEDVVerwalter(); Date[] d =
-		 * wmf.getDates();
-		 *
-		 * SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy"); File file =
-		 * new File( util.getPlanSavepath().getAbsolutePath() + df.format(d[0])
-		 * + "-" + df.format(d[1]) + ".pdf"); if (!file.exists()) { try {
-		 * file.createNewFile(); } catch (IOException e) { e.printStackTrace();
-		 * } } try { /*PDDocument document = new PDDocument(); PDPage page = new
-		 * PDPage(); document.addPage(page); PDPageContentStream contentStream =
-		 * new PDPageContentStream(document, page);
-		 *
-		 * contentStream.beginText();
-		 * contentStream.setFont(PDType1Font.TIMES_ROMAN, 12);
-		 * contentStream.setLeading(14.5f); // String[] data =
-		 * editorPane.getText().split("\r\n"); for (int i = 0; i <
-		 * messen.size(); i++) { Messe mes = messen.get(i); ArrayList<String>
-		 * list = mes.ausgebenAlsArray(); for (int j = 0; j < list.size(); j++)
-		 * { String text = list.get(j); // text = text.replace("\n",
-		 * "").replace("\r", ""); contentStream.showText(text);
-		 * contentStream.newLine(); } } // String text = "This is the sample
-		 * document and we are adding // content to it.";
-		 *
-		 * contentStream.endText(); contentStream.close();
-		 *
-		 * document.save(file); document.close();
-		 *
-		 * System.out.println("PDF created at: " + file.getCanonicalPath()); }
-		 * catch (IOException e1) { // Auto-generated catch block
-		 * e1.printStackTrace(); }
-		 */
+	public void pdf() {
+		Desktop d = Desktop.getDesktop();
+		try {
+			d.open(con.getPfd());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Docx4JException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void statistic() {
@@ -283,27 +281,18 @@ public class WMessenErstellen extends JFrame {
 	}
 
 	public void word() throws IOException {
-		//html save
-		//BasicConfigurator.configure();
-		FileWriter fw = new FileWriter(System.getProperty("user.home")+'\\'+ "tmp.html");
-		String code = editorPane.getText();
-		code = code.replaceAll("\n", "");
-		//code = code.replaceAll("<br>", "<br></br>");
-		code = code.replaceAll("     ", " ");//fünf Leeeeerzeichen zu einem
-		fw.write(code);
-		fw.flush();
-		fw.close();
-		File f = new File(System.getProperty("user.home")+'\\'+ "tmp.html");
-		//html to docx
-        
-        
-        File output = new java.io.File(System.getProperty("user.home")
-                + "\\html_output.docx");
-    //    wordMLPackage.save(output);
-        System.out.println("done");
-
-        System.out.println("file path where it is stored is" + " "
-                + output.getAbsolutePath());
+        Converter con = new Converter(this);
+       try {
+		Desktop d = Desktop.getDesktop();
+		d.open(con.toWord());
+	} catch (JAXBException e) {
+		new Erroropener("Es gab einen internen Fehler. Bitte mit Copy Paste arbeiten.");
+		e.printStackTrace();
+	} catch (Docx4JException e) {
+		System.err.println("Konnte nicht formatieren:");
+		new Erroropener("Das Programm konnte den Plan nicht zu einer Word-Datei umwandeln.\nBitte mit Copy Paste arbeiten.");
+		e.printStackTrace();
+	}
         //f.deleteOnExit();
 	}
 
@@ -636,17 +625,4 @@ public class WMessenErstellen extends JFrame {
 	public String getText() {
 		return editorPane.getText();
 	}
-	/*
-	 * private void alterAlgorthythmus(ArrayList<Messe> m) { Calendar start =
-	 * Calendar.getInstance(); start.setTime(m.get(0).getDate());
-	 * start.add(Calendar.MONTH, 1); SimpleDateFormat df = new
-	 * SimpleDateFormat("dd-MM-yyyy"); for (int i = 0; i < m.size(); i++) { try
-	 * { if (m.get(i).getDate().after(start.getTime())) {
-	 * System.err.println("neuer Monat:"); for (Messdiener medi : me) {
-	 * medi.getMessdatenDaten().naechsterMonat(); } start.add(Calendar.MONTH,
-	 * 1); } // System.err.println(start.before(m.get(i).getDate())); //
-	 * System.out.println("DRAN: " + m.get(i).getID()); //
-	 * System.out.println(m.get(i).getEnumdeafaultMesse()); einteilen(m.get(i),
-	 * 0); } catch (Exception e) { e.printStackTrace(); } } } }
-	 */
 }

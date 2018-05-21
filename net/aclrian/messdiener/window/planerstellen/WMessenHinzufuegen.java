@@ -281,6 +281,7 @@ public class WMessenHinzufuegen extends JFrame {
 		}
 		//
 		panel.setVisible(false);
+		chbxHochamt.setVisible(false);
 		contentPane.setVisible(false);
 
 		JPanel vorher = new JPanel();
@@ -321,6 +322,7 @@ public class WMessenHinzufuegen extends JFrame {
 		nurleiter = EnumBoolean.Null;
 		nurleiter.toString();
 		panel.setVisible(false);
+		chbxHochamt.setVisible(false);
 		titel = null;
 		btnMesseHinzufgen.setEnabled(true);
 		btnMessenEntfernen.setEnabled(true);
@@ -332,6 +334,7 @@ public class WMessenHinzufuegen extends JFrame {
 		btnMessenEntfernen.setEnabled(false);
 		btnAnzeigen.setEnabled(false);
 		panel.setVisible(true);
+		chbxHochamt.setVisible(true);
 	}
 
 	public void augewaehlenfuerausteilen() {
@@ -448,6 +451,7 @@ public class WMessenHinzufuegen extends JFrame {
 			bearbeiten = messen.get(ibearbeiten);
 			setMesseinPanel(messen.get(list.getSelectedIndex()));
 			panel.setVisible(true);
+			chbxHochamt.setVisible(true);
 			btnMesseHinzufgen.setEnabled(false);
 			btnMessenEntfernen.setEnabled(false);
 			btnAnzeigen.setEnabled(false);
@@ -581,6 +585,7 @@ public class WMessenHinzufuegen extends JFrame {
 			listmodel.addElement(messe.getIDHTML());
 		}
 		panel.setVisible(false);
+		chbxHochamt.setVisible(false);
 		btnMesseHinzufgen.setEnabled(true);
 		btnMessenEntfernen.setEnabled(true);
 		btnAnzeigen.setEnabled(true);

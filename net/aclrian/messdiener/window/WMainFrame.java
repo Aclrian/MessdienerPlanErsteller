@@ -33,7 +33,7 @@ import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.window.medierstellen.WMediBearbeitenFrame;
 import net.aclrian.messdiener.window.medierstellen.WWAnvertrauteFrame;
 import net.aclrian.messdiener.window.planerstellen.WMessenHinzufuegen;
-import net.aclrian.messdiener.window.planerstellen.WWMessenFrame;
+import net.aclrian.messdiener.window.planerstellen.WMessenFrame;
 import net.aclrian.update.VersionIDHandler;
 
 /**
@@ -62,7 +62,7 @@ public class WMainFrame extends JFrame {
 	private ArrayList<Messe> mesenarray;
 	private DateienVerwalter util;
 	private String savepath = "";
-	private WWMessenFrame mf;
+	private WMessenFrame mf;
 	private WMediBearbeitenFrame wf;
 	private ArrayList<Messdiener> mediarraymitMessdaten;
 	private Date[] d = new Date[2];
@@ -370,7 +370,7 @@ public class WMainFrame extends JFrame {
 			messdiener.setnewMessdatenDaten(util.getSavepath(), year, this);
 		}
 		mediarraymitMessdaten = mediarray;
-		mf = new WWMessenFrame(this);
+		mf = new WMessenFrame(this);
 		mf.setVisible(true);
 	}
 
