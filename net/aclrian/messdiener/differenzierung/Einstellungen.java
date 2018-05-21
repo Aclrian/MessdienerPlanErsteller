@@ -1,5 +1,7 @@
 package net.aclrian.messdiener.differenzierung;
 
+import java.util.Calendar;
+
 import net.aclrian.messdiener.differenzierung.Setting.Attribut;
 import net.aclrian.messdiener.utils.Utilities;
 
@@ -58,14 +60,23 @@ public class Einstellungen {
 		Integer[][] rtn = new Integer[lenght - 2][2];
 		for (int i = 2; i < settings.length; i++) {
 			Setting s = settings[i];
-			rtn[i - 2][0] = s.getId();
+			int currentyear = Calendar.getInstance().get(Calendar.YEAR);
+			rtn[i - 2][0] = currentyear-(i - 2);
 			rtn[i - 2][1] = s.getAnz_dienen();
 		}
 		return rtn;
 	}
-
+	
+	public static Integer[][] getEinheitsdata(int anz){
+		Integer[][] rtn = new Integer[lenght - 2][2];
+		for (int i = 0; i < (lenght-2); i++) {
+			rtn[i][0] = i;
+			rtn[i][1] = anz;
+		}
+		return rtn;
+	}
+	
 	public Setting[] getDaten() {
 		return settings;
 	}
-
 }
