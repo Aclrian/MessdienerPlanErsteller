@@ -31,3 +31,5 @@ html_output.docx
 html_output.docx
 .project
 .project
+/target/
+*.prefs
