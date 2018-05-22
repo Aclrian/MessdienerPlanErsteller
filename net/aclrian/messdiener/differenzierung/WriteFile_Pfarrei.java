@@ -913,6 +913,7 @@ public class WriteFile_Pfarrei extends JFrame {
 
 					@Override
 					public void stateChanged(ChangeEvent e) {
+						
 						System.out.println(spinner_max_andere.getValue());
 						int value = (int) model_andere.getValue();
 						spinner_max_leiter.setValue(value);
