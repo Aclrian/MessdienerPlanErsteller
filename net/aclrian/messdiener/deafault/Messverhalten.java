@@ -31,6 +31,7 @@ public class Messverhalten {
 				update(wmf);
 			}
 		} catch (NullPointerException e) {
+			new Erroropener(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -62,6 +63,15 @@ public class Messverhalten {
 			new Erroropener("Standardmesse (" + messe.toString() + ") existiert nicht!");
 		}
 	}
+	
+	public void ueberschreibeStandartMesse(StandartMesse alt, StandartMesse neu){
+		for (KannWelcheMesse kannWelcheMesse : messen) {
+			if(kannWelcheMesse.getMesse().toString().equals(alt.toString())){
+				kannWelcheMesse.setMesse(neu);
+			}
+		}
+	}
+	
 
 	/**
 	 * 
@@ -186,4 +196,8 @@ public class Messverhalten {
 		return rtn;		
 	}
 
+	public void fuegeneueMesseHinzu(StandartMesse sm) {
+		messen.add(new KannWelcheMesse(sm, false));	
+	}
+	
 }

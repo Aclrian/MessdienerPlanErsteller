@@ -1,9 +1,12 @@
 package net.aclrian.messdiener.differenzierung;
 
+import java.io.IOException;
 import java.util.ArrayList;
-
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.StandartMesse;
+import net.aclrian.messdiener.utils.Erroropener;
+import net.aclrian.messdiener.utils.References;
+import net.aclrian.messdiener.utils.WriteFile;
 import net.aclrian.messdiener.window.WMainFrame;
 
 public class Manuell {
@@ -17,36 +20,70 @@ public class Manuell {
 	public static StandartMesse Son_morgen = new StandartMesse("So", 10, "00", sm, 6, hlm);
 	public static StandartMesse Son_taufe = new StandartMesse("So", 15, "00", sm, 2, tf);
 	public static StandartMesse Son_abend = new StandartMesse("So", 18, "00", sm, 6, hlm);
+	private ArrayList<Handling> hand;
+	private WMainFrame wmf;
+	private Pfarrei pf;
 
-	public static void main(String[] args) {
-
+	public Manuell(ArrayList<Handling> hand, WMainFrame wmf, Pfarrei pf) {
+		this.hand = hand;
+		this.wmf = wmf;
+		this.pf = pf;
+	}
+	
+	public void act(){
+		for (Handling handling : hand) {
+			if (handling.getEw() == EnumWorking.ueberarbeitet) {
+				for (Messdiener m : wmf.getMediarray()) {
+					m.getDienverhalten().ueberschreibeStandartMesse(handling.getAlt(), handling.getNeu());
+				}
+			}
+			if (handling.getEw() == EnumWorking.neu) {
+				new Erroropener("Um in einer neuen Standartmesse Messdiener hinzu zu f"+References.ue+"gen, bitte den Messdiener ausw"+References.ae+"hlen.");
+				for (Messdiener m : wmf.getMediarray()) {
+					m.getDienverhalten().fuegeneueMesseHinzu(handling.getNeu());
+				}
+			}
+		}
+		WriteFile_Pfarrei.writeFile(pf, wmf.getEDVVerwalter().getSavepath());
+		for (Messdiener m : wmf.getMediarray()) {
+			WriteFile wf = new WriteFile(m, wmf.getEDVVerwalter().getSavepath());
+			try {
+				wf.toXML(wmf);
+			} catch (IOException e) {
+				new Erroropener(e.getMessage());
+				e.printStackTrace();
+			}
+		}
 	}
 
-	public static void updateXMLFiles() {
-		System.out.println("s");
-		System.out.println(Di_abend);
-		System.out.println(Sam_hochzeit);
-		System.out.println(Sam_abend);
-		System.out.println(Son_morgen);
-		System.out.println(Son_taufe);
-		System.out.println(Son_abend);
-		System.out.println("d");
-		WMainFrame wmf = new WMainFrame();// false);
-		System.out.println(wmf.getStandardmessen().size());
-		for (StandartMesse sm : wmf.getStandardmessen()) {
-			System.out.println(sm);
+	public static class Handling {
+
+		private StandartMesse sm;
+		private EnumWorking ew;
+		private StandartMesse alt;
+
+		public Handling(StandartMesse sm, EnumWorking ew, StandartMesse alt) {
+			this.sm = sm;
+			this.ew = ew;
+			if (ew == EnumWorking.ueberarbeitet) {
+				this.alt = alt;
+			}
+
 		}
-		wmf.setVisible(false);
-		ArrayList<Messdiener> me = new ArrayList<Messdiener>();
-		for (Messdiener messdiener : wmf.getMediarray()) {
-			System.out.println(messdiener.makeId());
-			messdiener.setnewMessdatenDaten("F:\\Neuer Ordner (3)", 2018, wmf);
-			me.add(messdiener);
-			messdiener.getDienverhalten().update(wmf);
+
+		public StandartMesse getNeu() {
+			return sm;
 		}
-		System.out.println("++++");
-		for (Messdiener messdiener : me) {
-			messdiener.makeXML("F:\\Neuer Ordner (3)", wmf);
+
+		public EnumWorking getEw() {
+			return ew;
+		}
+
+		public StandartMesse getAlt() {
+			return alt;
 		}
 	}
+
+	
+
 }

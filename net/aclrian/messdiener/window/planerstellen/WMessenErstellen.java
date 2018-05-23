@@ -158,7 +158,7 @@ public class WMessenErstellen extends JFrame {
 						try {
 							word();
 						} catch (IOException e1) {
-							new Erroropener("Konnte die Word-Datei nicht speichern.");
+							new Erroropener(e1.getMessage() + ": Konnte die Word-Datei nicht speichern.");
 							e1.printStackTrace();
 						}
 
@@ -168,6 +168,7 @@ public class WMessenErstellen extends JFrame {
 		try {
 			con = new Converter(this);
 		} catch (IOException e1) {
+ 			new Erroropener(e1.getMessage());
 			e1.printStackTrace();
 		}
 		//---------------.-------------
@@ -258,11 +259,14 @@ public class WMessenErstellen extends JFrame {
 		try {
 			d.open(con.getPfd());
 		} catch (IOException e) {
+ 			new Erroropener(e.getMessage());
 			e.printStackTrace();
 		} catch (Docx4JException e) {
+ 			new Erroropener(e.getMessage());
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JAXBException e) {
+ 			new Erroropener(e.getMessage());
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

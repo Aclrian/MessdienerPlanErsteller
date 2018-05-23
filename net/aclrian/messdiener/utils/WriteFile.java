@@ -112,6 +112,7 @@ public class WriteFile {
 					f1.appendChild(document.createTextNode(f[0]));
 				}
 			} catch (NullPointerException e) {
+				me.getFreunde()[0] = "";
 				f1.appendChild(document.createTextNode("LEER"));
 			}
 
@@ -125,6 +126,7 @@ public class WriteFile {
 					f2.appendChild(document.createTextNode(f[1]));
 				}
 			} catch (NullPointerException e) {
+				me.getFreunde()[1] = "";
 				f2.appendChild(document.createTextNode("LEER"));
 			}
 			anvertraute.appendChild(f2);
@@ -136,6 +138,7 @@ public class WriteFile {
 					f3.appendChild(document.createTextNode(f[2]));
 				}
 			} catch (NullPointerException e) {
+				me.getFreunde()[2] = "";
 				f3.appendChild(document.createTextNode("LEER"));
 			}
 			anvertraute.appendChild(f3);
@@ -148,6 +151,7 @@ public class WriteFile {
 					f4.appendChild(document.createTextNode(f[3]));
 				}
 			} catch (NullPointerException e) {
+				me.getFreunde()[3] = "";
 				f4.appendChild(document.createTextNode("LEER"));
 			}
 			anvertraute.appendChild(f4);
@@ -159,6 +163,7 @@ public class WriteFile {
 					f5.appendChild(document.createTextNode(f[4]));
 				}
 			} catch (NullPointerException e) {
+				me.getFreunde()[4] = "";
 				f5.appendChild(document.createTextNode("LEER"));
 			}
 			anvertraute.appendChild(f5);
@@ -173,6 +178,7 @@ public class WriteFile {
 					g1.appendChild(document.createTextNode(g[0]));
 				}
 			} catch (NullPointerException e) {
+				me.getGeschwister()[0] = "";
 				g1.appendChild(document.createTextNode("LEER"));
 			}
 			anvertraute.appendChild(g1);
@@ -184,6 +190,7 @@ public class WriteFile {
 					g2.appendChild(document.createTextNode(g[1]));
 				}
 			} catch (NullPointerException e) {
+				me.getGeschwister()[1] = "";
 				g2.appendChild(document.createTextNode("LEER"));
 			}
 			anvertraute.appendChild(g2);
@@ -195,6 +202,7 @@ public class WriteFile {
 					g3.appendChild(document.createTextNode(g[2]));
 				}
 			} catch (NullPointerException e) {
+				me.getGeschwister()[2] = "";
 				g3.appendChild(document.createTextNode("LEER"));
 			}
 			anvertraute.appendChild(g3);
@@ -206,7 +214,7 @@ public class WriteFile {
 				path.replaceAll("//", "/");
 				path.replaceAll("/", "//");
 			}
-			String datei = this.me.getNachnname() + ", " + this.me.getVorname();
+			String datei = this.me.getNachnname() + "_" + this.me.getVorname();
 
 			System.out.println("Datei wird gespeichert in :" + path + "//" + datei + ".xml");
 			StreamResult streamResult = new StreamResult(new File(path + "//" + datei + ".xml"));

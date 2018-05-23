@@ -50,6 +50,7 @@ public class Utilities {
 		try {
 			methname = enclosingMethod.getName();
 		} catch (Exception e) {
+			//new Erroropener("no error");
 			methname = "unknown";
 		}
 		logging(class1, methname, mitteilung);

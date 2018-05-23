@@ -37,7 +37,7 @@ public class Messdaten {
 			if (!geschwister[i].equals("") && !geschwister[i].equals("LEER")
 					&& !geschwister[i].equals("Vorname, Nachname")) {
 				try {
-					medi = wmf.getEDVVerwalter().sucheMessdiener(geschwister[i], wmf.getAlleMessdiener(), m);
+					medi = wmf.getEDVVerwalter().sucheMessdiener(geschwister[i], m, wmf);
 					if (medi != null) {
 						this.geschwister.add(medi);
 					} else {
@@ -45,6 +45,7 @@ public class Messdaten {
 								"Konnte " + geschwister[i] + " nicht finden fuer Anvertraute von: " + m.makeId() + "!");
 					}
 				} catch (Exception e) {
+					new Erroropener(e.getMessage());
 					Utilities.logging(this.getClass(), this.getClass().getEnclosingConstructor(),e.getMessage());
 					e.printStackTrace();
 				}
@@ -55,8 +56,9 @@ public class Messdaten {
 			Messdiener medi = null;
 			if (!geschwister[i].equals("")) {
 				try {
-					medi = wmf.getEDVVerwalter().sucheMessdiener(geschwister[i], wmf.getAlleMessdiener(), m);
+					medi = wmf.getEDVVerwalter().sucheMessdiener(geschwister[i], m, wmf);
 				} catch (Exception e) {
+					new Erroropener(e.getMessage());
 					e.printStackTrace();
 				}
 				if (medi != null) {
@@ -107,6 +109,7 @@ public class Messdaten {
 				}
 			}
 		} catch (Exception e) {
+			new Erroropener(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -122,6 +125,7 @@ public class Messdaten {
 				}
 			}
 		} catch (Exception e) {
+			new Erroropener(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -258,6 +262,7 @@ public class Messdaten {
 				}
 			}
 		} catch (Exception e) {
+			new Erroropener(e.getMessage());
 			e.printStackTrace();
 		}
 

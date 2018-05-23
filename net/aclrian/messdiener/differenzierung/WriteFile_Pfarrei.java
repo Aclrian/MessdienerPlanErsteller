@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.function.Predicate;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -150,6 +151,9 @@ public class WriteFile_Pfarrei extends JFrame {
 	private JLabel lblAnderen;
 	private JLabel lblStandardAnzahlPro;
 	private SpinnerModel model_andere = new SpinnerNumberModel(3, 1, 20, 1);
+	boolean alterunabhängig = false;
+	private boolean leitergleichandere = false;
+	private SpinnerModel model_leiter = new SpinnerNumberModel(0, 0, 20, 1);
 
 	/**
 	 * @wbp.parser.constructor
@@ -196,80 +200,145 @@ public class WriteFile_Pfarrei extends JFrame {
 		getContentPane().add(btnWeiter);
 
 		stdmessen_panel.setVisible(false);
+		stdmessen_panel.setBorder(
+				new TitledBorder(null, "Standartmessen", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		stdmessen_panel.setBounds(12, 12, 581, 278);
+		getContentPane().add(stdmessen_panel);
+		stdmessen_panel.setLayout(null);
 
-		einstellungenpanel = new JPanel();
-		einstellungenpanel.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Einstellungen",
-				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
-		einstellungenpanel.setBounds(12, 12, 581, 278);
-		getContentPane().add(einstellungenpanel);
-		einstellungenpanel.setLayout(null);
+		stdmessen_scrollPane = new JScrollPane();
+		stdmessen_scrollPane.setBounds(12, 136, 557, 99);
+		stdmessen_panel.add(stdmessen_scrollPane);
 
-		scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(304, 37, 265, 229);
-		einstellungenpanel.add(scrollPane_2);
+		stdmessen_table = new JTable(dmmm);
+		stdmessen_scrollPane.setViewportView(stdmessen_table);
+		stdmessen_table.setRequestFocusEnabled(false);
+		stdmessen_table.setFocusable(false);
 
-		table = new JTable(dmmm2);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-		table.doLayout();
-		scrollPane_2.setViewportView(table);
-		table.setRequestFocusEnabled(false);
-		table.setFocusable(false);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		stdmessen_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		JSeparator separator = new JSeparator();
-		separator.setOrientation(SwingConstants.VERTICAL);
-		separator.setBounds(286, 15, 8, 242);
-		einstellungenpanel.add(separator);
+		stdmessen_table.setModel(dmmm);
 
-		JLabel lblMaximaleAnzahlVon = new JLabel("<html><body>Maximale Anzahl<sup>1</sup> von:</body></html>");
-		lblMaximaleAnzahlVon.setBounds(22, 120, 138, 20);
-		einstellungenpanel.add(lblMaximaleAnzahlVon);
+		stdmessen_btnSpeichern = new JButton("Speichern");
+		stdmessen_btnSpeichern.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				stdmessen_speichern();
+			}
+		});
+		stdmessen_btnSpeichern.setBounds(448, 101, 121, 25);
+		stdmessen_panel.add(stdmessen_btnSpeichern);
 
-		lblLeitern = new JLabel("Leitern:");
-		lblLeitern.setBounds(150, 98, 70, 15);
-		einstellungenpanel.add(lblLeitern);
+		panel_1 = new JPanel();
+		panel_1.setBounds(12, 101, 418, 25);
+		stdmessen_panel.add(panel_1);
+		panel_1.setLayout(null);
 
-		lblAnderen = new JLabel("anderen:");
-		lblAnderen.setBounds(150, 144, 70, 15);
-		einstellungenpanel.add(lblAnderen);
+		JLabel stdmessen_lblEintragNummer = new JLabel("Ausgew" + References.ae + "hlten Eintrag");
+		stdmessen_lblEintragNummer.setBounds(12, 0, 160, 25);
+		panel_1.add(stdmessen_lblEintragNummer);
 
-		spinner_max_leiter = new JSpinner();
-		spinner_max_leiter.setModel(new SpinnerNumberModel(0, 0, 20, 1));
-		spinner_max_leiter.setBounds(224, 96, 45, 20);
-		einstellungenpanel.add(spinner_max_leiter);
+		stdmessen_btnBearbeiten = new JButton("bearbeiten");
+		stdmessen_btnBearbeiten.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int i = (int) stdmessen_table.getSelectedRow();
+					bearbeiten(i);
+				} catch (Exception e2) {
+					e2.printStackTrace();
+					new Erroropener("Treffe zun" + References.ae + "chst eine Auswahl");
+				}
+			}
+		});
+		stdmessen_btnBearbeiten.setBounds(178, 0, 117, 25);
+		panel_1.add(stdmessen_btnBearbeiten);
 
-		spinner_max_andere = new JSpinner();
-		spinner_max_andere.setModel(model_andere);
-		spinner_max_andere.setBounds(224, 142, 45, 20);
-		einstellungenpanel.add(spinner_max_andere);
+		JButton btnLschen = new JButton("l"+References.oe+"schen");
+		btnLschen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int i = stdmessen_table.getSelectedRow();
+					loeschen(i);
+				} catch (Exception e2) {
+					new Erroropener("Treffe zun" + References.ae + "chst eine Auswahl");
+				}
+			}
+		});
+		btnLschen.setBounds(311, 0, 105, 25);
+		panel_1.add(btnLschen);
 
-		textField = new JTextField();
-		textField.setColumns(10);
-		textField.setBounds(22, 35, 236, 20);
-		einstellungenpanel.add(textField);
+		JLabel label_2 = new JLabel("/");
+		label_2.setFont(new Font("Dialog", Font.BOLD, 14));
+		label_2.setBounds(299, 0, 14, 25);
+		panel_1.add(label_2);
 
-		JLabel label_1 = new JLabel("Name der Messdienergemeinschaft:");
-		label_1.setBounds(10, 15, 261, 20);
-		einstellungenpanel.add(label_1);
+		stdmessen_comboBoxTyp = new JComboBox<String>();
+		stdmessen_comboBoxTyp.setBounds(467, 17, 102, 25);
+		stdmessen_panel.add(stdmessen_comboBoxTyp);
 
-		JSeparator separator_1 = new JSeparator();
-		separator_1.setBounds(8, 77, 280, 7);
-		einstellungenpanel.add(separator_1);
+		stdmessen_comboBoxOrt = new JComboBox<String>();
+		stdmessen_comboBoxOrt.setBounds(292, 17, 114, 25);
+		stdmessen_panel.add(stdmessen_comboBoxOrt);
 
-		lblStandardAnzahlPro = new JLabel("<html><body>Standard Anzahl<sup>1</sup> pro Jahrgang</body></html>");
-		lblStandardAnzahlPro.setBounds(345, 12, 224, 20);
-		einstellungenpanel.add(lblStandardAnzahlPro);
+		stdmessen_lblTyp = new JLabel("Typ:");
+		stdmessen_lblTyp.setBounds(418, 17, 37, 25);
+		stdmessen_panel.add(stdmessen_lblTyp);
 
-		JLabel lblmitanzahlIst = new JLabel(
-				"<html><body><sup>1</sup>Mit <i>Anzahl</i> ist die Anzahl gemeint, <br>die ein Messdiener seines Jahrgangs bzw. als Leiter standartm\u00E4\u00DFig oder maximal in einem Monat eingeteilt wird.</body></html>");
-		lblmitanzahlIst.setBounds(36, 192, 233, 74);
-		einstellungenpanel.add(lblmitanzahlIst);
+		stdmessen_lblOrt = new JLabel("Ort:");
+		stdmessen_lblOrt.setBounds(243, 17, 37, 25);
+		stdmessen_panel.add(stdmessen_lblOrt);
 
-		JSeparator separator_2 = new JSeparator();
-		separator_2.setBounds(8, 173, 280, 7);
-		einstellungenpanel.add(separator_2);
-		TableColumnModel columnModel = table.getColumnModel();
-		einstellungenpanel.setVisible(false);
+		stdmessen_comboBoxTag = new JComboBox<String>();
+		stdmessen_comboBoxTag.setBounds(117, 17, 114, 25);
+		stdmessen_panel.add(stdmessen_comboBoxTag);
+		stdmessen_comboBoxTag
+				.setModel(new DefaultComboBoxModel<String>(new String[] { "Mo", "Di", "Mi", "Do", "Fr", "Sa", "So" }));
+
+		panel = new JPanel();
+		panel.setBounds(100, 59, 114, 20);
+		stdmessen_panel.add(panel);
+		panel.setLayout(null);
+
+		stdmessen_spinnermin = new JSpinner();
+		stdmessen_spinnermin.setBounds(69, 0, 45, 20);
+		panel.add(stdmessen_spinnermin);
+		stdmessen_spinnermin.setModel(new SpinnerNumberModel(0, 0, 59, 1));
+
+		JLabel label = new JLabel(":");
+		label.setFont(new Font("Dialog", Font.BOLD, 14));
+		label.setBounds(55, 0, 16, 20);
+		panel.add(label);
+
+		stdmessen_spinnerstd = new JSpinner();
+		stdmessen_spinnerstd.setBounds(0, 0, 45, 20);
+		panel.add(stdmessen_spinnerstd);
+		stdmessen_spinnerstd.setModel(new SpinnerNumberModel(12, 0, 24, 1));
+
+		JLabel stdmessen_lblBeginn = new JLabel("Beginn:");
+		stdmessen_lblBeginn.setBounds(15, 59, 70, 20);
+		stdmessen_panel.add(stdmessen_lblBeginn);
+
+		JLabel stdmessen_lblWochentag = new JLabel("Wochentag:");
+		stdmessen_lblWochentag.setBounds(12, 17, 93, 25);
+		stdmessen_panel.add(stdmessen_lblWochentag);
+
+		stdmessen_spinnerstdlblAnz = new JLabel("Anzahl der ben" + References.oe + "tigten Messdiener");
+		stdmessen_spinnerstdlblAnz.setBounds(229, 59, 261, 20);
+		stdmessen_panel.add(stdmessen_spinnerstdlblAnz);
+
+		stdmessen_spinneranz = new JSpinner();
+		stdmessen_spinneranz.setModel(new SpinnerNumberModel(6, 1, 20, 1));
+		stdmessen_spinneranz.setBounds(505, 59, 45, 20);
+		stdmessen_panel.add(stdmessen_spinneranz);
+
+		JButton btnUpdate = new JButton("Tabelle aktualisieren (bei Fehlern)");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
+		btnUpdate.setBounds(12, 247, 219, 25);
+		stdmessen_panel.add(btnUpdate);
+		stdmessen_panel.setVisible(false);
 
 		fragen = new JPanel();
 		fragen.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -371,6 +440,80 @@ public class WriteFile_Pfarrei extends JFrame {
 		frage12.add(rdbtnf12Nein);
 		bg12.add(rdbtnf12Nein);
 
+		einstellungenpanel = new JPanel();
+		einstellungenpanel.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Einstellungen",
+				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+		einstellungenpanel.setBounds(12, 12, 581, 278);
+		getContentPane().add(einstellungenpanel);
+		einstellungenpanel.setLayout(null);
+
+		scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(304, 37, 265, 229);
+		einstellungenpanel.add(scrollPane_2);
+
+		table = new JTable(dmmm2);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		table.doLayout();
+		scrollPane_2.setViewportView(table);
+		table.setRequestFocusEnabled(false);
+		table.setFocusable(false);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		JSeparator separator = new JSeparator();
+		separator.setOrientation(SwingConstants.VERTICAL);
+		separator.setBounds(286, 15, 8, 242);
+		einstellungenpanel.add(separator);
+
+		JLabel lblMaximaleAnzahlVon = new JLabel("<html><body>Maximale Anzahl<sup>1</sup> von:</body></html>");
+		lblMaximaleAnzahlVon.setBounds(22, 120, 138, 20);
+		einstellungenpanel.add(lblMaximaleAnzahlVon);
+
+		lblLeitern = new JLabel("Leitern:");
+		lblLeitern.setBounds(150, 98, 70, 15);
+		einstellungenpanel.add(lblLeitern);
+
+		lblAnderen = new JLabel("anderen:");
+		lblAnderen.setBounds(150, 144, 70, 15);
+		einstellungenpanel.add(lblAnderen);
+
+		spinner_max_leiter = new JSpinner();
+		spinner_max_leiter.setModel(model_leiter);
+		spinner_max_leiter.setBounds(224, 96, 45, 20);
+		einstellungenpanel.add(spinner_max_leiter);
+
+		spinner_max_andere = new JSpinner();
+		spinner_max_andere.setModel(model_andere);
+		spinner_max_andere.setBounds(224, 142, 45, 20);
+		einstellungenpanel.add(spinner_max_andere);
+
+		textField = new JTextField();
+		textField.setColumns(10);
+		textField.setBounds(22, 35, 236, 20);
+		einstellungenpanel.add(textField);
+
+		JLabel label_1 = new JLabel("Name der Messdienergemeinschaft:");
+		label_1.setBounds(10, 15, 261, 20);
+		einstellungenpanel.add(label_1);
+
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setBounds(8, 77, 280, 7);
+		einstellungenpanel.add(separator_1);
+
+		lblStandardAnzahlPro = new JLabel("<html><body>Standard Anzahl<sup>1</sup> pro Jahrgang</body></html>");
+		lblStandardAnzahlPro.setBounds(345, 12, 224, 20);
+		einstellungenpanel.add(lblStandardAnzahlPro);
+
+		JLabel lblmitanzahlIst = new JLabel(
+				"<html><body><sup>1</sup>Mit <i>Anzahl</i> ist die Anzahl gemeint, <br>die ein Messdiener seines Jahrgangs bzw. als Leiter standartm\u00E4\u00DFig oder maximal in einem Monat eingeteilt wird.</body></html>");
+		lblmitanzahlIst.setBounds(36, 192, 233, 74);
+		einstellungenpanel.add(lblmitanzahlIst);
+
+		JSeparator separator_2 = new JSeparator();
+		separator_2.setBounds(8, 173, 280, 7);
+		einstellungenpanel.add(separator_2);
+		TableColumnModel columnModel = table.getColumnModel();
+		einstellungenpanel.setVisible(false);
+
 		ortetypenpanel.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)),
 				"Standard Orte und Messetypen hizuf\u00FCgen", TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51)));
@@ -447,146 +590,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		ortetypenpanel.add(lblOrte);
 		ortetypenpanel.setVisible(true);
 		ortetypenpanel.setVisible(true);
-		stdmessen_panel.setBorder(
-				new TitledBorder(null, "Standartmessen", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		stdmessen_panel.setBounds(12, 12, 581, 278);
-		getContentPane().add(stdmessen_panel);
-		stdmessen_panel.setLayout(null);
-
-		stdmessen_scrollPane = new JScrollPane();
-		stdmessen_scrollPane.setBounds(12, 136, 557, 99);
-		stdmessen_panel.add(stdmessen_scrollPane);
-
-		stdmessen_table = new JTable(dmmm);
 		dmmm.setColumnIdentifiers(columnNames);
-		stdmessen_scrollPane.setViewportView(stdmessen_table);
-		stdmessen_table.setRequestFocusEnabled(false);
-		stdmessen_table.setFocusable(false);
-
-		stdmessen_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-		stdmessen_table.setModel(dmmm);
-
-		stdmessen_btnSpeichern = new JButton("Speichern");
-		stdmessen_btnSpeichern.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				stdmessen_speichern();
-			}
-		});
-		stdmessen_btnSpeichern.setBounds(448, 101, 121, 25);
-		stdmessen_panel.add(stdmessen_btnSpeichern);
-
-		panel_1 = new JPanel();
-		panel_1.setBounds(1200, 101, 418, 25);
-		stdmessen_panel.add(panel_1);
-		panel_1.setLayout(null);
-
-		JLabel stdmessen_lblEintragNummer = new JLabel("Ausgew" + References.ae + "hlten Eintrag");
-		stdmessen_lblEintragNummer.setBounds(12, 0, 160, 25);
-		panel_1.add(stdmessen_lblEintragNummer);
-
-		stdmessen_btnBearbeiten = new JButton("bearbeiten");
-		stdmessen_btnBearbeiten.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					int i = (int) stdmessen_table.getSelectedRow();
-					bearbeiten(i);
-				} catch (Exception e2) {
-					e2.printStackTrace();
-					new Erroropener("Treffe zun" + References.ae + "chst eine Auswahl");
-				}
-			}
-		});
-		stdmessen_btnBearbeiten.setBounds(178, 0, 117, 25);
-		panel_1.add(stdmessen_btnBearbeiten);
-
-		JButton btnLschen = new JButton("l\u00F6schen");
-		btnLschen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					int i = stdmessen_table.getSelectedRow();
-					loeschen(i);
-				} catch (Exception e2) {
-					new Erroropener("Treffe zun" + References.ae + "chst eine Auswahl");
-				}
-			}
-		});
-		btnLschen.setBounds(311, 0, 105, 25);
-		panel_1.add(btnLschen);
-
-		JLabel label_2 = new JLabel("/");
-		label_2.setFont(new Font("Dialog", Font.BOLD, 14));
-		label_2.setBounds(299, 0, 14, 25);
-		panel_1.add(label_2);
-
-		stdmessen_comboBoxTyp = new JComboBox<String>();
-		stdmessen_comboBoxTyp.setBounds(467, 17, 102, 25);
-		stdmessen_panel.add(stdmessen_comboBoxTyp);
-
-		stdmessen_comboBoxOrt = new JComboBox<String>();
-		stdmessen_comboBoxOrt.setBounds(292, 17, 114, 25);
-		stdmessen_panel.add(stdmessen_comboBoxOrt);
-
-		stdmessen_lblTyp = new JLabel("Typ:");
-		stdmessen_lblTyp.setBounds(418, 17, 37, 25);
-		stdmessen_panel.add(stdmessen_lblTyp);
-
-		stdmessen_lblOrt = new JLabel("Ort:");
-		stdmessen_lblOrt.setBounds(243, 17, 37, 25);
-		stdmessen_panel.add(stdmessen_lblOrt);
-
-		stdmessen_comboBoxTag = new JComboBox<String>();
-		stdmessen_comboBoxTag.setBounds(117, 17, 114, 25);
-		stdmessen_panel.add(stdmessen_comboBoxTag);
-		stdmessen_comboBoxTag
-				.setModel(new DefaultComboBoxModel<String>(new String[] { "Mo", "Di", "Mi", "Do", "Fr", "Sa", "So" }));
-
-		panel = new JPanel();
-		panel.setBounds(100, 59, 114, 20);
-		stdmessen_panel.add(panel);
-		panel.setLayout(null);
-
-		stdmessen_spinnermin = new JSpinner();
-		stdmessen_spinnermin.setBounds(69, 0, 45, 20);
-		panel.add(stdmessen_spinnermin);
-		stdmessen_spinnermin.setModel(new SpinnerNumberModel(0, 0, 59, 1));
-
-		JLabel label = new JLabel(":");
-		label.setFont(new Font("Dialog", Font.BOLD, 14));
-		label.setBounds(55, 0, 16, 20);
-		panel.add(label);
-
-		stdmessen_spinnerstd = new JSpinner();
-		stdmessen_spinnerstd.setBounds(0, 0, 45, 20);
-		panel.add(stdmessen_spinnerstd);
-		stdmessen_spinnerstd.setModel(new SpinnerNumberModel(12, 0, 24, 1));
-
-		JLabel stdmessen_lblBeginn = new JLabel("Beginn:");
-		stdmessen_lblBeginn.setBounds(15, 59, 70, 20);
-		stdmessen_panel.add(stdmessen_lblBeginn);
-
-		JLabel stdmessen_lblWochentag = new JLabel("Wochentag:");
-		stdmessen_lblWochentag.setBounds(12, 17, 93, 25);
-		stdmessen_panel.add(stdmessen_lblWochentag);
-
-		stdmessen_spinnerstdlblAnz = new JLabel("Anzahl der ben" + References.oe + "tigten Messdiener");
-		stdmessen_spinnerstdlblAnz.setBounds(229, 59, 261, 20);
-		stdmessen_panel.add(stdmessen_spinnerstdlblAnz);
-
-		stdmessen_spinneranz = new JSpinner();
-		stdmessen_spinneranz.setModel(new SpinnerNumberModel(6, 1, 20, 1));
-		stdmessen_spinneranz.setBounds(505, 59, 45, 20);
-		stdmessen_panel.add(stdmessen_spinneranz);
-
-		JButton btnUpdate = new JButton("Tabelle aktualisieren (bei Fehlern)");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				update();
-			}
-		});
-		btnUpdate.setBounds(12, 247, 219, 25);
-		stdmessen_panel.add(btnUpdate);
-		stdmessen_panel.setVisible(false);
 
 		btnZurck.setEnabled(false);
 		btnSpeichern.setEnabled(false);
@@ -622,6 +626,7 @@ public class WriteFile_Pfarrei extends JFrame {
 
 	public WriteFile_Pfarrei(Pfarrei pf, WMainFrame wmf) {
 		start(wmf);
+		panel_1.setVisible(true);
 		setTitle("Einstellungen von " + pf.getName() + " " + References.ue + "berarbeiten");
 		textField.setText(pf.getName());
 		orte = pf.getOrte();
@@ -635,10 +640,31 @@ public class WriteFile_Pfarrei extends JFrame {
 		seting = pf.getSettings();
 		dmmm2.setDataVector(seting.getDatafuerTabelle(), columnNames2);
 		sm = pf.getStandardMessen();
+		sm.removeIf(new Predicate<StandartMesse>() {
+			public boolean test(StandartMesse t) {
+				return new Sonstiges().isSonstiges(t);
+			};
+		});
 		dmmm.setDataVector(getTableData(), columnNames);
 		update();
 		spinner_max_andere.setValue(pf.getSettings().getDaten()[0].getAnz_dienen());
 		spinner_max_leiter.setValue(pf.getSettings().getDaten()[1].getAnz_dienen());
+		if (pf.zaehlenHochaemterMit()) {
+			rdbtnf12Ja.setSelected(true);
+		} else {
+			rdbtnf12Nein.setSelected(true);
+		}
+		rdbtnf1Ja.setSelected(false);
+		rdbtnf1Nein.setSelected(false);
+		rdbtnf2Ja.setSelected(false);
+		rdbtnf2Nein.setSelected(false);
+		if (pf.getSettings().getDaten()[1].getAnz_dienen() == 0) {
+			rdbtnf2Nein.setSelected(true);
+			rdbtnf3Nein.setSelected(true);
+		} else {
+			rdbtnf3Nein.setSelected(false);
+			rdbtnf3Ja.setSelected(false);
+		}
 	}
 
 	public void bearbeiten(int i) {
@@ -687,10 +713,11 @@ public class WriteFile_Pfarrei extends JFrame {
 			return;
 		}
 		String s = wmf.getEDVVerwalter().getSavepath();// waehleOrdner();
-		boolean hochaemter = new Boolean(bg12.getSelection() == rdbtnf12Ja);
+		boolean hochaemter = new Boolean(rdbtnf12Ja.isSelected());
+		System.out.println(hochaemter);
 		if (s != null) {
-			Pfarrei pf = new Pfarrei(seting, sm, name, orte, typen, hochaemter);
-			writeFile(pf, s);
+			Pfarrei pf = new Pfarrei(seting, sm, name, orte, typen, hochaemter); 
+			// writeFile(pf, s); wird in wmf.fertig gemacht
 			wmf.fertig(this, pf, s);
 		}
 
@@ -818,7 +845,7 @@ public class WriteFile_Pfarrei extends JFrame {
 
 			DOMSource domSource = new DOMSource(doc);
 			String datei = pf.getName();
-
+			datei = datei.replaceAll(" ", "_");
 			Utilities.logging(WriteFile_Pfarrei.class, WriteFile_Pfarrei.class.getEnclosingMethod(),
 					"Pfarrei wird gespeichert in :" + pfad + "//" + datei + WMainFrame.pfarredateiendung);
 			StreamResult streamResult = new StreamResult(new File(pfad + "//" + datei + WMainFrame.pfarredateiendung));
@@ -828,8 +855,10 @@ public class WriteFile_Pfarrei extends JFrame {
 		} catch (
 
 		ParserConfigurationException pce) {
+			new Erroropener(pce.getMessage());
 			pce.printStackTrace();
 		} catch (TransformerException tfe) {
+			new Erroropener(tfe.getMessage());
 			tfe.printStackTrace();
 		}
 
@@ -875,6 +904,8 @@ public class WriteFile_Pfarrei extends JFrame {
 			stdmessen_panel.setVisible(false);
 			ortetypenpanel.setVisible(false);
 			einstellungenpanel.setVisible(false);
+			btnSpeichern.setEnabled(false);
+			btnWeiter.setEnabled(true);
 		}
 	}
 
@@ -913,35 +944,44 @@ public class WriteFile_Pfarrei extends JFrame {
 
 					@Override
 					public void stateChanged(ChangeEvent e) {
-						
-						System.out.println(spinner_max_andere.getValue());
-						int value = (int) model_andere.getValue();
-						spinner_max_leiter.setValue(value);
-						dmmm2.setDataVector(Einstellungen.getEinheitsdata(value), columnNames2);
+						if (alterunabhängig) {
+							dmmm2.setDataVector(Einstellungen.getEinheitsdata((int) model_andere.getValue()),
+									columnNames2);
+
+						}
+						if (leitergleichandere) {
+							spinner_max_leiter.setValue((int) model_andere.getValue());
+						}
+
 					}
 				};
 				System.out.println("visibleJtable: " + getSelectedButtonText(bg1).equals(rdbtnf1Ja.getText()));
-				Boolean visibleJtable = getSelectedButtonText(bg1).equals(rdbtnf1Ja.getText());
-				// Boolean visibleJtabel = new Boolean(bg1.getSelection() == rdbtnf1Ja);
-				table.setVisible(visibleJtable);
-				lblStandardAnzahlPro.setVisible(visibleJtable);
-				scrollPane_2.setVisible(visibleJtable);
+				Boolean enabeldJtable = getSelectedButtonText(bg1).equals(rdbtnf1Ja.getText());
+				// Boolean visibleJtabel = new Boolean(bg1.getSelection() ==
+				// rdbtnf1Ja);
+				table.setEnabled(enabeldJtable);
+				// lblStandardAnzahlPro.setVisible(enabeldJtable);
+				// scrollPane_2.setVisible(enabeldJtable);
 
 				Boolean nureinspinner = new Boolean(getSelectedButtonText(bg2).equals(rdbtnf2Ja.getText()));
 				System.out.println("Nur einspinner: " + nureinspinner);
+				alterunabhängig = rdbtnf1Nein.isSelected();
 				if (rdbtnf2Ja.isSelected()) {
-					//einwert
+					// einwert für alle
+					leitergleichandere = true;
 					spinner_max_andere.removeChangeListener(listener);
 					spinner_max_andere.addChangeListener(listener);
 					spinner_max_leiter.setEnabled(false);
 					lblLeitern.setEnabled(false);
-				}else if (rdbtnf3Ja.isSelected()) {
-					//2 Werte
+				} else if (rdbtnf3Ja.isSelected()) {
+					// 2 Werte
+					leitergleichandere = false;
 					spinner_max_andere.removeChangeListener(listener);
 					spinner_max_leiter.setEnabled(true);
 					lblLeitern.setEnabled(true);
-				}else if (rdbtnf3Nein.isSelected()) {
-					//Leiter 0
+				} else if (rdbtnf3Nein.isSelected()) {
+					// Leiter = 0
+					leitergleichandere = false;
 					spinner_max_leiter.setEnabled(true);
 					spinner_max_leiter.setValue(0);
 					spinner_max_leiter.setEnabled(false);
@@ -958,6 +998,16 @@ public class WriteFile_Pfarrei extends JFrame {
 				rdbtnf3Nein.setVisible(false);
 				rdbtnf12Ja.setVisible(false);
 				rdbtnf12Nein.setVisible(false);
+				// update for Listener
+				if ((int) model_andere.getValue() < 20) {
+					spinner_max_andere.setValue(model_andere.getNextValue());
+					spinner_max_andere.setValue(model_andere.getPreviousValue());
+				} else {
+					spinner_max_andere.setValue(model_andere.getPreviousValue());
+					spinner_max_andere.setValue(model_andere.getNextValue());
+				}
+				btnWeiter.setEnabled(false);
+				btnSpeichern.setEnabled(true);
 			}
 
 		} else {
@@ -1048,6 +1098,16 @@ public class WriteFile_Pfarrei extends JFrame {
 		}
 
 		return null;
+	}
+
+	public void setzeInTabelleDenGrößtenWert() {
+		int andere = (int) spinner_max_andere.getValue();
+		int leiter = (int) spinner_max_leiter.getValue();
+		if (andere > leiter) {
+			dmmm2.setDataVector(Einstellungen.getEinheitsdata(andere), columnNames2);
+		} else {
+			dmmm2.setDataVector(Einstellungen.getEinheitsdata(leiter), columnNames2);
+		}
 	}
 
 	private enum EnumDoing {
