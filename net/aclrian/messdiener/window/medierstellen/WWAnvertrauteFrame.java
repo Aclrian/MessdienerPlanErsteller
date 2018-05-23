@@ -374,6 +374,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						try {
 							wf.toXML(wmf);
 						} catch (IOException e) {
+				 			new Erroropener(e.getMessage());
 							e.printStackTrace();
 						}
 					}
@@ -393,6 +394,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						try {
 							wf.toXML(wmf);
 						} catch (IOException e) {
+				 			new Erroropener(e.getMessage());
 							e.printStackTrace();
 						}
 					}
@@ -419,6 +421,7 @@ public class WWAnvertrauteFrame extends JFrame {
 			try {
 				rf.toXML(wmf);
 			} catch (IOException e) {
+	 			new Erroropener(e.getMessage());
 				e.printStackTrace();
 			}
 			// für mes Geschwister
@@ -446,6 +449,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						try {
 							wr.toXML(wmf);
 						} catch (IOException e) {
+							new Erroropener(e.getMessage());
 							e.printStackTrace();
 						}
 					}
@@ -480,6 +484,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						try {
 							wr.toXML(wmf);
 						} catch (IOException e) {
+				 			new Erroropener(e.getMessage());
 							e.printStackTrace();
 						}
 					}

@@ -31,6 +31,7 @@ import javax.swing.border.EmptyBorder;
 import com.toedter.calendar.JDateChooser;
 
 import net.aclrian.messdiener.panels.MediAnzeigen;
+import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.References;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.window.medierstellen.WMediBearbeitenFrame;
@@ -54,6 +55,7 @@ public class WAlleMessen extends JFrame {
 					WAlleMessen frame = new WAlleMessen();
 					frame.setVisible(true);
 				} catch (Exception e) {
+		 			new Erroropener(e.getMessage());
 					e.printStackTrace();
 				}
 			}

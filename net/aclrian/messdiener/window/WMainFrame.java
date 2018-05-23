@@ -1,6 +1,5 @@
 package net.aclrian.messdiener.window;
 
-
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -11,18 +10,26 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.function.Predicate;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAfter;
+import org.docx4j.events.JobIdentifier;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
 import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
+import net.aclrian.messdiener.differenzierung.EnumWorking;
+import net.aclrian.messdiener.differenzierung.Manuell.Handling;
+import net.aclrian.messdiener.differenzierung.Manuell;
 import net.aclrian.messdiener.differenzierung.Pfarrei;
 import net.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
 import net.aclrian.messdiener.utils.DateienVerwalter;
@@ -50,7 +57,7 @@ public class WMainFrame extends JFrame {
 	 */
 	private static final long serialVersionUID = 2278649234963113093L;
 	public static final String textdatei = "//.messdienerOrdnerPfad.txt";
-	public static final String VersionID = "b591";
+	public static final String VersionID = "b598";
 	// public static final int Max_einteilen = 3;
 	public static String pfarredateiendung = ".xml.pfarrei";
 	private Sonstiges sonstiges = new Sonstiges();
@@ -68,9 +75,10 @@ public class WMainFrame extends JFrame {
 	private Date[] d = new Date[2];
 	private Pfarrei pf;
 	private ArrayList<StandartMesse> standardmessen = new ArrayList<StandartMesse>();
-	//private Console c;
-//	private JCheckBox chckbxZeigeKonsole;
-	//private boolean cc = false;
+
+	// private Console c;
+	// private JCheckBox chckbxZeigeKonsole;
+	// private boolean cc = false;
 	/**
 	 * Hier mit startet alles!
 	 *
@@ -78,10 +86,10 @@ public class WMainFrame extends JFrame {
 	 */
 	public static void main(String[] args) {
 		Runnable r2 = new Runnable() {
-			
+
 			@Override
 			public void run() {
-				VersionIDHandler vh  = new VersionIDHandler();
+				VersionIDHandler vh = new VersionIDHandler();
 				vh.act();
 			}
 		};
@@ -95,59 +103,60 @@ public class WMainFrame extends JFrame {
 					// log.warning("Alles startet!");
 					t.start();
 					System.out.println(".");
-			/*	//	boolean da= false;
-					for (String string : args) {
-						if (string.equals("net.aclrian.debug:true")) {
-							da=true;
-							//frame.c.changeVisibility();
-							//frame.chckbxZeigeKonsole.setSelected(true);
-						}
-					}*/
-					//System.out.println(da);
-					WMainFrame frame = new WMainFrame();//da);
+					/*
+					 * // boolean da= false; for (String string : args) { if
+					 * (string.equals("net.aclrian.debug:true")) { da=true;
+					 * //frame.c.changeVisibility();
+					 * //frame.chckbxZeigeKonsole.setSelected(true); } }
+					 */
+					// System.out.println(da);
+					WMainFrame frame = new WMainFrame();// da);
 					t.interrupt();
-				/*	for (String string : args) {
-						if (string.equals("net.aclrian.debug:true")) {
-							//frame.c.changeVisibility();
-						//	frame.chckbxZeigeKonsole.setSelected(true);
-						}
-					}*/
+					/*
+					 * for (String string : args) { if
+					 * (string.equals("net.aclrian.debug:true")) {
+					 * //frame.c.changeVisibility(); //
+					 * frame.chckbxZeigeKonsole.setSelected(true); } }
+					 */
 					frame.setVisible(true);
 					frame.setAlwaysOnTop(true);
 					frame.setAlwaysOnTop(false);
-					/*WMainFrame frame = new WMainFrame();
-					frame.setVisible(true);*/
-					// frame.setUtil(new Util("N:\\.aaa_aproo\\zzzTESTgit\\_3GIT_\\XML"));
-					// "/mnt/DRIVE-N-GO/.aaa_aproo/zzzTESTgit/_3GIT_/XML"));
+					/*
+					 * WMainFrame frame = new WMainFrame();
+					 * frame.setVisible(true);
+					 */
 				} catch (Exception e) {
+					new Erroropener(e.getMessage());
 					e.printStackTrace();
 				}
-		}};
+			}
+		};
 		r.run();
 	}
 
 	/*
-	 ** Hiermit sollen vor langer Zeit mal Konsolenausgaben gemacht werden (Alternative zu
-	 * System.out.println();) / public static final Logger log =
+	 ** Hiermit sollen vor langer Zeit mal Konsolenausgaben gemacht werden
+	 * (Alternative zu System.out.println();) / public static final Logger log =
 	 * Logger.getLogger("net.aclrian.messdiener.window" +
 	 * WMainFrame.class.getName());
 	 */
 	/**
 	 * Konstruktor
-	 * @throws SecurityException 
-	 * @throws NoSuchMethodException 
+	 * 
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
 	 * @wbp.parser.constructor
 	 */
-	public WMainFrame(){
+	public WMainFrame() {
 		Utilities.logging(this.getClass(), this.getClass().getEnclosingConstructor(), "MpE startet...");
 		start();
 		util = new DateienVerwalter();
 		erneuern();
-		//if (!b) {
-	//		c = new Console();
-		//}
-	//	c = new Console();
-		}
+		// if (!b) {
+		// c = new Console();
+		// }
+		// c = new Console();
+	}
 
 	public void start() {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -161,7 +170,7 @@ public class WMainFrame extends JFrame {
 		setContentPane(cp);
 
 		//
-		
+
 		// util.getSpeicherort();
 
 		//
@@ -184,66 +193,73 @@ public class WMainFrame extends JFrame {
 
 		});
 
-		JLabel lblWarnung = new JLabel(
-				"<html>Bevor man einen Messdiener l"+References.oe+"scht, indem man seine Datei loescht,<br />sollte man dafuer sorgen, dass seine Freunde und Geschwister nicht mehr seine Freunde und Geschwister sind!</html>\n ");
+		JLabel lblWarnung = new JLabel("<html>Bevor man einen Messdiener l" + References.oe
+				+ "scht, indem man seine Datei loescht,<br />sollte man dafuer sorgen, dass seine Freunde und Geschwister nicht mehr seine Freunde und Geschwister sind!</html>\n ");
 		lblWarnung.setBounds(18, 153, 574, 45);
 		cp.setLayout(null);
 		cp.add(btnMessdienrer);
 		cp.add(btnNeuerPlan);
 		cp.add(lblWarnung);
 
-		JButton btnSpeicherortndern = new JButton("<html>Speicherort<br />"+References.ae+"ndern</html>");
+		JButton btnSpeicherortndern = new JButton("<html>Speicherort<br />" + References.ae + "ndern</html>");
 		btnSpeicherortndern.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				speicherOrt();
 			}
 		});
-		btnSpeicherortndern.setBounds(229, 17, 139, 94);
+		btnSpeicherortndern.setBounds(229, 17, 139, 56);
 		cp.add(btnSpeicherortndern);
-		
-		//chckbxZeigeKonsole = new JCheckBox("Zeige Konsole");
-		/*chckbxZeigeKonsole.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (b) {
-					return;
-				}
-				if (cc) {
-					//c = new Console(this);
-					return;
-				}
-		//		c.changeVisibility();
-				Utilities.logging(this.getClass(), "init", "Konsolen-Sichtbarkeit wurde geï¿½ndert.");
+
+		JButton btnpfarreindern = new JButton("<html>Pfarrei<br/>\u00E4ndern</html>");
+		btnpfarreindern.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				pfarreibearbeiten();
 			}
 		});
-		/*
-		 * */
-	//	chckbxZeigeKonsole.setBounds(234, 118, 134, 23);
-	//	cp.add(chckbxZeigeKonsole);
+		btnpfarreindern.setBounds(229, 84, 139, 56);
+		cp.add(btnpfarreindern);
 
-		
+		// chckbxZeigeKonsole = new JCheckBox("Zeige Konsole");
 		/*
-		 * //Sachen fÃ¼r den Logger log.setLevel(Level.ALL); FileHandler txt = null; try
-		 * { txt = new FileHandler("log_messdienerplanersteller.txt", true); } catch
-		 * (SecurityException | IOException e) { e.printStackTrace(); }
-		 * txt.setFormatter(new Formatter() {
+		 * chckbxZeigeKonsole.addItemListener(new ItemListener() {
+		 * 
+		 * @Override public void itemStateChanged(ItemEvent e) { if (b) {
+		 * return; } if (cc) { //c = new Console(this); return; } //
+		 * c.changeVisibility(); Utilities.logging(this.getClass(), "init",
+		 * "Konsolen-Sichtbarkeit wurde geï¿½ndert."); } }); /*
+		 */
+		// chckbxZeigeKonsole.setBounds(234, 118, 134, 23);
+		// cp.add(chckbxZeigeKonsole);
+
+		/*
+		 * //Sachen fÃ¼r den Logger log.setLevel(Level.ALL); FileHandler txt =
+		 * null; try { txt = new FileHandler("log_messdienerplanersteller.txt",
+		 * true); } catch (SecurityException | IOException e) {
+		 * e.printStackTrace(); } txt.setFormatter(new Formatter() {
 		 *
 		 * @Override public String format(LogRecord record) { String rtn =
 		 * this.formatMessage(record); SimpleDateFormat df = new
 		 * SimpleDateFormat("YYYY:MM:DD HH:mm:ss"); Date d = new
 		 * Date(record.getMillis()); String eins = df.format(d); String zwei =
-		 * record.getLevel().getName(); return "[" +eins +zwei + "]" + rtn +"\n\r"; }
-		 * }); log.addHandler(txt);
+		 * record.getLevel().getName(); return "[" +eins +zwei + "]" + rtn
+		 * +"\n\r"; } }); log.addHandler(txt);
 		 */
 	}
-	
+
+	public void pfarreibearbeiten() {
+		WriteFile_Pfarrei wf_pf = new WriteFile_Pfarrei(pf, this);
+		this.setVisible(false);
+		wf_pf.setVisible(true);
+
+	}
+
 	public WMainFrame(String s) {
 		start();
 		util = new DateienVerwalter(s);
 		erneuern();
 		Utilities.logging(this.getClass(), "init", "Es wurden " + mediarray.size() + " gefunden!");
-		
+
 	}
 
 	public void beabeiten() {
@@ -252,10 +268,11 @@ public class WMainFrame extends JFrame {
 				util = new DateienVerwalter();
 			}
 		} catch (NullPointerException e) {
+			// new Erroropener("no error");
 			util = new DateienVerwalter();
 		}
 		savepath = util.getSavepath();
-		//mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, this);
+		// mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, this);
 		wf = new WMediBearbeitenFrame(this);
 		wf.setVisible(true);
 	}
@@ -278,7 +295,7 @@ public class WMainFrame extends JFrame {
 	 */
 	public void berechnen(Date anfang, Date ende) {
 		savepath = util.getSavepath();
-		//mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, this);
+		// mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, this);
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		for (Messdiener messdiener : mediarray) {
 			messdiener.setnewMessdatenDaten(util.getSavepath(), year, this);
@@ -293,29 +310,31 @@ public class WMainFrame extends JFrame {
 		try {
 			pf = util.getPfarrei(this);
 			setTitle(pf.getName());
-			} catch (Exception e) {
-				WriteFile_Pfarrei wfp = new WriteFile_Pfarrei(this);
-				setContentPane(wfp.getContentPane());
-				setBounds(Utilities.setFrameMittig(wfp.getBounds().width, wfp.getBounds().height));
-				return;
-			}
+		} catch (Exception e) {
+			// new Erroropener("no error");
+			WriteFile_Pfarrei wfp = new WriteFile_Pfarrei(this);
+			setContentPane(wfp.getContentPane());
+			setBounds(Utilities.setFrameMittig(wfp.getBounds().width, wfp.getBounds().height));
+			return;
+		}
 		standardmessen.clear();
 		standardmessen.add(sonstiges);
 		boolean hatsonstiges = false;
 		System.out.println("------------------------" + pf.getStandardMessen().size());
 		for (StandartMesse sm : pf.getStandardMessen()) {
-			//if(sonstiges.isSonstiges(sm)) {hatsonstiges = true;}
-			//else{
+			// if(sonstiges.isSonstiges(sm)) {hatsonstiges = true;}
+			// else{
 			System.out.println(sm);
-				standardmessen.add(sm);
-				//}
+			standardmessen.add(sm);
+			// }
 		}
 		mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, this);
-		
+
 		if (!hatsonstiges) {
 			pf.getStandardMessen().add(sonstiges);
 		}
-		Utilities.logging(this.getClass(), new Object(){}.getClass().getEnclosingMethod().getName(), "Es wurden " + mediarray.size() + " gefunden!");
+		Utilities.logging(this.getClass(), new Object() {
+		}.getClass().getEnclosingMethod().getName(), "Es wurden " + mediarray.size() + " gefunden!");
 	}
 
 	/**
@@ -361,6 +380,7 @@ public class WMainFrame extends JFrame {
 				util = new DateienVerwalter();
 			}
 		} catch (NullPointerException e) {
+			// new Erroropener("no error");
 			util = new DateienVerwalter();
 		}
 		savepath = util.getSavepath();
@@ -413,12 +433,108 @@ public class WMainFrame extends JFrame {
 	}
 
 	public void fertig(WriteFile_Pfarrei wfp, Pfarrei pf, String savepath) {
-		this.pf = pf;
+		this.pf = null;
+		this.pf = util.getPfarrei(this);
+		if (!this.pf.getStandardMessen().toString().equals(pf.getStandardMessen().toString())) {
+			ArrayList<StandartMesse> beibehalten = new ArrayList<StandartMesse>();
+			ArrayList<StandartMesse> verbleibende = new ArrayList<StandartMesse>();
+			for (StandartMesse sm : pf.getStandardMessen()) {
+				boolean b = true;
+				for (StandartMesse smold : this.pf.getStandardMessen()) {
+					if (sm.toString().equals(smold.toString())) {
+						beibehalten.add(smold);
+						b = false;
+						break;
+					}
+				}
+				if (b) {
+					verbleibende.add(sm);
+				}
+
+			}
+			ArrayList<StandartMesse> alte = new ArrayList<StandartMesse>();
+			ArrayList<String> alteS = new ArrayList<String>();
+			for (StandartMesse alt : this.pf.getStandardMessen()) {
+				boolean b = false;
+				for (StandartMesse sm : beibehalten) {
+					
+					if (sm.toString().equals(alt.toString())) {
+						b = true;
+						break;
+					}
+				}
+				if (!b) {
+					alte.add(alt);
+					alteS.add("Überarbeitete " + alt.toString());
+				}
+
+			}
+			ArrayList<Handling> hand = new ArrayList<Handling>();
+			alteS.add("Neu");
+			for (StandartMesse sm : verbleibende) {
+				boolean fertig = false;
+				do {
+					
+					Object[] possibilities = new Object[0];
+					possibilities = alteS.toArray(possibilities);
+					String s = (String) JOptionPane.showInputDialog(null,
+							sm.toString() + " ist neu.\nIst sie wirkilch neu oder wurde sie nur überarbeitet?",
+							"Customized Dialog", JOptionPane.PLAIN_MESSAGE, null, possibilities, "Neu");
+
+					// If a string was returned, say so.
+					if ((s != null) && (s.length() > 0)) {
+						fertig = true;
+						EnumWorking ew;
+						StandartMesse alt = null;
+						if (s.equals("Neu")) {
+							alt = null;
+							ew = EnumWorking.neu;
+						} else {
+							for (StandartMesse sm1 : alte) {
+								if (s.endsWith(sm1.toString())) {
+									alte.remove(sm1.toString());
+									ArrayList<String> aS = new ArrayList<String>();
+									for (String string : alteS) {
+										if (!string.equals(s)) {
+											aS.add(string);
+										}
+									}
+									possibilities = aS.toArray(possibilities);
+									
+									alt = sm1;
+									break;
+								}
+							}
+							if (alt == null) {
+								fertig = false;
+							}
+							ew = EnumWorking.ueberarbeitet;
+						}
+						Handling h = new Handling(sm, ew, alt);
+						hand.add(h);
+					}
+				} while (fertig != true);
+			}
+			ArrayList<StandartMesse> bleibende = new ArrayList<StandartMesse>();
+			bleibende.addAll(beibehalten);
+			standardmessen = pf.getStandardMessen();
+			Manuell m = new Manuell(hand, this, pf);
+			m.act();
+			WriteFile_Pfarrei.writeFile(pf, savepath);
+			JOptionPane.showInputDialog("Das Programm wird nun beendet und mit den neuen Daten gestartet!");
+			System.exit(0);
+		} else {
+			String name = pf.getName();
+			name = name.replaceAll(" ", "_");
+			File f = new File(savepath + "\\" + name + WMainFrame.pfarredateiendung);
+			f.delete();
+			this.pf = pf;
+			WriteFile_Pfarrei.writeFile(pf, savepath);
+		}
 		util = new DateienVerwalter(savepath);
 		erneuern();
-		setContentPane(cp);
 	}
-	
+
 	public ArrayList<StandartMesse> getSMoheSonstiges() {
 		ArrayList<StandartMesse> sm = new ArrayList<StandartMesse>();
 		sm.addAll(standardmessen);
@@ -431,26 +547,64 @@ public class WMainFrame extends JFrame {
 		return sm;
 	}
 
-	/*public void consoleClose() {
-		this.cc=true;
-	//	this.chckbxZeigeKonsole.setSelected(false);
-		this.cc =false;
-	}*/
-	
-	
+	/*
+	 * public void consoleClose() { this.cc=true; //
+	 * this.chckbxZeigeKonsole.setSelected(false); this.cc =false; }
+	 */
+
+	public boolean isEqual(ArrayList<StandartMesse> sm1, ArrayList<StandartMesse> sm2) {
+		Predicate<StandartMesse> p = new Predicate<StandartMesse>() {
+			@Override
+			public boolean test(StandartMesse t) {
+				return new Sonstiges().isSonstiges(t);
+			}
+		};
+		sm1.removeIf(p);
+		sm2.removeIf(p);
+		if (sm1.size() == sm2.size()) {
+			for (StandartMesse standartMesse : sm1) {
+				boolean b = false;
+				for (StandartMesse standartMesse2 : sm2) {
+					if (standartMesse.toString().equals(standartMesse2.toString())) {
+						b = true;
+						break;
+					}
+				}
+				if (!b) {
+					return false;
+				}
+			}
+			for (StandartMesse standartMesse : sm2) {
+				boolean b = false;
+				for (StandartMesse standartMesse2 : sm1) {
+					if (standartMesse.toString().equals(standartMesse2.toString())) {
+						b = true;
+						break;
+					}
+				}
+				if (!b) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public static Image getIcon(References ref) {
 		return Toolkit.getDefaultToolkit().getImage(ref.getClass().getResource("title.png"));
 	}
-	
+
 	@Override
 	public void setVisible(boolean arg0) {
-		
+
 		super.setVisible(arg0);
 		if (arg0) {
 			setAlwaysOnTop(true);
 			setAlwaysOnTop(false);
 		}
-		
+
 	}
 
 }

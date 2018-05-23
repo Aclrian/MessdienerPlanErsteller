@@ -21,6 +21,7 @@ import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
 import org.docx4j.org.apache.poi.util.IOUtils;
 import org.docx4j.services.client.ConversionException;
 
+import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.window.WMainFrame;
 import net.aclrian.messdiener.window.planerstellen.WMessenErstellen;
 
@@ -62,6 +63,7 @@ public class Converter {
 			docx = toWord();
 		//	pfd = toPDF();
 		} catch (JAXBException | Docx4JException e) {
+			new Erroropener(e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -72,6 +74,7 @@ public class Converter {
 			JAXBContext.newInstance(this.getClass());
 			// FooObject fooObj = (FooObject)u.unmarshal( new File( "foo.xml" ) );
 		} catch (JAXBException e) {
+			new Erroropener(e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -207,6 +210,7 @@ public class Converter {
 				try {
 					Docx4J.toPDF(wordMLPackage, os);
 				} catch (Docx4JException e) {
+					new Erroropener(e.getMessage());
 					e.printStackTrace();
 					// What did we write?
 					IOUtils.closeQuietly(os);

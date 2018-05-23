@@ -224,6 +224,7 @@ public class Messe {
 		try {
 			return em;
 		} catch (NullPointerException e) {
+			//new Erroropener("no error");
 			return new Sonstiges();
 		}
 	}

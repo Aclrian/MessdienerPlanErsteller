@@ -46,7 +46,7 @@ import net.aclrian.messdiener.window.auswaehlen.WMediAuswaehlen;
 
 public class WMessenHinzufuegen extends JFrame {
 
-	private enum EnumBoolean {
+	public enum EnumBoolean {
 		True(), False(), Null();
 	}
 
@@ -318,7 +318,7 @@ public class WMessenHinzufuegen extends JFrame {
 	}
 
 	public void abbrechen() {
-		ausgewaehlte = null;
+		ausgewaehlte = new ArrayList<Messdiener>();
 		nurleiter = EnumBoolean.Null;
 		nurleiter.toString();
 		panel.setVisible(false);
@@ -404,6 +404,7 @@ public class WMessenHinzufuegen extends JFrame {
 							listmodel.addElement(m.getIDHTML());
 							messen.add(m);
 						} catch (ParseException e) {
+				 			new Erroropener(e.getMessage()+ ": Konnte kein Datum erzeugen. Das sollte eigentlich nicht passieren.");
 							e.printStackTrace();
 						}
 						// System.out.println(m.getIDHTML());
@@ -415,17 +416,11 @@ public class WMessenHinzufuegen extends JFrame {
 
 	public void getAusgewaehlte(ArrayList<Messdiener> list) {
 		try {
-			ausgewaehlte.get(0).getEintritt();
-		} catch (NullPointerException e) {
-			ausgewaehlte = new ArrayList<Messdiener>();
-		}catch (IndexOutOfBoundsException e) {
-			// do nothing
-		}try {
 		for (Messdiener messdiener : list) {
 			ausgewaehlte.add(messdiener);
 		}
 		} catch (NullPointerException e) {
-			ausgewaehlte = null;
+ 			new Erroropener(e.getMessage() + ": Liste: " + list.toString() + "ausgewaehlte: " + ausgewaehlte.toString());
 		}
 		this.setEnabled(true);
 	}
@@ -517,14 +512,6 @@ public class WMessenHinzufuegen extends JFrame {
 		Date datum = dc.getDate();
 		String sdatum = ddf.format(datum);
 		boolean cannotparse = false;
-		boolean standart = false;
-		try {
-			ausgewaehlte.get(0).getEintritt();
-		} catch (IndexOutOfBoundsException e) {
-			standart = true;
-		} catch (NullPointerException e) {
-			standart = true;
-		}
 		Date uhrzeit = null;
 		if (spinnerDatum.getModel() instanceof SpinnerDateModel) {
 			uhrzeit = (Date) spinnerDatum.getModel().getValue();
@@ -558,18 +545,15 @@ public class WMessenHinzufuegen extends JFrame {
 				}
 			}
 		}
-		if (!standart) {
-			for (Messdiener messdiener : ausgewaehlte) {
-				if (messdiener.isIstLeiter()) {
-					m.LeiterEinteilen(messdiener);
-				}
-				m.vorzeitigEiteilen(messdiener, mainframe);
+		for (Messdiener messdiener : ausgewaehlte) {
+			if (messdiener.isIstLeiter()) {
+				m.LeiterEinteilen(messdiener);
 			}
-
-			ausgewaehlte = null;
-			nurleiter = EnumBoolean.Null;
-
+			m.vorzeitigEiteilen(messdiener, mainframe);
 		}
+
+		ausgewaehlte = new ArrayList<Messdiener>();
+		nurleiter = EnumBoolean.Null;
 
 		if (ibearbeiten > -1 && bearbeiten != null) {
 			messen.remove(ibearbeiten);

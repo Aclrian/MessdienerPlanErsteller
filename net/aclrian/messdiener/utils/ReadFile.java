@@ -40,6 +40,7 @@ public class ReadFile {
 					try {
 						doc = dBuilder.parse(fXmlFile);
 					} catch (org.xml.sax.SAXParseException e) {
+						new Erroropener(e.getMessage()+": Das Dokument konnte nicht gelesen werden.");
 						doc = null;
 					}
 					if (doc != null) {
@@ -107,7 +108,6 @@ public class ReadFile {
 									Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"Es wurde eine Alte Version von Messdiener-Dateien gefunden!"
 											+ fXmlFile.getName());
 								}
-
 								if (!f1.equals("LEER")) {
 									freunde[0] = f1;
 								} else {
@@ -170,6 +170,7 @@ public class ReadFile {
 				}
 			}
 		} catch (Exception e) {
+			new Erroropener(e.getMessage());
 			e.printStackTrace();
 		}
 

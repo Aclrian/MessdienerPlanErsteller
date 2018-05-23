@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
+import net.aclrian.messdiener.utils.Erroropener;
+import net.aclrian.messdiener.utils.References;
+
 public class StandartMesse {
 	private int beginn_stunde;
 	private String beginn_minute;
@@ -33,6 +36,7 @@ public class StandartMesse {
 		try {
 			d = df.parse(String.valueOf(beginn_stunde) + ":" + beginn_minute);
 		} catch (ParseException e) {
+			new Erroropener("Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr"+References.ue+"fen.");
 			e.printStackTrace();
 		}
 		SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
@@ -43,6 +47,7 @@ public class StandartMesse {
 		try {
 			rtn = dall.parse(datum + ":" + uhrzeit);
 		} catch (ParseException e) {
+			new Erroropener("Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr"+References.ue+"fen.");
 			e.printStackTrace();
 		}
 		return rtn;
@@ -121,6 +126,20 @@ public class StandartMesse {
 			}
 		}
 		return rtn;
+	}
+	
+	public boolean Equals(StandartMesse smold){
+		boolean anz = anz_messdiener == smold.getAnz_messdiener();
+		boolean min = beginn_minute.equals(smold.getBeginn_minute());
+		boolean std = beginn_stunde == smold.getBeginn_stunde();
+		boolean ort = this.ort.equals(smold.getOrt());
+		boolean typ = this.typ.equals(smold.getTyp());
+		boolean tag = Wochentag.equals(smold.getWochentag());
+		if (tag == typ == ort == std == min == anz) {
+			return anz;
+		}else{
+			return false;
+		}
 	}
 	
 }

@@ -10,7 +10,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -47,6 +46,7 @@ public class VersionIDHandler {
 			internettid = searchVersionID();
 			downloadurl= new URI("https://github.com/Aclrian/MessdienerPlanErsteller/releases/tag/"+internettid);
 		} catch (URISyntaxException | IOException | ParseException e) {
+ 			new Erroropener(e.getMessage());
 			e.printStackTrace();
 			return EnumHandling.error;
 		}
@@ -146,6 +146,7 @@ public class VersionIDHandler {
 						try {
 							Desktop.getDesktop().browse(downloadurl);
 						} catch (IOException e1) {
+				 			new Erroropener(e1.getMessage());
 							e1.printStackTrace();
 						} // roll your own link launcher or use Desktop if J6+
 		        }
@@ -179,6 +180,7 @@ public class VersionIDHandler {
 						try {
 							Desktop.getDesktop().browse(downloadurl);
 						} catch (IOException e1) {
+				 			new Erroropener(e1.getMessage());
 							e1.printStackTrace();
 						} // roll your own link launcher or use Desktop if J6+
 		        }

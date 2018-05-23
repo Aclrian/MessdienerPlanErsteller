@@ -268,20 +268,20 @@ System.out.println(f.toString() + "!");
 
 	}
 
-	public Messdiener sucheMessdiener(String geschwi, ArrayList<Messdiener> alleMedis, Messdiener akt)
+	public Messdiener sucheMessdiener(String geschwi, Messdiener akt, WMainFrame wmf)
 			throws Exception {
 		if (geschwi.equals("")) {
 			return null;
 		} else {
-			for (Messdiener messdiener : alleMedis) {
+			for (Messdiener messdiener : wmf.getAlleMessdiener()) {
 				if (messdiener.makeId().equals(geschwi)) {
 					return messdiener;
 				}
 			}
 			try {
-				new Erroropener("Konnte keinen Name für: " + geschwi + " bei " + akt.makeId() + " finden.", null, null);
+				new Erroropener("Konnte keinen Name f"+References.ue+"r: " + geschwi + " bei " + akt.makeId() + " finden.", null, null);
 			} catch (Exception e) {
-
+				new Erroropener(e.getMessage());
 			}
 		}
 		return null;
@@ -336,7 +336,7 @@ System.out.println(f.toString() + "!");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				new Erroropener("zu wenig Rechte im aktuellen Ordner");
+				new Erroropener(e.getMessage());
 			}
 		} else {
 			try {
@@ -364,7 +364,7 @@ System.out.println(f.toString() + "!");
 				bufferedReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				new Erroropener("zu wenig Rechte im aktuellen Ordner");
+				new Erroropener(e.getMessage());
 			}
 		}
 	}

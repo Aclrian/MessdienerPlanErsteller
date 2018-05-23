@@ -11,6 +11,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import net.aclrian.messdiener.deafault.StandartMesse;
+import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.window.WMainFrame;
 
@@ -35,6 +36,8 @@ public class ReadFile_Pfarrei {
 					try {
 						doc = dBuilder.parse(fXmlFile);
 					} catch (org.xml.sax.SAXParseException e) {
+
+						new Erroropener(e.getMessage()+ ": Das Dokument konnte nicht gelesen werden.");
 						doc = null;
 					}
 					if (doc != null) {
@@ -134,9 +137,11 @@ public class ReadFile_Pfarrei {
 				String[] s2 = pfadMitDateiundmitEndung.split("\\" + File.separator);
 				name = s2[s2.length - 1];
 				name = name.substring(0, name.length() - WMainFrame.pfarredateiendung.length());
+				name = name.replaceAll("_", " ");
 				pf = new Pfarrei(einst, sm, name, orte, typen, hochaemter);
 			}
 		} catch (Exception e) {
+			new Erroropener(e.getMessage());
 			e.printStackTrace();
 		}
 

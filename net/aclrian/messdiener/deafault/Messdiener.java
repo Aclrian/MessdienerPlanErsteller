@@ -179,6 +179,7 @@ public class Messdiener {
 		try {
 			wf.toXML(wmf);
 		} catch (IOException e) {
+			new Erroropener(e.getMessage());
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), e.getMessage());
 			e.printStackTrace();
 		}
