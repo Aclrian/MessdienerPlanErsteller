@@ -20,9 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAfter;
-import org.docx4j.events.JobIdentifier;
-
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
 import net.aclrian.messdiener.deafault.Sonstiges;
