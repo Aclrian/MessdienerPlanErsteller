@@ -3,7 +3,7 @@ package net.aclrian.messdiener.window.console;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
-import net.aclrian.messdiener.utils.References;
+import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.window.WMainFrame;
 
 import java.awt.BorderLayout;

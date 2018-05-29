@@ -24,14 +24,14 @@ import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
 import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
-import net.aclrian.messdiener.differenzierung.EnumWorking;
+import net.aclrian.messdiener.differenzierung.Manuell.EnumWorking;
 import net.aclrian.messdiener.differenzierung.Manuell.Handling;
+import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.differenzierung.Manuell;
 import net.aclrian.messdiener.differenzierung.Pfarrei;
 import net.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
 import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
-import net.aclrian.messdiener.utils.References;
 import net.aclrian.messdiener.utils.Utilities;
 //import net.aclrian.messdiener.window.console.Console;
 import net.aclrian.messdiener.window.medierstellen.WMediBearbeitenFrame;
@@ -489,7 +489,7 @@ public class WMainFrame extends JFrame {
 						} else {
 							for (StandartMesse sm1 : alte) {
 								if (s.endsWith(sm1.toString())) {
-									alte.remove(sm1.toString());
+									 remove(alte,sm1);
 									ArrayList<String> aS = new ArrayList<String>();
 									for (String string : alteS) {
 										if (!string.equals(s)) {
@@ -530,6 +530,15 @@ public class WMainFrame extends JFrame {
 		}
 		util = new DateienVerwalter(savepath);
 		erneuern();
+	}
+
+	private void remove(ArrayList<StandartMesse> smarray, StandartMesse sm) {
+		for (int i = 0; i<smarray.size(); i++) {
+			StandartMesse messe = smarray.get(i);
+			if (messe.toString().equals(sm.toString())) {
+				smarray.remove(i);
+			}
+		}
 	}
 
 	public ArrayList<StandartMesse> getSMoheSonstiges() {

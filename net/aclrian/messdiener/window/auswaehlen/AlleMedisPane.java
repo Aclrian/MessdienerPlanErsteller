@@ -16,7 +16,7 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 
 import net.aclrian.messdiener.deafault.Messdiener;
-import net.aclrian.messdiener.utils.References;
+import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.window.WMainFrame;
 //special thanks to https://learn-java-by-example.com/java/add-checkbox-items-jlist/
 public class AlleMedisPane {

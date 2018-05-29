@@ -8,15 +8,16 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
 import net.aclrian.messdiener.deafault.ATextField;
+import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.window.APanel;
 
-public class MediAnzeigen extends JPanel {
+public class MediAnzeigen extends APanel {
 	/**
 	 *
 	 */
@@ -35,8 +36,8 @@ public class MediAnzeigen extends JPanel {
 	private JCheckBox chckbxSoAbend = new JCheckBox("So, Abend");
 	private JScrollPane scrollPane = new JScrollPane();
 	private JLabel lblGeschwister = new JLabel("Geschwister");
-	private JButton button = new JButton("-->");
-	private JButton button_1 = new JButton("-->");
+	private JButton button = new JButton(References.pfeillinks);
+	private JButton button_1 = new JButton(References.pfeilrechts);
 	private JScrollPane scrollPane_1 = new JScrollPane();
 	private JLabel lblFreunde = new JLabel("Freunde");
 	private JButton btnSpeichern = new JButton("Speichern");
@@ -45,21 +46,12 @@ public class MediAnzeigen extends JPanel {
 	/**
 	 * Create the panel.
 	 **/
-	public MediAnzeigen(String s) {// int withe, int heigh) {// , WMainFrame wmf) {
+	public MediAnzeigen() {// int withe, int heigh) {// , WMainFrame wmf) {
 		setLayout(null);
-
 		setBorder(new BevelBorder(BevelBorder.LOWERED, Color.LIGHT_GRAY, Color.LIGHT_GRAY, Color.LIGHT_GRAY,
 				Color.LIGHT_GRAY));
-
-		// this.setBounds(0, 0, 567, 655);//setBounds(138, 11, withe, heigh);
-		setLayout(null);
-		if (s == null) {
-			this.setBounds(0, 0, 567, 655);
-		}
 		add(textField);
-		// textField.setColumns(10);
 		add(textField_1);
-		// textField_1.setColumns(10);
 		add(spinner);
 		add(chckbxLeiter);
 		add(chckbxDiAbend);
@@ -79,26 +71,20 @@ public class MediAnzeigen extends JPanel {
 		add(btnSpeichern);
 		add(btnAbbrechen);
 		setVisible(true);
-		graphics(getWidth(), getHeight());
 		addComponentListener(new ComponentAdapter() {
-
 			@Override
-			public void componentResized(ComponentEvent e) { // if(!isworking) {
+			public void componentResized(ComponentEvent e) {
 				Component c = (Component) e.getSource();
 				int Lwidth = c.getBounds().width;
-				int Lheigth = c.getBounds().height; // setVisible(false);
-				// setBounds(c.getBounds()); System.out.println(c.getWidth()+"?" +
-				// c.getHeight());
+				int Lheigth = c.getBounds().height;
 				graphics(Lwidth, Lheigth);
 				setVisible(true);
 			}
 		});
-
 	}
 
 	protected void graphics(int width, int heigth) {
-		this.setBounds(this.getBounds().x, this.getBounds().y, 488, 616);
-
+		//this.setBounds(this.getBounds().x, this.getBounds().y, width, heigth);
 		int drei = width / 3;
 		int stdhoehe = heigth / 20;
 		int abstandhoch = heigth / 100;
