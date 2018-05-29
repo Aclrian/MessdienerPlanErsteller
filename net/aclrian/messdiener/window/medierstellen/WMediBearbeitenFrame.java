@@ -25,10 +25,10 @@ import javax.swing.border.EmptyBorder;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messverhalten;
+import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.ReadFile;
-import net.aclrian.messdiener.utils.References;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.window.WMainFrame;
 import net.aclrian.messdiener.window.auswaehlen.ATable;

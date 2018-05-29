@@ -4,12 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.StandartMesse;
+import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.Erroropener;
-import net.aclrian.messdiener.utils.References;
 import net.aclrian.messdiener.utils.WriteFile;
 import net.aclrian.messdiener.window.WMainFrame;
 
 public class Manuell {
+	public enum EnumWorking {
+		ueberarbeitet, neu
+
+	}
+
 	public static String sm = "St. Martinus";
 	public static String hlm = "Hl. Messe";
 	public static String zh = "Hochzeit";
