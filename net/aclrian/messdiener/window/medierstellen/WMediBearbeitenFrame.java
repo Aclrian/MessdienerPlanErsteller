@@ -172,7 +172,7 @@ public class WMediBearbeitenFrame extends JFrame {
 		btnSpeichern.setBounds(289, 123, 132, 35);
 		panel.add(btnSpeichern);
 
-		JButton btnspeichernundSchlieen = new JButton("<html><body>Speichern </br>& Schli"+References.ss+"en</body></html>");
+		JButton btnspeichernundSchlieen = new JButton("<html><body>Speichern </br>& Schlie"+References.ss+"en</body></html>");
 		btnspeichernundSchlieen.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnspeichernundSchlieen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
