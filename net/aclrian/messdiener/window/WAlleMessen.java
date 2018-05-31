@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
@@ -15,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Calendar;
-
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -29,9 +27,10 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
-import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 
 import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.window.medierstellen.WMediBearbeitenFrame;
@@ -55,7 +54,7 @@ public class WAlleMessen extends JFrame {
 					WAlleMessen frame = new WAlleMessen();
 					frame.setVisible(true);
 				} catch (Exception e) {
-		 			new Erroropener(e.getMessage());
+					new Erroropener(e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -64,8 +63,8 @@ public class WAlleMessen extends JFrame {
 
 	private JPanel contentPane = new JPanel();
 	private APanel panel;
-	private JDateChooser jdcanfang = new JDateChooser(Calendar.getInstance().getTime());
-	private JDateChooser jdende;
+	private JTextFieldDateEditor jdcanfang = new JTextFieldDateEditor();
+	private JTextFieldDateEditor jdende = new JTextFieldDateEditor();
 	private JScrollPane scrollPanemedi = new JScrollPane();
 	private DefaultListModel<String> dfmedi = new DefaultListModel<String>();
 	private JList<String> listmedi = new JList<String>();
@@ -90,26 +89,29 @@ public class WAlleMessen extends JFrame {
 
 	private JButton btnStandart = new JButton("");
 	//
-	final Color hell0 = new Color(20, 96, 88);
-	final Color hell1 = new Color(71, 142, 134);
-	final Color standart = new Color(39, 116, 108);
-	final Color dunkel1 = new Color(4, 72, 65);
-	final Color dunkel2 = new Color(0, 46, 41, 1);
-	//private Font f;
+	final static Color hell0 = new Color(20, 96, 88);
+	final static Color hell1 = new Color(71, 142, 134);
+	final static Color standart = new Color(39, 116, 108);
+	final static Color dunkel1 = new Color(4, 72, 65);
+	final static Color dunkel2 = new Color(0, 46, 41, 1);
+	final static Border b = new BevelBorder(BevelBorder.LOWERED, hell0, hell0, hell0, hell0); 
+	final static Font f = new Font("SansSerif", 0, 45);
+	// private Font f;
 	private Calendar cal;
 
 	public WAlleMessen() {
-		this(Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height);		
+		this(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height, new DateienVerwalter());
 	}
+
 	/**
 	 * Create the frame.
 	 * 
 	 */
-	private WAlleMessen(int width, int heigth) {
+	private WAlleMessen(int width, int heigth, DateienVerwalter dv) {
 		// setBounds(new Rectangle(0, 0, 1600, 890));
 		// setResizable(false);
-		//int width = 1600;// Toolkit.getDefaultToolkit().getScreenSize().width;
-		//int heigth = 890;// Toolkit.getDefaultToolkit().getScreenSize().height;
+		// int width = 1600;// Toolkit.getDefaultToolkit().getScreenSize().width;
+		// int heigth = 890;// Toolkit.getDefaultToolkit().getScreenSize().height;
 		// setBounds(0,0,533,534);
 		setTitle("Messdienerplanersteller");
 		setBounds(0, 0, width, heigth);
@@ -123,27 +125,29 @@ public class WAlleMessen extends JFrame {
 		effectiveScreenArea.x = bounds.x + screenInsets.left;
 		effectiveScreenArea.y = bounds.y + screenInsets.top;
 		effectiveScreenArea.height = bounds.height - screenInsets.top - screenInsets.bottom;
-		effectiveScreenArea.width = bounds.width - screenInsets.left - screenInsets.right;
+		effectiveScreenArea.width = gc.getBounds().width; // - screenInsets.left - screenInsets.right;
 		this.setBounds(effectiveScreenArea);
 		cal = Calendar.getInstance();
+		jdcanfang.setDate(cal.getTime());
 		cal.add(Calendar.MONTH, 1);
-		jdende = new JDateChooser(cal.getTime());
+		jdende.setDate(cal.getTime());
+		// new JDateChooser(cal.getTime());
 		listmesse.setModel(dfmesse);
 		listmedi.setModel(dfmedi);
 		// setVisible(true);
-		
+
 		int wviertel = width / 4;
 		int linieunten = heigth / 10;
-		//int linienoben = linieunten * (1 + 1 / 3);// 1+1/3 Abstand wie bei linieunten
+		// int linienoben = linieunten * (1 + 1 / 3);// 1+1/3 Abstand wie bei linieunten
 		int abstandlinie = heigth / 100;
 		int abstandbreit = width / 100;
-		//int abstandindreibuttons = (wviertel - abstandlinie) / 3;
-		//int breite = wviertel / 3;
+		// int abstandindreibuttons = (wviertel - abstandlinie) / 3;
+		// int breite = wviertel / 3;
 		@SuppressWarnings("unused")
 		int panelWith = 2 * wviertel - 2 * abstandlinie;
 		@SuppressWarnings("unused")
 		int panelHight = heigth - abstandbreit - linieunten;
-		panel = new  APanel();//new MediAnzeigen("leer");
+		panel = new APanel();// new MediAnzeigen("leer");
 		graphics(width, heigth);
 		contentPane.setBounds(new Rectangle(0, 0, 800, 600));
 		contentPane.setBounds(0, 0, width, heigth);
@@ -155,6 +159,7 @@ public class WAlleMessen extends JFrame {
 		contentPane.add(scrollPanemedi);
 		scrollPanemedi.setViewportView(listmedi);
 		scrollPanemedi.setColumnHeaderView(lblAlleMessdiener);
+
 		messescrollPanel.setColumnHeaderView(lblAlleMesen);
 		contentPane.add(medipanel);
 		medipanel.setLayout(null);
@@ -164,7 +169,7 @@ public class WAlleMessen extends JFrame {
 		plusmedi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				WMediBearbeitenFrame wmbf = new WMediBearbeitenFrame(new WMainFrame());//new WMainFrame(false));
+				WMediBearbeitenFrame wmbf = new WMediBearbeitenFrame(new WMainFrame());// new WMainFrame(false));
 				wmbf.setVisible(true);
 				// setzeinPanel(wmbf.getPanel());
 			}
@@ -172,7 +177,7 @@ public class WAlleMessen extends JFrame {
 		medipanel.add(plusmedi);
 		medipanel.add(minusmedi);
 		medipanel.add(augemedi);
-		augemedi.setIcon(new ImageIcon(References.class.getResource("auge.png")));
+		augemedi.setIcon(new ImageIcon(References.class.getResource("auge_new2.png")));
 		augemedi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -181,6 +186,8 @@ public class WAlleMessen extends JFrame {
 
 		// abstandbreit, abstandlinie, wviertel-2*abstandlinie,
 		// heigth-abstandbreit-linieunten);
+		//messestandarterzeugen.setFont(f);
+		btnPlanErstellen.setIcon(new ImageIcon(WAlleMessen.class.getResource("/messen_erstellen.png")));
 		contentPane.add(messescrollPanel);
 		messescrollPanel.setViewportView(listmesse);
 		contentPane.add(messestandarterzeugen);
@@ -192,10 +199,10 @@ public class WAlleMessen extends JFrame {
 		contentPane.add(messepanel);
 		messepanel.add(plusmesse);
 		messepanel.add(minusmesse);
-		augemesse.setIcon(new ImageIcon(WAlleMessen.class.getResource("/auge.png")));
+		augemesse.setIcon(new ImageIcon(References.class.getResource("auge_new2.png")));
 		btnEinstellungen.setIcon(new ImageIcon(WAlleMessen.class.getResource("/settings.png")));
 		messepanel.add(augemesse);
-		btnStandart.setIcon(new ImageIcon(WAlleMessen.class.getResource("/eigensacftenbearbeiten.png")));
+		btnStandart.setIcon(new ImageIcon(References.class.getResource("eigensacftenbearbeiten_new.png")));
 		contentPane.add(btnStandart);
 		addComponentListener(new ComponentAdapter() {
 
@@ -210,33 +217,59 @@ public class WAlleMessen extends JFrame {
 				setVisible(true);
 			}
 		});
-		farbe(getContentPane());
+		farbe(this.getContentPane());
 		// pack();: --> dosn't work
 	}
+
 	/**
 	 * @wbp.parser.constructor
 	 */
 	public WAlleMessen(boolean onlyWindowbilderUse) {
-		this(1600,900);
+		this(1600, 900, new DateienVerwalter());
 		setBounds(0, 0, 1600, 900);
 	}
 
-
 	private void farbe(Component c) {
-		/*
-		 * if (c instanceof JPanel) { c.setBackground(standart); for (Component c2 :
-		 * ((JPanel) c).getComponents()) { farbe(c2); } } else if (c instanceof JLabel)
-		 * { c.setBackground(hell0); // c.setForeground(Color.WHITE); } else if (c
-		 * instanceof JButton) { // c.setForeground(Color.WHITE);
-		 * c.setBackground(hell0); // c.setForeground(Color.WHITE);
-		 *
-		 * } else if (c instanceof JScrollPane) { // lblAlleMesen.setForeground(hell0);
-		 * lblAlleMesen.setBackground(dunkel2); //
-		 * lblAlleMessdiener.setForeground(hell0);
-		 * lblAlleMessdiener.setBackground(dunkel2); farbe(((JScrollPane)
-		 * c).getColumnHeader()); } else if (c instanceof JViewport) {
-		 * c.setBackground(hell0); // c.setBackground(dunkel2); //}
-		 */
+		System.out.println(c.getClass());
+		if (c instanceof JPanel) {
+			for (Component c2 : ((JPanel) c).getComponents()) {
+				farbe(c2);
+			}
+			c.setBackground(dunkel1);
+		}
+		else if (c instanceof JButton) {
+			c.setForeground(standart);
+			c.setBackground(dunkel1);
+			((JButton) c).setBorder(b);
+			if (((JButton) c).getText().length() == 1) {
+				c.setFont(f);
+			}			
+		}
+		else if (c instanceof JScrollPane) {
+			farbe(((JScrollPane) c).getViewport());
+			farbe(((JScrollPane) c).getColumnHeader());
+		}
+		else if (c instanceof JLabel) {
+			c.setForeground(standart);
+			c.setBackground(dunkel1);
+			if (((JLabel)c).getText().length() == 1) {
+			c.setFont(f);
+			}
+			//((JLabel) c).setBorder(b);
+		}else if (c instanceof JList<?>) {
+			c.setForeground(standart);
+		}
+		else if (c instanceof JViewport) {
+			Font fs  = new Font("SansSerif", 0, 26);
+			c.setFont(fs);
+			c.setBackground(standart);
+			c.setForeground(dunkel1);
+		}
+		else if (c instanceof JTextFieldDateEditor) {
+			((JTextFieldDateEditor) c).setBorder(b);
+			c.setBackground(standart);
+			c.setForeground(dunkel1);
+		}
 	}
 
 	private void graphics(int width, int heigth) {
@@ -248,22 +281,19 @@ public class WAlleMessen extends JFrame {
 		int linienoben = linieunten * (1 + 1 / 3);// 1+1/3 Abstand wie bei linieunten
 		int abstandlinie = heigth / 400;
 		int abstandbreit = width / 100;
-		int abstandindreibuttons = (wviertel - 2*abstandbreit) / 3;
+		int abstandindreibuttons = (wviertel - 2 * abstandbreit) / 3;
 		int breite = wviertel / 3;
-		btnEinstellungen.setBounds((int) (2.5 * wviertel) - wviertel - (breite / 2), heigth - linieunten- abstandlinie/2, breite,
-				linieunten - 5 * abstandlinie);
-		scrollPanemedi.setBounds(abstandbreit, abstandlinie, wviertel - 2 * abstandbreit,//abstandlinie,
-				(int) (heigth - linieunten -2*abstandlinie) );//abstandbreit - linieunten);
+		btnEinstellungen.setBounds((int) (2.5 * wviertel) - wviertel - (breite / 2),
+				heigth - linieunten - abstandlinie / 2, breite, linieunten - 5 * abstandlinie);
+		scrollPanemedi.setBounds(abstandbreit, abstandlinie, wviertel - 2 * abstandbreit, // abstandlinie,
+				heigth - abstandbreit - linieunten);// abstandbreit - linieunten);
 		medipanel.setVisible(false);
-		messepanel.setBorder(new BevelBorder(BevelBorder.RAISED, Color.BLACK, null, null, null));
-		medipanel.setBounds(abstandbreit, heigth - linieunten - abstandlinie - abstandlinie/2, wviertel - 2 * abstandbreit,
-				linieunten);
+		medipanel.setBounds(abstandbreit, heigth - linieunten - abstandlinie - abstandlinie / 2,
+				wviertel - 2 * abstandbreit, linieunten);
 		medipanel.setVisible(true);
 
-		panel.setBounds(wviertel + (abstandbreit / 2), abstandlinie, width-2*wviertel-6*abstandbreit,
+		panel.setBounds((int) (wviertel + (abstandbreit * 0.5)), abstandlinie, 2 * wviertel - 2 * abstandbreit,
 				heigth - abstandbreit - linieunten);
-		panel.setVisible(true);
-		System.out.println(panel.getBounds());
 		plusmedi.setBounds(abstandbreit - abstandindreibuttons / 10, abstandlinie,
 				abstandindreibuttons - abstandindreibuttons / 10, linieunten - 5 * abstandlinie);
 		minusmedi.setBounds(abstandbreit - abstandindreibuttons / 10 + abstandindreibuttons, abstandlinie,
@@ -272,12 +302,11 @@ public class WAlleMessen extends JFrame {
 				abstandindreibuttons - abstandindreibuttons / 10 - 1, linieunten - 5 * abstandlinie);
 		messescrollPanel.setBounds(3 * wviertel, abstandlinie + linienoben, wviertel - 2 * abstandbreit,
 				heigth - abstandbreit - linienoben - linienoben);
-		btnPlanErstellen.setIcon(new ImageIcon(WAlleMessen.class.getResource("/messen_erstellen.png")));
 
-		btnPlanErstellen.setBounds((int) (2.5 * wviertel) - (breite / 2), heigth - linieunten- abstandlinie/2, breite,
-				linieunten - 5 * abstandlinie);
-		messepanel.setBounds(3 * wviertel,  heigth - linieunten - abstandlinie - abstandlinie/2, wviertel - 2 * abstandbreit,
-				linieunten);
+		btnPlanErstellen.setBounds((int) (2.5 * wviertel) - (breite / 2), heigth - linieunten - abstandlinie / 2,
+				breite, linieunten - 5 * abstandlinie);
+		messepanel.setBounds(3 * wviertel, heigth - linieunten - abstandlinie - abstandlinie / 2,
+				wviertel - 2 * abstandbreit, linieunten);
 		plusmesse.setBounds(abstandbreit - abstandindreibuttons / 10, abstandlinie,
 				abstandindreibuttons - abstandindreibuttons / 10, linieunten - 5 * abstandlinie);
 		minusmesse.setBounds(abstandbreit - abstandindreibuttons / 10 + abstandindreibuttons, abstandlinie,
@@ -291,23 +320,24 @@ public class WAlleMessen extends JFrame {
 		linienoben = linienoben + 1 - 1;
 		abstandlinie = abstandlinie + 1 - 1;
 		abstandbreit = abstandbreit + 1 - 1;
-		lblVon.setBounds((int) (wviertel * 3+(0.5)*abstandbreit), abstandlinie, achtel - abstandbreit, linienoben / 2 - abstandlinie);
-		lblBis.setBounds((int) (wviertel * 3+(0.5)*abstandbreit), abstandlinie + linienoben / 2, achtel - abstandbreit,
+		lblVon.setBounds((int) (wviertel * 3 + (0.5) * abstandbreit), abstandlinie, achtel - abstandbreit,
 				linienoben / 2 - abstandlinie);
-		jdcanfang.setBounds(wviertel * 3 + achtel, abstandlinie, drittel, linienoben / 2 - abstandlinie);
+		lblBis.setBounds((int) (wviertel * 3 + (0.5) * abstandbreit), abstandlinie + linienoben / 2,
+				achtel - abstandbreit, linienoben / 2 - abstandlinie);
+		jdcanfang.setBounds((int) (wviertel * 3 + achtel * 0.7), abstandlinie, drittel, linienoben / 2 - abstandlinie);
 
 		// Rectangle b = jdcanfang.getBounds();
 		int lhalb = (linienoben / 2);
 		int posende = abstandlinie + lhalb;
-		jdende.setBounds(wviertel * 3 + achtel, posende, drittel, linienoben / 2 - abstandlinie);
-		messestandarterzeugen.setBounds(wviertel * 3 + achtel + drittel + abstandbreit, abstandlinie,
-noch schön machen				rest / 2 - abstandbreit, linienoben - abstandlinie);
-		btnStandart.setBounds((int) (wviertel * 3 + achtel + drittel + (0.5)*abstandbreit + rest / 2), abstandlinie,
-				(int) (rest / 2 - (0.5)*abstandbreit), linienoben - abstandlinie);
-		//f = new Font(lblBis.getFont().getName(), Font.PLAIN, width / 50);
+		jdende.setBounds((int) (wviertel * 3 + achtel * 0.7), posende, drittel, linienoben / 2 - abstandlinie);
+		messestandarterzeugen.setBounds((int) (wviertel * 3 + achtel * 0.65 + drittel + abstandbreit), abstandlinie,
+				rest / 2 - abstandbreit, linienoben - abstandlinie);
+		btnStandart.setBounds((int) (wviertel * 3 + achtel * 0.7 + drittel + (0.5) * abstandbreit + rest / 2),
+				abstandlinie, (int) (rest / 2 - (0.5) * abstandbreit), linienoben - abstandlinie);
+		// f = new Font(lblBis.getFont().getName(), Font.PLAIN, width / 50);
 		setTextEqualsToSize(getContentPane());
 		Utilities.setFrameMittig(width, heigth);
-		Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"-------------------------");
+		Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "-------------------------");
 	}
 
 	private void setTextEqualsToSize(Component c) {
@@ -318,20 +348,20 @@ noch schön machen				rest / 2 - abstandbreit, linienoben - abstandlinie);
 		} else if (c instanceof JLabel) {
 			int h = c.getHeight();
 			int font = h / 2;
-			System.out.println(font + " " + ((JLabel)c).getText());
+			System.out.println(font + " " + ((JLabel) c).getText());
 			c.getFont().deriveFont(Font.PLAIN, font);
 
 		} else if (c instanceof JButton) {
 			int h = c.getHeight();
 			int font = h / 2;
-			System.out.println(font + " " + ((JButton)c).getText());
+			System.out.println(font + " " + ((JButton) c).getText());
 			c.getFont().deriveFont(Font.PLAIN, font);
 		} else if (c instanceof JScrollPane) {
 			setTextEqualsToSize(((JScrollPane) c).getColumnHeader());
 		} else if (c instanceof JViewport) {
 			int h = c.getHeight();
 			int font = h / 2;
-			System.out.println(font + " " + ((JViewport)c).getName());
+			System.out.println(font + " " + ((JViewport) c).getName());
 			c.getFont().deriveFont(Font.PLAIN, font);
 		}
 
