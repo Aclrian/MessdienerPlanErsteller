@@ -253,6 +253,8 @@ public class WMediBearbeitenFrame extends JFrame {
 		moben = null;
 		btnffneMedi.setEnabled(true);
 		btnNeuerMedi.setEnabled(true);
+		Messverhalten mv = new Messverhalten(wmf);
+		table.setMessverhalten(mv, wmf);
 		setzeleer(wmf);
 	}
 
