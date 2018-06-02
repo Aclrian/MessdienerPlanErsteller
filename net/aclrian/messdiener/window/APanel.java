@@ -9,13 +9,17 @@ import javax.swing.JPanel;
 public class APanel extends JPanel {
 
 	private static final long serialVersionUID = -175407300858987490L;
+	private int dfbtnwidth;
+	private int dfbtnheight;
 
 	/**
 	 * Create the panel.
 	 */
-	public APanel() {
+	public APanel(int defaultButtonwidth, int defaultButtonheight) {
 		setLayout(null);
 		setBorder(WAlleMessen.b);
+		this.setDfbtnwidth(defaultButtonwidth);
+		this.setDfbtnheight(defaultButtonheight);
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -26,11 +30,26 @@ public class APanel extends JPanel {
 				setVisible(true);
 			}
 		});
-		
 	}
 
 	protected void graphics(int width, int heigth) {
 		
+	}
+
+	public int getDfbtnwidth() {
+		return dfbtnwidth;
+	}
+
+	private void setDfbtnwidth(int dfbtnwidth) {
+		this.dfbtnwidth = dfbtnwidth;
+	}
+
+	public int getDfbtnheight() {
+		return dfbtnheight;
+	}
+
+	private void setDfbtnheight(int dfbtnheight) {
+		this.dfbtnheight = dfbtnheight;
 	}
 	
 	
