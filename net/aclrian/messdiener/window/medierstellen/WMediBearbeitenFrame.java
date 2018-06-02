@@ -94,7 +94,7 @@ public class WMediBearbeitenFrame extends JFrame {
 		textFieldNachname = new JTextField();
 		btnNeuerMedi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				neuenMediAnlegen();
+				neuenMediAnlegen(wmf);
 			}
 		});
 		this.savepath = wmf.getEDVVerwalter().getSavepath();
