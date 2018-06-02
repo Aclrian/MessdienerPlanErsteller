@@ -13,11 +13,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.image.ColorModel;
-import java.awt.image.DirectColorModel;
+/*import java.awt.image.ColorModel;
+import java.awt.image.DirectColorModel;*/
 import java.util.Calendar;
 
-import javax.swing.AbstractButton;
+//import javax.swing.AbstractButton;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -289,7 +289,7 @@ public class WAlleMessen extends JFrame {
 		else if(c instanceof JCheckBox) {
 			c.setForeground(standart);
 			c.setBackground(dunkel1);
-			ColorModel cm = c.getColorModel();
+			//ColorModel cm = c.getColorModel();
 			/*if (cm instanceof DirectColorModel) {
 				DirectColorModel dcm = (DirectColorModel) cm;
 		//		dcm.
