@@ -165,12 +165,7 @@ public class WMainFrame extends JFrame {
 		cp = new JPanel();
 		cp.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(cp);
-
-		//
-
-		// util.getSpeicherort();
-
-		//
+		
 		JButton btnMessdienrer = new JButton("<html>Messdierner-<br />verwaltung</html>");
 		btnMessdienrer.setBounds(15, 17, 204, 124);
 		btnMessdienrer.addActionListener(new ActionListener() {
@@ -191,7 +186,7 @@ public class WMainFrame extends JFrame {
 		});
 
 		JLabel lblWarnung = new JLabel("<html>Bevor man einen Messdiener l" + References.oe
-				+ "scht, indem man seine Datei loescht,<br />sollte man dafuer sorgen, dass seine Freunde und Geschwister nicht mehr seine Freunde und Geschwister sind!</html>\n ");
+				+ "scht, indem man seine Datei l"+References.oe+"scht,<br />sollte man dafuer sorgen, dass seine Freunde und Geschwister nicht mehr seine Freunde und Geschwister sind!</html>\n ");
 		lblWarnung.setBounds(18, 153, 574, 45);
 		cp.setLayout(null);
 		cp.add(btnMessdienrer);
@@ -228,27 +223,12 @@ public class WMainFrame extends JFrame {
 		 */
 		// chckbxZeigeKonsole.setBounds(234, 118, 134, 23);
 		// cp.add(chckbxZeigeKonsole);
-
-		/*
-		 * //Sachen für den Logger log.setLevel(Level.ALL); FileHandler txt =
-		 * null; try { txt = new FileHandler("log_messdienerplanersteller.txt",
-		 * true); } catch (SecurityException | IOException e) {
-		 * e.printStackTrace(); } txt.setFormatter(new Formatter() {
-		 *
-		 * @Override public String format(LogRecord record) { String rtn =
-		 * this.formatMessage(record); SimpleDateFormat df = new
-		 * SimpleDateFormat("YYYY:MM:DD HH:mm:ss"); Date d = new
-		 * Date(record.getMillis()); String eins = df.format(d); String zwei =
-		 * record.getLevel().getName(); return "[" +eins +zwei + "]" + rtn
-		 * +"\n\r"; } }); log.addHandler(txt);
-		 */
 	}
 
 	public void pfarreibearbeiten() {
 		WriteFile_Pfarrei wf_pf = new WriteFile_Pfarrei(pf, this);
 		this.setVisible(false);
 		wf_pf.setVisible(true);
-
 	}
 
 	public WMainFrame(String s) {
@@ -256,7 +236,6 @@ public class WMainFrame extends JFrame {
 		util = new DateienVerwalter(s);
 		erneuern();
 		Utilities.logging(this.getClass(), "init", "Es wurden " + mediarray.size() + " gefunden!");
-
 	}
 
 	public void beabeiten() {
@@ -599,7 +578,7 @@ public class WMainFrame extends JFrame {
 	}
 
 	public static Image getIcon(References ref) {
-		return Toolkit.getDefaultToolkit().getImage(ref.getClass().getResource("title.png"));
+		return Toolkit.getDefaultToolkit().getImage(ref.getClass().getResource("title_32.png"));
 	}
 
 	@Override

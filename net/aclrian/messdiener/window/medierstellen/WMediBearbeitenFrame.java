@@ -94,7 +94,7 @@ public class WMediBearbeitenFrame extends JFrame {
 		textFieldNachname = new JTextField();
 		btnNeuerMedi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				neuenMediAnlegen();
+				neuenMediAnlegen(wmf);
 			}
 		});
 		this.savepath = wmf.getEDVVerwalter().getSavepath();
@@ -259,10 +259,12 @@ public class WMediBearbeitenFrame extends JFrame {
 	/**
 	 * legt einen neuen Messdiener an
 	 */
-	public void neuenMediAnlegen() {
+	public void neuenMediAnlegen(WMainFrame wmf) {
 		this.mobenWurdeGeoeffntet = false;
 		btnffneMedi.setEnabled(false);
 		btnNeuerMedi.setEnabled(false);
+		Messverhalten mv = new Messverhalten(wmf);
+		table.setMessverhalten(mv, wmf);
 		panel.setVisible(true);
 	}
 
