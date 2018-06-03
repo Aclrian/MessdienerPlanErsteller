@@ -15,7 +15,7 @@ public class AProgress {
 
 	public AProgress() {
 		ada = new AData(this);
-		WAlleMessen wam = new WAlleMessen();
+		WAlleMessen wam = new WAlleMessen(this);
 		wam.setVisible(true);
 	}
 	public AData getAda() {
@@ -41,6 +41,10 @@ public class AProgress {
 	public void fertig(WriteFile_Pfarrei writeFile_Pfarrei, Pfarrei pf, String s) {
 		// TODO Auto-generated method stub
 		
+	}
+	public void start() {
+		WAlleMessen wam = new WAlleMessen(this);
+		wam.setVisible(true);
 	}
 
 }
