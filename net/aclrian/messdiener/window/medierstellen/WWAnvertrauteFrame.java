@@ -15,6 +15,8 @@ import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
 import net.aclrian.messdiener.deafault.Messdiener;
+import net.aclrian.messdiener.newy.progress.AData;
+import net.aclrian.messdiener.newy.progress.AProgress;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
@@ -95,14 +97,14 @@ public class WWAnvertrauteFrame extends JFrame {
 	 * @param f
 	 *            Uebergeordnete Instanz von {@link WWAnvertrauteFrame}
 	 */
-	public WWAnvertrauteFrame(WMainFrame wmf, Messdiener me, WMediBearbeitenFrame wwf) {
+	public WWAnvertrauteFrame(AProgress ap, Messdiener me, WMediBearbeitenFrame wwf) {
 		
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setTitle("W"+References.ae+"hle Messdiener aus, die Geschwister oder Freunde werden sollen");
 		setBounds(Utilities.setFrameMittig(583, 495));
-		setIconImage(WMainFrame.getIcon(new References()));
-		this.savepath = wmf.getEDVVerwalter().getSavepath();
-		this.alleMedis = wmf.getAlleMessdiener();
+		setIconImage(References.getIcon());
+		this.savepath = ap.getAda().getUtil().getSavepath();
+		this.alleMedis = ap.getAda().getMediarray();
 
 		getContentPane().setLayout(null);
 
@@ -157,7 +159,7 @@ public class WWAnvertrauteFrame extends JFrame {
 
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				speichern(wwf, wmf);
+				speichern(wwf, ap);
 			}
 		});
 		btnSave.setBounds(232, 396, 117, 25);
@@ -192,23 +194,23 @@ public class WWAnvertrauteFrame extends JFrame {
 
 		if (me.getFreunde() != null) {
 			for (String freundid : me.getFreunde()) {
-				bearbeiteAnvertrauter(freundid, false, wmf);
+				bearbeiteAnvertrauter(freundid, false);
 			}
 			// Geschwisterueberpruefung: fuegt geschwister zu geschwiearrayund loescht die
 			// Messdiener vom hauptarray
 			if (me.getGeschwister() != null) {
 				for (String geschwiid : me.getGeschwister()) {
-					bearbeiteAnvertrauter(geschwiid, true, wmf);
+					bearbeiteAnvertrauter(geschwiid, true);
 				}
 			}
 		}
 	}
 
-	public void bearbeiteAnvertrauter(String id, boolean geschwister, WMainFrame wmf) {
+	public void bearbeiteAnvertrauter(String id, boolean geschwister) {
 		Utilities.logging(this.getClass(), "bearbeiteAnvertraute", id + " ist dran.geschwister: " + geschwister);
 		if (id != null && !id.equals("") && !id.equals("LEER")) {
-			if (findeID(id, wmf) != new Messdiener()) {
-				Messdiener geschwi = findeID(id, wmf);
+			if (findeID(id) != new Messdiener()) {
+				Messdiener geschwi = findeID(id);
 				if (geschwi != m && geschwi != me) {
 					if (geschwister) {
 						geschwiarray.add(geschwi);
@@ -246,7 +248,7 @@ public class WWAnvertrauteFrame extends JFrame {
 	 * @return ggf. Messdiener mit der id von <b>freundid</b>
 	 */
 
-	public Messdiener findeID(String freundid, WMainFrame wmf) {
+	public Messdiener findeID(String freundid) {
 		for (Messdiener messdiener : alleMedis) {
 			if (messdiener.makeId().equals(freundid)) {
 				return messdiener;
@@ -350,7 +352,8 @@ public class WWAnvertrauteFrame extends JFrame {
 	/**
 	 * speichert den Messdiener und alle seinen neuenGeschwister und Freunde
 	 */
-	public void speichern(WMediBearbeitenFrame wwf, WMainFrame wmf) {
+	public void speichern(WMediBearbeitenFrame wwf, AProgress ap) {
+		AData ada = ap.getAda();
 		int gsize = geschwiarray.size();
 		int fsize = friendarray.size();
 
@@ -358,7 +361,7 @@ public class WWAnvertrauteFrame extends JFrame {
 
 		if (geschwiarray.size() <= 3 && friendarray.size() <= 5) {
 			// ME
-			// alte löschen
+			// alte loeschen
 			for (Messdiener messdiener : hauptarray) {
 				String[] ids = messdiener.getFreunde();
 				for (int i = 0; i < ids.length; i++) {
@@ -372,7 +375,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						messdiener.setFreunde(ids);
 						WriteFile wf = new WriteFile(messdiener, savepath);
 						try {
-							wf.toXML(wmf);
+							wf.toXML(ada);
 						} catch (IOException e) {
 				 			new Erroropener(e.getMessage());
 							e.printStackTrace();
@@ -392,7 +395,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						messdiener.setGeschwister(gids);
 						WriteFile wf = new WriteFile(messdiener, savepath);
 						try {
-							wf.toXML(wmf);
+							wf.toXML(ada);
 						} catch (IOException e) {
 				 			new Erroropener(e.getMessage());
 							e.printStackTrace();
@@ -419,7 +422,7 @@ public class WWAnvertrauteFrame extends JFrame {
 			// me speichern
 			WriteFile rf = new WriteFile(me, savepath);
 			try {
-				rf.toXML(wmf);
+				rf.toXML(ada);
 			} catch (IOException e) {
 	 			new Erroropener(e.getMessage());
 				e.printStackTrace();
@@ -447,7 +450,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						geschwister.setGeschwister(ggs);
 						WriteFile wr = new WriteFile(geschwister, savepath);
 						try {
-							wr.toXML(wmf);
+							wr.toXML(ada);
 						} catch (IOException e) {
 							new Erroropener(e.getMessage());
 							e.printStackTrace();
@@ -482,7 +485,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						freund.setFreunde(ggs);
 						WriteFile wr = new WriteFile(freund, savepath);
 						try {
-							wr.toXML(wmf);
+							wr.toXML(ada);
 						} catch (IOException e) {
 				 			new Erroropener(e.getMessage());
 							e.printStackTrace();
@@ -493,8 +496,8 @@ public class WWAnvertrauteFrame extends JFrame {
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "Freunde wurden gespeichert!");
 			this.setEnabled(false);
 			this.setVisible(false);
-			wwf.setback(me, this, wmf);
-			wmf.erneuern();
+			wwf.setback(me, this, ada);
+			ada.erneuern(ap);
 			this.dispose();
 		} else if (gsize > 3) {
 			new Erroropener("Man kann nur maximal 3 Geschwister haben");

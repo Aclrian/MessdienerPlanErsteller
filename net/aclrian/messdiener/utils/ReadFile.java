@@ -13,10 +13,10 @@ import org.w3c.dom.NodeList;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messverhalten;
 import net.aclrian.messdiener.deafault.StandartMesse;
-import net.aclrian.messdiener.window.WMainFrame;
+import net.aclrian.messdiener.newy.progress.AData;
 
 /**
- * lieÃŸt aus einer xml-Datei den Messdiener und gibt diesen zuÃ¼rck
+ * liesst aus einer xml-Datei den Messdiener und gibt diesen zurueck
  * 
  * @author Aclrian
  *
@@ -27,7 +27,7 @@ public class ReadFile {
 	 * @param pfadMitDateiundmitEndung
 	 * @return den ausgelesenen Messdiener
 	 */
-	public Messdiener getMessdiener(String pfadMitDateiundmitEndung, WMainFrame wmf) {
+	public Messdiener getMessdiener(String pfadMitDateiundmitEndung, AData ada) {
 		Messdiener me = new Messdiener();
 		try {
 			File fXmlFile = new File(pfadMitDateiundmitEndung);
@@ -63,16 +63,16 @@ public class ReadFile {
 								boolean istLeiter = Boolean
 										.valueOf(eElement.getElementsByTagName("Leiter").item(0).getTextContent());
 								// Messverhalten
-								Messverhalten dienverhalten = new Messverhalten(wmf);
-								for (StandartMesse sm : wmf.getStandardmessen()) {
-									if (wmf.getSonstiges().isSonstiges(sm)) {
+								Messverhalten dienverhalten = new Messverhalten(ada);
+								for (StandartMesse sm : ada.getPfarrei().getStandardMessen()) {
+									if (AData.sonstiges.isSonstiges(sm)) {
 										continue;
 									}
 									String sname = sm.toReduziertenString();
-									//Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"Es wird f�r " + sname + " gesucht nach Eintr�gen");
+									//Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"Es wird fuer " + sname + " gesucht nach Eintr�gen");
 									String value = eElement.getElementsByTagName(sname).item(0).getTextContent();
 									boolean kann = value.equals("true");
-									dienverhalten.editiereBestimmteMesse(wmf, sm, kann);
+									dienverhalten.editiereBestimmteMesse(ada, sm, kann);
 								}
 /*
 								dienverhalten.editiereBestimmteMesse(wmf, Holen.Di_abend, Boolean.valueOf(

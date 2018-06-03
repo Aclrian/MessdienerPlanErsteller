@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 import net.aclrian.messdiener.window.planerstellen.WMessenHinzufuegen;
 
 public class WMediAuswaehlen extends JFrame {
@@ -27,7 +26,7 @@ public class WMediAuswaehlen extends JFrame {
 	 */
 	public WMediAuswaehlen(ArrayList<Messdiener> hauptarray, boolean nurleiter, WMessenHinzufuegen wmh) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setIconImage(WMainFrame.getIcon(new References()));
+		this.setIconImage(References.getIcon());
 		setBounds(Utilities.setFrameMittig(450, 300));
 		setTitle("W"+References.ae+"hle Leiter, die eingeteilt werden sollen");
 		if (!nurleiter) {

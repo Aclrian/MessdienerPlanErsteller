@@ -67,7 +67,7 @@ import javax.swing.*;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
-import net.aclrian.messdiener.window.WMainFrame;
+import net.aclrian.messdiener.newy.progress.AData;
 
 import java.beans.*;
 import java.util.ArrayList;
@@ -121,7 +121,7 @@ public class ProgressBarDemo extends JPanel implements ActionListener, PropertyC
 		}
 	}
 
-	public ProgressBarDemo(Messdiener[] medis, ArrayList<Messe> messen, WMainFrame wmf) {
+	public ProgressBarDemo(Messdiener[] medis, ArrayList<Messe> messen, AData ada) {
 		super(new BorderLayout());
 		this.medis = medis;
 		this.messen = messen;
@@ -177,13 +177,13 @@ public class ProgressBarDemo extends JPanel implements ActionListener, PropertyC
 	 * Create the GUI and show it. As with all GUI code, this must run on the
 	 * event-dispatching thread.
 	 */
-	public static void createAndShowGUI(Messdiener[] medis, ArrayList<Messe> messen, WMainFrame wmf) {
+	public static void createAndShowGUI(Messdiener[] medis, ArrayList<Messe> messen, AData ada) {
 		// Create and set up the window.
 		JFrame frame = new JFrame("ProgressBarDemo");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		// Create and set up the content pane.
-		JComponent newContentPane = new ProgressBarDemo(medis, messen, wmf);
+		JComponent newContentPane = new ProgressBarDemo(medis, messen, ada);
 		newContentPane.setOpaque(true); // content panes must be opaque
 		frame.setContentPane(newContentPane);
 

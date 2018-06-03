@@ -13,6 +13,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.aclrian.messdiener.differenzierung.Pfarrei;
 import net.aclrian.messdiener.differenzierung.ReadFile_Pfarrei;
+import net.aclrian.messdiener.newy.progress.AData;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.window.WMainFrame;
@@ -39,9 +40,9 @@ public class DateienVerwalter {
 		this.setSavepath(savepath);
 	}
 
-	public Pfarrei getPfarrei(WMainFrame wmf) {
+	public Pfarrei getPfarrei() {
 
-		File f = getPfarreFile(wmf);
+		File f = getPfarreFile();
 System.out.println(f.toString() + "!");
 		Pfarrei rtn = ReadFile_Pfarrei.getPfarrei(f.getAbsolutePath());
 		if(rtn == null) {
@@ -51,8 +52,8 @@ System.out.println(f.toString() + "!");
 			return rtn;
 		}
 	}
-
-	private File getPfarreFile(WMainFrame wmf) {
+	
+	private File getPfarreFile() {
 		ArrayList<File> files = new ArrayList<File>();
 		File f = new File(savepath);
 		for (File file : f.listFiles()) {
@@ -173,13 +174,13 @@ System.out.println(f.toString() + "!");
 		return files;
 	}
 
-	public Messdiener[] getAlleMedisVomOrdner(String path, WMainFrame wmf) {// 1
+	public Messdiener[] getAlleMedisVomOrdner(String path, AData ada) {// 1
 		ArrayList<File> files = getAlleMessdienerFiles(path);
 		Messdiener[] medis = new Messdiener[files.size()];
 		int i = 0;
 		for (File file : files) {
 			ReadFile rf = new ReadFile();
-			medis[i] = rf.getMessdiener(file.getAbsolutePath(), wmf);
+			medis[i] = rf.getMessdiener(file.getAbsolutePath(), ada);
 			i++;
 		}
 		return medis;
@@ -189,13 +190,13 @@ System.out.println(f.toString() + "!");
 	 * 
 	 * @return Messdiener als Array
 	 */
-	public Messdiener[] getAlleMedisVomOrdner(WMainFrame wmf) {
+	public Messdiener[] getAlleMedisVomOrdner(AData ada) {
 		ArrayList<File> files = getAlleMessdienerFiles();
 		Messdiener[] medis = new Messdiener[files.size()];
 		int i = 0;
 		for (File file : files) {
 			ReadFile rf = new ReadFile();
-			medis[i] = rf.getMessdiener(file.getAbsolutePath(), wmf);
+			medis[i] = rf.getMessdiener(file.getAbsolutePath(), ada);
 			i++;
 		}
 		return medis;
@@ -205,12 +206,12 @@ System.out.println(f.toString() + "!");
 	 * 
 	 * @return Messdiener als List
 	 */
-	public ArrayList<Messdiener> getAlleMedisVomOrdnerAlsList(WMainFrame wmf) {
+	public ArrayList<Messdiener> getAlleMedisVomOrdnerAlsList(AData ada) {
 		ArrayList<File> files = getAlleMessdienerFiles();
 		ArrayList<Messdiener> medis = new ArrayList<Messdiener>();
 		for (File file : files) {
 			ReadFile rf = new ReadFile();
-			medis.add(rf.getMessdiener(file.getAbsolutePath(), wmf));
+			medis.add(rf.getMessdiener(file.getAbsolutePath(), ada));
 		}
 		return medis;
 	}
@@ -219,13 +220,13 @@ System.out.println(f.toString() + "!");
 	 * 
 	 * @return Messdiener als List
 	 */
-	public ArrayList<Messdiener> getAlleMedisVomOrdnerAlsList(String pfad, WMainFrame wmf) {
+	public ArrayList<Messdiener> getAlleMedisVomOrdnerAlsList(String pfad, AData ada) {
 		ArrayList<File> files = getAlleMessdienerFiles(pfad);
 		ArrayList<Messdiener> medis = new ArrayList<Messdiener>();
 		for (File file : files) {
 			ReadFile rf = new ReadFile();
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), file.getAbsolutePath());
-			medis.add(rf.getMessdiener(file.getAbsolutePath(), wmf));
+			medis.add(rf.getMessdiener(file.getAbsolutePath(), ada));
 		}
 		return medis;
 	}
@@ -237,19 +238,19 @@ System.out.println(f.toString() + "!");
 	 * @param savepath
 	 * @return
 	 */
-	public Messdiener sucheMessdiener(String geschwi, String savepath, WMainFrame wmf) {
+	public Messdiener sucheMessdiener(String geschwi, String savepath, AData ada) {
 		File file = new File(savepath + "//" + geschwi);
 		if (file.exists()) {
 			ReadFile rf = new ReadFile();
-			return rf.getMessdiener(file.getAbsolutePath(), wmf);
+			return rf.getMessdiener(file.getAbsolutePath(), ada);
 		} else {
 			return null;
 		}
 
 	}
 
-	public int getMaxAnzLeiter(String savepath, WMainFrame wmf) {
-		Messdiener[] medis = getAlleMedisVomOrdner(savepath, wmf);
+	public int getMaxAnzLeiter(String savepath, AData ada) {
+		Messdiener[] medis = getAlleMedisVomOrdner(savepath, ada);
 		int rtn = 0;
 		for (Messdiener me : medis) {
 			if (me.isIstLeiter()) {
@@ -259,8 +260,8 @@ System.out.println(f.toString() + "!");
 		return rtn;
 	}
 
-	public int getMaxAnzMedis(String savepath, WMainFrame wmf) {
-		Messdiener[] medis = getAlleMedisVomOrdner(savepath, wmf);
+	public int getMaxAnzMedis(String savepath, AData ada) {
+		Messdiener[] medis = getAlleMedisVomOrdner(savepath, ada);
 		int rtn = medis.length;
 		/*
 		 * for (Messdiener me : medis) { if (me.isIstLeiter()) { rtn--; } }
@@ -269,12 +270,12 @@ System.out.println(f.toString() + "!");
 
 	}
 
-	public Messdiener sucheMessdiener(String geschwi, Messdiener akt, WMainFrame wmf)
+	public Messdiener sucheMessdiener(String geschwi, Messdiener akt, AData ada)
 			throws Exception {
 		if (geschwi.equals("")) {
 			return null;
 		} else {
-			for (Messdiener messdiener : wmf.getAlleMessdiener()) {
+			for (Messdiener messdiener : ada.getMediarray()) {
 				if (messdiener.makeId().equals(geschwi)) {
 					return messdiener;
 				}

@@ -41,10 +41,10 @@ import net.aclrian.messdiener.deafault.Messe;
 import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.differenzierung.Einstellungen;
+import net.aclrian.messdiener.newy.progress.AData;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 import java.awt.Panel;
 
 public class WMessenErstellen extends JFrame {
@@ -70,10 +70,10 @@ public class WMessenErstellen extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public WMessenErstellen(Messdiener[] me, ArrayList<Messe> m, WMainFrame wmf) {
+	public WMessenErstellen(Messdiener[] me, ArrayList<Messe> m, AData ada) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Messen anzeigen");
-		setIconImage(WMainFrame.getIcon(new References()));
+		setIconImage(References.getIcon());
 		setBounds(Utilities.setFrameMittig(987, 460));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -81,7 +81,7 @@ public class WMessenErstellen extends JFrame {
 		contentPane.setLayout(null);
 		this.me = me;
 		this.messen = m;
-		neuerAlgorythmus(wmf);
+		neuerAlgorythmus(ada);
 		StringBuffer s = new StringBuffer("<html>");
 		for (int i = 0; i<m.size(); i++) {
 			Messe messe = m.get(i);
@@ -300,7 +300,7 @@ public class WMessenErstellen extends JFrame {
         //f.deleteOnExit();
 	}
 
-	public void neuerAlgorythmus(WMainFrame wmf) {
+	public void neuerAlgorythmus(AData ada) {
 		for (Messdiener messdiener : me) {
 			hauptarray.add(messdiener);
 		}
@@ -311,7 +311,7 @@ public class WMessenErstellen extends JFrame {
 		System.out.println("-------");
 		// Dap und zvmzwm fruehzeitg erkennen und beheben
 		// ArrayList<ArrayList<E>>
-		for (StandartMesse sm : wmf.getStandardmessen()) {
+		for (StandartMesse sm : ada.getPfarrei().getStandardMessen()) {
 			int anz_real = 0;
 			int anz_monat = 0;
 			ArrayList<Messdiener> array = new ArrayList<Messdiener>();
@@ -321,8 +321,8 @@ public class WMessenErstellen extends JFrame {
 					if (medi.isIstLeiter()) {
 						id++;
 					}
-					int ii = wmf.getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
-					if (medi.getDienverhalten().getBestimmtes(sm, wmf) && ii != 0) {
+					int ii = ada.getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
+					if (medi.getDienverhalten().getBestimmtes(sm, ada) && ii != 0) {
 						array.add(medi);
 						anz_monat += medi.getMessdatenDaten().getkannnochAnz();
 					}
@@ -334,7 +334,7 @@ public class WMessenErstellen extends JFrame {
 				start.setTime(messen.get(0).getDate());
 				start.add(Calendar.MONTH, 1);
 				for (Messe me : messen) {
-					if (wmf.getSonstiges().isSonstiges(me.getStandardMesse())) {
+					if (AData.sonstiges.isSonstiges(me.getStandardMesse())) {
 						if (me.getDate().after(start.getTime())) {
 							anz_real = anz_real + anz_monat;
 							start.setTime(me.getDate());
@@ -349,7 +349,7 @@ public class WMessenErstellen extends JFrame {
 						int medishinzufuegen = (int) Math.ceil((double) (fehlt / array.size()));//abrunden
 						Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "Es wurde abgerundet: "+ (double) (fehlt / array.size()) + "-->" + medishinzufuegen);
 						for (Messdiener messdiener : array) {
-							messdiener.getMessdatenDaten().addtomaxanz(medishinzufuegen, wmf, messdiener.isIstLeiter());
+							messdiener.getMessdatenDaten().addtomaxanz(medishinzufuegen, ada, messdiener.isIstLeiter());
 						}
 						Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "Zu den Messdienern, die am " + sm.getWochentag() + " um "
 								+ sm.getBeginn_stunde() + " koennen, werden + " + medishinzufuegen
@@ -383,24 +383,24 @@ public class WMessenErstellen extends JFrame {
 				}
 			}
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"Messe fertig: " + me.getID());
-			if (wmf.getSonstiges().isSonstiges(me.getStandardMesse())) {
-				this.einteilen(me, EnumAction.EinfachEinteilen, wmf);
+			if (AData.sonstiges.isSonstiges(me.getStandardMesse())) {
+				this.einteilen(me, EnumAction.EinfachEinteilen, ada);
 			} else {
-				this.einteilen(me, EnumAction.TypeBeachten, wmf);
+				this.einteilen(me, EnumAction.TypeBeachten, ada);
 			}
 		}
 	}
 
-	private void einteilen(Messe m, EnumAction act, WMainFrame wmf) {
+	private void einteilen(Messe m, EnumAction act, AData ada) {
 		switch (act) {
 		case EinfachEinteilen:
 			ArrayList<Messdiener> medis;
 			boolean zwang = false;
 			try {
-				medis = get(wmf.getSonstiges(), m, wmf);
+				medis = get(AData.sonstiges, m, ada);
 			} catch (Exception e) {
 				Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), e.getMessage());
-				medis = beheben(m, wmf);
+				medis = beheben(m, ada);
 				zwang = true;
 			}
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "\t" + medis.size() + " f"+References.ue+"r " + m.getnochbenoetigte());
@@ -412,10 +412,10 @@ public class WMessenErstellen extends JFrame {
 			ArrayList<Messdiener> medis2;
 			boolean zwang2 = false;
 			try {
-				medis2 = get(m.getStandardMesse(), m, wmf);
+				medis2 = get(m.getStandardMesse(), m, ada);
 			} catch (Exception e) {
 				Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), e.getMessage());
-				medis2 = beheben(m, wmf);
+				medis2 = beheben(m, ada);
 				zwang2 = true;
 			}
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "\t" + medis2.size() + " f"+References.ue+"r " + m.getnochbenoetigte());
@@ -490,8 +490,8 @@ public class WMessenErstellen extends JFrame {
 		}
 	}
 
-	public ArrayList<Messdiener> beheben(Messe m, WMainFrame wmf) {
-		ArrayList<Messdiener> rtn = get(m.getStandardMesse(), m.getDate(), wmf);
+	public ArrayList<Messdiener> beheben(Messe m, AData ada) {
+		ArrayList<Messdiener> rtn = get(m.getStandardMesse(), m.getDate(), ada);
 		if (rtn.size() < m.getnochbenoetigte()) {
 			ArrayList<Messdiener> prov = new ArrayList<Messdiener>();
 			hauptarray.sort(Messdiener.einteilen);
@@ -511,7 +511,7 @@ public class WMessenErstellen extends JFrame {
 			// Wenn wirklich keiner mehr kann
 			if (rtn.size() < m.getnochbenoetigte()) {
 				hauptarray.sort(Messdiener.einteilen);
-				Einstellungen e = wmf.getPfarrei().getSettings();
+				Einstellungen e = ada.getPfarrei().getSettings();
 				for (Messdiener messdiener : hauptarray) {
 					int id = 0;
 					if (messdiener.isIstLeiter()) {
@@ -535,7 +535,7 @@ public class WMessenErstellen extends JFrame {
 		return rtn;
 	}
 
-	public ArrayList<Messdiener> get(StandartMesse sm, Messe m, WMainFrame wmf) throws Exception {
+	public ArrayList<Messdiener> get(StandartMesse sm, Messe m, AData ada) throws Exception {
 		ArrayList<Messdiener> al = new ArrayList<Messdiener>();
 		for (Messdiener medi : hauptarray) {
 			// System.out.println(medi.makeId());
@@ -543,8 +543,8 @@ public class WMessenErstellen extends JFrame {
 			if (medi.isIstLeiter()) {
 				id++;
 			}
-			int ii = wmf.getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
-			if (medi.getDienverhalten().getBestimmtes(sm, wmf) == true && ii!=0
+			int ii = ada.getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
+			if (medi.getDienverhalten().getBestimmtes(sm, ada) == true && ii!=0
 					&& medi.getMessdatenDaten().kann(m.getDate(),false)) {
 				al.add(medi);
 			}
@@ -557,7 +557,7 @@ public class WMessenErstellen extends JFrame {
 		throw new NotEnughtMedis(m);
 	}
 
-	public ArrayList<Messdiener> get(StandartMesse sm, Date d, WMainFrame wmf) {
+	public ArrayList<Messdiener> get(StandartMesse sm, Date d, AData ada) {
 		ArrayList<Messdiener> al = new ArrayList<Messdiener>();
 		ArrayList<Messdiener> al2 = new ArrayList<Messdiener>();
 		for (Messdiener medi : hauptarray) {
@@ -566,8 +566,8 @@ public class WMessenErstellen extends JFrame {
 			if (medi.isIstLeiter()) {
 				id++;
 			}
-			int ii = wmf.getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
-			if (medi.getDienverhalten().getBestimmtes(sm, wmf) == true && ii != 0) {
+			int ii = ada.getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
+			if (medi.getDienverhalten().getBestimmtes(sm, ada) == true && ii != 0) {
 				if(medi.getMessdatenDaten().kann(d,false)) {
 				al.add(medi);
 				} else if(medi.getMessdatenDaten().kann(d,true)) {

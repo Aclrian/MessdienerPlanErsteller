@@ -18,9 +18,9 @@ import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
 
+import net.aclrian.messdiener.newy.progress.AProgress;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 
 public class WMessenFrame extends JFrame {
 
@@ -36,10 +36,10 @@ public class WMessenFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public WMessenFrame(WMainFrame wmf) {
+	public WMessenFrame(AProgress ap) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("W"+References.ae+"hle den Zeitraum f"+References.ue+"r den neuen Plan");
-		setIconImage(WMainFrame.getIcon(new References()));
+		setIconImage(References.getIcon());
 		setBounds(Utilities.setFrameMittig(433, 192));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -89,7 +89,7 @@ public class WMessenFrame extends JFrame {
 		JButton btnWeiter = new JButton("Weiter");
 		btnWeiter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				wmf.berechen();
+				ap.berechen();
 			}
 		});
 		btnWeiter.setBounds(148, 107, 117, 25);
@@ -108,7 +108,7 @@ public class WMessenFrame extends JFrame {
 			    });*/
 	}
 
-	public Date[] berechnen(WMainFrame wmf) {
+	public Date[] berechnen() {
 		Date[] d = new Date[2];
 		
 		d[0] = dateChooser.getDate();

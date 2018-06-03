@@ -122,7 +122,7 @@ public class WAlleMessen extends JFrame {
 		// int width = 1600;// Toolkit.getDefaultToolkit().getScreenSize().width;
 		// int heigth = 890;// Toolkit.getDefaultToolkit().getScreenSize().height;
 		// setBounds(0,0,533,534);
-		this.setIconImage(WMainFrame.getIcon(new References()));
+		this.setIconImage(References.getIcon());
 		setTitle("Messdienerplanersteller");
 		setBounds(0, 0, width, heigth);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -181,7 +181,7 @@ public class WAlleMessen extends JFrame {
 		plusmedi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				WMediBearbeitenFrame wmbf = new WMediBearbeitenFrame(new WMainFrame());// new WMainFrame(false));
+				WMediBearbeitenFrame wmbf = new WMediBearbeitenFrame();// new WMainFrame(false));
 				wmbf.setVisible(true);
 				// setzeinPanel(wmbf.getPanel());
 			}

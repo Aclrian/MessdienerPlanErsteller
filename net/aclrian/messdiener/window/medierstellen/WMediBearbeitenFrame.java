@@ -25,12 +25,13 @@ import javax.swing.border.EmptyBorder;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messverhalten;
+import net.aclrian.messdiener.newy.progress.AData;
+import net.aclrian.messdiener.newy.progress.AProgress;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.ReadFile;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 import net.aclrian.messdiener.window.auswaehlen.ATable;
 import javax.swing.ScrollPaneConstants;
 
@@ -79,12 +80,12 @@ public class WMediBearbeitenFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public WMediBearbeitenFrame(WMainFrame wmf) {
+	public WMediBearbeitenFrame(AProgress ap) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Messdienerverwaltung");
 		int weite = 595;
 		int hoehe = 320;
-		setIconImage(WMainFrame.getIcon(new References()));
+		setIconImage(References.getIcon());
 		setBounds(Utilities.setFrameMittig(weite, hoehe));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -94,15 +95,15 @@ public class WMediBearbeitenFrame extends JFrame {
 		textFieldNachname = new JTextField();
 		btnNeuerMedi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				neuenMediAnlegen(wmf);
+				neuenMediAnlegen(ap.getAda());
 			}
 		});
-		this.savepath = wmf.getEDVVerwalter().getSavepath();
+		this.savepath = ap.getAda().getUtil().getSavepath();
 		btnNeuerMedi.setBounds(10, 11, 118, 23);
 		contentPane.add(btnNeuerMedi);
 		btnffneMedi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				oeffne(wmf.getEDVVerwalter(), wmf);
+				oeffne(ap.getAda().getUtil(), ap.getAda());
 			}
 		});
 
@@ -120,7 +121,7 @@ public class WMediBearbeitenFrame extends JFrame {
 
 		btnAnvertraute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				wmf.getGeschwister();
+				ap.getGeschwister();
 			}
 		});
 
@@ -158,7 +159,7 @@ public class WMediBearbeitenFrame extends JFrame {
 
 		btnAbbrechen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abbrechen(wmf);
+				abbrechen(ap.getAda());
 			}
 		});
 		btnAbbrechen.setBounds(289, 211, 132, 35);
@@ -166,7 +167,7 @@ public class WMediBearbeitenFrame extends JFrame {
 
 		btnSpeichern.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				speichern(wmf);
+				speichern(ap);
 			}
 		});
 		btnSpeichern.setBounds(289, 123, 132, 35);
@@ -176,7 +177,7 @@ public class WMediBearbeitenFrame extends JFrame {
 		btnspeichernundSchlieen.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnspeichernundSchlieen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				speichernundschliessen(wmf);
+				speichernundschliessen(ap);
 			}
 		});
 		btnspeichernundSchlieen.setBounds(289, 167, 132, 35);
@@ -203,12 +204,12 @@ public class WMediBearbeitenFrame extends JFrame {
 		// btnspeichernundSchlieen, chckbxSaAbends}));
 	}
 
-	public void speichernundschliessen(WMainFrame wmf) {
-		DateienVerwalter u = wmf.getEDVVerwalter();
+	public void speichernundschliessen(AProgress ap) {
+		DateienVerwalter u = ap.getAda().getUtil();
 		if (textFieldVorname.getText().equals("") || textFieldNachname.getText().equals("")) {
 			new Erroropener("Unvollst"+References.ae+"ndige Eingabe!");
 		} else {
-			Messdiener me = getMeVonEingabe(wmf);
+			Messdiener me = getMeVonEingabe(ap.getAda());
 			if (mobenWurdeGeoeffntet) {
 				if (!moben.getNachnname().equals(me.getNachnname()) && !moben.getVorname().equals(me.getVorname())) {
 					File f = new File(mobensavepath);
@@ -233,38 +234,38 @@ public class WMediBearbeitenFrame extends JFrame {
 				this.savepath = u.waehleOrdner();
 			}
 
-			me.makeXML(savepath, wmf);
+			me.makeXML(savepath, ap.getAda());
 			JFrame f = new JFrame();
 			JOptionPane.showMessageDialog(f, "Erfolgreich gespeichert!", "Gespeichert!",
 					JOptionPane.INFORMATION_MESSAGE);
 			moben = null;
-			setzeleer(wmf);
+			setzeleer(ap.getAda());
 			chckbxLeiter.setSelected(false);
 			// this.mobenWurdeGeoeffntet= true;
 			// this.mobensavepath = savepath+ "//" + moben.makeId() + ".xml";
-			wmf.erneuern();
-			abbrechen(wmf);
+			ap.getAda().erneuern(ap);
+			abbrechen(ap.getAda());
 		}
 
 	}
 
-	public void abbrechen(WMainFrame wmf) {
+	public void abbrechen(AData ada) {
 		panel.setVisible(false);
 		moben = null;
 		btnffneMedi.setEnabled(true);
 		btnNeuerMedi.setEnabled(true);
-		setzeleer(wmf);
+		setzeleer(ada);
 	}
 
 	/**
 	 * legt einen neuen Messdiener an
 	 */
-	public void neuenMediAnlegen(WMainFrame wmf) {
+	public void neuenMediAnlegen(AData ada) {
 		this.mobenWurdeGeoeffntet = false;
 		btnffneMedi.setEnabled(false);
 		btnNeuerMedi.setEnabled(false);
-		Messverhalten mv = new Messverhalten(wmf);
-		table.setMessverhalten(mv, wmf);
+		Messverhalten mv = new Messverhalten(ada);
+		table.setMessverhalten(mv, ada);
 		panel.setVisible(true);
 	}
 
@@ -272,7 +273,7 @@ public class WMediBearbeitenFrame extends JFrame {
 	 * startet {@link WWAnvertraueFrame} fuer den aktuellen Messdiener nicht nur
 	 * fuer Geschwister
 	 */
-	public boolean getGeschwister(WMainFrame wmf) {
+	public boolean getGeschwister() {
 		boolean nullpointer = false;
 		try {
 			moben.makeId();
@@ -292,7 +293,7 @@ public class WMediBearbeitenFrame extends JFrame {
 	/**
 	 * oeffnet einen Messdiener
 	 */
-	public void oeffne(DateienVerwalter u, WMainFrame wmf) {
+	public void oeffne(DateienVerwalter u, AData ada) {
 		String pfadmitDaoE = null;
 		boolean abbruch = false;
 		try {
@@ -306,8 +307,8 @@ public class WMediBearbeitenFrame extends JFrame {
 		}
 		if (abbruch == false && pfadmitDaoE != null) {
 			ReadFile rf = new ReadFile();
-			Messdiener me = rf.getMessdiener(pfadmitDaoE, wmf);
-			setzeMedi(me, wmf);
+			Messdiener me = rf.getMessdiener(pfadmitDaoE, ada);
+			setzeMedi(me, ada);
 			moben = me;
 			panel.setVisible(true);
 			btnffneMedi.setEnabled(false);
@@ -320,12 +321,12 @@ public class WMediBearbeitenFrame extends JFrame {
 	/**
 	 * speichert einen neuen Messdiener
 	 */
-	public void speichern(WMainFrame wmf) {
-		DateienVerwalter u = wmf.getEDVVerwalter();
+	public void speichern(AProgress ap) {
+		DateienVerwalter u = ap.getAda().getUtil();
 		if (textFieldVorname.getText().equals("") || textFieldNachname.getText().equals("")) {
 			new Erroropener("Unvollst"+References.ae+"ndige Eingabe!");
 		} else {
-			Messdiener me = getMeVonEingabe(wmf);
+			Messdiener me = getMeVonEingabe(ap.getAda());
 			if (mobenWurdeGeoeffntet) {
 				if (!moben.getNachnname().equals(me.getNachnname()) && !moben.getVorname().equals(me.getVorname())) {
 					File f = new File(mobensavepath);
@@ -351,7 +352,7 @@ public class WMediBearbeitenFrame extends JFrame {
 				this.savepath = u.waehleOrdner();
 			}
 
-			me.makeXML(savepath, wmf);
+			me.makeXML(savepath, ap.getAda());
 			JFrame f = new JFrame();
 			JOptionPane.showMessageDialog(f,
 					"Erfolgreich gespeichert! Du kannst nun einen neuen Messdiener anlegen. Wenn du den alten bearbeiten willst musst du ihn erst  wieder "+References.oe+"ffnen!",
@@ -364,7 +365,7 @@ public class WMediBearbeitenFrame extends JFrame {
 			// this.mobensavepath = savepath+ "//" + moben.makeId() + ".xml";
 		}
 		textFieldNachname.requestFocus();
-		wmf.erneuern();
+		ap.getAda().erneuern(ap);
 	}
 
 	/**
@@ -373,12 +374,12 @@ public class WMediBearbeitenFrame extends JFrame {
 	 * 
 	 * @return neuer Messdiener
 	 */
-	public Messdiener getMeVonEingabe(WMainFrame wmf) {
+	public Messdiener getMeVonEingabe(AData ada) {
 		Messdiener me = new Messdiener();
 		if (mobenWurdeGeoeffntet) {
 			me = moben;
 		}
-		Messverhalten mv = table.getMessdaten(wmf);
+		Messverhalten mv = table.getMessdaten(ada);
 		Object jahr = spinnerEJahr.getModel().getValue();
 		int ja = Integer.parseInt(String.valueOf(jahr));
 		me.setzeAllesNeu(textFieldVorname.getText(), textFieldNachname.getText(), ja, chckbxLeiter.isSelected(), mv);
@@ -400,19 +401,19 @@ public class WMediBearbeitenFrame extends JFrame {
 	 * @param wmf
 	 */
 	private void setzeAlles(String vorname, String nachname, int Ejahr, boolean leiter, Messverhalten mv,
-			WMainFrame wmf) {
+			AData ada) {
 		textFieldVorname.setText(vorname);
 		textFieldNachname.setText(nachname);
 		spinnerEJahr.setValue(Ejahr);
 		chckbxLeiter.setSelected(leiter);
-		table.setMessverhalten(mv, wmf);
+		table.setMessverhalten(mv, ada);
 	}
 
 	/**
 	 * setzt die Benutzereingaben leer
 	 */
-	private void setzeleer(WMainFrame wmf) {
-		setzeAlles("", "", currentyear, false, new Messverhalten(wmf), wmf);
+	private void setzeleer(AData ada) {
+		setzeAlles("", "", currentyear, false, new Messverhalten(ada), ada);
 
 	}
 
@@ -422,8 +423,8 @@ public class WMediBearbeitenFrame extends JFrame {
 	 * @param me
 	 * @param wmf
 	 */
-	public void setzeMedi(Messdiener me, WMainFrame wmf) {
-		setzeAlles(me.getVorname(), me.getNachnname(), me.getEintritt(), me.isIstLeiter(), me.getDienverhalten(), wmf);
+	public void setzeMedi(Messdiener me, AData ada) {
+		setzeAlles(me.getVorname(), me.getNachnname(), me.getEintritt(), me.isIstLeiter(), me.getDienverhalten(), ada);
 		moben = me;
 	}
 
@@ -431,9 +432,9 @@ public class WMediBearbeitenFrame extends JFrame {
 		return moben;
 	}
 
-	public void setback(Messdiener me, WWAnvertrauteFrame wwAnvertrauteFrame, WMainFrame wmf) {
+	public void setback(Messdiener me, WWAnvertrauteFrame wwAnvertrauteFrame, AData ada) {
 		// Messdiener tmp = me;
-		abbrechen(wmf);
+		abbrechen(ada);
 		/*
 		 * setzeMedi(me); moben = me; panel.setVisible(true);
 		 * btnffneMedi.setEnabled(false); btnNeuerMedi.setEnabled(false);

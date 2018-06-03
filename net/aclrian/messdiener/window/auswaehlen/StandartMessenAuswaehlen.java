@@ -11,7 +11,7 @@ import javax.swing.ListSelectionModel;
 import net.aclrian.messdiener.deafault.Messverhalten;
 import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
-import net.aclrian.messdiener.window.WMainFrame;
+import net.aclrian.messdiener.newy.progress.AData;
 
 public class StandartMessenAuswaehlen extends JList<CheckboxListItem> {
 
@@ -74,22 +74,22 @@ public class StandartMessenAuswaehlen extends JList<CheckboxListItem> {
 		this.setVisible(true);
 	}
 
-	public Messverhalten getMessverhalten(WMainFrame wmf) {
-		Messverhalten mv = new Messverhalten(wmf);
+	public Messverhalten getMessverhalten(AData ada) {
+		Messverhalten mv = new Messverhalten(ada);
 		for (int i = 0; i < cbli.size(); i++) {
 			StandartMesse sm = stdm.get(i);
-			mv.editiereBestimmteMesse(wmf, sm, cbli.get(i).isSelected());
+			mv.editiereBestimmteMesse(ada, sm, cbli.get(i).isSelected());
 		}
 		return mv;
 	}
 
-	public void setMessverhalten(Messverhalten mv, WMainFrame wmf) {
+	public void setMessverhalten(Messverhalten mv, AData ada) {
 		dlm.removeAllElements();
 		for (int i = 0; i < cbli.size(); i++) {
 			StandartMesse sm = stdm.get(i);
 			//Utilities.logging(getClass(), getClass().getEnclosingMethod(), sm.toString()+": "+mv.getBestimmtes(sm, wmf));
 			//System.out.println(sm.toString());
-			boolean b = mv.getBestimmtes(sm, wmf);
+			boolean b = mv.getBestimmtes(sm, ada);
 			cbli.get(i).setSelected(b);
 			//System.out.println(cbli.get(i).toString());
 			dlm.addElement(cbli.get(i));

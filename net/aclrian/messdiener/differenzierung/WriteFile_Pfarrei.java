@@ -47,6 +47,7 @@ import org.w3c.dom.Element;
 import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.differenzierung.Setting.Attribut;
+import net.aclrian.messdiener.newy.progress.AProgress;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
@@ -158,14 +159,14 @@ public class WriteFile_Pfarrei extends JFrame {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public WriteFile_Pfarrei(WMainFrame wmf) {
-		start(wmf);
+	public WriteFile_Pfarrei(AProgress ap) {
+		start(ap);
 	}
 
-	public void start(WMainFrame wmf) {
+	public void start(AProgress ap) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Getting start...");
-		setIconImage(WMainFrame.getIcon(new References()));
+		setIconImage(References.getIcon());
 		setBounds(0, 0, 615, 365);
 		setBounds(Utilities.setFrameMittig(623, 375));
 		getContentPane().setLayout(null);
@@ -175,7 +176,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		btnSpeichern = new JButton("Speichern");
 		btnSpeichern.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				pfarreispeichern(wmf);
+				pfarreispeichern(ap);
 			}
 		});
 		btnSpeichern.setBounds(476, 302, 117, 25);
@@ -624,8 +625,8 @@ public class WriteFile_Pfarrei extends JFrame {
 		}
 	}
 
-	public WriteFile_Pfarrei(Pfarrei pf, WMainFrame wmf) {
-		start(wmf);
+	public WriteFile_Pfarrei(Pfarrei pf, AProgress ap) {
+		start(ap);
 		panel_1.setVisible(true);
 		setTitle("Einstellungen von " + pf.getName() + " " + References.ue + "berarbeiten");
 		textField.setText(pf.getName());
@@ -696,7 +697,7 @@ public class WriteFile_Pfarrei extends JFrame {
 
 	}
 
-	public void pfarreispeichern(WMainFrame wmf) {
+	public void pfarreispeichern(AProgress ap) {
 		String name = textField.getText();
 		if (name == null || name.equals("")) {
 			new Erroropener("Bitte vorher etwas eingeben");
@@ -712,15 +713,14 @@ public class WriteFile_Pfarrei extends JFrame {
 		if (error) {
 			return;
 		}
-		String s = wmf.getEDVVerwalter().getSavepath();// waehleOrdner();
+		String s = ap.getAda().getUtil().getSavepath();// waehleOrdner();
 		boolean hochaemter = new Boolean(rdbtnf12Ja.isSelected());
 		System.out.println(hochaemter);
 		if (s != null) {
 			Pfarrei pf = new Pfarrei(seting, sm, name, orte, typen, hochaemter); 
 			// writeFile(pf, s); wird in wmf.fertig gemacht
-			wmf.fertig(this, pf, s);
+			ap.fertig(this, pf, s);
 		}
-
 	}
 
 	public static void writeFile(Pfarrei pf, String pfad) {

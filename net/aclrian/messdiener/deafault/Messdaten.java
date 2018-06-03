@@ -8,10 +8,9 @@ import java.util.HashSet;
 
 import net.aclrian.messdiener.differenzierung.Einstellungen;
 import net.aclrian.messdiener.differenzierung.Setting;
-
+import net.aclrian.messdiener.newy.progress.AData;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 
 public class Messdaten {
 	private ArrayList<Messdiener> geschwister;
@@ -28,7 +27,7 @@ public class Messdaten {
 	private ArrayList<Date> ausgeteilt = new ArrayList<Date>();
 	private ArrayList<Date> pause	   = new ArrayList<Date>();
 
-	public Messdaten(Messdiener m, WMainFrame wmf, int aktdatum) {
+	public Messdaten(Messdiener m, AData ada, int aktdatum) {
 		geschwister = new ArrayList<Messdiener>();
 		freunde = new ArrayList<Messdiener>();
 		String[] geschwister = m.getGeschwister();
@@ -37,7 +36,7 @@ public class Messdaten {
 			if (!geschwister[i].equals("") && !geschwister[i].equals("LEER")
 					&& !geschwister[i].equals("Vorname, Nachname")) {
 				try {
-					medi = wmf.getEDVVerwalter().sucheMessdiener(geschwister[i], m, wmf);
+					medi = ada.getUtil().sucheMessdiener(geschwister[i], m, ada);
 					if (medi != null) {
 						this.geschwister.add(medi);
 					} else {
@@ -56,7 +55,7 @@ public class Messdaten {
 			Messdiener medi = null;
 			if (!geschwister[i].equals("")) {
 				try {
-					medi = wmf.getEDVVerwalter().sucheMessdiener(geschwister[i], m, wmf);
+					medi = ada.getUtil().sucheMessdiener(geschwister[i], m, ada);
 				} catch (Exception e) {
 					new Erroropener(e.getMessage());
 					e.printStackTrace();
@@ -66,7 +65,7 @@ public class Messdaten {
 				}
 			}
 		}
-		max_messen = berecheMax(m.getEintritt(), aktdatum, m.isIstLeiter(), wmf.getPfarrei().getSettings());
+		max_messen = berecheMax(m.getEintritt(), aktdatum, m.isIstLeiter(), ada.getPfarrei().getSettings());
 		anz_messen = 0;
 		insgesamtEingeteilt = 0;
 	}
@@ -113,9 +112,9 @@ public class Messdaten {
 			e.printStackTrace();
 		}
 	}
-	public void einteilenVorzeitig(Date date, boolean hochamt, Messdiener medi, WMainFrame wmf) {
+	public void einteilenVorzeitig(Date date, boolean hochamt, Messdiener medi, AData ada) {
 		try {
-			if (kannvorzeitg(date, medi.isIstLeiter(), wmf)) {
+			if (kannvorzeitg(date, medi.isIstLeiter(), ada)) {
 				eingeteilt.add(date);
 				pause.add(gettheNextDay(date));
 				anz_messen++;
@@ -185,10 +184,10 @@ public class Messdaten {
 		return max_messen;
 	}
 	
-	public boolean kannvorzeitg(Date date, boolean leiter, WMainFrame wmf) {
+	public boolean kannvorzeitg(Date date, boolean leiter, AData ada) {
 		boolean eins = kanndann(date,false);
 		boolean zwei = kannnoch();
-		if (leiter && wmf.getPfarrei().getSettings().getDaten()[1].getAnz_dienen() == 0) {
+		if (leiter && ada.getPfarrei().getSettings().getDaten()[1].getAnz_dienen() == 0) {
 			zwei = true;
 		}
 		if (eins == zwei == true) {
@@ -279,9 +278,9 @@ public class Messdaten {
 		ausgeteilt = new ArrayList<Date>();
 	}
 
-	public void addtomaxanz(int medishinzufuegen, WMainFrame wmf, boolean isLeiter) {
+	public void addtomaxanz(int medishinzufuegen, AData ada, boolean isLeiter) {
 		max_messen += medishinzufuegen;
-		Setting[] set = wmf.getPfarrei().getSettings().getDaten();
+		Setting[] set = ada.getPfarrei().getSettings().getDaten();
 		int id = 0;
 		if (isLeiter) {
 			id++;

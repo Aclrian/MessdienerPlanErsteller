@@ -14,7 +14,7 @@ import javax.xml.transform.stream.StreamResult;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messverhalten;
 import net.aclrian.messdiener.deafault.StandartMesse;
-import net.aclrian.messdiener.window.WMainFrame;
+import net.aclrian.messdiener.newy.progress.AData;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -40,7 +40,7 @@ public class WriteFile {
  * speichert den Messdiener
  * @throws IOException wirft IOException bei bspw. zu wenig Rechten
  */
-	public void toXML(WMainFrame wmf) throws IOException {
+	public void toXML(AData ada)throws IOException {
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty("indent", "yes");
@@ -77,13 +77,13 @@ public class WriteFile {
 			Element mv = document.createElement("Messverhalten");
 			Messverhalten dv = this.me.getDienverhalten();
 			
-			for (int i = 0; i < wmf.getStandardmessen().size(); i++) {
-				StandartMesse messe = wmf.getStandardmessen().get(i);
+			for (int i = 0; i < ada.getPfarrei().getStandardMessen().size(); i++) {
+				StandartMesse messe = ada.getPfarrei().getStandardMessen().get(i);
 				System.out.println(messe);
-				if (wmf.getSonstiges().isSonstiges(messe)) {
+				if (AData.sonstiges.isSonstiges(messe)) {
 					continue;
 				}
-				boolean kwm = dv.getBestimmtes(messe, wmf);
+				boolean kwm = dv.getBestimmtes(messe, ada);
 				String s = messe.toReduziertenString();
 				Element kwmesse = document.createElement(s);
 				kwmesse.appendChild(document.createTextNode(String.valueOf(kwm)));

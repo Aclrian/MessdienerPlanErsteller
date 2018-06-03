@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.StandartMesse;
+import net.aclrian.messdiener.newy.progress.AData;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.WriteFile;
-import net.aclrian.messdiener.window.WMainFrame;
 
 public class Manuell {
 	public enum EnumWorking {
@@ -26,34 +26,34 @@ public class Manuell {
 	public static StandartMesse Son_taufe = new StandartMesse("So", 15, "00", sm, 2, tf);
 	public static StandartMesse Son_abend = new StandartMesse("So", 18, "00", sm, 6, hlm);
 	private ArrayList<Handling> hand;
-	private WMainFrame wmf;
+	private AData ada;
 	private Pfarrei pf;
 
-	public Manuell(ArrayList<Handling> hand, WMainFrame wmf, Pfarrei pf) {
+	public Manuell(ArrayList<Handling> hand, AData ada, Pfarrei pf) {
 		this.hand = hand;
-		this.wmf = wmf;
+		this.ada = ada;
 		this.pf = pf;
 	}
 	
 	public void act(){
 		for (Handling handling : hand) {
 			if (handling.getEw() == EnumWorking.ueberarbeitet) {
-				for (Messdiener m : wmf.getMediarray()) {
+				for (Messdiener m : ada.getMediarray()) {
 					m.getDienverhalten().ueberschreibeStandartMesse(handling.getAlt(), handling.getNeu());
 				}
 			}
 			if (handling.getEw() == EnumWorking.neu) {
 				new Erroropener("Um in einer neuen Standartmesse Messdiener hinzu zu f"+References.ue+"gen, bitte den Messdiener ausw"+References.ae+"hlen.");
-				for (Messdiener m : wmf.getMediarray()) {
+				for (Messdiener m : ada.getMediarray()) {
 					m.getDienverhalten().fuegeneueMesseHinzu(handling.getNeu());
 				}
 			}
 		}
-		WriteFile_Pfarrei.writeFile(pf, wmf.getEDVVerwalter().getSavepath());
-		for (Messdiener m : wmf.getMediarray()) {
-			WriteFile wf = new WriteFile(m, wmf.getEDVVerwalter().getSavepath());
+		WriteFile_Pfarrei.writeFile(pf, ada.getUtil().getSavepath());
+		for (Messdiener m : ada.getMediarray()) {
+			WriteFile wf = new WriteFile(m, ada.getUtil().getSavepath());
 			try {
-				wf.toXML(wmf);
+				wf.toXML(ada);
 			} catch (IOException e) {
 				new Erroropener(e.getMessage());
 				e.printStackTrace();

@@ -33,14 +33,14 @@ import javax.swing.border.EmptyBorder;
 
 import com.toedter.calendar.JDateChooser;
 
-import net.aclrian.frame.old.ProgressBarDemo;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
 import net.aclrian.messdiener.deafault.StandartMesse;
+import net.aclrian.messdiener.newy.progress.AData;
+import net.aclrian.messdiener.newy.progress.AProgress;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 import net.aclrian.messdiener.window.auswaehlen.WMediAbwaehlen;
 import net.aclrian.messdiener.window.auswaehlen.WMediAuswaehlen;
 
@@ -79,7 +79,7 @@ public class WMessenHinzufuegen extends JFrame {
 	private JSpinner spinnerTyp = new JSpinner();
 	private JDateChooser dc = new JDateChooser();
 	//private SpinnerModel spinnerDatumModel = new SpinnerDateModel();
-	private WMainFrame mainframe;
+	private AProgress ap;
 	private JButton btnAnzeigen = new JButton("<html><body>Messe<br>anzeigen/<br>bearbeiten</body></html>");
 	private JButton btnSetzeManuell = new JButton("manuell einteilen");
 	private ArrayList<Messdiener> ausgewaehlte;
@@ -96,10 +96,10 @@ public class WMessenHinzufuegen extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public WMessenHinzufuegen(Date anfang, Date ende, WMainFrame wmf) {
-		mainframe = wmf;
-		setMediarray(wmf.getMediarraymitMessdaten());
-		setIconImage(WMainFrame.getIcon(new References()));
+	public WMessenHinzufuegen(Date anfang, Date ende, AProgress ap) {
+		this.ap = ap;
+		setMediarray(ap.getMediarraymitMessdaten());
+		setIconImage(References.getIcon());
 		setTitle("Hier koennen noch Messen hinzugef"+References.ue+"gt werden:");
 		titel = "";
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -201,11 +201,11 @@ public class WMessenHinzufuegen extends JFrame {
 		btnAbbrechen.setBounds(148, 234, 117, 25);
 		panel.add(btnAbbrechen);
 
-		spinnerKirche.setModel(new SpinnerListModel(wmf.getPfarrei().getOrte()));
+		spinnerKirche.setModel(new SpinnerListModel(ap.getAda().getPfarrei().getOrte()));
 		spinnerKirche.setBounds(146, 172, 119, 20);
 		panel.add(spinnerKirche);
 
-		spinnerTyp.setModel(new SpinnerListModel(wmf.getPfarrei().getTypen()));
+		spinnerTyp.setModel(new SpinnerListModel(ap.getAda().getPfarrei().getTypen()));
 		spinnerTyp.setBounds(146, 203, 119, 20);
 		panel.add(spinnerTyp);
 
@@ -246,7 +246,7 @@ public class WMessenHinzufuegen extends JFrame {
 		btnPlanErstellen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				erstellen(wmf);
+				erstellen(ap.getAda());
 			}
 		});
 
@@ -286,7 +286,7 @@ public class WMessenHinzufuegen extends JFrame {
 
 		JPanel vorher = new JPanel();
 		vorher.setBorder(new EmptyBorder(5, 5, 5, 5));
-		if (wmf != null) {
+		if (ap != null) {
 			setContentPane(vorher);
 		}
 		// setContentPane(vorher);
@@ -296,7 +296,7 @@ public class WMessenHinzufuegen extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				b.setText("Bitte Warten...");
-				generireDefaultMessen(anfang, ende, wmf);
+				generireDefaultMessen(anfang, ende, ap.getAda());
 				vorher.setVisible(false);
 				setContentPane(contentPane);
 				contentPane.setVisible(true);
@@ -353,7 +353,7 @@ public class WMessenHinzufuegen extends JFrame {
 		}
 	}
 
-	public void erstellen(ActionEvent evt, WMainFrame wmf) {
+	/*private void erstellen(ActionEvent evt, AData ada) {
 		setVisible(true);
 		if (messen.size() < 1) {
 			new Erroropener("Es sollte wenigstens eine Messe geben, inder Messdiener eingeteilt werden sollen!");
@@ -361,30 +361,30 @@ public class WMessenHinzufuegen extends JFrame {
 			int i = hauptarray.size();
 			Messdiener[] mm = new Messdiener[i];
 			hauptarray.toArray(mm);
-			ProgressBarDemo.createAndShowGUI(mm, messen, wmf);
+			ProgressBarDemo.createAndShowGUI(mm, messen, ada);
 			// this.dispose();
 		}
-	}
+	}*/
 
-	public void erstellen(WMainFrame wmf) {
+	public void erstellen(AData ada) {
 		if (!messen.isEmpty()) {
 			Messdiener[] mm = new Messdiener[hauptarray.size()];
 			hauptarray.toArray(mm);
-			WMessenErstellen erst = new WMessenErstellen(mm, messen, wmf);
+			WMessenErstellen erst = new WMessenErstellen(mm, messen, ada);
 			erst.setVisible(true);
 		} else {
 			new Erroropener("Es sollte wenigstens eine Messe existieren!");
 		}
 	}
 
-	public void generireDefaultMessen(Date anfang, Date ende, WMainFrame wmf) {
+	public void generireDefaultMessen(Date anfang, Date ende, AData ada) {
 		Calendar start = Calendar.getInstance();
 		start.setTime(anfang);
 		SimpleDateFormat wochendagformat = new SimpleDateFormat("EEE");
 		for (Date date = start.getTime(); date.before(ende); start.add(Calendar.DATE, 1), date = start.getTime()) {
 			String tag = wochendagformat.format(date);
-			for (StandartMesse sm :wmf.getStandardmessen()) {
-				if (!wmf.getSonstiges().isSonstiges(sm)) {
+			for (StandartMesse sm : ada.getPfarrei().getStandardMessen()) {
+				if (!AData.sonstiges.isSonstiges(sm)) {
 					// DEBUG: System.out.println(sm.getWochentag() + ":"
 					// + tag + "--");
 					// if (sm.getWochentag().equals(tag)) {
@@ -400,7 +400,7 @@ public class WMessenHinzufuegen extends JFrame {
 						SimpleDateFormat dfuhr = new SimpleDateFormat("dd-MM-yyyy-HH:mm");
 						try {
 							Date frting = dfuhr.parse(df.format(d)+"-"+sm.getBeginn_stundealsString()+":"+sm.getBeginn_minute());
-							Messe m = new Messe(frting, sm, mainframe);
+							Messe m = new Messe(frting, sm, ap.getAda());
 							listmodel.addElement(m.getIDHTML());
 							messen.add(m);
 						} catch (ParseException e) {
@@ -528,20 +528,20 @@ public class WMessenHinzufuegen extends JFrame {
 			if (!titel.equals("")) {
 				bearbeiten.setTitle(titel);
 			}
-			bearbeiten.bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, mainframe);
+			bearbeiten.bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, ap.getAda());
 			m = bearbeiten;
 		} else {
 			if (cannotparse == false) {
 				try {
 					if (titel != null || !titel.equals("")) {
-						m = new Messe(hochamt, anz_medis, datummituhrzeit, ort, typ, titel, mainframe);
+						m = new Messe(hochamt, anz_medis, datummituhrzeit, ort, typ, titel, ap.getAda());
 					} else {
-						m = new Messe(hochamt, anz_medis, datummituhrzeit, ort, typ, mainframe);
+						m = new Messe(hochamt, anz_medis, datummituhrzeit, ort, typ, ap.getAda());
 					}
 				} catch (NullPointerException e) {
 					e.printStackTrace();
 					
-					m = new Messe(hochamt, anz_medis, datummituhrzeit, ort, typ, mainframe);
+					m = new Messe(hochamt, anz_medis, datummituhrzeit, ort, typ, ap.getAda());
 				}
 			}
 		}
@@ -549,7 +549,7 @@ public class WMessenHinzufuegen extends JFrame {
 			if (messdiener.isIstLeiter()) {
 				m.LeiterEinteilen(messdiener);
 			}
-			m.vorzeitigEiteilen(messdiener, mainframe);
+			m.vorzeitigEiteilen(messdiener, ap.getAda());
 		}
 
 		ausgewaehlte = new ArrayList<Messdiener>();
