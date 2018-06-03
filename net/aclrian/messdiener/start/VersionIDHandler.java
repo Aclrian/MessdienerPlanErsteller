@@ -22,7 +22,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import net.aclrian.messdiener.utils.Erroropener;
-import net.aclrian.messdiener.window.WMainFrame;
 
 public class VersionIDHandler {
 	public static final String tag = "tag_name";
@@ -50,17 +49,17 @@ public class VersionIDHandler {
 			e.printStackTrace();
 			return EnumHandling.error;
 		}
-		System.out.println("Running with: " + WMainFrame.VersionID + " found: " + internettid);
-		if (WMainFrame.VersionID.equals(internettid)) {
+		System.out.println("Running with: " + AProgress.VersionID + " found: " + internettid);
+		if (AProgress.VersionID.equals(internettid)) {
 			return EnumHandling.isTheLatest;
 		}
-		String programmsvid = WMainFrame.VersionID;
+		String programmsvid = AProgress.VersionID;
 		int localversion;
 		if (programmsvid.startsWith(beta_start)) {
 			String tmp = programmsvid.substring(1);
 			localversion = Integer.parseInt(tmp);
 		} else {
-			localversion = Integer.parseInt(WMainFrame.VersionID);
+			localversion = Integer.parseInt(AProgress.VersionID);
 		}
 		int internetversion;
 		if (internettid.startsWith(beta_start)) {
@@ -69,17 +68,17 @@ public class VersionIDHandler {
 		} else {
 			internetversion = Integer.parseInt(internettid);
 		}
-		System.out.println("local: "+ WMainFrame.VersionID + " " + localversion);
+		System.out.println("local: "+ AProgress.VersionID + " " + localversion);
 		System.out.println("online: "+ internettid + " " + internetversion);
 		if (localversion > internetversion) {
 			// update or beta request
-			if (WMainFrame.VersionID.equals(getBeta(WMainFrame.VersionID, internettid))) {
+			if (AProgress.VersionID.equals(getBeta(AProgress.VersionID, internettid))) {
 				return EnumHandling.isOld;
 			}
 			return EnumHandling.isTooNew;
 		}
 		if (internetversion > localversion) {
-			if (internettid.equals(getBeta(WMainFrame.VersionID, internettid))) {
+			if (internettid.equals(getBeta(AProgress.VersionID, internettid))) {
 				return EnumHandling.betaRequest;
 			}
 			return EnumHandling.isOld;
@@ -203,6 +202,7 @@ JOptionPane.showMessageDialog(f, ep1, "Neue Version", JOptionPane.INFORMATION_ME
 		VersionIDHandler vidh = new VersionIDHandler();
 		vidh.act();
 		AProgress ap = new AProgress();
+		ap.start();
 	}
 
 	public enum EnumHandling {

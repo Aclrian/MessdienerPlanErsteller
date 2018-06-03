@@ -109,22 +109,24 @@ public class WAlleMessen extends JFrame {
 	final static Font f = new Font("SansSerif", 0, 45);
 	// private Font f;
 	private Calendar cal;
+	private AProgress ap;
 
-	public WAlleMessen() {
+	public WAlleMessen(AProgress aProgress) {
 		this(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height,
-				new DateienVerwalter());
+				aProgress);
 	}
 
 	/**
 	 * Create the frame.
 	 * 
 	 */
-	private WAlleMessen(int width, int heigth, DateienVerwalter dv) {
+	private WAlleMessen(int width, int heigth, AProgress ap) {
 		// setBounds(new Rectangle(0, 0, 1600, 890));
 		// setResizable(false);
 		// int width = 1600;// Toolkit.getDefaultToolkit().getScreenSize().width;
 		// int heigth = 890;// Toolkit.getDefaultToolkit().getScreenSize().height;
 		// setBounds(0,0,533,534);
+		this.ap = ap;
 		this.setIconImage(References.getIcon());
 		setTitle("Messdienerplanersteller");
 		setBounds(0, 0, width, heigth);
