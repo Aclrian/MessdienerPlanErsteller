@@ -2,11 +2,10 @@ package net.aclrian.messdiener.deafault;
 
 import java.util.ArrayList;
 
-
+import net.aclrian.messdiener.newy.progress.AData;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.KannWelcheMesse;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 
 /**
  * Speicher dat Messverhalten eines Messdieners
@@ -18,17 +17,16 @@ public class Messverhalten {
 	private ArrayList<KannWelcheMesse> messen = new ArrayList<KannWelcheMesse>();
 	private int i = -1;
 
-	public Messverhalten(WMainFrame wmf) {
+	public Messverhalten(AData ada) {
 		try {
-			if (wmf != null) {
-				wmf.getTitle();
-				for (StandartMesse standartMesse : wmf.getStandardmessen()) {
-					if (wmf.getSonstiges().isSonstiges(standartMesse)) {
+			if (ada != null) {
+				for (StandartMesse standartMesse : ada.getPfarrei().getStandardMessen()) {
+					if (AData.sonstiges.isSonstiges(standartMesse)) {
 						continue;
 					}
 					this.messen.add(new KannWelcheMesse(standartMesse, false));
 				}
-				update(wmf);
+				update(ada);
 			}
 		} catch (NullPointerException e) {
 			new Erroropener(e.getMessage());
@@ -42,8 +40,8 @@ public class Messverhalten {
 	 * @param messe
 	 * @param kann
 	 */
-	public void editiereBestimmteMesse(WMainFrame wmf, StandartMesse messe, boolean kann) {
-		if (wmf.getSonstiges().isSonstiges(messe) || getBestimmtes(messe, wmf) == kann) {
+	public void editiereBestimmteMesse(AData ada, StandartMesse messe, boolean kann) {
+		if (AData.sonstiges.isSonstiges(messe) || getBestimmtes(messe, ada) == kann) {
 			return;
 		}
 		boolean b = false;
@@ -79,11 +77,11 @@ public class Messverhalten {
 	 *            EnumdeafualtMesse
 	 * @return ob der Messdiener zu der standart Messe kann
 	 */
-	public boolean getBestimmtes(StandartMesse messe, WMainFrame wmf) {
-		if (wmf.getSonstiges().isSonstiges(messe)) {
+	public boolean getBestimmtes(StandartMesse messe, AData ada) {
+		if (AData.sonstiges.isSonstiges(messe)) {
 			return true;
 		}
-		update(wmf);
+		update(ada);
 		boolean rt = false;
 		for (KannWelcheMesse kwm : messen) {
 			StandartMesse sm = kwm.getMesse();
@@ -95,9 +93,9 @@ public class Messverhalten {
 		return rt;
 	}
 
-	public void update(WMainFrame wmf) {
+	public void update(AData ada) {
 		for (int in = 0; in < messen.size(); in++) {
-			if (new Sonstiges().isSonstiges(messen.get(in).getMesse())) {
+			if (AData.sonstiges.isSonstiges(messen.get(in).getMesse())) {
 				if (i == 0) {
 					i = in;
 				} else {
@@ -105,11 +103,11 @@ public class Messverhalten {
 				}
 			}
 		}
-		if (istAnders(wmf)) {
+		if (istAnders(ada)) {
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
 					"Standartmessen habe sich geändert");
 			ArrayList<KannWelcheMesse> bleiben = new ArrayList<KannWelcheMesse>();
-			for (StandartMesse sm : wmf.getStandardmessen()) {
+			for (StandartMesse sm : ada.getPfarrei().getStandardMessen()) {
 				boolean b = false;
 				for (KannWelcheMesse kwm : messen) {
 					StandartMesse sm_old = kwm.getMesse();
@@ -126,16 +124,16 @@ public class Messverhalten {
 		}
 	}
 
-	private boolean istAnders(WMainFrame wmf) {
+	private boolean istAnders(AData ada) {
 		ArrayList<StandartMesse> smold = new ArrayList<StandartMesse>();
 		for (KannWelcheMesse kwm : messen) {
-			if (kwm.getMesse() != null || kwm != null || !wmf.getSonstiges().isSonstiges(kwm.getMesse()))
+			if (kwm.getMesse() != null || kwm != null || !AData.sonstiges.isSonstiges(kwm.getMesse()))
 				smold.add(kwm.getMesse());
 		}
 		StandartMesse[] smold2 = new StandartMesse[smold.size()];
 		smold.sort(StandartMesse.comfuerSMs);
 		smold.toArray(smold2);
-		ArrayList<StandartMesse> smwmf = wmf.getSMoheSonstiges();
+		ArrayList<StandartMesse> smwmf = ada.getSMoheSonstiges();
 		StandartMesse[] smwmf2 = new StandartMesse[smwmf.size()];
 		smwmf.toArray(smwmf2);
 		if (smold.equals(smwmf)) {
@@ -184,8 +182,8 @@ public class Messverhalten {
 		return messen.toString();
 	}
 
-	public Object[][] getData(WMainFrame wmf) {
-		update(wmf);
+	public Object[][] getData(AData ada) {
+		update(ada);
 		messen.sort(KannWelcheMesse.sort);
 		Object[][] rtn = new Object[messen.size()][2];
 		for (int i = 0; i < messen.size(); i++) {

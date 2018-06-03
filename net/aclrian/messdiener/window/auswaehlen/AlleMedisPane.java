@@ -17,7 +17,6 @@ import javax.swing.ListSelectionModel;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.pictures.References;
-import net.aclrian.messdiener.window.WMainFrame;
 //special thanks to https://learn-java-by-example.com/java/add-checkbox-items-jlist/
 public class AlleMedisPane {
 
@@ -28,7 +27,7 @@ public class AlleMedisPane {
 	
 	public AlleMedisPane(ArrayList<Messdiener> hauptarray, boolean nurleiter) {
 		JFrame frame = new JFrame();
-		frame.setIconImage(WMainFrame.getIcon(new References()));
+		frame.setIconImage(References.getIcon());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// Create a list containing CheckboxListItem's
 		list.setModel(mlist);

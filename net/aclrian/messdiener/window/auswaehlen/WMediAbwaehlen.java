@@ -21,7 +21,6 @@ import com.toedter.calendar.JDateChooser;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 import net.aclrian.messdiener.window.planerstellen.WMessenHinzufuegen;
 
 public class WMediAbwaehlen extends JFrame {
@@ -41,7 +40,7 @@ public class WMediAbwaehlen extends JFrame {
 
 	public WMediAbwaehlen(Messdiener m, boolean neusetzen, WMessenHinzufuegen wmh) {
 		wmh.setEnabled(false);
-		this.setIconImage(WMainFrame.getIcon(new References()));
+		this.setIconImage(References.getIcon());
 		this.m = m;
 		if (neusetzen) {
 			m.getMessdatenDaten().loescheAbwesendeDaten();

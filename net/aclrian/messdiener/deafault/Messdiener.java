@@ -3,13 +3,13 @@ package net.aclrian.messdiener.deafault;
 import java.io.IOException;
 import java.util.Comparator;
 
+import net.aclrian.messdiener.newy.progress.AData;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.utils.WriteFile;
-import net.aclrian.messdiener.window.WMainFrame;
 
 /**
- * Klasse, mit der Messdiener digital gespeichert werden können
+ * Klasse, mit der Messdiener digital gespeichert werden koennen
  * 
  * @author Aclrian
  *
@@ -174,10 +174,10 @@ public class Messdiener {
 	 * 
 	 * @param pfad
 	 */
-	public void makeXML(String pfad, WMainFrame wmf) {
+	public void makeXML(String pfad, AData ada) {
 		WriteFile wf = new WriteFile(this, pfad);
 		try {
-			wf.toXML(wmf);
+			wf.toXML(ada);
 		} catch (IOException e) {
 			new Erroropener(e.getMessage());
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), e.getMessage());
@@ -229,8 +229,8 @@ public class Messdiener {
 		this.daten = daten;
 	}
 
-	public void setnewMessdatenDaten(String savepath, int aktdatum, WMainFrame wmf) {
-		this.daten = new Messdaten(this, wmf, aktdatum);
+	public void setnewMessdatenDaten(String savepath, int aktdatum, AData ada) {
+		this.daten = new Messdaten(this, ada, aktdatum);
 	}
 
 	/*

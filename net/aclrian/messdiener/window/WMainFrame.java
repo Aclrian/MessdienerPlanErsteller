@@ -1,7 +1,5 @@
 package net.aclrian.messdiener.window;
 
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 //import java.awt.event.ItemEvent;
@@ -30,6 +28,7 @@ import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.differenzierung.Manuell;
 import net.aclrian.messdiener.differenzierung.Pfarrei;
 import net.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
+import net.aclrian.messdiener.newy.progress.AProgress;
 import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
@@ -59,6 +58,9 @@ public class WMainFrame extends JFrame {
 	public static String pfarredateiendung = ".xml.pfarrei";
 	private Sonstiges sonstiges = new Sonstiges();
 	private JPanel cp;
+	
+	private WMessenFrame mf;
+	private WMediBearbeitenFrame wf;
 	/**
 	 * Hier werden alle Messdiener aus {@link WMainFrame#savepath} gespeichert!
 	 */
@@ -66,13 +68,11 @@ public class WMainFrame extends JFrame {
 	private ArrayList<Messe> mesenarray;
 	private DateienVerwalter util;
 	private String savepath = "";
-	private WMessenFrame mf;
-	private WMediBearbeitenFrame wf;
 	private ArrayList<Messdiener> mediarraymitMessdaten;
 	private Date[] d = new Date[2];
 	private Pfarrei pf;
 	private ArrayList<StandartMesse> standardmessen = new ArrayList<StandartMesse>();
-
+	private AProgress ap = new AProgress();
 	// private Console c;
 	// private JCheckBox chckbxZeigeKonsole;
 	// private boolean cc = false;
@@ -161,7 +161,7 @@ public class WMainFrame extends JFrame {
 		double hoehe = 240;
 		setBounds(Utilities.setFrameMittig(weite, hoehe));
 		setTitle("Messdiener Kaarst");
-		this.setIconImage(getIcon(new References()));
+		this.setIconImage(References.getIcon());
 		cp = new JPanel();
 		cp.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(cp);
@@ -249,14 +249,14 @@ public class WMainFrame extends JFrame {
 		}
 		savepath = util.getSavepath();
 		// mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, this);
-		wf = new WMediBearbeitenFrame(this);
+		wf = new WMediBearbeitenFrame(ap);
 		wf.setVisible(true);
 	}
 
 	public void berechen() {
-		d = mf.berechnen(this);
+		d = mf.berechnen();
 		if (d[0] != null && d[1] != null) {
-			WMessenHinzufuegen wwmh = new WMessenHinzufuegen(d[0], d[1], this);
+			WMessenHinzufuegen wwmh = new WMessenHinzufuegen(d[0], d[1], ap);
 			wwmh.setVisible(true);
 		} else {
 			new Erroropener("Bitte Daten eingeben!");
@@ -274,17 +274,17 @@ public class WMainFrame extends JFrame {
 		// mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, this);
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		for (Messdiener messdiener : mediarray) {
-			messdiener.setnewMessdatenDaten(util.getSavepath(), year, this);
+			messdiener.setnewMessdatenDaten(util.getSavepath(), year, ap.getAda());
 		}
 		mediarraymitMessdaten = mediarray;
-		WMessenHinzufuegen wwmh = new WMessenHinzufuegen(anfang, ende, this);
+		WMessenHinzufuegen wwmh = new WMessenHinzufuegen(anfang, ende, ap);
 		wwmh.setVisible(true);
 	}
 
 	public void erneuern() {
 		savepath = util.getSavepath();
 		try {
-			pf = util.getPfarrei(this);
+			pf = util.getPfarrei();
 			setTitle(pf.getName());
 		} catch (Exception e) {
 			// new Erroropener("no error");
@@ -304,7 +304,7 @@ public class WMainFrame extends JFrame {
 			standardmessen.add(sm);
 			// }
 		}
-		mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, this);
+		mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, ap.getAda());
 
 		if (!hatsonstiges) {
 			pf.getStandardMessen().add(sonstiges);
@@ -331,8 +331,8 @@ public class WMainFrame extends JFrame {
 	}
 
 	public void getGeschwister() {
-		if (wf.getGeschwister(this)) {
-			WWAnvertrauteFrame af = new WWAnvertrauteFrame(this, wf.getMoben(), wf);
+		if (wf.getGeschwister()) {
+			WWAnvertrauteFrame af = new WWAnvertrauteFrame(ap.getAda(), wf.getMoben(), wf);
 			af.setVisible(true);
 		}
 
@@ -360,13 +360,13 @@ public class WMainFrame extends JFrame {
 			util = new DateienVerwalter();
 		}
 		savepath = util.getSavepath();
-		mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, this);
+		mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, ap.getAda());
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		for (Messdiener messdiener : mediarray) {
-			messdiener.setnewMessdatenDaten(util.getSavepath(), year, this);
+			messdiener.setnewMessdatenDaten(util.getSavepath(), year, ap.getAda());
 		}
 		mediarraymitMessdaten = mediarray;
-		mf = new WMessenFrame(this);
+		mf = new WMessenFrame(ap);
 		mf.setVisible(true);
 	}
 
@@ -395,7 +395,7 @@ public class WMainFrame extends JFrame {
 
 	public Pfarrei getPfarrei() {
 		if (pf == null) {
-			pf = util.getPfarrei(this);
+			pf = util.getPfarrei();
 		}
 		return pf;
 	}
@@ -409,8 +409,7 @@ public class WMainFrame extends JFrame {
 	}
 
 	public void fertig(WriteFile_Pfarrei wfp, Pfarrei pf, String savepath) {
-		this.pf = null;
-		this.pf = util.getPfarrei(this);
+		this.pf = util.getPfarrei();
 		if (!this.pf.getStandardMessen().toString().equals(pf.getStandardMessen().toString())) {
 			ArrayList<StandartMesse> beibehalten = new ArrayList<StandartMesse>();
 			ArrayList<StandartMesse> verbleibende = new ArrayList<StandartMesse>();
@@ -494,7 +493,7 @@ public class WMainFrame extends JFrame {
 			ArrayList<StandartMesse> bleibende = new ArrayList<StandartMesse>();
 			bleibende.addAll(beibehalten);
 			standardmessen = pf.getStandardMessen();
-			Manuell m = new Manuell(hand, this, pf);
+			Manuell m = new Manuell(hand, ap.getAda(), pf);
 			m.act();
 			WriteFile_Pfarrei.writeFile(pf, savepath);
 			JOptionPane.showInputDialog("Das Programm wird nun beendet und mit den neuen Daten gestartet!");
@@ -575,10 +574,6 @@ public class WMainFrame extends JFrame {
 		} else {
 			return false;
 		}
-	}
-
-	public static Image getIcon(References ref) {
-		return Toolkit.getDefaultToolkit().getImage(ref.getClass().getResource("title_32.png"));
 	}
 
 	@Override

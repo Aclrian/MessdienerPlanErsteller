@@ -6,9 +6,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
+import net.aclrian.messdiener.newy.progress.AData;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 
 /**
  * Klasse von Messen
@@ -50,9 +50,9 @@ public class Messe {
 	private String titel = "";
 
 	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, String titel,
-			WMainFrame wmf) {
-		if (wmf.getPfarrei().getOrte().contains(ort) && wmf.getPfarrei().getTypen().contains(typ)) {
-			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, wmf);
+			AData ada) {
+		if (ada.getPfarrei().getOrte().contains(ort) && ada.getPfarrei().getTypen().contains(typ)) {
+			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, ada);
 			this.titel = titel;
 		} else {
 			Utilities.logging(getClass(), getClass().getEnclosingConstructor(), "da ging was schief");
@@ -60,16 +60,16 @@ public class Messe {
 
 	}
 
-	public Messe(Date d, StandartMesse sm, WMainFrame wmf) {
+	public Messe(Date d, StandartMesse sm, AData ada) {
 		boolean isdrin = false;
-		for (StandartMesse stm : wmf.getSMoheSonstiges()) {
+		for (StandartMesse stm : ada.getSMoheSonstiges()) {
 			if (sm.toString().equals(stm.toString())) {
 				isdrin = true;
 				break;
 			}
 		}
 		if (isdrin) {
-			bearbeiten(false, sm.getAnz_messdiener(), d, sm.getOrt(), sm.getTyp(), wmf);
+			bearbeiten(false, sm.getAnz_messdiener(), d, sm.getOrt(), sm.getTyp(), ada);
 		} else {
 			Utilities.logging(getClass(), getClass().getEnclosingConstructor(), "da ging was schief");
 		}
@@ -87,9 +87,9 @@ public class Messe {
 	 * @param kirche
 	 * @param type
 	 */
-	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, WMainFrame wmf) {
-		if (wmf.getPfarrei().getOrte().contains(ort) && wmf.getPfarrei().getTypen().contains(typ)) {
-			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, wmf);
+	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, AData ada) {
+		if (ada.getPfarrei().getOrte().contains(ort) && ada.getPfarrei().getTypen().contains(typ)) {
+			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, ada);
 		} else {
 			Utilities.logging(getClass(), getClass().getEnclosingConstructor(), "da ging was schief");
 		}
@@ -178,13 +178,13 @@ public class Messe {
 	 * @param kirche
 	 * @param type
 	 */
-	public void bearbeiten(boolean hochamt, int anz_messdiener, Date date, String kirche, String type, WMainFrame wmf) {
+	public void bearbeiten(boolean hochamt, int anz_messdiener, Date date, String kirche, String type, AData ada) {
 		setWochentag(df.format(date));
 		setHochamt(hochamt);
 		setKirche(kirche);
 		setMesseTyp(type);
 		setDate(date);
-		setAnz_messdiener(anz_messdiener, wmf);
+		setAnz_messdiener(anz_messdiener, ada);
 		/*
 		 * for (int i = 0; i < anz_messdiener; i++) { Messdiener me = new Messdiener();
 		 * me.setLeer(this); medis.add(me); medis.sort(Messdiener.compForMedis);}
@@ -341,8 +341,8 @@ public class Messe {
 		}
 	}
 
-	private void setAnz_messdiener(int anz_messdiener, WMainFrame wmf) {
-		if (anz_messdiener <= wmf.getEDVVerwalter().getMaxAnzMedis(wmf.getEDVVerwalter().getSavepath(), wmf)) {
+	private void setAnz_messdiener(int anz_messdiener, AData ada) {
+		if (anz_messdiener <= ada.getUtil().getMaxAnzMedis(ada.getUtil().getSavepath(), ada)) {
 			this.anz_messdiener = anz_messdiener;
 		} else {
 			new Erroropener("zu grosse Anzahl an Messdiener!");
@@ -384,9 +384,9 @@ public class Messe {
 		}
 	}
 
-	public void vorzeitigEiteilen(Messdiener medi, WMainFrame wmf) {
-		if (medi.getMessdatenDaten().kannvorzeitg(date, medi.isIstLeiter(), wmf)) {
-			medi.getMessdatenDaten().einteilenVorzeitig(getDate(), isHochamt(), medi, wmf);
+	public void vorzeitigEiteilen(Messdiener medi, AData ada) {
+		if (medi.getMessdatenDaten().kannvorzeitg(date, medi.isIstLeiter(), ada)) {
+			medi.getMessdatenDaten().einteilenVorzeitig(getDate(), isHochamt(), medi, ada);
 			if (medi.isIstLeiter()) {
 				leiter.add(medi);
 			} else {

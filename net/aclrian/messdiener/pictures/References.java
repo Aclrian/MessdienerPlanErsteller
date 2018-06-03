@@ -1,5 +1,8 @@
 package net.aclrian.messdiener.pictures;
 
+import java.awt.Image;
+import java.awt.Toolkit;
+
 public class References {
 	public static char aclrianscheVergesslichkeit = ' ';
 	public static final String aclrianschesGestet = "cl=d";
@@ -21,6 +24,8 @@ public class References {
 	
 	
 	}
-	
+	public static Image getIcon() {
+		return Toolkit.getDefaultToolkit().getImage(References.class.getResource("title_32.png"));
+	}
 	
 }
