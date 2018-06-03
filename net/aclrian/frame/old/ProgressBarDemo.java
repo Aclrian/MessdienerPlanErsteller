@@ -67,7 +67,7 @@ import javax.swing.*;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
-import net.aclrian.messdiener.newy.progress.AData;
+import net.aclrian.messdiener.start.AData;
 
 import java.beans.*;
 import java.util.ArrayList;

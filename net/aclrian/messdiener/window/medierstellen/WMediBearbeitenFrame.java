@@ -25,9 +25,9 @@ import javax.swing.border.EmptyBorder;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messverhalten;
-import net.aclrian.messdiener.newy.progress.AData;
-import net.aclrian.messdiener.newy.progress.AProgress;
 import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.start.AData;
+import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.ReadFile;

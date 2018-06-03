@@ -25,10 +25,12 @@ import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.differenzierung.Manuell.EnumWorking;
 import net.aclrian.messdiener.differenzierung.Manuell.Handling;
 import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.start.AData;
+import net.aclrian.messdiener.start.AProgress;
+import net.aclrian.messdiener.start.VersionIDHandler;
 import net.aclrian.messdiener.differenzierung.Manuell;
 import net.aclrian.messdiener.differenzierung.Pfarrei;
 import net.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
-import net.aclrian.messdiener.newy.progress.AProgress;
 import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
@@ -37,7 +39,6 @@ import net.aclrian.messdiener.window.medierstellen.WMediBearbeitenFrame;
 import net.aclrian.messdiener.window.medierstellen.WWAnvertrauteFrame;
 import net.aclrian.messdiener.window.planerstellen.WMessenHinzufuegen;
 import net.aclrian.messdiener.window.planerstellen.WMessenFrame;
-import net.aclrian.update.VersionIDHandler;
 
 /**
  * Hiermit startet alles: Es wird eine Benutzeroberflaeche zum Erstellen eines
@@ -52,10 +53,9 @@ public class WMainFrame extends JFrame {
 	 * Seriennummer
 	 */
 	private static final long serialVersionUID = 2278649234963113093L;
-	public static final String textdatei = "//.messdienerOrdnerPfad.txt";
-	public static final String VersionID = "b598";
+
 	// public static final int Max_einteilen = 3;
-	public static String pfarredateiendung = ".xml.pfarrei";
+	
 	private Sonstiges sonstiges = new Sonstiges();
 	private JPanel cp;
 	
@@ -226,7 +226,7 @@ public class WMainFrame extends JFrame {
 	}
 
 	public void pfarreibearbeiten() {
-		WriteFile_Pfarrei wf_pf = new WriteFile_Pfarrei(pf, this);
+		WriteFile_Pfarrei wf_pf = new WriteFile_Pfarrei(pf, ap);
 		this.setVisible(false);
 		wf_pf.setVisible(true);
 	}
@@ -288,7 +288,7 @@ public class WMainFrame extends JFrame {
 			setTitle(pf.getName());
 		} catch (Exception e) {
 			// new Erroropener("no error");
-			WriteFile_Pfarrei wfp = new WriteFile_Pfarrei(this);
+			WriteFile_Pfarrei wfp = new WriteFile_Pfarrei(ap);
 			setContentPane(wfp.getContentPane());
 			setBounds(Utilities.setFrameMittig(wfp.getBounds().width, wfp.getBounds().height));
 			return;
@@ -332,7 +332,7 @@ public class WMainFrame extends JFrame {
 
 	public void getGeschwister() {
 		if (wf.getGeschwister()) {
-			WWAnvertrauteFrame af = new WWAnvertrauteFrame(ap.getAda(), wf.getMoben(), wf);
+			WWAnvertrauteFrame af = new WWAnvertrauteFrame(ap, wf.getMoben(), wf);
 			af.setVisible(true);
 		}
 
@@ -384,7 +384,7 @@ public class WMainFrame extends JFrame {
 
 	public void speicherOrt() {
 		String s = System.getProperty("user.home");
-		s += textdatei;
+		s += AData.textdatei;
 		File f = new File(s);
 		f.delete();
 		util.erneuereSavepath();
@@ -501,7 +501,7 @@ public class WMainFrame extends JFrame {
 		} else {
 			String name = pf.getName();
 			name = name.replaceAll(" ", "_");
-			File f = new File(savepath + "\\" + name + WMainFrame.pfarredateiendung);
+			File f = new File(savepath + "\\" + name + AData.pfarredateiendung);
 			f.delete();
 			this.pf = pf;
 			WriteFile_Pfarrei.writeFile(pf, savepath);

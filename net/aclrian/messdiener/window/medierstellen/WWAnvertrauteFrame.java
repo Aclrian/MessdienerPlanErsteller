@@ -15,9 +15,9 @@ import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
 import net.aclrian.messdiener.deafault.Messdiener;
-import net.aclrian.messdiener.newy.progress.AData;
-import net.aclrian.messdiener.newy.progress.AProgress;
 import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.start.AData;
+import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.utils.WriteFile;

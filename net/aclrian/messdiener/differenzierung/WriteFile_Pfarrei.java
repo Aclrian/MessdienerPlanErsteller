@@ -47,11 +47,11 @@ import org.w3c.dom.Element;
 import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.differenzierung.Setting.Attribut;
-import net.aclrian.messdiener.newy.progress.AProgress;
 import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.start.AData;
+import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.AbstractButton;
@@ -847,8 +847,8 @@ public class WriteFile_Pfarrei extends JFrame {
 			String datei = pf.getName();
 			datei = datei.replaceAll(" ", "_");
 			Utilities.logging(WriteFile_Pfarrei.class, WriteFile_Pfarrei.class.getEnclosingMethod(),
-					"Pfarrei wird gespeichert in :" + pfad + "//" + datei + WMainFrame.pfarredateiendung);
-			StreamResult streamResult = new StreamResult(new File(pfad + "//" + datei + WMainFrame.pfarredateiendung));
+					"Pfarrei wird gespeichert in :" + pfad + "//" + datei + AData.pfarredateiendung);
+			StreamResult streamResult = new StreamResult(new File(pfad + "//" + datei + AData.pfarredateiendung));
 			transformer.transform(domSource, streamResult);
 			Utilities.logging(WriteFile_Pfarrei.class, WriteFile_Pfarrei.class.getEnclosingMethod(),
 					"Pfarrei: " + pf.getName() + "wurde erfolgreich gespeichert!");
