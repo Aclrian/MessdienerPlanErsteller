@@ -1,4 +1,4 @@
-package net.aclrian.messdiener.newy.progress;
+package net.aclrian.messdiener.start;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -6,13 +6,17 @@ import java.util.Calendar;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.differenzierung.Pfarrei;
 import net.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
+import net.aclrian.messdiener.window.WAlleMessen;
 
 public class AProgress {
 
 	private AData ada;
+	public static final String VersionID = "b598";
 
 	public AProgress() {
 		ada = new AData(this);
+		WAlleMessen wam = new WAlleMessen();
+		wam.setVisible(true);
 	}
 	public AData getAda() {
 		return ada;

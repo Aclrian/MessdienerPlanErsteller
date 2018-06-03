@@ -2,10 +2,11 @@ package net.aclrian.messdiener.differenzierung;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.StandartMesse;
-import net.aclrian.messdiener.newy.progress.AData;
 import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.start.AData;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.WriteFile;
 

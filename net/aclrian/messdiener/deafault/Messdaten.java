@@ -8,7 +8,7 @@ import java.util.HashSet;
 
 import net.aclrian.messdiener.differenzierung.Einstellungen;
 import net.aclrian.messdiener.differenzierung.Setting;
-import net.aclrian.messdiener.newy.progress.AData;
+import net.aclrian.messdiener.start.AData;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
 

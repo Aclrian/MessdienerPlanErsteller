@@ -11,9 +11,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import net.aclrian.messdiener.deafault.StandartMesse;
+import net.aclrian.messdiener.start.AData;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WMainFrame;
 
 public class ReadFile_Pfarrei {
 
@@ -29,7 +29,7 @@ public class ReadFile_Pfarrei {
 			File fXmlFile = new File(pfadMitDateiundmitEndung);
 			if (!fXmlFile.isDirectory()) {
 				String s = fXmlFile.getAbsolutePath();
-				if (s.endsWith(WMainFrame.pfarredateiendung)) {
+				if (s.endsWith(AData.pfarredateiendung)) {
 					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 					Document doc;
@@ -136,7 +136,7 @@ public class ReadFile_Pfarrei {
 						"Der Fileseperator vom OS: " + s1);
 				String[] s2 = pfadMitDateiundmitEndung.split("\\" + File.separator);
 				name = s2[s2.length - 1];
-				name = name.substring(0, name.length() - WMainFrame.pfarredateiendung.length());
+				name = name.substring(0, name.length() - AData.pfarredateiendung.length());
 				name = name.replaceAll("_", " ");
 				pf = new Pfarrei(einst, sm, name, orte, typen, hochaemter);
 			}

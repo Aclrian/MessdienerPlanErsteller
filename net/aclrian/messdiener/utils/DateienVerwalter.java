@@ -13,10 +13,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.aclrian.messdiener.differenzierung.Pfarrei;
 import net.aclrian.messdiener.differenzierung.ReadFile_Pfarrei;
-import net.aclrian.messdiener.newy.progress.AData;
 import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.start.AData;
 import net.aclrian.messdiener.deafault.Messdiener;
-import net.aclrian.messdiener.window.WMainFrame;
 
 /**
  * Sonstige Klasse, die viel mit Ordnerverwaltung und Sortieren zu tun hat.
@@ -58,14 +57,14 @@ System.out.println(f.toString() + "!");
 		File f = new File(savepath);
 		for (File file : f.listFiles()) {
 			String s = file.toString();
-			if (s.endsWith(WMainFrame.pfarredateiendung)) {
+			if (s.endsWith(AData.pfarredateiendung)) {
 				files.add(file);				
 			}
 
 		}
 		if (files.size() != 1) {
 			if (files.size() > 1) {
-				new Erroropener("Es darf nur eine Datei mit der Endung: '" + WMainFrame.pfarredateiendung
+				new Erroropener("Es darf nur eine Datei mit der Endung: '" + AData.pfarredateiendung
 						+ "' in dem Ordner: " + savepath + " vorhanden sein.");
 			} else {
 				return null;
@@ -308,7 +307,7 @@ System.out.println(f.toString() + "!");
 
 	public void getSpeicherort() {
 		String homedir = System.getProperty("user.home");
-		homedir = homedir + WMainFrame.textdatei;
+		homedir = homedir + AData.textdatei;
 		Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"Das Home-Verzeichniss wurde gefunden: " + homedir);
 		File f = new File(homedir);
 		if (!f.exists()) {

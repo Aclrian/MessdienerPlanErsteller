@@ -11,7 +11,7 @@ import javax.swing.ListSelectionModel;
 import net.aclrian.messdiener.deafault.Messverhalten;
 import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
-import net.aclrian.messdiener.newy.progress.AData;
+import net.aclrian.messdiener.start.AData;
 
 public class StandartMessenAuswaehlen extends JList<CheckboxListItem> {
 

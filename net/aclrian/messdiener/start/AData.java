@@ -1,4 +1,4 @@
-package net.aclrian.messdiener.newy.progress;
+package net.aclrian.messdiener.start;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,8 @@ public class AData {
 	private DateienVerwalter dv;
 	private String savepath = "";
 	private Pfarrei pf;
-	public static String pfarredateiendung = ".xml.pfarrei";
+	public static final String pfarredateiendung = ".xml.pfarrei";
+	public static final String textdatei = "//.messdienerOrdnerPfad.txt";
 	
 	public AData(AProgress ap) {
 		dv = new DateienVerwalter();
@@ -38,17 +39,17 @@ public class AData {
 		pf.getStandardMessen().add(sonstiges);
 		boolean hatsonstiges = false;
 		for (StandartMesse sm : pf.getStandardMessen()) {
-			// if(sonstiges.isSonstiges(sm)) {hatsonstiges = true;}
-			// else{
+			 if(sonstiges.isSonstiges(sm)) {hatsonstiges = true;}
+			 else{
 			System.out.println(sm);
 			pf.getStandardMessen().add(sm);
-			// }
+		 }
 		}
-		mediarray = dv.getAlleMedisVomOrdnerAlsList(savepath, this);
-
 		if (!hatsonstiges) {
 			pf.getStandardMessen().add(sonstiges);
 		}
+		mediarray = dv.getAlleMedisVomOrdnerAlsList(savepath, this);
+
 		Utilities.logging(this.getClass(), new Object() {
 		}.getClass().getEnclosingMethod().getName(), "Es wurden " + mediarray.size() + " gefunden!");
 	}

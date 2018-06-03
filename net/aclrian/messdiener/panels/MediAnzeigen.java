@@ -8,7 +8,9 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 
 import net.aclrian.messdiener.deafault.ATextField;
+import net.aclrian.messdiener.deafault.Messverhalten;
 import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.start.AData;
 import net.aclrian.messdiener.window.APanel;
 import net.aclrian.messdiener.window.auswaehlen.ATable;
 
@@ -34,9 +36,10 @@ public class MediAnzeigen extends APanel {
 	/**
 	 * Create the panel.
 	 **/
-	public MediAnzeigen(int dfbtnwidth, int dfbtnheight) {// int withe, int heigh) {// , WMainFrame wmf) {
+	public MediAnzeigen(int dfbtnwidth, int dfbtnheight, AData ada) {// int withe, int heigh) {// , WMainFrame wmf) {
 		super(dfbtnwidth, dfbtnheight);
 		setLayout(null);
+		atable.setMessverhalten(new Messverhalten(ada), ada);
 		add(textField);
 		add(textField_1);
 		add(spinner);
@@ -63,7 +66,7 @@ public class MediAnzeigen extends APanel {
 		chckbxLeiter.setBounds(2*drei+abstandweit, abstandhoch+stdhoehe, drei-2*abstandweit, stdhoehe);
 		btnAbbrechen.setBounds(abstandweit, heigth-abstandhoch-this.getDfbtnheight(), this.getDfbtnwidth(), this.getDfbtnheight());
 		btnSpeichern.setBounds(width-abstandweit-this.getDfbtnwidth(), heigth-abstandhoch-this.getDfbtnheight(), this.getDfbtnwidth(), this.getDfbtnheight());
-		atable.setBounds(abstandweit, (int) (abstandhoch+drei*0.5), drei+drei, stdhoehe+stdhoehe);
+		atable.setBounds(abstandweit, (int) (abstandhoch+drei*0.5), drei+drei-abstandweit, stdhoehe+stdhoehe);
 		scrollPane_1.setBounds(269, 427, 257, 140);
 		button.setBounds(52, 324, 117, 25);
 		scrollPane.setBounds(269, 275, 257, 140);

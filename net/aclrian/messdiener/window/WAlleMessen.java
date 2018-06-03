@@ -31,11 +31,14 @@ import javax.swing.JViewport;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.ViewportUI;
 
 import com.toedter.calendar.JTextFieldDateEditor;
 
 import net.aclrian.messdiener.panels.MediAnzeigen;
 import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.start.AData;
+import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
@@ -159,7 +162,7 @@ public class WAlleMessen extends JFrame {
 		int panelHight = heigth - abstandbreit - linieunten;
 		int a = (width / 4) / 3;
 		int i = heigth / 10 - 5 * (heigth/ 400);
-		panel = new MediAnzeigen(a,i);// new APanel();
+		panel = new MediAnzeigen(a,i, new AData(null));// new APanel();
 		graphics(width, heigth);
 		contentPane.setBounds(new Rectangle(0, 0, 800, 600));
 		contentPane.setBounds(0, 0, width, heigth);
@@ -181,8 +184,8 @@ public class WAlleMessen extends JFrame {
 		plusmedi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				WMediBearbeitenFrame wmbf = new WMediBearbeitenFrame();// new WMainFrame(false));
-				wmbf.setVisible(true);
+				//WMediBearbeitenFrame wmbf = new WMediBearbeitenFrame();// new WMainFrame(false));
+				//wmbf.setVisible(true);
 				// setzeinPanel(wmbf.getPanel());
 			}
 		});
@@ -260,27 +263,33 @@ public class WAlleMessen extends JFrame {
 			farbe(((JScrollPane) c).getViewport());
 			farbe(((JScrollPane) c).getColumnHeader());
 		} else if (c instanceof JLabel) {
-			c.setForeground(standart);
-			c.setBackground(dunkel1);
 			if (((JLabel) c).getText().length() == 1) {
 				c.setFont(f);
 			}
+			c.setForeground(standart);
+			c.setBackground(dunkel1);
+			
 			// ((JLabel) c).setBorder(b);
 		} else if (c instanceof JList<?>) {
 			c.setForeground(standart);
-			Color col = new Color(0, 255, 255);
-			((JList<?>) c).setSelectionBackground(col);
-			//((JList<?>) c).setSelectionBackground(neuhell2);
+			((JList<?>) c).setSelectionBackground(neuhell2);
 			c.setBackground(neuhell1);
+			((JList<?>) c).setBorder(b);
 			/*if (((JList<?>) c).getModel() instanceof DefaultListModel<?>) {
 				DefaultListModel<?> dlm = (DefaultListModel<?>) ((JList<?>) c).getModel();
 				dlm.
 			}*/
 		} else if (c instanceof JViewport) {
-			Font fs = new Font("SansSerif", 0, 26);
-			c.setFont(fs);
-			c.setBackground(standart);
-			c.setForeground(dunkel1);
+			//Font fs = new Font("SansSerif", 0, 26);
+			//c.setFont(fs);
+			//ViewportUI vui = new ViewportUI() {
+			//};
+			for (Component com: ((JViewport) c).getComponents()){
+				farbe(com);
+			}
+
+			/*c.setBackground(dunkel1);
+			c.setForeground(standart);*/
 		} else if (c instanceof JTextFieldDateEditor) {
 			((JTextFieldDateEditor) c).setBorder(b);
 			c.setForeground(neuhell1);
