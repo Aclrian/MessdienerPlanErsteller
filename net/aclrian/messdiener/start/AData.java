@@ -32,26 +32,24 @@ public class AData {
 		} catch (Exception e) {
 			// new Erroropener("no error");
 			WriteFile_Pfarrei wfp = new WriteFile_Pfarrei(ap);
+			wfp.setVisible(true);
 			//TODO
 			return;
 		}
-		pf.getStandardMessen().clear();
+		//pf.getStandardMessen().clear();
 		pf.getStandardMessen().add(sonstiges);
-		boolean hatsonstiges = false;
-		for (StandartMesse sm : pf.getStandardMessen()) {
+		//boolean hatsonstiges = false;
+	/*	for (StandartMesse sm : pf.getStandardMessen()) {
 			 if(sonstiges.isSonstiges(sm)) {hatsonstiges = true;}
 			 else{
 			System.out.println(sm);
 			pf.getStandardMessen().add(sm);
 		 }
-		}
-		if (!hatsonstiges) {
-			pf.getStandardMessen().add(sonstiges);
-		}
+		}*/
+	
 		mediarray = dv.getAlleMedisVomOrdnerAlsList(savepath, this);
 
-		Utilities.logging(this.getClass(), new Object() {
-		}.getClass().getEnclosingMethod().getName(), "Es wurden " + mediarray.size() + " gefunden!");
+		Utilities.logging(this.getClass(), "init", "Es wurden " + mediarray.size() + " gefunden!");
 	}
 	
 	public ArrayList<Messdiener> getMediarray() {

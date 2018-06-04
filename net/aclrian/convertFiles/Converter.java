@@ -21,8 +21,8 @@ import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
 import org.docx4j.org.apache.poi.util.IOUtils;
 import org.docx4j.services.client.ConversionException;
 
+import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.Erroropener;
-import net.aclrian.messdiener.window.WMainFrame;
 import net.aclrian.messdiener.window.planerstellen.WMessenErstellen;
 
 public class Converter {
@@ -52,7 +52,7 @@ public class Converter {
 		html = html.substring(0, html.length() -14);
 		html = html.replaceAll("</b>", "</h2>");
 		html = html.replaceAll("<b>", "<h2>");
-		html += "<p>Der Messdienerplan wurde erstellt mit: <a href='"+url+"'>MessdienerplanErsteller "+WMainFrame.VersionID+"</a></p>"+"</body></html>";
+		html += "<p>Der Messdienerplan wurde erstellt mit: <a href='"+url+"'>MessdienerplanErsteller "+AProgress.VersionID+"</a></p>"+"</body></html>";
 		html = html.replaceAll("<head></head>", "<head><style>h1{font-size: 18px; font-weight: bold;}h2{font-weight: bold;font-size: 14px}p{font-size: 12x}</style></head>");
 
 		fw.write(html);

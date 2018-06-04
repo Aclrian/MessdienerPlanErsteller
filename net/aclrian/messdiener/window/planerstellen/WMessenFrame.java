@@ -53,7 +53,6 @@ public class WMessenFrame extends JFrame {
 	
 		
 		if (dateChooser.getDateEditor() instanceof JTextFieldDateEditor) {
-			System.out.println("sdsd");
 			((JTextFieldDateEditor) dateChooser.getDateEditor()).addFocusListener(new FocusListener() {
 				
 				@Override
@@ -89,7 +88,7 @@ public class WMessenFrame extends JFrame {
 		JButton btnWeiter = new JButton("Weiter");
 		btnWeiter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ap.berechen();
+				ap.berechen(berechnen());
 			}
 		});
 		btnWeiter.setBounds(148, 107, 117, 25);

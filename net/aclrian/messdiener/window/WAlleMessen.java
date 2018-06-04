@@ -31,18 +31,14 @@ import javax.swing.JViewport;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.ViewportUI;
-
 import com.toedter.calendar.JTextFieldDateEditor;
 
 import net.aclrian.messdiener.panels.MediAnzeigen;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.start.AData;
 import net.aclrian.messdiener.start.AProgress;
-import net.aclrian.messdiener.utils.DateienVerwalter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.medierstellen.WMediBearbeitenFrame;
 
 public class WAlleMessen extends JFrame {
 
@@ -60,7 +56,7 @@ public class WAlleMessen extends JFrame {
 			@Override
 			public void run() {
 				try {
-					WAlleMessen frame = new WAlleMessen();
+					WAlleMessen frame = new WAlleMessen(new AProgress());
 					frame.setVisible(true);
 				} catch (Exception e) {
 					new Erroropener(e.getMessage());
@@ -111,22 +107,17 @@ public class WAlleMessen extends JFrame {
 	private Calendar cal;
 	private AProgress ap;
 
-	public WAlleMessen(AProgress aProgress) {
-		this(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height,
-				aProgress);
-	}
-
 	/**
 	 * Create the frame.
 	 * 
 	 */
-	private WAlleMessen(int width, int heigth, AProgress ap) {
+	public WAlleMessen(AProgress ap) {
 		// setBounds(new Rectangle(0, 0, 1600, 890));
 		// setResizable(false);
-		// int width = 1600;// Toolkit.getDefaultToolkit().getScreenSize().width;
-		// int heigth = 890;// Toolkit.getDefaultToolkit().getScreenSize().height;
+		int width = Toolkit.getDefaultToolkit().getScreenSize().width;
+		int heigth = Toolkit.getDefaultToolkit().getScreenSize().height;
 		// setBounds(0,0,533,534);
-		this.ap = ap;
+		this.setAp(ap);
 		this.setIconImage(References.getIcon());
 		setTitle("Messdienerplanersteller");
 		setBounds(0, 0, width, heigth);
@@ -244,7 +235,7 @@ public class WAlleMessen extends JFrame {
 	 * @wbp.parser.constructor
 	 */
 	public WAlleMessen(boolean onlyWindowbilderUse) {
-		this(1600, 900, new DateienVerwalter());
+		this(new AProgress());
 		setBounds(0, 0, 1600, 900);
 	}
 
@@ -412,5 +403,13 @@ public class WAlleMessen extends JFrame {
 
 	public void setzeinPanel(JPanel pane) {
 
+	}
+
+	public AProgress getAp() {
+		return ap;
+	}
+
+	public void setAp(AProgress ap) {
+		this.ap = ap;
 	}
 }

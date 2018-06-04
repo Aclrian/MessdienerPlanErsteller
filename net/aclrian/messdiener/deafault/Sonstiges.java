@@ -8,6 +8,9 @@ public class Sonstiges extends StandartMesse {
 	
 	
 	public boolean isSonstiges(StandartMesse sm) {
-		return this.toString().equals(sm.toString());
+		if (sm instanceof Sonstiges) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -25,7 +25,7 @@ public class Messdaten {
 	private int max_messen;
 	private ArrayList<Date> eingeteilt = new ArrayList<Date>();
 	private ArrayList<Date> ausgeteilt = new ArrayList<Date>();
-	private ArrayList<Date> pause	   = new ArrayList<Date>();
+	private ArrayList<Date> pause = new ArrayList<Date>();
 
 	public Messdaten(Messdiener m, AData ada, int aktdatum) {
 		geschwister = new ArrayList<Messdiener>();
@@ -39,17 +39,19 @@ public class Messdaten {
 					medi = ada.getUtil().sucheMessdiener(geschwister[i], m, ada);
 					if (medi != null) {
 						this.geschwister.add(medi);
+						Messdaten.removeDuplicatedEntries(this.geschwister);
 					} else {
 						new Erroropener(
 								"Konnte " + geschwister[i] + " nicht finden fuer Anvertraute von: " + m.makeId() + "!");
 					}
 				} catch (Exception e) {
 					new Erroropener(e.getMessage());
-					Utilities.logging(this.getClass(), this.getClass().getEnclosingConstructor(),e.getMessage());
+					Utilities.logging(this.getClass(), this.getClass().getEnclosingConstructor(), e.getMessage());
 					e.printStackTrace();
 				}
 			}
 		}
+		
 		geschwister = m.getFreunde();
 		for (int i = 0; i < geschwister.length; i++) {
 			Messdiener medi = null;
@@ -62,6 +64,7 @@ public class Messdaten {
 				}
 				if (medi != null) {
 					freunde.add(medi);
+					Messdaten.removeDuplicatedEntries(freunde);
 				}
 			}
 		}
@@ -84,13 +87,13 @@ public class Messdaten {
 		if (eintritt < aktdatum) {
 			int abstand = aktdatum - eintritt;
 			if (abstand >= Einstellungen.lenght) {
-				abstand = Einstellungen.lenght-1;
+				abstand = Einstellungen.lenght - 1;
 			}
-			eins = einst.getDaten()[abstand +2].getAnz_dienen();
+			eins = einst.getDaten()[abstand + 2].getAnz_dienen();
 			if (zwei < eins) {
 				eins = zwei;
 			}
-		}else{
+		} else {
 			eins = zwei;
 		}
 		return eins;
@@ -112,6 +115,7 @@ public class Messdaten {
 			e.printStackTrace();
 		}
 	}
+
 	public void einteilenVorzeitig(Date date, boolean hochamt, Messdiener medi, AData ada) {
 		try {
 			if (kannvorzeitg(date, medi.isIstLeiter(), ada)) {
@@ -169,6 +173,28 @@ public class Messdaten {
 		return rtn;
 	}
 
+	public ArrayList<Messdiener> getAnvertraute(ArrayList<Messdiener> medis) {
+		ArrayList<Messdiener> rtn = new ArrayList<Messdiener>();
+		Messdaten.removeDuplicatedEntries(geschwister);
+		Messdaten.removeDuplicatedEntries(freunde);
+
+		for (int i = 0;i<geschwister.size();i++) {
+			for (int j = 0;j<medis.size();j++) {
+				if (geschwister.get(i).makeId().equals(medis.get(j).makeId())) {
+					rtn.add(medis.get(j));
+				}
+			}
+		}
+		for (int i = 0;i<freunde.size();i++) {
+			for (int j = 0;j<medis.size();j++) {
+				if (freunde.get(i).makeId().equals(medis.get(j).makeId())) {
+					rtn.add(medis.get(j));
+				}
+			}
+		}
+		return rtn;
+	}
+
 	public static void removeDuplicatedEntries(ArrayList<Messdiener> arrayList) {
 		HashSet<Messdiener> hashSet = new HashSet<Messdiener>(arrayList);
 		arrayList.clear();
@@ -183,9 +209,9 @@ public class Messdaten {
 	public int getMax_messenInt() {
 		return max_messen;
 	}
-	
+
 	public boolean kannvorzeitg(Date date, boolean leiter, AData ada) {
-		boolean eins = kanndann(date,false);
+		boolean eins = kanndann(date, false);
 		boolean zwei = kannnoch();
 		if (leiter && ada.getPfarrei().getSettings().getDaten()[1].getAnz_dienen() == 0) {
 			zwei = true;
@@ -196,9 +222,9 @@ public class Messdaten {
 			return false;
 		}
 	}
-	
+
 	public boolean kann(Date date, boolean zwang) {
-		boolean eins = kanndann(date,zwang);
+		boolean eins = kanndann(date, zwang);
 		boolean zwei = kannnoch();
 		if (eins == zwei == true) {
 			return eins;
@@ -209,20 +235,20 @@ public class Messdaten {
 
 	public boolean kanndann(Date date, boolean zwang) {
 		if (eingeteilt.isEmpty() && ausgeteilt.isEmpty()) {
-			if(zwang || pause.isEmpty()) {
-			return true;
+			if (zwang || pause.isEmpty()) {
+				return true;
 			}
 		}
-		System.out.println(eingeteilt.toString() + ausgeteilt.toString() +pause.toString()+ ":" + date.toString());
-		if (contains(date,eingeteilt) || contains(gettheNextDay(date), eingeteilt)) {
+		System.out.println(eingeteilt.toString() + ausgeteilt.toString() + pause.toString() + ":" + date.toString());
+		if (contains(date, eingeteilt) || contains(gettheNextDay(date), eingeteilt)) {
 			return false;
 		}
-		if (contains(date,ausgeteilt) || contains(gettheNextDay(date), ausgeteilt)) {
+		if (contains(date, ausgeteilt) || contains(gettheNextDay(date), ausgeteilt)) {
 			// System.out.print(date + " kann dann nicht! " + getGeschwister().get(0));
 			return false;
 		}
 		if (!zwang) {
-			if (contains(date,pause) || contains(gettheNextDay(date), pause)) {
+			if (contains(date, pause) || contains(gettheNextDay(date), pause)) {
 				return false;
 			}
 		}
@@ -250,10 +276,10 @@ public class Messdaten {
 
 	public void einteilenZwang(Date date, boolean hochamt) {
 		try {
-			if (!contains(date,ausgeteilt)) {
+			if (!contains(date, ausgeteilt)) {
 				eingeteilt.add(date);
-				//Date day = gettheNextDay(date);
-				//pause.add(day);
+				// Date day = gettheNextDay(date);
+				// pause.add(day);
 				anz_messen++;
 				insgesamtEingeteilt++;
 				if (hochamt) {
@@ -293,9 +319,9 @@ public class Messdaten {
 	public int getkannnochAnz() {
 		return max_messen - anz_messen;
 	}
-	
-	public double getSortierenDouble(){
-		double rtn = getAnz_messen()/getMax_messen();
+
+	public double getSortierenDouble() {
+		double rtn = getAnz_messen() / getMax_messen();
 		return rtn;
 	}
 }

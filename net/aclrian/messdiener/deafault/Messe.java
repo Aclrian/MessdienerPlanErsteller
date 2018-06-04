@@ -69,6 +69,7 @@ public class Messe {
 			}
 		}
 		if (isdrin) {
+			this.em = sm;
 			bearbeiten(false, sm.getAnz_messdiener(), d, sm.getOrt(), sm.getTyp(), ada);
 		} else {
 			Utilities.logging(getClass(), getClass().getEnclosingConstructor(), "da ging was schief");

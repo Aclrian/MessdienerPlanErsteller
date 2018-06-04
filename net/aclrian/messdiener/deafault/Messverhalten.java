@@ -21,10 +21,9 @@ public class Messverhalten {
 		try {
 			if (ada != null) {
 				for (StandartMesse standartMesse : ada.getPfarrei().getStandardMessen()) {
-					if (AData.sonstiges.isSonstiges(standartMesse)) {
-						continue;
+					if (!(standartMesse instanceof Sonstiges)) {
+						this.messen.add(new KannWelcheMesse(standartMesse, false));
 					}
-					this.messen.add(new KannWelcheMesse(standartMesse, false));
 				}
 				update(ada);
 			}
@@ -81,7 +80,6 @@ public class Messverhalten {
 		if (AData.sonstiges.isSonstiges(messe)) {
 			return true;
 		}
-		update(ada);
 		boolean rt = false;
 		for (KannWelcheMesse kwm : messen) {
 			StandartMesse sm = kwm.getMesse();
@@ -90,6 +88,7 @@ public class Messverhalten {
 			}
 		}
 		new Erroropener("Standardmesse (" + messe.toString() + ") existiert nicht!");
+		update(ada);
 		return rt;
 	}
 
@@ -111,7 +110,7 @@ public class Messverhalten {
 				boolean b = false;
 				for (KannWelcheMesse kwm : messen) {
 					StandartMesse sm_old = kwm.getMesse();
-					if (sm.equals(sm_old)) {
+					if (sm.toString().equals(sm_old.toString())) {
 						bleiben.add(kwm);
 						b = true;
 					}
@@ -127,7 +126,7 @@ public class Messverhalten {
 	private boolean istAnders(AData ada) {
 		ArrayList<StandartMesse> smold = new ArrayList<StandartMesse>();
 		for (KannWelcheMesse kwm : messen) {
-			if (kwm.getMesse() != null || kwm != null || !AData.sonstiges.isSonstiges(kwm.getMesse()))
+			if (!(kwm.getMesse() instanceof Sonstiges))
 				smold.add(kwm.getMesse());
 		}
 		StandartMesse[] smold2 = new StandartMesse[smold.size()];
@@ -136,12 +135,6 @@ public class Messverhalten {
 		ArrayList<StandartMesse> smwmf = ada.getSMoheSonstiges();
 		StandartMesse[] smwmf2 = new StandartMesse[smwmf.size()];
 		smwmf.toArray(smwmf2);
-		if (smold.equals(smwmf)) {
-			return false;
-		}
-		if (smold2.equals(smwmf2)) {
-			return false;
-		}
 		if (smold2.toString().equals(smwmf2.toString())) {
 			return false;
 		}
