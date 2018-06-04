@@ -124,6 +124,7 @@ public class WMainFrame extends JFrame {
 					 */
 				} catch (Exception e) {
 					new Erroropener(e.getMessage());
+					System.out.println(e.getCause());
 					e.printStackTrace();
 				}
 			}
@@ -362,10 +363,7 @@ public class WMainFrame extends JFrame {
 		savepath = util.getSavepath();
 		mediarray = util.getAlleMedisVomOrdnerAlsList(savepath, ap.getAda());
 		int year = Calendar.getInstance().get(Calendar.YEAR);
-		for (Messdiener messdiener : mediarray) {
-			messdiener.setnewMessdatenDaten(util.getSavepath(), year, ap.getAda());
-		}
-		mediarraymitMessdaten = mediarray;
+		mediarraymitMessdaten = ap.getMediarraymitMessdaten();
 		mf = new WMessenFrame(ap);
 		mf.setVisible(true);
 	}

@@ -43,6 +43,7 @@ import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.differenzierung.Einstellungen;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.start.AData;
+import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
 import java.awt.Panel;
@@ -70,7 +71,7 @@ public class WMessenErstellen extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public WMessenErstellen(Messdiener[] me, ArrayList<Messe> m, AData ada) {
+	public WMessenErstellen(Messdiener[] me, ArrayList<Messe> m, AProgress ap) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Messen anzeigen");
 		setIconImage(References.getIcon());
@@ -81,7 +82,7 @@ public class WMessenErstellen extends JFrame {
 		contentPane.setLayout(null);
 		this.me = me;
 		this.messen = m;
-		neuerAlgorythmus(ada);
+		neuerAlgorythmus(ap);
 		StringBuffer s = new StringBuffer("<html>");
 		for (int i = 0; i<m.size(); i++) {
 			Messe messe = m.get(i);
@@ -300,7 +301,7 @@ public class WMessenErstellen extends JFrame {
         //f.deleteOnExit();
 	}
 
-	public void neuerAlgorythmus(AData ada) {
+	public void neuerAlgorythmus(AProgress ap) {
 		for (Messdiener messdiener : me) {
 			hauptarray.add(messdiener);
 		}
@@ -311,18 +312,18 @@ public class WMessenErstellen extends JFrame {
 		System.out.println("-------");
 		// Dap und zvmzwm fruehzeitg erkennen und beheben
 		// ArrayList<ArrayList<E>>
-		for (StandartMesse sm : ada.getPfarrei().getStandardMessen()) {
+		for (StandartMesse sm : ap.getAda().getPfarrei().getStandardMessen()) {
 			int anz_real = 0;
 			int anz_monat = 0;
 			ArrayList<Messdiener> array = new ArrayList<Messdiener>();
-			if (!(new Sonstiges().isSonstiges(sm))) {
+			if (!(AData.sonstiges.isSonstiges(sm))) {
 				for (Messdiener medi : hauptarray) {
 					int id = 0;
 					if (medi.isIstLeiter()) {
 						id++;
 					}
-					int ii = ada.getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
-					if (medi.getDienverhalten().getBestimmtes(sm, ada) && ii != 0) {
+					int ii = ap.getAda().getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
+					if (medi.getDienverhalten().getBestimmtes(sm, ap.getAda()) && ii != 0) {
 						array.add(medi);
 						anz_monat += medi.getMessdatenDaten().getkannnochAnz();
 					}
@@ -333,8 +334,9 @@ public class WMessenErstellen extends JFrame {
 				Calendar start = Calendar.getInstance();
 				start.setTime(messen.get(0).getDate());
 				start.add(Calendar.MONTH, 1);
+				System.out.println();
 				for (Messe me : messen) {
-					if (AData.sonstiges.isSonstiges(me.getStandardMesse())) {
+					if (!AData.sonstiges.isSonstiges(me.getStandardMesse())) {
 						if (me.getDate().after(start.getTime())) {
 							anz_real = anz_real + anz_monat;
 							start.setTime(me.getDate());
@@ -349,7 +351,7 @@ public class WMessenErstellen extends JFrame {
 						int medishinzufuegen = (int) Math.ceil((double) (fehlt / array.size()));//abrunden
 						Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "Es wurde abgerundet: "+ (double) (fehlt / array.size()) + "-->" + medishinzufuegen);
 						for (Messdiener messdiener : array) {
-							messdiener.getMessdatenDaten().addtomaxanz(medishinzufuegen, ada, messdiener.isIstLeiter());
+							messdiener.getMessdatenDaten().addtomaxanz(medishinzufuegen, ap.getAda(), messdiener.isIstLeiter());
 						}
 						Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "Zu den Messdienern, die am " + sm.getWochentag() + " um "
 								+ sm.getBeginn_stunde() + " koennen, werden + " + medishinzufuegen
@@ -371,66 +373,75 @@ public class WMessenErstellen extends JFrame {
 		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 		Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "n"+References.ae+"chster Monat bei: " + df.format(start.getTime()));
 		// EIGENTLICHER ALGORYTHMUS
-		for (Messe me : messen) {
-
+		for (int i = 0; i<messen.size();i++) {
+			Messe me = messen.get(i);
 			// while(m.isfertig() || stackover){
 			if (me.getDate().after(start.getTime())) {
 				start.add(Calendar.MONTH, 1);
 				Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "naechster Monat: Es ist " + df.format(me.getDate()));
 				for (Messdiener messdiener : hauptarray) {
-
 					messdiener.getMessdatenDaten().naechsterMonat();
 				}
 			}
-			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"Messe fertig: " + me.getID());
-			if (AData.sonstiges.isSonstiges(me.getStandardMesse())) {
-				this.einteilen(me, EnumAction.EinfachEinteilen, ada);
+			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"Messe dran: " + me.getID());
+			if (me.getStandardMesse() instanceof Sonstiges) {
+				this.einteilen(me, EnumAction.EinfachEinteilen, ap);
 			} else {
-				this.einteilen(me, EnumAction.TypeBeachten, ada);
+				this.einteilen(me, EnumAction.TypeBeachten, ap);
 			}
+			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),"Messe fertig: " + me.getID());
 		}
 	}
 
-	private void einteilen(Messe m, EnumAction act, AData ada) {
+	private void einteilen(Messe m, EnumAction act, AProgress ap) {
 		switch (act) {
 		case EinfachEinteilen:
 			ArrayList<Messdiener> medis;
 			boolean zwang = false;
 			try {
-				medis = get(AData.sonstiges, m, ada);
+				medis = get(AData.sonstiges, m, ap.getAda());
 			} catch (Exception e) {
 				Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), e.getMessage());
-				medis = beheben(m, ada);
+				medis = beheben(m, ap.getAda());
 				zwang = true;
 			}
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "\t" + medis.size() + " f"+References.ue+"r " + m.getnochbenoetigte());
 			for (int j = 0; j < medis.size(); j++) {
-				einteilen(m, medis.get(j), zwang);
+				einteilen(m, medis.get(j), zwang, ap);
 			}
 			break;
 		case TypeBeachten:
 			ArrayList<Messdiener> medis2;
 			boolean zwang2 = false;
 			try {
-				medis2 = get(m.getStandardMesse(), m, ada);
+				medis2 = get(m.getStandardMesse(), m, ap.getAda());
 			} catch (Exception e) {
 				Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), e.getMessage());
-				medis2 = beheben(m, ada);
+				medis2 = beheben(m, ap.getAda());
 				zwang2 = true;
 			}
+			System.out.println(medis2.toString() + medis2.size());
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "\t" + medis2.size() + " f"+References.ue+"r " + m.getnochbenoetigte());
-			for (int j = 0; j < medis2.size(); j++) {
-				einteilen(m, medis2.get(j), zwang2);
+			for (int j = 0; j < medis2.size();) {
+				System.out.println("drin");
+				while (!m.istFertig()) {
+					System.out.println("dr"+j+"n");
+					einteilen(m, medis2.get(j), zwang2, ap);
+					j++;
+				}
+				break;
 			}
+			System.out.println("fertig!");
 			break;
 		default:
 			break;
 		}
 	}
 
-	public void einteilen(Messe m, Messdiener medi, boolean zwang) {
+	public void einteilen(Messe m, Messdiener medi, boolean zwang, AProgress ap) {
 		boolean d = false;
 		if (m.istFertig()) {
+			System.out.println("fertig!!");
 			return;
 		} else if (zwang) {
 			if (medi.getMessdatenDaten().kann(m.getDate(),zwang)) {
@@ -444,14 +455,21 @@ public class WMessenErstellen extends JFrame {
 			}
 		}
 		if (!m.istFertig() && d == true) {
-			ArrayList<Messdiener> anv = medi.getMessdatenDaten().getAnvertraute();
+			ArrayList<Messdiener> anv = medi.getMessdatenDaten().getAnvertraute(ap.getMediarraymitMessdaten());
+			Messdaten.removeDuplicatedEntries(anv);
 			if (anv.size() >= 1) {
-				Messdaten.removeDuplicatedEntries(anv);
 				anv.sort(Messdiener.einteilen);
 				for (Messdiener messdiener : anv) {
-					if (messdiener.getMessdatenDaten().kann(m.getDate(),zwang)) {
+					boolean b = new Boolean(messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse(), ap.getAda()));
+					if (m.getStandardMesse().toString().startsWith("D")) {
+						System.out.println(b);
+					}
+					
+					if (messdiener.getMessdatenDaten().kann(m.getDate(),zwang) && b) {
 						Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "\t" + messdiener.makeId() + " dient mit " + medi.makeId());
-						einteilen(m, messdiener, zwang);
+						System.out.println("gertig");
+						einteilen(m, messdiener, zwang, ap);
+						System.out.println("fdfewtig");
 					}
 				}
 			}

@@ -246,7 +246,7 @@ public class WMessenHinzufuegen extends JFrame {
 		btnPlanErstellen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				erstellen(ap.getAda());
+				erstellen(ap);
 			}
 		});
 
@@ -366,11 +366,11 @@ public class WMessenHinzufuegen extends JFrame {
 		}
 	}*/
 
-	public void erstellen(AData ada) {
+	public void erstellen(AProgress ap) {
 		if (!messen.isEmpty()) {
 			Messdiener[] mm = new Messdiener[hauptarray.size()];
 			hauptarray.toArray(mm);
-			WMessenErstellen erst = new WMessenErstellen(mm, messen, ada);
+			WMessenErstellen erst = new WMessenErstellen(mm, messen, ap);
 			erst.setVisible(true);
 		} else {
 			new Erroropener("Es sollte wenigstens eine Messe existieren!");
