@@ -21,6 +21,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -380,6 +381,13 @@ public class WAlleMessen extends JFrame {
 			System.out.println(c.getClass());
 			c.setBackground(dunkel2);
 			c.setForeground(neuhell1);
+		} else if(c instanceof JEditorPane) {
+			if (((JEditorPane) c).getText().toLowerCase().contains("Github".toLowerCase())) {
+				
+			}
+			c.setForeground(Color.WHITE);
+			c.setBackground(dunkel1);
+			//c.setBackground(c);
 		} else {
 			try {
 				System.out.println(c.getClass());
@@ -440,7 +448,7 @@ public class WAlleMessen extends JFrame {
 
 		btnPlanErstellen.setBounds((int) (2.5 * wviertel) - (breite / 2), heigth - linieunten - abstandlinie / 2,
 				breite, linieunten - 5 * abstandlinie);
-		messepanel.setBounds(3 * wviertel, heigth - linieunten - abstandlinie - abstandlinie / 2,
+		messepanel.setBounds(3 * wviertel+abstandbreit, heigth - linieunten - abstandlinie - abstandlinie / 2,
 				wviertel - 2 * abstandbreit, linieunten);
 		plusmesse.setBounds(abstandbreit - abstandindreibuttons / 10, abstandlinie,
 				abstandindreibuttons - abstandindreibuttons / 10, linieunten - 5 * abstandlinie);
