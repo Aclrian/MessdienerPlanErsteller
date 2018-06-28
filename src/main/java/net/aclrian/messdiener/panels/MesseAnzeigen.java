@@ -2,12 +2,14 @@ package net.aclrian.messdiener.panels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
@@ -16,12 +18,14 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.APanel;
+import net.aclrian.messdiener.window.WAlleMessen;
 import net.aclrian.messdiener.window.auswaehlen.ACheckBox;
+import net.aclrian.messdiener.window.auswaehlen.AList;
 
 public class MesseAnzeigen extends APanel {
 
@@ -39,14 +43,22 @@ public class MesseAnzeigen extends APanel {
 	private JSpinner spinnerTyp = new JSpinner();
 	private JButton btnSetzeManuell = new JButton("manuell einteilen");
 	private JButton btntitle = new JButton("Titel " + References.ae + "ndern");
+	private SpinnerNumberModel slmAnzahl = new SpinnerNumberModel(6, 0, 50, 1);
+	private SpinnerListModel snmKirche;
+	private SpinnerListModel snmTypen;
 	// private ArrayList<Messdiener> ausgewaehlte;
 	// private EnumBoolean nurleiter;
 	private JTextField tftitel = new JTextField();
 	private String title = null;
 
 	private ACheckBox chbxnurleiter = new ACheckBox("nur Leiter");
+	private SpinnerDateModel sdmDatum;
 	// private Messe bearbeiten;
 	// private int ibearbeiten;
+	private AList<Messdiener> alist;
+	private ArrayList<Messdiener> eingeteilte = new ArrayList<Messdiener>();
+
+	private JScrollPane scrollpane = new JScrollPane();
 
 	/**
 	 * Create the panel.
@@ -56,8 +68,9 @@ public class MesseAnzeigen extends APanel {
 	 * @param ap
 	 */
 	public MesseAnzeigen(int defaultButtonwidth, int defaultButtonheight, AProgress ap) {
-		super(defaultButtonwidth, defaultButtonheight, true);
-		spinnerDatum.setModel(new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY));
+		super(defaultButtonwidth, defaultButtonheight, true, ap);
+		sdmDatum = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
+		spinnerDatum.setModel(sdmDatum);
 		JSpinner.DateEditor de_spinnerDatum = new JSpinner.DateEditor(spinnerDatum, "dd.MM.yyy HH:mm");
 		spinnerDatum.setEditor(de_spinnerDatum);
 		add(chbxHochamt);
@@ -71,6 +84,8 @@ public class MesseAnzeigen extends APanel {
 		add(lblOrt);
 		add(lblTyp);
 		add(btnSetzeManuell);
+		add(scrollpane);
+		scrollpane.setVisible(false);
 		tftitel.setVisible(false);
 		btntitle.addActionListener(new ActionListener() {
 			
@@ -79,7 +94,11 @@ public class MesseAnzeigen extends APanel {
 				if (btntitle.getText().equals("Titel " + References.ae + "ndern")) {
 					tftitel.setVisible(true);
 					if (tftitel.getText().equals("")) {
+						if(title.equals("")) {
 						tftitel.setText(spinnerTyp.getModel().getValue().toString());
+						} else {
+							tftitel.setText(title);
+						}
 					}
 					btntitle.setText("Titel speichern");
 				} else {
@@ -106,20 +125,20 @@ public class MesseAnzeigen extends APanel {
 			}
 		});
 
-		SpinnerNumberModel slmAnzahl = new SpinnerNumberModel(6, 0, 50, 1);
+		
 		spinnerAnzahlMedis.setModel(slmAnzahl);
 		String[] orte = new String[ap.getAda().getPfarrei().getOrte().size()];
 		for (int i = 0; i < orte.length; i++) {
 			orte[i] = ap.getAda().getPfarrei().getOrte().get(i);
 		}
-		SpinnerListModel snmKirche = new SpinnerListModel(orte);
+		snmKirche = new SpinnerListModel(orte);
 		spinnerKirche.setModel(snmKirche);
 
 		String[] type = new String[ap.getAda().getPfarrei().getTypen().size()];
 		for (int i = 0; i < type.length; i++) {
 			type[i] = ap.getAda().getPfarrei().getTypen().get(i);
 		}
-		SpinnerListModel snmTypen = new SpinnerListModel(type);
+		snmTypen = new SpinnerListModel(type);
 		spinnerTyp.setModel(snmTypen);
 		getBtnSpeichern().addActionListener(new ActionListener() {
 
@@ -128,6 +147,43 @@ public class MesseAnzeigen extends APanel {
 				speichern(ap);
 			}
 		});
+		btnSetzeManuell.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(btnSetzeManuell.getText().equals("manuell einteilen")) {
+					if (alleSindLeiter() || chbxnurleiter.isSelected()) {
+						alist = new AList<Messdiener>(ap.getLeiter(ap.getMediarraymitMessdaten()), Messdiener.compForMedis);
+					} else {
+						alist = new AList<Messdiener>(ap.getMediarraymitMessdaten(), Messdiener.compForMedis);
+					}
+					WAlleMessen.farbe(alist, false);
+					alist.setSelected(eingeteilte, true);
+					eingeteilte = alist.getSelected();
+					scrollpane.setViewportView(alist);
+					scrollpane.setVisible(true);
+					graphics();
+					btnSetzeManuell.setText("Einteilen");
+					alist.setLayoutOrientation(AList.VERTICAL_WRAP);
+				} else {
+					eingeteilte = alist.getSelected();
+					btnSetzeManuell.setText("manuell einteilen");
+					scrollpane.setVisible(false);
+				}
+			}
+		});
+	}
+
+	protected boolean alleSindLeiter() {
+		if (eingeteilte.size() == 0) {
+			return false;
+		}
+		for (Messdiener messdiener : eingeteilte) {
+			if (!messdiener.isIstLeiter()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	protected void speichern(AProgress ap) {
@@ -141,21 +197,29 @@ public class MesseAnzeigen extends APanel {
 					((Date) spinnerDatum.getModel().getValue()), ((String) spinnerKirche.getModel().getValue()),
 					((String) spinnerTyp.getModel().getValue()), title, ap.getAda());
 		}
+		if (eingeteilte.size()>0) {
+			for (Messdiener medi : eingeteilte) {
+				m.vorzeitigEiteilen(medi, ap.getAda());
+			}
+		}
 		Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), m.getID() + " wurde erstellt.");
 		ap.getWAlleMessen().addMesse(m);
 	}
+	
 	public void offneMesse(Messe m){
-		setztinPanel(m);
-	}
-
-	private void setztinPanel(Messe m) {
 		title = m.getTitle();
+		eingeteilte = m.getEingeteilte();
 		chbxHochamt.setSelected(m.isHochamt());
-		
-	}
+		slmAnzahl.setValue(m.getAnz_messdiener());
+		snmTypen.setValue(m.getMesseTyp());
+		snmKirche.setValue(m.getKirche());
+		sdmDatum.setValue(m.getDate());
+	}	
 
 	@Override
-	protected void graphics(int width, int heigth) {
+	public void graphics() {
+		int width = this.getBounds().width;
+		int heigth = this.getBounds().height;
 		int drei = width / 3;
 		int stdhoehe = heigth / 20;
 		int abstandhoch = heigth / 100;
@@ -186,7 +250,9 @@ public class MesseAnzeigen extends APanel {
 		btntitle.setBounds(haelfte + abstandweit, abstandhoch + 6 * stdhoehe, (int) ((drei - abstandweit) * 0.5),
 				stdhoehe);
 		tftitel.setBounds(haelfte+2*abstandweit+btntitle.getBounds().width, abstandhoch + 6 * stdhoehe, eingenschaften, stdhoehe);
-
+		if(alist != null) {
+			scrollpane.setBounds(abstandweit, 9*stdhoehe, width-2*abstandweit, 6*stdhoehe);
+		}
 	}
 
 }

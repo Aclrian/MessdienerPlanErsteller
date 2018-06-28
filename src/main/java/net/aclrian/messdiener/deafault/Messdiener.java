@@ -1,9 +1,11 @@
 package net.aclrian.messdiener.deafault;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 
 import net.aclrian.messdiener.start.AData;
+import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.Utilities;
 import net.aclrian.messdiener.utils.WriteFile;
@@ -23,6 +25,7 @@ public class Messdiener {
 	private int Eintritt = 2000;
 	private boolean istLeiter = false;
 	private Messdaten daten;
+	private File file;
 	public final static Comparator<Messdiener> compForMedis = new Comparator<Messdiener>() {
 
 		@Override
@@ -80,8 +83,9 @@ public class Messdiener {
 	/**
 	 * Konstruktor
 	 */
-	public Messdiener() {
+	public Messdiener(File f) {
 		setDeafault();
+		this.file = f;
 	}
 
 	/**
@@ -174,10 +178,10 @@ public class Messdiener {
 	 * 
 	 * @param pfad
 	 */
-	public void makeXML(String pfad, AData ada) {
-		WriteFile wf = new WriteFile(this, pfad);
+	public void makeXML(AProgress ap) {
+		WriteFile wf = new WriteFile(this, ap.getAda().getSavepath());
 		try {
-			wf.toXML(ada);
+			wf.toXML(ap);
 		} catch (IOException e) {
 			new Erroropener(e.getMessage());
 			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), e.getMessage());
@@ -231,6 +235,15 @@ public class Messdiener {
 
 	public void setnewMessdatenDaten(String savepath, int aktdatum, AData ada) {
 		this.daten = new Messdaten(this, ada, aktdatum);
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+		
 	}
 
 	/*

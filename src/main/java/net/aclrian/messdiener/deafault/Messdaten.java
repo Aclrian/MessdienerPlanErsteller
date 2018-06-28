@@ -192,6 +192,7 @@ public class Messdaten {
 				}
 			}
 		}
+		removeDuplicatedEntries(rtn);
 		return rtn;
 	}
 

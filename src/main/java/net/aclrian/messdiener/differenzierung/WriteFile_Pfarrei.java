@@ -152,7 +152,7 @@ public class WriteFile_Pfarrei extends JFrame {
 	private JLabel lblAnderen;
 	private JLabel lblStandardAnzahlPro;
 	private SpinnerModel model_andere = new SpinnerNumberModel(3, 1, 20, 1);
-	boolean alterunabhängig = false;
+	boolean alterunabhaengig = false;
 	private boolean leitergleichandere = false;
 	private SpinnerModel model_leiter = new SpinnerNumberModel(0, 0, 20, 1);
 
@@ -944,7 +944,7 @@ public class WriteFile_Pfarrei extends JFrame {
 
 					@Override
 					public void stateChanged(ChangeEvent e) {
-						if (alterunabhängig) {
+						if (alterunabhaengig) {
 							dmmm2.setDataVector(Einstellungen.getEinheitsdata((int) model_andere.getValue()),
 									columnNames2);
 
@@ -965,9 +965,9 @@ public class WriteFile_Pfarrei extends JFrame {
 
 				Boolean nureinspinner = new Boolean(getSelectedButtonText(bg2).equals(rdbtnf2Ja.getText()));
 				System.out.println("Nur einspinner: " + nureinspinner);
-				alterunabhängig = rdbtnf1Nein.isSelected();
+				alterunabhaengig = rdbtnf1Nein.isSelected();
 				if (rdbtnf2Ja.isSelected()) {
-					// einwert für alle
+					// einwert fï¿½r alle
 					leitergleichandere = true;
 					spinner_max_andere.removeChangeListener(listener);
 					spinner_max_andere.addChangeListener(listener);
@@ -1100,7 +1100,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		return null;
 	}
 
-	public void setzeInTabelleDenGrößtenWert() {
+	public void setzeInTabelleDenGroesstenWert() {
 		int andere = (int) spinner_max_andere.getValue();
 		int leiter = (int) spinner_max_leiter.getValue();
 		if (andere > leiter) {

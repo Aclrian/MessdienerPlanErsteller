@@ -121,7 +121,8 @@ public class WMediBearbeitenFrame extends JFrame {
 
 		btnAnvertraute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ap.getGeschwister();
+				new Erroropener("<html><body>Diese Beta-Version unterst" +References.ue + "tzt diese Funktion nicht mehr.<br></br>Warte auf das n�chste Update <br></br>(Experte: ) oder mache es manuell...</body></html>");
+				//ap.getGeschwister();
 			}
 		});
 
@@ -205,7 +206,6 @@ public class WMediBearbeitenFrame extends JFrame {
 	}
 
 	public void speichernundschliessen(AProgress ap) {
-		DateienVerwalter u = ap.getAda().getUtil();
 		if (textFieldVorname.getText().equals("") || textFieldNachname.getText().equals("")) {
 			new Erroropener("Unvollst"+References.ae+"ndige Eingabe!");
 		} else {
@@ -230,11 +230,7 @@ public class WMediBearbeitenFrame extends JFrame {
 					}
 				}
 			}
-			if (this.savepath.equals("")) {
-				this.savepath = u.waehleOrdner();
-			}
-
-			me.makeXML(savepath, ap.getAda());
+			me.makeXML(ap);
 			JFrame f = new JFrame();
 			JOptionPane.showMessageDialog(f, "Erfolgreich gespeichert!", "Gespeichert!",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -352,7 +348,7 @@ public class WMediBearbeitenFrame extends JFrame {
 				this.savepath = u.waehleOrdner();
 			}
 
-			me.makeXML(savepath, ap.getAda());
+			me.makeXML(ap);
 			JFrame f = new JFrame();
 			JOptionPane.showMessageDialog(f,
 					"Erfolgreich gespeichert! Du kannst nun einen neuen Messdiener anlegen. Wenn du den alten bearbeiten willst musst du ihn erst  wieder "+References.oe+"ffnen!",
@@ -375,7 +371,7 @@ public class WMediBearbeitenFrame extends JFrame {
 	 * @return neuer Messdiener
 	 */
 	public Messdiener getMeVonEingabe(AData ada) {
-		Messdiener me = new Messdiener();
+		Messdiener me = new Messdiener(null);
 		if (mobenWurdeGeoeffntet) {
 			me = moben;
 		}

@@ -437,7 +437,7 @@ public class WMainFrame extends JFrame {
 				}
 				if (!b) {
 					alte.add(alt);
-					alteS.add("Überarbeitete " + alt.toString());
+					alteS.add("ï¿½berarbeitete " + alt.toString());
 				}
 
 			}
@@ -450,7 +450,7 @@ public class WMainFrame extends JFrame {
 					Object[] possibilities = new Object[0];
 					possibilities = alteS.toArray(possibilities);
 					String s = (String) JOptionPane.showInputDialog(null,
-							sm.toString() + " ist neu.\nIst sie wirkilch neu oder wurde sie nur überarbeitet?",
+							sm.toString() + " ist neu.\nIst sie wirkilch neu oder wurde sie nur ï¿½berarbeitet?",
 							"Customized Dialog", JOptionPane.PLAIN_MESSAGE, null, possibilities, "Neu");
 
 					// If a string was returned, say so.
@@ -490,7 +490,7 @@ public class WMainFrame extends JFrame {
 			ArrayList<StandartMesse> bleibende = new ArrayList<StandartMesse>();
 			bleibende.addAll(beibehalten);
 			standardmessen = pf.getStandardMessen();
-			Manuell m = new Manuell(hand, ap.getAda(), pf);
+			Manuell m = new Manuell(hand, ap, pf);
 			m.act();
 			WriteFile_Pfarrei.writeFile(pf, savepath);
 			JOptionPane.showInputDialog("Das Programm wird nun beendet und mit den neuen Daten gestartet!");

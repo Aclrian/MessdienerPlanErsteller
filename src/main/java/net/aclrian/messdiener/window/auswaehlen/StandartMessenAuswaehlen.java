@@ -23,6 +23,7 @@ public class StandartMessenAuswaehlen extends JList<CheckboxListItem> {
 	private ArrayList<StandartMesse> stdm = new ArrayList<StandartMesse>();
 	private DefaultListModel<CheckboxListItem> dlm = new DefaultListModel<CheckboxListItem>();
 
+	@Deprecated
 	public StandartMessenAuswaehlen(ArrayList<StandartMesse> stdm) {
 
 		// Create a list containing CheckboxListItem's
@@ -47,7 +48,7 @@ public class StandartMessenAuswaehlen extends JList<CheckboxListItem> {
 		// Use a CheckboxListRenderer (see below)
 		// to renderer list cells
 
-		this.setCellRenderer(new CheckboxListRenderer());
+		//this.setCellRenderer(new CheckboxListRenderer());
 		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		// Add a mouse listener to handle changing selection
