@@ -37,6 +37,14 @@ public class ATextField extends JTextField {
 	public String getTitle() {
 		return title;
 	}
+	
+	@Override
+	public String getText() {
+		if (super.getText().equals(title)) {
+			return "";
+		}
+		return super.getText();
+	}
 
 	public void setTitle(String title) {
 		this.title = title;

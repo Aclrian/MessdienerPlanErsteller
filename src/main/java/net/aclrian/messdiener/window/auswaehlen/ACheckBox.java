@@ -15,7 +15,12 @@ public class ACheckBox extends JCheckBox{
 	private static final long serialVersionUID = 7515003839963796738L;
 
 	public ACheckBox(String title) {
-		super(title);
+		this();
+		setText(title);	
+	}
+
+	public ACheckBox() {
+		super();
 		setIcon(new ImageIcon(References.class.getResource("unselect.png")));
 		addChangeListener(new ChangeListener() {
 			
@@ -30,5 +35,9 @@ public class ACheckBox extends JCheckBox{
 			}
 		});
 	}
-
+	
+	@Override
+	public String toString() {
+		return getText();
+	}
 }

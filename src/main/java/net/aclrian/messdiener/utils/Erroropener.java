@@ -1,7 +1,11 @@
 package net.aclrian.messdiener.utils;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
+import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.window.WAlleMessen;
 
 /**
  * Eine klassische Aclrian Klasse: DER ERROROPENER <br>
@@ -11,18 +15,6 @@ import javax.swing.JOptionPane;
  *
  */
 public class Erroropener {
-	private class MyThread implements Runnable {
-		String s;
-
-		public MyThread(String s) {
-			this.s = s;
-		}
-
-		@Override
-		public void run() {
-			JOptionPane.showMessageDialog(new JFrame(), s, "Fehler!", 0);
-		}
-	}
 
 
 	/**
@@ -37,9 +29,12 @@ public class Erroropener {
 		} else if (error == "Wochentag") {
 			error = "Bitte den Wochentag gross und richtig schreiben!\nbspw. Montag";
 		}
-		MyThread mt = new MyThread(error);
-		Thread t = new Thread(mt);
-		t.start();
+		JOptionPane op = new JOptionPane(error, JOptionPane.ERROR_MESSAGE);
+		JFrame f = new JFrame();
+		JDialog dialog = op.createDialog(f, "Fehler!");
+		//farbe(op, false);
+		WAlleMessen.farbe(dialog, false);
+		dialog.setVisible(true);
 	}
 
 	/*

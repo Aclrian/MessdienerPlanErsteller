@@ -80,7 +80,7 @@ public class WWAnvertrauteFrame extends JFrame {
 	 */
 	private String savepath;
 
-	private final static Messdiener m = new Messdiener();
+	private final static Messdiener m = new Messdiener(null);
 
 	/**
 	 * Konstruktor erstellt von {@link WWAnvertrauteFrame}
@@ -185,7 +185,7 @@ public class WWAnvertrauteFrame extends JFrame {
 		// Der Hauptarray wird sortiert mit .makeID()
 		hauptarray.sort(Messdiener.compForMedis);
 		// alle Messdiener_IDs von Hauptarray werden zur graphischen Oberfläche
-		// hinzugefügt
+		// hinzugefuegt
 		for (Messdiener messdiener2 : hauptarray) {
 			listmodel.addElement(messdiener2.makeId());
 		}
@@ -209,7 +209,7 @@ public class WWAnvertrauteFrame extends JFrame {
 	public void bearbeiteAnvertrauter(String id, boolean geschwister) {
 		Utilities.logging(this.getClass(), "bearbeiteAnvertraute", id + " ist dran.geschwister: " + geschwister);
 		if (id != null && !id.equals("") && !id.equals("LEER")) {
-			if (findeID(id) != new Messdiener()) {
+			if (findeID(id) != new Messdiener(null)) {
 				Messdiener geschwi = findeID(id);
 				if (geschwi != m && geschwi != me) {
 					if (geschwister) {
@@ -254,11 +254,11 @@ public class WWAnvertrauteFrame extends JFrame {
 				return messdiener;
 			}
 		}
-		return new Messdiener();
+		return m;
 	}
 
 	/**
-	 * schlie�t das Fenster
+	 * schlie�t das Fenster
 	 */
 	protected void schliessen() {
 		this.dispose();
@@ -375,7 +375,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						messdiener.setFreunde(ids);
 						WriteFile wf = new WriteFile(messdiener, savepath);
 						try {
-							wf.toXML(ada);
+							wf.toXML(ap);
 						} catch (IOException e) {
 				 			new Erroropener(e.getMessage());
 							e.printStackTrace();
@@ -395,7 +395,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						messdiener.setGeschwister(gids);
 						WriteFile wf = new WriteFile(messdiener, savepath);
 						try {
-							wf.toXML(ada);
+							wf.toXML(ap);
 						} catch (IOException e) {
 				 			new Erroropener(e.getMessage());
 							e.printStackTrace();
@@ -422,7 +422,7 @@ public class WWAnvertrauteFrame extends JFrame {
 			// me speichern
 			WriteFile rf = new WriteFile(me, savepath);
 			try {
-				rf.toXML(ada);
+				rf.toXML(ap);
 			} catch (IOException e) {
 	 			new Erroropener(e.getMessage());
 				e.printStackTrace();
@@ -450,7 +450,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						geschwister.setGeschwister(ggs);
 						WriteFile wr = new WriteFile(geschwister, savepath);
 						try {
-							wr.toXML(ada);
+							wr.toXML(ap);
 						} catch (IOException e) {
 							new Erroropener(e.getMessage());
 							e.printStackTrace();
@@ -485,7 +485,7 @@ public class WWAnvertrauteFrame extends JFrame {
 						freund.setFreunde(ggs);
 						WriteFile wr = new WriteFile(freund, savepath);
 						try {
-							wr.toXML(ada);
+							wr.toXML(ap);
 						} catch (IOException e) {
 				 			new Erroropener(e.getMessage());
 							e.printStackTrace();

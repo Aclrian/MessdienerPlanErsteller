@@ -1,13 +1,11 @@
 package net.aclrian.messdiener.panels;
 
-import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Font;
+import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -15,12 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import net.aclrian.messdiener.differenzierung.Pfarrei;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.Erroropener;
-import net.aclrian.messdiener.window.APanel;
-import net.aclrian.messdiener.window.WAlleMessen;
 
 public class Start extends APanel {
 
@@ -34,35 +29,28 @@ public class Start extends APanel {
 	private JButton pfaendern = new JButton("<html><body><h3>Pfarrei<br>"+References.ae+"ndern</h3></body></html>");
 	private JEditorPane ep;
 	private URI uri;
-
 	
-	public Start(int dfbtnheigth, int dfbtnwidht, Pfarrei pf) {
-		super(dfbtnwidht, dfbtnheigth, false);
+	
+	public Start(int dfbtnwidht, int dfbtnheigth, AProgress ap) {
+		super(dfbtnwidht, dfbtnheigth, false, ap);
+		this.setLayout(null);
 		Font font = title.getFont();
 		StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
 	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
 	    style.append("font-size:" + font.getSize() + "pt;");
 	    // html content
-	    URI url = null;
 	    uri = null;
 		try {
-			url = new URI("https://github.com/Aclrian/MessdienerPlanErsteller/");
 			uri = new URI("https://github.com/Aclrian/MessdienerPlanErsteller/");
 		} catch (URISyntaxException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">" //
-	            + "<a href=\""+url+"\"><img src=\""+ References.class.getResource("GitHub_Logo.png") +"\" width=\"145\" height=\"126\"/></a>" //
-	            + "</body></html>");
 		ep = new JEditorPane("text/html", "<html>" + 
 	    		"  <head></head><body>" + 
 	    		"    <a color=\"white\" href=\"https://github.com/Aclrian/MessdienerPlanErsteller/\">"//+"View Source on: "//+
 	    		+ "<img src=\""+ References.class.getResource("GitHub_Logo_White.png") +"\" width=\"100\" height=\"41\" border=\"0\">" + 
 	    		"</a>  </body>" + 
 	    		"</html>");
-	    System.out.println(ep.getText());
-
 	    // handle link events
 	    ep.addHyperlinkListener(new HyperlinkListener()
 	    {
@@ -79,42 +67,71 @@ public class Start extends APanel {
 	        }
 	    });
 	    ep.setEditable(false);
+	    add(ep);
+	    ep.setVisible(true);
+	    
 		unterueberschrift.setText("<html><body><h2>version: " + AProgress.VersionID + " von Aclrian</h2></body></html>");
-		pfarreilabel.setText("<html><body><h2>f�r <i>" + pf.getName() + "</i></h2></body></html>");
-		title.setHorizontalAlignment(JLabel.CENTER);
 		unterueberschrift.setHorizontalAlignment(JLabel.RIGHT);
-		pfarreilabel.setHorizontalAlignment(JLabel.CENTER);
-		add(title);
 		add(unterueberschrift);
+		unterueberschrift.setVisible(true);
+		
+		pfarreilabel.setText("<html><body><h2>f"+References.ue+"r <i>" + ap.getAda().getPfarrei().getName() + "</i></h2></body></html>");
+		pfarreilabel.setHorizontalAlignment(JLabel.CENTER);
 		add(pfarreilabel);
+		pfarreilabel.setVisible(true);
+		
+		title.setHorizontalAlignment(JLabel.CENTER);
+		add(title);
+		title.setVisible(true);
+		
 		add(speicherortaendern);
+		speicherortaendern.setVisible(true);
+		
 		add(plangenerieren);
-		add(ep);
+		plangenerieren.setVisible(true);
+		
 		add(pfaendern);
+		pfaendern.setVisible(true);
+		
+		graphics();
+		setVisible(true);
 	}
 
 	@Override
-	protected void graphics(int width, int heigth) {
+	public void graphics() {
+		int width = this.getBounds().width;
+		int heigth = this.getBounds().height;
 		int drei = width / 3;
 		int stdhoehe = heigth / 20;
 		int abstandhoch = heigth / 100;
 		int abstandweit = width / 100;
-		int eingenschaften = width / 5;
-		int haelfte = width / 2;
+		//int eingenschaften = width / 5;
+		//int haelfte = width / 2;
 		title.setBounds(abstandweit, abstandhoch, width-2*abstandweit, stdhoehe);
+		title.setVisible(true);
 		pfarreilabel.setBounds(abstandweit, 2*abstandhoch+stdhoehe, width-2*abstandweit, stdhoehe);
+		pfarreilabel.setVisible(true);
 		unterueberschrift.setBounds(abstandweit, heigth-abstandhoch-stdhoehe, width-2*abstandweit, stdhoehe);
-		//title.setBorder(WAlleMessen.b);
-		speicherortaendern.setBounds(abstandweit, 6*stdhoehe, drei, 3*stdhoehe);
-		plangenerieren.setBounds(drei+abstandweit, 11*stdhoehe, drei-abstandweit, 3*stdhoehe);
-		pfaendern .setBounds(2*drei,6*stdhoehe,drei-abstandweit, 3* stdhoehe);
-		ep.setBounds((int) (abstandweit*0+2),heigth-44, 100,41);
-		//ep.setBorder(WAlleMessen.b);
-	   // System.out.println(ep.getText());
-	    
-		//pfarreilabel.setBorder(WAlleMessen.b);
-		//pfarreilabel.setBorder(WAlleMessen.b);
-		
+		unterueberschrift.setVisible(true);
+		speicherortaendern.setBounds(abstandweit, 6*stdhoehe, drei-abstandweit, 3*stdhoehe);
+		speicherortaendern.setVisible(true);
+		System.out.println(speicherortaendern.getBounds());
+		System.out.println(this.getBounds());
+		plangenerieren.setBounds(drei, 11*stdhoehe, drei-abstandweit, 3*stdhoehe);
+		plangenerieren.setVisible(true);
+		pfaendern.setBounds(2*drei-abstandweit,6*stdhoehe,drei, 3* stdhoehe);
+		pfaendern.setVisible(true);
+		ep.setBounds((int) (abstandweit*1+2),heigth-44, 100,41);
+		ep.setVisible(true);		
 	}
 
+	public static void main(String[] args) throws IOException {
+		File f = new File("C:\\Users\\Adrian\\Dropbox\\Messdienerdateien//äüß.xml");
+		f.createNewFile();
+		
+	}
+	@Override
+	public String toString() {
+		return this.getBounds()+super.toString();
+	}
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.pictures.References;
-import net.aclrian.messdiener.start.AData;
+import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.WriteFile;
 
@@ -27,34 +27,34 @@ public class Manuell {
 	public static StandartMesse Son_taufe = new StandartMesse("So", 15, "00", sm, 2, tf);
 	public static StandartMesse Son_abend = new StandartMesse("So", 18, "00", sm, 6, hlm);
 	private ArrayList<Handling> hand;
-	private AData ada;
+	private AProgress ap;
 	private Pfarrei pf;
 
-	public Manuell(ArrayList<Handling> hand, AData ada, Pfarrei pf) {
+	public Manuell(ArrayList<Handling> hand, AProgress ap, Pfarrei pf) {
 		this.hand = hand;
-		this.ada = ada;
+		this.ap = ap;
 		this.pf = pf;
 	}
 	
 	public void act(){
 		for (Handling handling : hand) {
 			if (handling.getEw() == EnumWorking.ueberarbeitet) {
-				for (Messdiener m : ada.getMediarray()) {
+				for (Messdiener m : ap.getAda().getMediarray()) {
 					m.getDienverhalten().ueberschreibeStandartMesse(handling.getAlt(), handling.getNeu());
 				}
 			}
 			if (handling.getEw() == EnumWorking.neu) {
 				new Erroropener("Um in einer neuen Standartmesse Messdiener hinzu zu f"+References.ue+"gen, bitte den Messdiener ausw"+References.ae+"hlen.");
-				for (Messdiener m : ada.getMediarray()) {
+				for (Messdiener m : ap.getAda().getMediarray()) {
 					m.getDienverhalten().fuegeneueMesseHinzu(handling.getNeu());
 				}
 			}
 		}
-		WriteFile_Pfarrei.writeFile(pf, ada.getUtil().getSavepath());
-		for (Messdiener m : ada.getMediarray()) {
-			WriteFile wf = new WriteFile(m, ada.getUtil().getSavepath());
+		WriteFile_Pfarrei.writeFile(pf, ap.getAda().getUtil().getSavepath());
+		for (Messdiener m : ap.getAda().getMediarray()) {
+			WriteFile wf = new WriteFile(m, ap.getAda().getUtil().getSavepath());
 			try {
-				wf.toXML(ada);
+				wf.toXML(ap);
 			} catch (IOException e) {
 				new Erroropener(e.getMessage());
 				e.printStackTrace();

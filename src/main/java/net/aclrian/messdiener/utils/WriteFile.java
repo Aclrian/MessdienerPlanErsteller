@@ -1,7 +1,11 @@
 package net.aclrian.messdiener.utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,11 +19,14 @@ import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messverhalten;
 import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.start.AData;
+import net.aclrian.messdiener.start.AProgress;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 /**
  * Mit dieser Klasse werden Mesdiener in xml-Dateien gespeichert
+ * 
  * @author Aclrain
  *
  */
@@ -29,22 +36,28 @@ public class WriteFile {
 
 	/**
 	 * 
-	 * @param ps der Messdiener, der gespeichert werden soll
-	 * @param path der Pfad, bei dem der Messdienergespeichter werden soll
+	 * @param ps
+	 *            der Messdiener, der gespeichert werden soll
+	 * @param path
+	 *            der Pfad, bei dem der Messdienergespeichter werden soll
 	 */
 	public WriteFile(Messdiener ps, String path) {
 		this.me = ps;
 		this.path = path;
 	}
-/**
- * speichert den Messdiener
- * @throws IOException wirft IOException bei bspw. zu wenig Rechten
- */
-	public void toXML(AData ada)throws IOException {
+
+	/**
+	 * speichert den Messdiener
+	 * 
+	 * @throws IOException
+	 *             wirft IOException bei bspw. zu wenig Rechten
+	 */
+	public void toXML(AProgress ap) throws IOException {
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty("indent", "yes");
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			//transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
 			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 
@@ -76,22 +89,21 @@ public class WriteFile {
 
 			Element mv = document.createElement("Messverhalten");
 			Messverhalten dv = this.me.getDienverhalten();
-			
-			for (int i = 0; i < ada.getPfarrei().getStandardMessen().size(); i++) {
-				StandartMesse messe = ada.getPfarrei().getStandardMessen().get(i);
+
+			for (int i = 0; i < ap.getAda().getPfarrei().getStandardMessen().size(); i++) {
+				StandartMesse messe = ap.getAda().getPfarrei().getStandardMessen().get(i);
 				System.out.println(messe);
 				if (AData.sonstiges.isSonstiges(messe)) {
 					continue;
 				}
-				boolean kwm = dv.getBestimmtes(messe, ada);
+				boolean kwm = dv.getBestimmtes(messe, ap.getAda());
 				String s = messe.toReduziertenString();
 				Element kwmesse = document.createElement(s);
 				kwmesse.appendChild(document.createTextNode(String.valueOf(kwm)));
 				mv.appendChild(kwmesse);
 			}
 			employee.appendChild(mv);
-			
-			
+
 			Element leiter = document.createElement("Leiter");
 			leiter.appendChild(document.createTextNode(String.valueOf(this.me.isIstLeiter())));
 			employee.appendChild(leiter);
@@ -99,8 +111,8 @@ public class WriteFile {
 			Element eintritt = document.createElement("Eintritt");
 			eintritt.appendChild(document.createTextNode(String.valueOf(this.me.getEintritt())));
 			employee.appendChild(eintritt);
-			
-			//Freunde und Geschwister
+
+			// Freunde und Geschwister
 			String[] f = me.getFreunde();
 			String[] g = me.getGeschwister();
 			Element anvertraute = document.createElement("Anvertraute");
@@ -214,15 +226,29 @@ public class WriteFile {
 				path.replaceAll("//", "/");
 				path.replaceAll("/", "//");
 			}
-			String datei = this.me.getNachnname() + "_" + this.me.getVorname();
-
+			String datei = this.me.getNachnname() + ", " + this.me.getVorname();
+			datei = new String(datei.getBytes(), Charset.forName("UTF-8"));
 			System.out.println("Datei wird gespeichert in :" + path + "//" + datei + ".xml");
-			StreamResult streamResult = new StreamResult(new File(path + "//" + datei + ".xml"));
-			transformer.transform(domSource, streamResult);
+			File file = new File(path + "//" + datei + ".xml");
+			//
+			OutputStreamWriter out = new OutputStreamWriter ( new FileOutputStream(file), "UTF-8" );
+			StreamResult result=new StreamResult(out);
+			transformer.transform(domSource,result);
 			System.out.println("Done creating XML File for: " + this.me.getVorname() + " " + this.me.getNachnname());
-		} catch (
-
-		ParserConfigurationException pce) {
+			boolean b = false;
+			for (Messdiener m : ap.getAda().getMediarray()) {
+			    if (m.getFile().equals(me.getFile())) {
+				b = true;
+				ap.getAda().getMediarray().remove(m);
+				ap.getAda().getMediarray().add(me);
+				break;
+			    }
+			}
+			if(b == false) {
+			    ap.getAda().getMediarray().add(me);
+			    ap.getWAlleMessen().update(ap.getAda());
+			}
+		} catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
 		} catch (TransformerException tfe) {
 			tfe.printStackTrace();

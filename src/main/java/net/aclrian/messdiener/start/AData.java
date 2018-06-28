@@ -1,5 +1,6 @@
 package net.aclrian.messdiener.start;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import net.aclrian.messdiener.deafault.Messdiener;
@@ -30,7 +31,8 @@ public class AData {
 		try {
 			pf = dv.getPfarrei();
 		} catch (Exception e) {
-			// new Erroropener("no error");
+			e.printStackTrace();
+			// new Erroropener("!jtfvorname.getText().equals("") no error");
 			WriteFile_Pfarrei wfp = new WriteFile_Pfarrei(ap);//TODO hier muss was gemacht werden
 			return;
 		}
@@ -116,6 +118,8 @@ public class AData {
 	public void addMedi(Messdiener medi) {
 		mediarray.add(medi);		
 	}
+
+	
 
 
 }

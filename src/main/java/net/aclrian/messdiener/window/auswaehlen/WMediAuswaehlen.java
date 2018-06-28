@@ -1,9 +1,9 @@
 package net.aclrian.messdiener.window.auswaehlen;
 
-import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -54,17 +54,24 @@ public class WMediAuswaehlen extends JFrame {
 				btnBesttigen.setBounds(183, 143, 112, 25);
 				
 				getContentPane().add(btnBesttigen);
-				AlleMedisPane amp = new AlleMedisPane(hauptarray, nurleiter);
+				AList<Messdiener> amp;
+				if (nurleiter) {
+					@SuppressWarnings("unchecked")
+					ArrayList<Messdiener> al = (ArrayList<Messdiener>) hauptarray.clone();
+					amp = new AList<Messdiener>(al, Messdiener.compForMedis);
+				} else {
+					 amp = new AList<Messdiener>(hauptarray, Messdiener.compForMedis);
+				}
+				
 				btnBesttigen.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						ArrayList<Messdiener> rtn = amp.getAusgewaehlte(hauptarray);
+						ArrayList<Messdiener> rtn = amp.getSelected();
 						zurueckgeben(rtn, wmh);
 					}
 				});
 		getContentPane().add(btnAbbrechen);
 		
-		Container c = amp.getMedisinList();
-		panel.add(c);
+		add(amp);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setVisible(true);
 	}

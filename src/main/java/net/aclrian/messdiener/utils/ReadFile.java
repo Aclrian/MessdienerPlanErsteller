@@ -28,9 +28,10 @@ public class ReadFile {
 	 * @return den ausgelesenen Messdiener
 	 */
 	public Messdiener getMessdiener(String pfadMitDateiundmitEndung, AData ada) {
-		Messdiener me = new Messdiener();
+		Messdiener me = null;
 		try {
 			File fXmlFile = new File(pfadMitDateiundmitEndung);
+			me = new Messdiener(fXmlFile);
 			if (!fXmlFile.isDirectory()) {
 				String s = fXmlFile.getAbsolutePath();
 				if (s.endsWith(".xml")) {

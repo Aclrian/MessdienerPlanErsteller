@@ -12,6 +12,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
 import net.aclrian.messdiener.deafault.Messverhalten;
+import net.aclrian.messdiener.deafault.Sonstiges;
 import net.aclrian.messdiener.deafault.StandartMesse;
 import net.aclrian.messdiener.start.AData;
 
@@ -36,6 +37,9 @@ public class ATable extends JTable {
 		Messverhalten mv = new Messverhalten(ada);
 		for (int i = 0; i < dtm.getRowCount(); i++) {
 			StandartMesse s = (StandartMesse) dtm.getValueAt(i, 0);
+			if (s instanceof Sonstiges) {
+			    continue;
+			}
 			boolean kann = (Boolean) dtm.getValueAt(i, 1);
 			for (StandartMesse sm : ada.getSMoheSonstiges()) {
 				if (s.toString().equals(sm.toString())) {

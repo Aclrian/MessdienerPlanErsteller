@@ -57,9 +57,9 @@ public class WMessenErstellen extends JFrame {
 	private JPanel contentPane;
 	private Messdiener[] me;
 	// private ArrayList<Messe> m;
-	private JEditorPane editorPane = new JEditorPane("text/html", "");
 	private final ArrayList<Messe> messen;
 	private ArrayList<Messdiener> hauptarray = new ArrayList<Messdiener>();
+	private JEditorPane editorPane = new JEditorPane("text/html", "");
 	private DefaultListModel<Messdiener> dlm = new DefaultListModel<Messdiener>();
 	private JList<Messdiener> list = new JList<>(dlm);
 	private Converter con;
@@ -460,16 +460,14 @@ public class WMessenErstellen extends JFrame {
 			if (anv.size() >= 1) {
 				anv.sort(Messdiener.einteilen);
 				for (Messdiener messdiener : anv) {
-					boolean b = new Boolean(messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse(), ap.getAda()));
+					boolean b = messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse(), ap.getAda());
 					if (m.getStandardMesse().toString().startsWith("D")) {
 						System.out.println(b);
 					}
 					
 					if (messdiener.getMessdatenDaten().kann(m.getDate(),zwang) && b) {
 						Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "\t" + messdiener.makeId() + " dient mit " + medi.makeId());
-						System.out.println("gertig");
 						einteilen(m, messdiener, zwang, ap);
-						System.out.println("fdfewtig");
 					}
 				}
 			}

@@ -180,11 +180,11 @@ public class Messe {
 	 * @param type
 	 */
 	public void bearbeiten(boolean hochamt, int anz_messdiener, Date date, String kirche, String type, AData ada) {
-		setWochentag(df.format(date));
-		setHochamt(hochamt);
-		setKirche(kirche);
-		setMesseTyp(type);
-		setDate(date);
+		this.Wochentag = df.format(date);
+		this.hochamt = hochamt;
+		this.kirche = kirche;
+		this.typ = type;
+		this.date = date;
 		setAnz_messdiener(anz_messdiener, ada);
 		/*
 		 * for (int i = 0; i < anz_messdiener; i++) { Messdiener me = new Messdiener();
@@ -347,7 +347,7 @@ public class Messe {
 	}
 
 	private void setAnz_messdiener(int anz_messdiener, AData ada) {
-		if (anz_messdiener <= ada.getUtil().getMaxAnzMedis(ada.getUtil().getSavepath(), ada)) {
+		if (anz_messdiener <= ada.getMediarray().size()) {
 			this.anz_messdiener = anz_messdiener;
 		} else {
 			new Erroropener("zu grosse Anzahl an Messdiener!");
