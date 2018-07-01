@@ -714,7 +714,7 @@ public class WriteFile_Pfarrei extends JFrame {
 			return;
 		}
 		String s = ap.getAda().getUtil().getSavepath();// waehleOrdner();
-		boolean hochaemter = new Boolean(rdbtnf12Ja.isSelected());
+		boolean hochaemter = rdbtnf12Ja.isSelected();
 		System.out.println(hochaemter);
 		if (s != null) {
 			Pfarrei pf = new Pfarrei(seting, sm, name, orte, typen, hochaemter); 
@@ -963,7 +963,7 @@ public class WriteFile_Pfarrei extends JFrame {
 				// lblStandardAnzahlPro.setVisible(enabeldJtable);
 				// scrollPane_2.setVisible(enabeldJtable);
 
-				Boolean nureinspinner = new Boolean(getSelectedButtonText(bg2).equals(rdbtnf2Ja.getText()));
+				Boolean nureinspinner = (getSelectedButtonText(bg2).equals(rdbtnf2Ja.getText()));
 				System.out.println("Nur einspinner: " + nureinspinner);
 				alterunabhaengig = rdbtnf1Nein.isSelected();
 				if (rdbtnf2Ja.isSelected()) {

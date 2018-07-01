@@ -27,15 +27,6 @@ import javax.xml.bind.JAXBException;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 
 import net.aclrian.convertFiles.Converter;
-import net.aclrian.messdiener.deafault.Messdaten;
-/*
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;*/
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
 import net.aclrian.messdiener.deafault.Sonstiges;
@@ -45,6 +36,7 @@ import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.start.AData;
 import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.Erroropener;
+import net.aclrian.messdiener.utils.RemoveDoppelte;
 import net.aclrian.messdiener.utils.Utilities;
 import java.awt.Panel;
 
@@ -456,7 +448,8 @@ public class WMessenErstellen extends JFrame {
 		}
 		if (!m.istFertig() && d == true) {
 			ArrayList<Messdiener> anv = medi.getMessdatenDaten().getAnvertraute(ap.getMediarraymitMessdaten());
-			Messdaten.removeDuplicatedEntries(anv);
+			RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
+			rd.removeDuplicatedEntries(anv);
 			if (anv.size() >= 1) {
 				anv.sort(Messdiener.einteilen);
 				for (Messdiener messdiener : anv) {
@@ -498,7 +491,8 @@ public class WMessenErstellen extends JFrame {
 						medis.remove(messdiener);
 					}
 				}
-				Messdaten.removeDuplicatedEntries(kann);
+				RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
+				rd.removeDuplicatedEntries(kann);
 				kann.sort(Messdiener.einteilen);
 				kann.remove(medis.get(i));
 				medis.addAll(i, kann);
