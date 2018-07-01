@@ -4,12 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 
 import net.aclrian.messdiener.differenzierung.Einstellungen;
 import net.aclrian.messdiener.differenzierung.Setting;
 import net.aclrian.messdiener.start.AData;
 import net.aclrian.messdiener.utils.Erroropener;
+import net.aclrian.messdiener.utils.RemoveDoppelte;
 import net.aclrian.messdiener.utils.Utilities;
 
 public class Messdaten {
@@ -26,6 +26,8 @@ public class Messdaten {
 	private ArrayList<Date> eingeteilt = new ArrayList<Date>();
 	private ArrayList<Date> ausgeteilt = new ArrayList<Date>();
 	private ArrayList<Date> pause = new ArrayList<Date>();
+	
+	RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
 
 	public Messdaten(Messdiener m, AData ada, int aktdatum) {
 		geschwister = new ArrayList<Messdiener>();
@@ -39,7 +41,7 @@ public class Messdaten {
 					medi = ada.getUtil().sucheMessdiener(geschwister[i], m, ada);
 					if (medi != null) {
 						this.geschwister.add(medi);
-						Messdaten.removeDuplicatedEntries(this.geschwister);
+						rd.removeDuplicatedEntries(this.geschwister);
 					} else {
 						new Erroropener(
 								"Konnte " + geschwister[i] + " nicht finden fuer Anvertraute von: " + m.makeId() + "!");
@@ -64,7 +66,7 @@ public class Messdaten {
 				}
 				if (medi != null) {
 					freunde.add(medi);
-					Messdaten.removeDuplicatedEntries(freunde);
+					rd.removeDuplicatedEntries(freunde);
 				}
 			}
 		}
@@ -169,14 +171,14 @@ public class Messdaten {
 		ArrayList<Messdiener> rtn = geschwister;
 		rtn.addAll(freunde);
 		rtn.sort(Messdiener.einteilen);
-		removeDuplicatedEntries(rtn);
+		rd.removeDuplicatedEntries(rtn);
 		return rtn;
 	}
 
 	public ArrayList<Messdiener> getAnvertraute(ArrayList<Messdiener> medis) {
 		ArrayList<Messdiener> rtn = new ArrayList<Messdiener>();
-		Messdaten.removeDuplicatedEntries(geschwister);
-		Messdaten.removeDuplicatedEntries(freunde);
+		rd.removeDuplicatedEntries(geschwister);
+		rd.removeDuplicatedEntries(freunde);
 
 		for (int i = 0;i<geschwister.size();i++) {
 			for (int j = 0;j<medis.size();j++) {
@@ -192,15 +194,11 @@ public class Messdaten {
 				}
 			}
 		}
-		removeDuplicatedEntries(rtn);
+		
+		rd.removeDuplicatedEntries(rtn);
 		return rtn;
 	}
 
-	public static void removeDuplicatedEntries(ArrayList<Messdiener> arrayList) {
-		HashSet<Messdiener> hashSet = new HashSet<Messdiener>(arrayList);
-		arrayList.clear();
-		arrayList.addAll(hashSet);
-	}
 
 	public double getMax_messen() {
 		double rtn = (max_messen == 0) ? 0.001 : max_messen;
@@ -240,7 +238,7 @@ public class Messdaten {
 				return true;
 			}
 		}
-		System.out.println(eingeteilt.toString() + ausgeteilt.toString() + pause.toString() + ":" + date.toString());
+		//System.out.println(eingeteilt.toString() + ausgeteilt.toString() + pause.toString() + ":" + date.toString());
 		if (contains(date, eingeteilt) || contains(gettheNextDay(date), eingeteilt)) {
 			return false;
 		}

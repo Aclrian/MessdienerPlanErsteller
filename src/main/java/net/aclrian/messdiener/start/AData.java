@@ -1,7 +1,7 @@
 package net.aclrian.messdiener.start;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messe;
@@ -24,6 +24,7 @@ public class AData {
 	private Pfarrei pf;
 	public static final String pfarredateiendung = ".xml.pfarrei";
 	public static final String textdatei = "//.messdienerOrdnerPfad.txt";
+	private HashMap<Messe, ArrayList<Messdiener>> voreingeteilte = new HashMap<>();
 	
 	public AData(AProgress ap) {
 		dv = new DateienVerwalter();
@@ -94,13 +95,13 @@ public class AData {
 		pf.getStandardMessen().clear();
 		pf.getStandardMessen().add(sonstiges);
 		boolean hatsonstiges = false;
-		for (StandartMesse sm : pf.getStandardMessen()) {
+		/*for (StandartMesse sm : pf.getStandardMessen()) {
 			// if(sonstiges.isSonstiges(sm)) {hatsonstiges = true;}
 			// else{
 			System.out.println(sm);
 			pf.getStandardMessen().add(sm);
 			// }
-		}
+		}*/
 		mediarray = dv.getAlleMedisVomOrdnerAlsList(savepath, this);
 
 		if (!hatsonstiges) {
@@ -117,6 +118,11 @@ public class AData {
 
 	public void addMedi(Messdiener medi) {
 		mediarray.add(medi);		
+	}
+
+
+	public HashMap<Messe,ArrayList<Messdiener>> getVoreingeteilte() {
+	 return voreingeteilte;   
 	}
 
 	

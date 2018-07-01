@@ -32,4 +32,6 @@ html_output.docx
 .project
 .project
 /target/
+/.idea/
 *.prefs
+.idea/.name

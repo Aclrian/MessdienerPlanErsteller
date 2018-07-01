@@ -18,12 +18,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 
 import net.aclrian.messdiener.deafault.ATextField;
-import net.aclrian.messdiener.deafault.Messdaten;
 import net.aclrian.messdiener.deafault.Messdiener;
 import net.aclrian.messdiener.deafault.Messverhalten;
 import net.aclrian.messdiener.pictures.References;
 import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.Erroropener;
+import net.aclrian.messdiener.utils.RemoveDoppelte;
 import net.aclrian.messdiener.utils.WriteFile;
 import net.aclrian.messdiener.window.WAlleMessen.EnumActivePanel;
 import net.aclrian.messdiener.window.auswaehlen.ACheckBox;
@@ -152,7 +152,7 @@ public class MediAnzeigen extends APanel {
 		    geschwi.add(m);
 		    ((DefaultListModel<Messdiener>) geschwisterview.getModel()).addElement(m);
 		} catch (NullPointerException e2) {
-		    new Erroropener("erst einen Messdiener ausw�hlen");
+		    new Erroropener("erst einen Messdiener ausw" +References.ae+"hlen");
 		}
 		update();
 	    }
@@ -284,7 +284,8 @@ public class MediAnzeigen extends APanel {
 		addBekanntschaft(medi, m, false);
 	    }
 	    // speichern
-	    Messdaten.removeDuplicatedEntries(bearbeitete);
+	    RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<Messdiener>();
+	    rd.removeDuplicatedEntries(bearbeitete);
 	    // ap.updated(bearbeitete);
 	    try {
 		for (Messdiener messdiener : bearbeitete) {

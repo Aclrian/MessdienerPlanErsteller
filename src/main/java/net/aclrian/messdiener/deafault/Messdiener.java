@@ -95,7 +95,7 @@ public class Messdiener {
 	 * @param nname
 	 *            Nachname
 	 * @param Eintritt
-	 *            Jahr des Einfuehrung Ist davon abhängig, wie oft der Messdiener
+	 *            Jahr des Einfuehrung Ist davon abhaengig, wie oft der Messdiener
 	 *            eingeteilt werden soll
 	 * @param istLeiter
 	 *            Leiter, Ist davon abhängig, wie oft der Messdiener eingeteilt
