@@ -4,8 +4,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import net.aclrian.messdiener.pictures.References;
-import net.aclrian.messdiener.window.WAlleMessen;
+import net.aclrian.messdiener.resources.References;
+import net.aclrian.messdiener.start.WEinFrame;
 
 /**
  * Eine klassische Aclrian Klasse: DER ERROROPENER <br>
@@ -33,34 +33,7 @@ public class Erroropener {
 		JFrame f = new JFrame();
 		JDialog dialog = op.createDialog(f, "Fehler!");
 		//farbe(op, false);
-		WAlleMessen.farbe(dialog, false);
+		WEinFrame.farbe(dialog, false);
 		dialog.setVisible(true);
 	}
-
-	/*
-	 * 
-	 * @param error gibt einen direkten Fehler aus
-	 * 
-	 * @param direktefehlercodeausgabe darf null sein
-	 *
-	 * public Erroropener(String error, Object direktefehlercodeausgabe) { new
-	 * MyThread(error); }
-	 */
-
-	/**
-	 *
-	 * error gibt einen direkten Fehler aus
-	 * 
-	 * @param direktefehlercodeausgabe
-	 *            darf null sein
-	 * 
-	 * @param fehlerausgabe
-	 *            in Konsole als throwable
-	 * 
-	 * @throws Exception
-	 */
-	public Erroropener(String error, Object object, Object object2) throws Exception {
-		throw new Exception(error);
-	}
-
 }

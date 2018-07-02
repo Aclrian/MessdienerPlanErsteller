@@ -19,22 +19,21 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.aclrian.messdiener.deafault.Messdiener;
-import net.aclrian.messdiener.deafault.Messe;
-import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.components.ACheckBox;
+import net.aclrian.messdiener.components.AList;
+import net.aclrian.messdiener.messdiener.Messdiener;
+import net.aclrian.messdiener.messe.Messe;
+import net.aclrian.messdiener.resources.References;
 import net.aclrian.messdiener.start.AProgress;
+import net.aclrian.messdiener.start.WEinFrame;
+import net.aclrian.messdiener.start.WEinFrame.EnumActivePanel;
 import net.aclrian.messdiener.utils.Utilities;
-import net.aclrian.messdiener.window.WAlleMessen;
-import net.aclrian.messdiener.window.WAlleMessen.EnumActivePanel;
-import net.aclrian.messdiener.window.auswaehlen.ACheckBox;
-import net.aclrian.messdiener.window.auswaehlen.AList;
 
 public class MesseAnzeigen extends APanel {
 
     private static final long serialVersionUID = -2230487108865122325L;
 
     private ACheckBox chbxHochamt = new ACheckBox("Hochamt");
-    // private JLabel lblUhrzeit = new JLabel("Uhrzeit");
     private JSpinner spinnerDatum = new JSpinner();
     private JLabel lblDatum = new JLabel("Datum");
     private JSpinner spinnerAnzahlMedis = new JSpinner();
@@ -48,27 +47,15 @@ public class MesseAnzeigen extends APanel {
     private SpinnerNumberModel slmAnzahl = new SpinnerNumberModel(6, 0, 50, 1);
     private SpinnerListModel snmKirche;
     private SpinnerListModel snmTypen;
-    // private ArrayList<Messdiener> ausgewaehlte;
-    // private EnumBoolean nurleiter;
     private JTextField tftitel = new JTextField();
     private String title = null;
-
     private ACheckBox chbxnurleiter = new ACheckBox("nur Leiter");
     private SpinnerDateModel sdmDatum;
-    // private Messe bearbeiten;
-    // private int ibearbeiten;
     private AList<Messdiener> alist;
     private ArrayList<Messdiener> eingeteilte = new ArrayList<Messdiener>();
     private JScrollPane scrollpane = new JScrollPane();
     private Messe moben;
 
-    /**
-     * Create the panel.
-     * 
-     * @param defaultButtonheight
-     * @param defaultButtonwidth
-     * @param ap
-     */
     public MesseAnzeigen(int defaultButtonwidth, int defaultButtonheight, AProgress ap) {
 	super(defaultButtonwidth, defaultButtonheight, true, ap);
 	sdmDatum = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
@@ -152,7 +139,7 @@ public class MesseAnzeigen extends APanel {
 		    } else {
 			alist = new AList<Messdiener>(ap.getAda().getMediarray(), Messdiener.compForMedis);
 		    }
-		    WAlleMessen.farbe(alist, false);
+		    WEinFrame.farbe(alist, false);
 		    alist.setSelected(eingeteilte, true);
 		    eingeteilte = alist.getSelected();
 		    scrollpane.setViewportView(alist);
@@ -207,10 +194,9 @@ public class MesseAnzeigen extends APanel {
 	SimpleDateFormat sdf = new SimpleDateFormat("EEE");
 	if (getArt() == Art.bearbeiten && sdf.format(m.getDate()).equals(sdf.format(moben.getDate()))) {
 	    m.setStandartMesse(moben.getStandardMesse(), ap.getAda());
-	} // if (eingeteilte.size() > 0) {
+	}
 	ap.getAda().getVoreingeteilte().put(m, eingeteilte);
-	// }
-	Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), m.getID() + " wurde erstellt.");
+	Utilities.logging(this.getClass(), "speichern", m.getID() + " wurde erstellt.");
 	ap.getWAlleMessen().addMesse(m);
 	ap.getWAlleMessen().changeAP(EnumActivePanel.Start, true);
     }

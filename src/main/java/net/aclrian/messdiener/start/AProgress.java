@@ -5,37 +5,26 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 
-import net.aclrian.messdiener.deafault.Messdiener;
-import net.aclrian.messdiener.deafault.Messe;
-import net.aclrian.messdiener.deafault.StandartMesse;
-import net.aclrian.messdiener.differenzierung.Pfarrei;
-import net.aclrian.messdiener.differenzierung.WriteFile_Pfarrei;
+import net.aclrian.messdiener.messdiener.Messdiener;
+import net.aclrian.messdiener.messe.Messe;
+import net.aclrian.messdiener.messe.StandartMesse;
 import net.aclrian.messdiener.utils.Erroropener;
-import net.aclrian.messdiener.window.WAlleMessen;
-import net.aclrian.messdiener.window.planerstellen.WMessenHinzufuegen;
 
 public class AProgress {
 
     private AData ada;
     public static final String VersionID = "b600";
     private ArrayList<Messdiener> memit;
-    WAlleMessen wam;
+    WEinFrame wam;
 
     public AProgress() {
 	ada = new AData(this);
-	wam = new WAlleMessen(this);
+	wam = new WEinFrame(this);
     }
 
     public AData getAda() {
 	return ada;
-    }
-
-    public void berechen(Date[] dates) {
-	// alt
-	WMessenHinzufuegen wmh = new WMessenHinzufuegen(dates[0], dates[1], this);
-	wmh.setVisible(true);
     }
 
     public ArrayList<Messdiener> getMediarraymitMessdaten() {
@@ -51,18 +40,13 @@ public class AProgress {
 	return mediarray;
     }
 
-    public void fertig(WriteFile_Pfarrei writeFile_Pfarrei, Pfarrei pf, String s) {
-	// TODO Auto-generated method stub
-
-    }
-
     public void start() {
 	wam.setVisible(true);
     }
 
-    public void pfareiNeu(WriteFile_Pfarrei wfp) {
-	wam.setContentPane(wfp);
-    }
+    /*
+     * public void pfareiNeu(WriteFile_Pfarrei wfp) { wam.setContentPane(wfp); }
+     */
 
     public Object[][] getAbmeldenTableVector(String[] s) {
 	Object[][] rtn = new Object[ada.getMediarray().size()][s.length];
@@ -81,11 +65,7 @@ public class AProgress {
 	return rtn;
     }
 
-    public void pfarreiGeaendert(WriteFile_Pfarrei wfp, Pfarrei pf) {
-	// TODO
-    }
-
-    public WAlleMessen getWAlleMessen() {
+    public WEinFrame getWAlleMessen() {
 	return wam;
     }
 
@@ -153,4 +133,6 @@ public class AProgress {
 	}
 	return null;
     }
+
+    
 }

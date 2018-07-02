@@ -17,22 +17,20 @@ import javax.swing.JSpinner;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 
-import net.aclrian.messdiener.deafault.ATextField;
-import net.aclrian.messdiener.deafault.Messdiener;
-import net.aclrian.messdiener.deafault.Messverhalten;
-import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.components.ACheckBox;
+import net.aclrian.messdiener.components.ATable;
+import net.aclrian.messdiener.components.ATextField;
+import net.aclrian.messdiener.messdiener.Messdiener;
+import net.aclrian.messdiener.messdiener.WriteFile;
+import net.aclrian.messdiener.messe.Messverhalten;
+import net.aclrian.messdiener.resources.References;
 import net.aclrian.messdiener.start.AProgress;
+import net.aclrian.messdiener.start.WEinFrame.EnumActivePanel;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.RemoveDoppelte;
-import net.aclrian.messdiener.utils.WriteFile;
-import net.aclrian.messdiener.window.WAlleMessen.EnumActivePanel;
-import net.aclrian.messdiener.window.auswaehlen.ACheckBox;
-import net.aclrian.messdiener.window.auswaehlen.ATable;
+import net.aclrian.messdiener.utils.Utilities;
 
 public class MediAnzeigen extends APanel {
-    /**
-     *
-     */
     private static final long serialVersionUID = 9198327596275692676L;
     private ATextField jtfvorname = new ATextField("Vorname");
     private ATextField jtfnachname = new ATextField("Nachname");
@@ -61,9 +59,6 @@ public class MediAnzeigen extends APanel {
 	    "Bitte vorm Speichern die Fenster Gr" + References.oe + References.ss + "e " + References.ae + "ndern!");
     private ArrayList<Messdiener> bearbeitete = new ArrayList<Messdiener>();
 
-    /**
-     * Create the panel.
-     **/
     public MediAnzeigen(int dfbtnwidth, int dfbtnheight, AProgress ap) {
 	super(dfbtnwidth, dfbtnheight, true, ap);
 	setLayout(null);
@@ -152,7 +147,7 @@ public class MediAnzeigen extends APanel {
 		    geschwi.add(m);
 		    ((DefaultListModel<Messdiener>) geschwisterview.getModel()).addElement(m);
 		} catch (NullPointerException e2) {
-		    new Erroropener("erst einen Messdiener ausw" +References.ae+"hlen");
+		    new Erroropener("erst einen Messdiener ausw" + References.ae + "hlen");
 		}
 		update();
 	    }
@@ -238,14 +233,6 @@ public class MediAnzeigen extends APanel {
 	}
     }
 
-    /*
-     * public Messdiener getMedi(AProgress ap) { Messdiener m = new
-     * Messdiener(null); m.setzeAllesNeu(jtfvorname.getText(),
-     * jtfnachname.getText(), (int) ((SpinnerNumberModel)
-     * spinner.getModel()).getValue(), chckbxLeiter.isSelected(),
-     * atable.getMessdaten(ap.getAda())); geschwister(); m.makeXML(ap.getAda());
-     * return m; }
-     */
     public void speichern(AProgress ap) {
 	if (geschwi.size() <= 3 && freunde.size() <= 5 && !jtfvorname.getText().equals("")
 		&& !jtfnachname.getText().equals("")) {
@@ -269,9 +256,9 @@ public class MediAnzeigen extends APanel {
 	    for (Messdiener messdiener : ap.getAda().getMediarray()) {
 		alteloeschen(m, messdiener.getFreunde(), bearbeitete);
 		alteloeschen(m, messdiener.getGeschwister(), bearbeitete);
-		if(moben != null) {
-		alteloeschen(moben, messdiener.getFreunde(), bearbeitete);
-		alteloeschen(moben, messdiener.getGeschwister(), bearbeitete);
+		if (moben != null) {
+		    alteloeschen(moben, messdiener.getFreunde(), bearbeitete);
+		    alteloeschen(moben, messdiener.getGeschwister(), bearbeitete);
 		}
 	    }
 	    for (int i = 0; i < geschwi.size(); i++) {
@@ -286,7 +273,6 @@ public class MediAnzeigen extends APanel {
 	    // speichern
 	    RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<Messdiener>();
 	    rd.removeDuplicatedEntries(bearbeitete);
-	    // ap.updated(bearbeitete);
 	    try {
 		for (Messdiener messdiener : bearbeitete) {
 		    WriteFile wf = new WriteFile(messdiener, ap.getAda().getUtil().getSavepath());
@@ -294,6 +280,7 @@ public class MediAnzeigen extends APanel {
 		}
 		WriteFile wf = new WriteFile(m, ap.getAda().getSavepath());
 		wf.toXML(ap);
+		Utilities.logging(this.getClass(), "speichern", "Messdiener " + m.makeId() + " wurde gespeichert!");
 	    } catch (IOException e) {
 		new Erroropener("Konnte nicht Speichern! Wegen: " + e.getCause());
 		e.printStackTrace();
