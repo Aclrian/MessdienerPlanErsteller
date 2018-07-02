@@ -9,7 +9,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import net.aclrian.messdiener.start.AProgress;
-import net.aclrian.messdiener.window.WAlleMessen.EnumActivePanel;
+import net.aclrian.messdiener.start.WEinFrame.EnumActivePanel;
 
 public class AbmeldenPane extends APanel {
 
@@ -29,8 +29,6 @@ public class AbmeldenPane extends APanel {
 	abtable = new AbmeldenTable(ap);
 	scrollpane.setViewportView(abtable);
 	austeilen.setSelected(true);
-	//scrollpane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-	//scrollpane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 	ButtonGroup bg = new ButtonGroup();
 	bg.add(austeilen);
 	bg.add(einteilen);
@@ -39,8 +37,6 @@ public class AbmeldenPane extends APanel {
 	add(einteilen);
 	add(scrollpane);
 	getBtnSpeichern().setText("Plan erstellen");
-	//getBtnAbbrechen().setEnabled(false);
-	//getBtnAbbrechen().setToolTipText("Zum "+References.Ae+"ndern bitte neustarten, da dieser Prozess schwierig ist.");
 	getBtnAbbrechen().addActionListener(e -> ap.getWAlleMessen().changeAP(EnumActivePanel.Start, true));
 	getBtnSpeichern().addActionListener(new ActionListener() {
 	    @Override

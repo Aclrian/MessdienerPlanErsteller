@@ -1,7 +1,10 @@
 package net.aclrian.messdiener.panels;
 
+import java.awt.Desktop;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,21 +15,24 @@ import java.util.Locale;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.xml.bind.JAXBException;
 
-import net.aclrian.convertFiles.Converter;
-import net.aclrian.messdiener.deafault.Messdiener;
-import net.aclrian.messdiener.deafault.Messe;
-import net.aclrian.messdiener.deafault.Sonstiges;
-import net.aclrian.messdiener.deafault.StandartMesse;
-import net.aclrian.messdiener.differenzierung.Einstellungen;
-import net.aclrian.messdiener.pictures.References;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
+
+import net.aclrian.messdiener.messdiener.Messdiener;
+import net.aclrian.messdiener.messe.Messe;
+import net.aclrian.messdiener.messe.Sonstiges;
+import net.aclrian.messdiener.messe.StandartMesse;
+import net.aclrian.messdiener.pfarrei.Einstellungen;
+import net.aclrian.messdiener.resources.References;
 import net.aclrian.messdiener.start.AData;
 import net.aclrian.messdiener.start.AProgress;
+import net.aclrian.messdiener.utils.Converter;
 import net.aclrian.messdiener.utils.Erroropener;
 import net.aclrian.messdiener.utils.RemoveDoppelte;
 import net.aclrian.messdiener.utils.Utilities;
@@ -37,7 +43,6 @@ enum EnumAction {
 
 public class Finish extends APanel {
     private static final long serialVersionUID = 1100706202326699632L;
-
     private JEditorPane editorPane = new JEditorPane("text/html", "");
     private DefaultListModel<Messdiener> dlm = new DefaultListModel<Messdiener>();
     private JList<Messdiener> list = new JList<Messdiener>(dlm);
@@ -48,9 +53,6 @@ public class Finish extends APanel {
     private JButton topdf = new JButton("Zum Pfd-Dokument");
     private JButton todocx = new JButton("Zum Word-Dokument");
     private JButton toback = new JButton("Zur" + References.ue + "ck");
-    // private JPanel panel = new JPanel();
-
-    private Converter con;
     private ArrayList<Messdiener> hauptarray;
     private ArrayList<Messe> messen;
 
@@ -67,7 +69,10 @@ public class Finish extends APanel {
 	add(sPMessen);
 
 	add(todocx);
+	todocx.addActionListener(e -> open(true));
+
 	add(topdf);
+	topdf.addActionListener(e -> open(false));
 	add(toback);
 	this.hauptarray = ap.getMediarraymitMessdaten();
 	this.messen = ap.getAda().getMesenarray();
@@ -86,7 +91,6 @@ public class Finish extends APanel {
 		}
 	    }
 	}
-
 	generate(ap);
 	// to JEditPane
 	StringBuffer s = new StringBuffer("<html>");
@@ -110,16 +114,30 @@ public class Finish extends APanel {
 		dlm.addElement(medi);
 	    }
 	}
-	/*
-	 * try { con = new Converter(this); } catch (IOException e1) { new
-	 * Erroropener(e1.getMessage()); e1.printStackTrace(); }
-	 */
-	// ---------------.-------------
 	Toolkit.getDefaultToolkit().beep();
 	// Ende
 	graphics();
-	ap.getWAlleMessen().graphics();
-	graphics();
+	Rectangle r = ap.getWAlleMessen().getBounds();
+	ap.getWAlleMessen().setBounds(r);
+	setVisible(true);
+	ap.getWAlleMessen().setExtendedState(JFrame.MAXIMIZED_BOTH);
+	ap.getWAlleMessen().setBounds(r);
+    }
+
+    private void open(boolean isword) {
+	Converter con;
+	try {
+	    con = new Converter(this);
+	    File f = (isword) ? con.toWord() : con.toPDF();
+	    Desktop d = Desktop.getDesktop();
+	    d.open(f);
+	} catch (IOException e) {
+	    new Erroropener(e.getMessage());
+	    e.printStackTrace();
+	} catch (JAXBException | Docx4JException e) {
+	    new Erroropener("Konnte das Dokument nicht umwandeln");
+	    e.printStackTrace();
+	}
     }
 
     private void generate(AProgress ap) {
@@ -132,9 +150,7 @@ public class Finish extends APanel {
 	    System.out.println(hauptarray.get(i).getMessdatenDaten().getAnz_messen() + "/"
 		    + hauptarray.get(i).getMessdatenDaten().getMax_messen());
 	}
-	System.out.println("-------");
 	// Dap und zvmzwm fruehzeitg erkennen und beheben
-	// ArrayList<ArrayList<E>>
 	for (StandartMesse sm : ap.getAda().getPfarrei().getStandardMessen()) {
 	    int anz_real = 0;
 	    int anz_monat = 0;
@@ -172,34 +188,32 @@ public class Finish extends APanel {
 		    int fehlt = benoetigte_anz - anz_real;
 		    try {
 			int medishinzufuegen = (int) Math.ceil((double) (fehlt / array.size()));// abrunden
-			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
+			Utilities.logging(this.getClass(), "neuerAlorythmus",
 				"Es wurde abgerundet: " + (double) (fehlt / array.size()) + "-->" + medishinzufuegen);
 			for (Messdiener messdiener : array) {
 			    messdiener.getMessdatenDaten().addtomaxanz(medishinzufuegen, ap.getAda(),
 				    messdiener.isIstLeiter());
 			}
-			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
+			Utilities.logging(this.getClass(), "neuerAlorythmus",
 				"Zu den Messdienern, die am " + sm.getWochentag() + " um " + sm.getBeginn_stunde()
 					+ " koennen, werden + " + medishinzufuegen
 					+ " zu ihrem normalen Wert hinzugefuegt!");
 
 		    } catch (ArithmeticException e) {
-			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
-				"Kein Messdiener kann: " + sm.getWochentag() + sm.getBeginn_stunde() + ":"
-					+ sm.getBeginn_minute());
+			Utilities.logging(this.getClass(), "neuerAlorythmus", "Kein Messdiener kann: "
+				+ sm.getWochentag() + sm.getBeginn_stunde() + ":" + sm.getBeginn_minute());
 		    }
 		}
 	    }
 	}
 	// DAV UND ZWMZVM ENDE
-	Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
-		References.Ue + "berpruefung zu ende!");
+	Utilities.logging(this.getClass(), "neuerAlorythmus", References.Ue + "berpruefung zu ende!");
 	// neuer Monat:
 	Calendar start = Calendar.getInstance();
 	start.setTime(messen.get(0).getDate());
 	start.add(Calendar.MONTH, 1);
 	SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-	Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
+	Utilities.logging(this.getClass(), "neuerAlorythmus",
 		"n" + References.ae + "chster Monat bei: " + df.format(start.getTime()));
 	// EIGENTLICHER ALGORYTHMUS
 	for (int i = 0; i < messen.size(); i++) {
@@ -207,19 +221,19 @@ public class Finish extends APanel {
 	    // while(m.isfertig() || stackover){
 	    if (me.getDate().after(start.getTime())) {
 		start.add(Calendar.MONTH, 1);
-		Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
+		Utilities.logging(this.getClass(), "neuerAlorythmus",
 			"naechster Monat: Es ist " + df.format(me.getDate()));
 		for (Messdiener messdiener : hauptarray) {
 		    messdiener.getMessdatenDaten().naechsterMonat();
 		}
 	    }
-	    Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "Messe dran: " + me.getID());
+	    Utilities.logging(this.getClass(), "neuerAlorythmus", "Messe dran: " + me.getID());
 	    if (me.getStandardMesse() instanceof Sonstiges) {
 		this.einteilen(me, EnumAction.EinfachEinteilen, ap);
 	    } else {
 		this.einteilen(me, EnumAction.TypeBeachten, ap);
 	    }
-	    Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), "Messe fertig: " + me.getID());
+	    Utilities.logging(this.getClass(), "neuerAlorythmus", "Messe fertig: " + me.getID());
 	}
     }
 
@@ -228,17 +242,18 @@ public class Finish extends APanel {
 	case EinfachEinteilen:
 	    ArrayList<Messdiener> medis;
 	    boolean zwang = false;
-	  //  try {
-		medis = get(AData.sonstiges, m, ap.getAda());
-	//    } catch (Exception e) {
-	//	Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), e.getMessage());
-		// medis = beheben(m, ap.getAda());
-	//	zwang = true;
-	 //   }
-	    Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
+	    // try {
+	    medis = get(AData.sonstiges, m, ap.getAda());
+	    // } catch (Exception e) {
+	    // Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
+	    // e.getMessage());
+	    // medis = beheben(m, ap.getAda());
+	    // zwang = true;
+	    // }
+	    Utilities.logging(this.getClass(), "einteilen",
 		    "\t" + medis.size() + " f" + References.ue + "r " + m.getnochbenoetigte());
-	    if (m.getnochbenoetigte() < medis.size()) {
-		System.out.println("Die Messe " + m.getID() + "hat zu wenige Messdiener");
+	    if (m.getnochbenoetigte() > medis.size()) {
+		Utilities.logging(this.getClass(), "einteilen", "Die Messe " + m.getID() + "hat zu wenige Messdiener");
 		new Erroropener("Die Messe " + m.getID() + "hat zu wenige Messdiener");
 	    }
 	    for (int j = 0; j < medis.size(); j++) {
@@ -248,17 +263,18 @@ public class Finish extends APanel {
 	case TypeBeachten:
 	    ArrayList<Messdiener> medis2;
 	    boolean zwang2 = false;
-	  //  try {
-		medis2 = get(m.getStandardMesse(), m, ap.getAda());
-	    //} catch (Exception e) {
-		//Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(), e.getMessage());
-		//medis2 = beheben(m, ap.getAda());
-		//zwang2 = true;
-	   // }
-	    Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
+	    // try {
+	    medis2 = get(m.getStandardMesse(), m, ap.getAda());
+	    // } catch (Exception e) {
+	    // Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
+	    // e.getMessage());
+	    // medis2 = beheben(m, ap.getAda());
+	    // zwang2 = true;
+	    // }
+	    Utilities.logging(this.getClass(), "einteilen",
 		    "\t" + medis2.size() + " f" + References.ue + "r " + m.getnochbenoetigte());
-	    if (m.getnochbenoetigte() < medis2.size()) {
-		System.out.println("Die Messe " + m.getID() + "hat zu wenige Messdiener");
+	    if (m.getnochbenoetigte() > medis2.size()) {
+		Utilities.logging(this.getClass(), "einteilen", "Die Messe " + m.getID() + "hat zu wenige Messdiener");
 		new Erroropener("Die Messe " + m.getID() + "hat zu wenige Messdiener");
 	    }
 	    for (int j = 0; j < medis2.size(); j++) {
@@ -299,7 +315,7 @@ public class Finish extends APanel {
 		    }
 
 		    if (messdiener.getMessdatenDaten().kann(m.getDate(), zwang) && b) {
-			Utilities.logging(this.getClass(), this.getClass().getEnclosingMethod(),
+			Utilities.logging(this.getClass(), "einteilen2",
 				"\t" + messdiener.makeId() + " dient mit " + medi.makeId());
 			einteilen(m, messdiener, zwang, ap);
 		    }
@@ -347,7 +363,6 @@ public class Finish extends APanel {
 		new Erroropener("<html><body>Die Messe:<br>" + m.getID()
 			+ "</br><br>hat schon neue Messdiener bekommen, die schon zu oft eingeteilt sind, aber es herrscht Messdiener-Knappheit</br></body></html>");
 	    }
-	    // }
 	}
 	rtn.sort(Messdiener.einteilen);
 	return rtn;
@@ -356,7 +371,6 @@ public class Finish extends APanel {
     public ArrayList<Messdiener> get(StandartMesse sm, Messe m, AData ada) {
 	ArrayList<Messdiener> al = new ArrayList<Messdiener>();
 	for (Messdiener medi : hauptarray) {
-	    // System.out.println(medi.makeId());
 	    int id = 0;
 	    if (medi.isIstLeiter()) {
 		id++;
@@ -376,7 +390,6 @@ public class Finish extends APanel {
 	ArrayList<Messdiener> al = new ArrayList<Messdiener>();
 	ArrayList<Messdiener> al2 = new ArrayList<Messdiener>();
 	for (Messdiener medi : hauptarray) {
-	    // System.out.println(medi.makeId());
 	    int id = 0;
 	    if (medi.isIstLeiter()) {
 		id++;
@@ -397,52 +410,19 @@ public class Finish extends APanel {
 	    System.out.println(al.get(i).getMessdatenDaten().getAnz_messen() + "/"
 		    + al.get(i).getMessdatenDaten().getMax_messen());
 	}
-	System.out.println("-------");
-
 	al2.sort(Messdiener.einteilen);
 	for (int i = 0; i < al2.size(); i++) {
 	    System.out.println(al2.get(i).getMessdatenDaten().getAnz_messen() + "/"
 		    + al2.get(i).getMessdatenDaten().getMax_messen());
 	}
-	System.out.println("-------");
-
 	al.addAll(al2);
 	for (int i = 0; i < al.size(); i++) {
 	    System.out.println(al.get(i).getMessdatenDaten().getAnz_messen() + "/"
 		    + al.get(i).getMessdatenDaten().getMax_messen());
 	}
-	System.out.println("-------");
-
 	return al;
     }
-/*
-    private class NotEnughtMedis extends Exception {
-	/**
-	 * 
-	 * /
-	private static final long serialVersionUID = 1730056704969911415L;
-	private Messe m;
-	private Thread t = new Thread() {
-	    @Override
-	    public void run() {
-		new Erroropener(getMessage());
-	    }
-	};
 
-	public NotEnughtMedis(Messe m) {
-	    this.m = m;
-	    t.run();
-	}
-
-	@Override
-	public String getMessage() {
-	    String s = super.getMessage();
-	    s += "Zu wenige M" + References.oe + "gliche Messdiener bei: " + m.getID();
-
-	    return s;
-	}
-    }
-*/
     public String getText() {
 	return editorPane.getText();
     }

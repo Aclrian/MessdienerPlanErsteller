@@ -16,10 +16,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
-import net.aclrian.messdiener.deafault.Messdiener;
-import net.aclrian.messdiener.deafault.Messe;
+import net.aclrian.messdiener.messdiener.Messdiener;
+import net.aclrian.messdiener.messe.Messe;
 import net.aclrian.messdiener.start.AProgress;
 import net.aclrian.messdiener.utils.RemoveDoppelte;
+import net.aclrian.messdiener.utils.Utilities;
 
 public class AbmeldenTable extends JTable {
 
@@ -34,10 +35,8 @@ public class AbmeldenTable extends JTable {
 	    sarry.add(df.format(messe.getDate()));
 	}
 	RemoveDoppelte<String> rd = new RemoveDoppelte<>();
-	System.out.println("");
 	rd.removeDuplicatedEntries(sarry);
 	sarry.sort(new Comparator<String>() {
-	    @SuppressWarnings("null")
 	    @Override
 	    public int compare(String o1, String o2) {
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
@@ -47,7 +46,7 @@ public class AbmeldenTable extends JTable {
 		    return d1.compareTo(d2);
 		} catch (ParseException e) {
 		    e.printStackTrace();
-		    return (Integer) null;
+		    return o1.compareTo(o2);
 		}
 		
 	    }
@@ -65,12 +64,10 @@ public class AbmeldenTable extends JTable {
 	SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 	for (int i = 0; i < abdtm.getRowCount(); i++) {
 	    Messdiener m=  ap.getMessdienerFromString((String) abdtm.getValueAt(i, 0), ap.getMediarraymitMessdaten());
-	    System.out.println("Messdiener: " + m.toString() + ": ");
 	    for (int j = 1; j < abdtm.getColumnCount(); j++) {
 		boolean b = (boolean) abdtm.getValueAt(i, j);
 		if (b != kanndann) {
-		    System.out.println("\tkann nicht am " + abdtm.getColumnName(j));
-		    try {
+		   try {
 			m.getMessdatenDaten().austeilen(df.parse(abdtm.getColumnName(j)));
 		    } catch (ParseException e) {
 			e.printStackTrace();
@@ -78,6 +75,7 @@ public class AbmeldenTable extends JTable {
 		}
 	    }
 	}
+	Utilities.logging(this.getClass(), "speichern", "Abmeldungen wurden verarbeitet.");
     }
 
     public void setForegroundInHeader(Color foreground, Color background) {
@@ -95,11 +93,6 @@ public class AbmeldenTable extends JTable {
 		lbl.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl.setBackground(background);
 		lbl.setForeground(foreground);
-		/*
-		 * return (value == selectedColumn) ? hr.getTableCellRendererComponent( table,
-		 * value, true, true, row, column) : hr.getTableCellRendererComponent( table,
-		 * value, false, false, row, column);
-		 */
 		return lbl;
 	    }
 	});

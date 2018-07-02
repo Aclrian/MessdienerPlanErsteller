@@ -15,11 +15,11 @@ import javax.swing.JLabel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import net.aclrian.messdiener.pictures.References;
+import net.aclrian.messdiener.resources.References;
 import net.aclrian.messdiener.start.AData;
 import net.aclrian.messdiener.start.AProgress;
+import net.aclrian.messdiener.start.WEinFrame.EnumActivePanel;
 import net.aclrian.messdiener.utils.Erroropener;
-import net.aclrian.messdiener.window.WAlleMessen.EnumActivePanel;
 
 public class Start extends APanel {
 
@@ -37,100 +37,98 @@ public class Start extends APanel {
     private URI uri;
 
     public Start(int dfbtnwidht, int dfbtnheigth, AProgress ap) {
-		super(dfbtnwidht, dfbtnheigth, false, ap);
-		this.setLayout(null);
-		Font font = title.getFont();
-		StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
-	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-	    style.append("font-size:" + font.getSize() + "pt;");
-	    // html content
-	    uri = null;
-		try {
-			uri = new URI("https://github.com/Aclrian/MessdienerPlanErsteller/");
-		} catch (URISyntaxException e2) {
-			e2.printStackTrace();
-		}
-		ep = new JEditorPane("text/html", "<html>" + 
-	    		"  <head></head><body>" + 
-	    		"    <a color=\"white\" href=\"https://github.com/Aclrian/MessdienerPlanErsteller/\">"//+"View Source on: "//+
-	    		+ "<img src=\""+ References.class.getResource("GitHub_Logo_White.png") +"\" width=\"100\" height=\"41\" border=\"0\">" + 
-	    		"</a>  </body>" + 
-	    		"</html>");
-	    // handle link events
-	    ep.addHyperlinkListener(new HyperlinkListener()
-	    {
-	        @Override
-	        public void hyperlinkUpdate(HyperlinkEvent e)
-	        {
-	            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED))
-					try {
-						Desktop.getDesktop().browse(uri);
-					} catch (IOException e1) {
-			 			new Erroropener(e1.getMessage());
-						e1.printStackTrace();
-					} // roll your own link launcher or use Desktop if J6+
-	        }
-	    });
-	    ep.setEditable(false);
-	    add(ep);
-	    ep.setVisible(true);
-	    
-		unterueberschrift.setText("<html><body><h2>version: " + AProgress.VersionID + " von Aclrian</h2></body></html>");
-		unterueberschrift.setHorizontalAlignment(JLabel.RIGHT);
-		add(unterueberschrift);
-		unterueberschrift.setVisible(true);
-		
-		pfarreilabel.setText("<html><body><h2>f"+References.ue+"r <i>" + ap.getAda().getPfarrei().getName() + "</i></h2></body></html>");
-		pfarreilabel.setHorizontalAlignment(JLabel.CENTER);
-		add(pfarreilabel);
-		pfarreilabel.setVisible(true);
-		
-		title.setHorizontalAlignment(JLabel.CENTER);
-		add(title);
-		title.setVisible(true);
-		
-		add(ferienplan);
-		ferienplan.addActionListener(e -> {
-		    if(ap.getAda().getMesenarray().size() > 0) {
-			ap.getWAlleMessen().changeAP(EnumActivePanel.Abmelden, true);
-		    } else {
-			new Erroropener("Erst Messen erstellen");
-		    }
-		 });ferienplan.setVisible(true);
-		
-		add(speicherortaendern);
-		speicherortaendern.addActionListener(new ActionListener() {
-		    
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			String s = System.getProperty("user.home");
-			s += AData.textdatei;
-			File f = new File(s);
-			f.delete();
-			//ap.getAda().getUtil().erneuereSavepath();
-			ap.getAda().erneuern(ap);
-			ap.getWAlleMessen().update(ap.getAda());
-		    }
-		});
-		speicherortaendern.setVisible(true);
-		
-		add(plangenerieren);
-		plangenerieren.addActionListener(e -> {
-		    if(ap.getAda().getMesenarray().size() > 0) {
-			herzstueck(ap);
-		    } else {
-			new Erroropener("Erst Messen erstellen");
-		    }
-		});
-		plangenerieren.setVisible(true);
-		
-		add(pfaendern);
-		pfaendern.setVisible(true);
-		
-		graphics();
-				
-		setVisible(true);
+	super(dfbtnwidht, dfbtnheigth, false, ap);
+	this.setLayout(null);
+	Font font = title.getFont();
+	StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
+	style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+	style.append("font-size:" + font.getSize() + "pt;");
+	uri = null;
+	try {
+	    uri = new URI("https://github.com/Aclrian/MessdienerPlanErsteller/");
+	} catch (URISyntaxException e2) {
+	    e2.printStackTrace();
 	}
+	ep = new JEditorPane("text/html",
+		"<html>" + "  <head></head><body>"
+			+ "    <a color=\"white\" href=\"https://github.com/Aclrian/MessdienerPlanErsteller/\">"// +"View
+														// Source
+														// on:
+														// "//+
+			+ "<img src=\"" + References.class.getResource("GitHub_Logo_White.png")
+			+ "\" width=\"100\" height=\"41\" border=\"0\">" + "</a>  </body>" + "</html>");
+	ep.addHyperlinkListener(new HyperlinkListener() {
+	    @Override
+	    public void hyperlinkUpdate(HyperlinkEvent e) {
+		if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED))
+		    try {
+			Desktop.getDesktop().browse(uri);
+		    } catch (IOException e1) {
+			new Erroropener(e1.getMessage());
+			e1.printStackTrace();
+		    }
+	    }
+	});
+	ep.setEditable(false);
+	add(ep);
+	ep.setVisible(true);
+
+	unterueberschrift
+		.setText("<html><body><h2>version: " + AProgress.VersionID + " von Aclrian</h2></body></html>");
+	unterueberschrift.setHorizontalAlignment(JLabel.RIGHT);
+	add(unterueberschrift);
+	unterueberschrift.setVisible(true);
+
+	pfarreilabel.setText("<html><body><h2>f" + References.ue + "r <i>" + ap.getAda().getPfarrei().getName()
+		+ "</i></h2></body></html>");
+	pfarreilabel.setHorizontalAlignment(JLabel.CENTER);
+	add(pfarreilabel);
+	pfarreilabel.setVisible(true);
+
+	title.setHorizontalAlignment(JLabel.CENTER);
+	add(title);
+	title.setVisible(true);
+
+	add(ferienplan);
+	ferienplan.addActionListener(e -> {
+	    if (ap.getAda().getMesenarray().size() > 0) {
+		ap.getWAlleMessen().changeAP(EnumActivePanel.Abmelden, true);
+	    } else {
+		new Erroropener("Erst Messen erstellen");
+	    }
+	});
+	ferienplan.setVisible(true);
+
+	add(speicherortaendern);
+	speicherortaendern.addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		String s = System.getProperty("user.home");
+		s += AData.textdatei;
+		File f = new File(s);
+		f.delete();
+		ap.getAda().erneuern(ap);
+		ap.getWAlleMessen().update(ap.getAda());
+	    }
+	});
+	speicherortaendern.setVisible(true);
+
+	add(plangenerieren);
+	plangenerieren.addActionListener(e -> {
+	    if (ap.getAda().getMesenarray().size() > 0) {
+		herzstueck(ap);
+	    } else {
+		new Erroropener("Erst Messen erstellen");
+	    }
+	});
+	plangenerieren.setVisible(true);
+
+	add(pfaendern);
+	pfaendern.setVisible(true);
+	graphics();
+	setVisible(true);
+    }
 
     private void herzstueck(AProgress ap) {
 	ap.getWAlleMessen().changeAP(EnumActivePanel.Finish, true);
@@ -144,8 +142,6 @@ public class Start extends APanel {
 	int stdhoehe = heigth / 20;
 	int abstandhoch = heigth / 100;
 	int abstandweit = width / 100;
-	// int eingenschaften = width / 5;
-	// int haelfte = width / 2;
 	title.setBounds(abstandweit, abstandhoch, width - 2 * abstandweit, stdhoehe);
 	title.setVisible(true);
 	pfarreilabel.setBounds(abstandweit, 2 * abstandhoch + stdhoehe, width - 2 * abstandweit, stdhoehe);
@@ -154,8 +150,6 @@ public class Start extends APanel {
 	unterueberschrift.setVisible(true);
 	speicherortaendern.setBounds(abstandweit, 6 * stdhoehe, drei - abstandweit, 3 * stdhoehe);
 	speicherortaendern.setVisible(true);
-	System.out.println(speicherortaendern.getBounds());
-	System.out.println(this.getBounds());
 	plangenerieren.setBounds(drei, 11 * stdhoehe, drei - abstandweit, 3 * stdhoehe);
 	plangenerieren.setVisible(true);
 	pfaendern.setBounds(2 * drei - abstandweit, 6 * stdhoehe, drei, 3 * stdhoehe);

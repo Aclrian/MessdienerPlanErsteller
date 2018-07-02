@@ -21,9 +21,6 @@ public class Utilities {
 		System.out.println(getLoggerInfo(loggedclass, methodenname) + mitteilung);
 	}
 	
-	public static void logging(Class<?> loggedclass, Constructor<?> c, String mitteilung){
-		Utilities.logging(loggedclass, "init", mitteilung);
-	}
 	public static Rectangle setFrameMittig(int weite, int hoehe) {
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		Point p = env.getCenterPoint();
@@ -44,17 +41,4 @@ public class Utilities {
 		double y = My - (hoehe / 2);
 		return new Rectangle((int) x, (int) y, (int) weite, (int) hoehe);
 	}
-
-	public static void logging(Class<?> class1, Method enclosingMethod, String mitteilung) {
-		String methname;
-		try {
-			methname = enclosingMethod.getName();
-		} catch (Exception e) {
-			//new Erroropener("no error");
-			methname = "unknown";
-		}
-		logging(class1, methname, mitteilung);
-		
-	}
-
 }
