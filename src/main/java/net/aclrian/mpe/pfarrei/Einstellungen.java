@@ -48,7 +48,6 @@ public class Einstellungen {
 	}
 
 	public void editMaxDienen(boolean istleiter, int anz_max_dienen) {
-		System.out.println(istleiter + ": " + anz_max_dienen);
 		int id = 0;
 		if (istleiter) {
 			id++;

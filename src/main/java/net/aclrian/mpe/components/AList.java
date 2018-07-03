@@ -70,8 +70,6 @@ public class AList<E> extends JList<ACheckBox> {
 	}
 	for (E elem : selected) {
 	    for (int i = 0; i < mlist.getSize(); i++) {
-		System.out.println(elem.toString());
-		System.out.println(mlist.getElementAt(i).getText());
 		if (elem.toString().equals(mlist.getElementAt(i).getText())) {
 		    mlist.getElementAt(i).setSelected(true);
 		    continue;

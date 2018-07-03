@@ -142,10 +142,6 @@ public class Finish extends APanel {
     
     public void neuerAlgorythmus(AProgress ap) {
 	hauptarray.sort(Messdiener.einteilen);
-	for (int i = 0; i < hauptarray.size(); i++) {
-	    System.out.println(hauptarray.get(i).getMessdatenDaten().getAnz_messen() + "/"
-		    + hauptarray.get(i).getMessdatenDaten().getMax_messen());
-	}
 	// Dap und zvmzwm fruehzeitg erkennen und beheben
 	for (StandartMesse sm : ap.getAda().getPfarrei().getStandardMessen()) {
 	    int anz_real = 0;
@@ -169,7 +165,6 @@ public class Finish extends APanel {
 		Calendar start = Calendar.getInstance();
 		start.setTime(messen.get(0).getDate());
 		start.add(Calendar.MONTH, 1);
-		System.out.println();
 		for (Messe me : messen) {
 		    if (!AData.sonstiges.isSonstiges(me.getStandardMesse())) {
 			if (me.getDate().after(start.getTime())) {
@@ -306,11 +301,7 @@ public class Finish extends APanel {
 		anv.sort(Messdiener.einteilen);
 		for (Messdiener messdiener : anv) {
 		    boolean b = messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse(), ap.getAda());
-		    if (m.getStandardMesse().toString().startsWith("D")) {
-			System.out.println(b);
-		    }
-
-		    if (messdiener.getMessdatenDaten().kann(m.getDate(), zwang) && b) {
+		   if (messdiener.getMessdatenDaten().kann(m.getDate(), zwang) && b) {
 			Utilities.logging(this.getClass(), "einteilen2",
 				"\t" + messdiener.makeId() + " dient mit " + medi.makeId());
 			einteilen(m, messdiener, zwang, ap);
@@ -402,20 +393,20 @@ public class Finish extends APanel {
 	Collections.shuffle(al);
 	Collections.shuffle(al2);
 	al.sort(Messdiener.einteilen);
-	for (int i = 0; i < al.size(); i++) {
+	/*for (int i = 0; i < al.size(); i++) {
 	    System.out.println(al.get(i).getMessdatenDaten().getAnz_messen() + "/"
 		    + al.get(i).getMessdatenDaten().getMax_messen());
-	}
-	al2.sort(Messdiener.einteilen);
+	}*/
+	/*al2.sort(Messdiener.einteilen);
 	for (int i = 0; i < al2.size(); i++) {
 	    System.out.println(al2.get(i).getMessdatenDaten().getAnz_messen() + "/"
 		    + al2.get(i).getMessdatenDaten().getMax_messen());
-	}
+	}*/
 	al.addAll(al2);
-	for (int i = 0; i < al.size(); i++) {
+	/*for (int i = 0; i < al.size(); i++) {
 	    System.out.println(al.get(i).getMessdatenDaten().getAnz_messen() + "/"
 		    + al.get(i).getMessdatenDaten().getMax_messen());
-	}
+	}*/
 	return al;
     }
 
@@ -428,11 +419,8 @@ public class Finish extends APanel {
 	int width = this.getBounds().width;
 	int heigth = this.getBounds().height;
 	int drei = width / 3;
-	// int stdhoehe = heigth / 20;
 	int abstandhoch = heigth / 100;
 	int abstandweit = width / 100;
-	// int eingenschaften = width / 5;
-	// int haelfte = width / 2;
 	sPMedis.setBounds(abstandweit, abstandhoch, drei - abstandweit,
 		heigth - this.getDfbtnheight() - 4 * abstandhoch);
 	sPMessen.setBounds(drei + abstandweit, abstandhoch, 2 * drei - 3 * abstandweit,

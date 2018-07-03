@@ -319,7 +319,6 @@ public class DateienVerwalter {
 		FileReader fileReader = new FileReader(homedir);
 		BufferedReader bufferedReader = new BufferedReader(fileReader);
 		while ((line = bufferedReader.readLine()) != null) {
-		    System.out.println(line);
 		    File savepath = new File(line);
 		    if (savepath.exists()) {
 			setSavepath(line);

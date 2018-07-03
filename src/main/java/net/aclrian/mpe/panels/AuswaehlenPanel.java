@@ -31,8 +31,7 @@ public class AuswaehlenPanel<E> extends APanel {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		System.out.println(alist.getSelected());
-
+		//TODO hier etwas hinzufuegen
 	    }
 	});
 	graphics();

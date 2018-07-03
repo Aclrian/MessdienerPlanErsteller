@@ -266,7 +266,6 @@ public class MediAnzeigen extends APanel {
 		addBekanntschaft(medi, m, true);
 	    }
 	    for (int i = 0; i < freunde.size(); i++) {
-		System.out.println("");
 		Messdiener medi = freunde.get(i);
 		addBekanntschaft(medi, m, false);
 	    }

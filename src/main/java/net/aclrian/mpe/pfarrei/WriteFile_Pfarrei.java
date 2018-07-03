@@ -685,7 +685,6 @@ public class WriteFile_Pfarrei extends JFrame {
 	}
 	String s = ap.getAda().getUtil().getSavepath();// waehleOrdner();
 	boolean hochaemter = rdbtnf12Ja.isSelected();
-	System.out.println(hochaemter);
 	if (s != null) {
 	    Pfarrei pf = new Pfarrei(seting, sm, name, orte, typen, hochaemter);
 	    ap.fertig(this, pf, s, ap);
@@ -923,19 +922,12 @@ public class WriteFile_Pfarrei extends JFrame {
 
 		    }
 		};
-		System.out.println("visibleJtable: " + getSelectedButtonText(bg1).equals(rdbtnf1Ja.getText()));
 		Boolean enabeldJtable = getSelectedButtonText(bg1).equals(rdbtnf1Ja.getText());
-		// Boolean visibleJtabel = new Boolean(bg1.getSelection() ==
-		// rdbtnf1Ja);
 		table.setEnabled(enabeldJtable);
-		// lblStandardAnzahlPro.setVisible(enabeldJtable);
-		// scrollPane_2.setVisible(enabeldJtable);
-
 		Boolean nureinspinner = (getSelectedButtonText(bg2).equals(rdbtnf2Ja.getText()));
-		System.out.println("Nur einspinner: " + nureinspinner);
 		alterunabhaengig = rdbtnf1Nein.isSelected();
 		if (rdbtnf2Ja.isSelected()) {
-		    // einwert f�r alle
+		    // einwert fuer alle
 		    leitergleichandere = true;
 		    spinner_max_andere.removeChangeListener(listener);
 		    spinner_max_andere.addChangeListener(listener);
