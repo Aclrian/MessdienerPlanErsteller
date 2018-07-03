@@ -161,9 +161,6 @@ public class WEinFrame extends JFrame {
 	    public void actionPerformed(ActionEvent arg0) {
 		if (listmedi.getSelectedIndex() > -1) {
 		    remove(getMedi(), ap.getAda().getMediarray());
-		    for (Messdiener m : ap.getAda().getMediarray()) {
-			System.out.println(m);
-		    }
 		    Messdiener m = dfmedi.remove(listmedi.getSelectedIndex());
 		    String s = "Soll der Messdiener: '" + m.makeId() + "' auch als Datei gel" + References.oe
 			    + "scht werden?\nDieser Vorgang kann nicht r" + References.ue + "ckg" + References.ae
@@ -440,13 +437,13 @@ public class WEinFrame extends JFrame {
 	} else if (c instanceof JRadioButton) {
 	    c.setForeground(neuhell1);
 	    c.setBackground(dunkel1);
-	} else {
+	} /*else {
 	    try {
 		System.out.println(c);
 	    } catch (Exception e) {
 		e.printStackTrace();
 	    }
-	}
+	}*/
 	c.repaint();
     }
 

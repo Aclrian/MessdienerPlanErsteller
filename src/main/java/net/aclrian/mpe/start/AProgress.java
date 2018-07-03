@@ -18,6 +18,7 @@ import net.aclrian.mpe.pfarrei.WriteFile_Pfarrei;
 import net.aclrian.mpe.pfarrei.Manuell.EnumWorking;
 import net.aclrian.mpe.pfarrei.Manuell.Handling;
 import net.aclrian.mpe.utils.Erroropener;
+import net.aclrian.mpe.utils.Utilities;
 
 public class AProgress {
 
@@ -73,8 +74,6 @@ public class AProgress {
 	if (cal.getTime().before(end) && !AData.sonstiges.isSonstiges(sm)) {
 	    SimpleDateFormat wochendagformat = new SimpleDateFormat("EEE");
 	    String tag = wochendagformat.format(cal.getTime());
-	    System.out.println(cal.getTime());
-	    System.out.println(sm.getWochentag());
 	    if (tag.startsWith(sm.getWochentag())) {
 		Date d = cal.getTime();
 		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
@@ -106,11 +105,11 @@ public class AProgress {
 	    if (!AData.sonstiges.isSonstiges(sm)) {
 		start.setTime(anfang);
 		ArrayList<Messe> m = optimieren(start, sm, ende, new ArrayList<Messe>());
-		System.out.println(m + "fuer " + sm.toString());
 		rtn.addAll(m);
 	    }
 	}
 	rtn.sort(Messe.compForMessen);
+	Utilities.logging(getClass(), "generireDefaultMessen", "DefaultMessen generiert");
 	return rtn;
 
     }
