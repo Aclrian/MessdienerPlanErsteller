@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
+import net.aclrian.mpe.components.AbmeldenTable;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
 

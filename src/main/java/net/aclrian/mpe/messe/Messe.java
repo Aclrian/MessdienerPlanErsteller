@@ -27,13 +27,7 @@ public class Messe {
 
 	@Override
 	public int compare(Messe o1, Messe o2) {
-	    if (o1.getDate().before(o2.getDate())) {
-		return -1;
-	    } else if (o1.getDate().before(o2.getDate())) {
-		return 1;
-	    } else {
-		return 0;
-	    }
+		return o1.getDate().compareTo(o2.getDate());
 	}
     };
     private String Wochentag;

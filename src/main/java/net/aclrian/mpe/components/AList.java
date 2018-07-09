@@ -61,6 +61,10 @@ public class AList<E> extends JList<ACheckBox> {
 	}
 	return rtn;
     }
+    
+    public ArrayList<E> getAlle() {
+		return array;
+	}
 
     public void setSelected(ArrayList<E> selected, boolean makeotherfalse) {
 	if (makeotherfalse) {
@@ -76,6 +80,15 @@ public class AList<E> extends JList<ACheckBox> {
 		}
 	    }
 	}
+    }
+    
+    public void setSelected(E e) {
+	for (int i = 0; i < mlist.getSize(); i++) {
+		if (e.toString().equals(mlist.getElementAt(i).getText())) {
+		    mlist.getElementAt(i).setSelected(true);
+		    return;
+		}
+	    }
     }
 }
 

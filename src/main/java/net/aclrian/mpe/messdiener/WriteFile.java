@@ -236,6 +236,10 @@ public class WriteFile {
 		    ap.getAda().getMediarray().remove(m);
 		    ap.getAda().getMediarray().add(me);
 		    break;
+		} else{ 
+			if (m.toString().equals(me.toString())) {
+				me.getFile().delete();
+			}
 		}
 	    }
 	    if (b == false) {
