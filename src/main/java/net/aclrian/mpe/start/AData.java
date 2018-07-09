@@ -30,17 +30,36 @@ public class AData {
 	savepath = dv.getSavepath();
 	try {
 	    pf = dv.getPfarrei();
-	    if(pf == null) {
-		ap.getPfarreiNeu();
-	    }
+	} catch (NullPointerException e) {
+	    ap.getPfarreiNeu();
+	    return;
 	} catch (Exception e) {
-	    ap.pfarreigeaendert(pf);
+	    e.printStackTrace();
+	    ap.pfarreiaendern(pf);
 	    return;
 	}
 	pf.getStandardMessen().add(sonstiges);
 	mediarray = dv.getAlleMedisVomOrdnerAlsList(savepath, this);
 	mediarray.sort(Messdiener.compForMedis);
 	Utilities.logging(this.getClass(), "init", "Es wurden " + mediarray.size() + " gefunden!");
+	/*for (StandartMesse sm : pf.getStandardMessen()) {
+	    System.out.println(sm + ":");
+	    if (!(sm instanceof Sonstiges)) {
+		for (Messdiener messdiener : mediarray) {
+		    if (messdiener.getDienverhalten().getBestimmtes(sm, this)) {
+			System.out.println(messdiener);
+		    }
+		}
+		System.out.println("\n\n\n");
+	    }
+
+	}
+
+	for (Messdiener messdiener : mediarray) {
+	    if (!messdiener.isIstLeiter()) {
+		System.out.println(messdiener);
+	    }
+	}*/
     }
 
     public ArrayList<Messdiener> getMediarray() {
@@ -80,11 +99,11 @@ public class AData {
 	savepath = dv.getSavepath();
 	try {
 	    pf = dv.getPfarrei();
-	    if(pf == null) {
+	    if (pf == null) {
 		ap.getPfarreiNeu();
 	    }
 	} catch (Exception e) {
-	    ap.pfarreigeaendert(pf);
+	    ap.pfarreiaendern(pf);
 	    return;
 	}
 	pf.getStandardMessen().clear();

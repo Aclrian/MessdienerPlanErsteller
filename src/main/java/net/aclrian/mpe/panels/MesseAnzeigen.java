@@ -139,7 +139,7 @@ public class MesseAnzeigen extends APanel {
 		    } else {
 			alist = new AList<Messdiener>(ap.getAda().getMediarray(), Messdiener.compForMedis);
 		    }
-		    WEinFrame.farbe(alist, false);
+		    WEinFrame.farbe(alist);
 		    alist.setSelected(eingeteilte, true);
 		    eingeteilte = alist.getSelected();
 		    scrollpane.setViewportView(alist);

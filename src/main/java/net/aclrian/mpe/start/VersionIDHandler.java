@@ -128,6 +128,8 @@ public class VersionIDHandler {
 	    StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
 	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
 	    style.append("font-size:" + font.getSize() + "pt;");
+	    style.append("color:" + WEinFrame.neuhell1+ ";");
+	    style.append("background:" + WEinFrame.neuhell2);
 
 	    JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">" //
 		    + "Das Programm fand eine neue Beta-Version. <a href=\"" + downloadurl
@@ -153,12 +155,16 @@ public class VersionIDHandler {
 	    break;
 	case isOld:
 	    JLabel label1 = new JLabel();
+	    label1.setForeground(WEinFrame.neuhell1);
 	    Font font1 = label1.getFont();
-	    StringBuffer style1 = new StringBuffer("font-family:" + font1.getFamily() + ";");
+	    StringBuffer style1 = new StringBuffer("body{");
 	    style1.append("font-weight:" + (font1.isBold() ? "bold" : "normal") + ";");
 	    style1.append("font-size:" + font1.getSize() + "pt;");
-	    JEditorPane ep1 = new JEditorPane("text/html", "<html><body style=\"" + style1 + "\">" //
-		    + "Das Programm fand eine neue Version. <a href=\"" + downloadurl + "\">Zum Update klicke hier</a>" //
+	    style1.append("color:" + "rgb("+ WEinFrame.dunkel1.getRed()+","+WEinFrame.dunkel1.getGreen()+","+WEinFrame.dunkel1.getBlue() +");");
+	    style1.append("background:" + "rgb("+ WEinFrame.neuhell1.getRed()+","+WEinFrame.neuhell1.getGreen()+","+WEinFrame.neuhell1.getBlue() +");}");
+	    System.out.println(style1);
+	    JEditorPane ep1 = new JEditorPane("text/html", "<html>"+"<head><style>a{font-weight:bold;font-size:12pt;color:rgb(4,72,65);background:rgb(42,169,156);}</style></head><body>"+ //
+		    "<a href=\"" + downloadurl + "\">Das Programm fand eine neue Version. Zum Update klicke hier</a>"
 		    + "</body></html>");
 	    ep1.addHyperlinkListener(new HyperlinkListener() {
 		@Override
@@ -174,11 +180,11 @@ public class VersionIDHandler {
 	    });
 	    ep1.setEditable(false);
 	    ep1.setBackground(label1.getBackground());
-
 	    JOptionPane op = new JOptionPane(ep1, JOptionPane.INFORMATION_MESSAGE);
 	    JFrame f1 = new JFrame();
+	    WEinFrame.farbe(op);
 	    JDialog dialog = op.createDialog(f1, "Neue Version!");
-	    WEinFrame.farbe(dialog, false);
+	    dialog.setVisible(true);
 	    break;
 	case error:
 	    new Erroropener("Fehler beim Suche nach Updates...");

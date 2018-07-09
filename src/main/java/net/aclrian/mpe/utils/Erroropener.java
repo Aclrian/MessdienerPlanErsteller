@@ -31,7 +31,7 @@ public class Erroropener {
 		JOptionPane op = new JOptionPane(error, JOptionPane.ERROR_MESSAGE);
 		JFrame f = new JFrame();
 		JDialog dialog = op.createDialog(f, "Fehler!");
-		WEinFrame.farbe(dialog, false);
+		WEinFrame.farbe(dialog);
 		dialog.setVisible(true);
 	}
 }
