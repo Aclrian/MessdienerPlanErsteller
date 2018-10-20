@@ -35,3 +35,6 @@ html_output.docx
 /.idea/
 *.prefs
 .idea/.name
+src/main/java/net/aclrian/mpe/utils/UIBorder.java
+src/main/java/net/aclrian/mpe/utils/TableRenderDemo.java
+src/main/java/net/aclrian/mpe/utils/UIManagerDefaults.java

@@ -8,7 +8,7 @@ import net.aclrian.mpe.utils.Erroropener;
 import net.aclrian.mpe.utils.Utilities;
 
 /**
- * Speicher dat Messverhalten eines Messdieners
+ * Speicher das Messverhalten eines Messdieners
  * 
  * @author Aclrian
  *
