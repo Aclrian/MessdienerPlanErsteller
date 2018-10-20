@@ -60,15 +60,15 @@ public class Converter {
 		setHtmlFile(new File(System.getProperty("user.home") + '\\' + "tmp.html"));
 		try {
 			docx = toWord();
-		} catch (JAXBException | Docx4JException e) {
-			new Erroropener(e.getMessage());
+		} catch (Exception e) {
+			new Erroropener(e);
 			e.printStackTrace();
 		}
 	}
 
-	public File toWord() throws IOException, JAXBException, Docx4JException {
+	private File toWord() throws IOException, JAXBException, Docx4JException {
 		File docx = new java.io.File(System.getProperty("user.home") + "\\tmp.docx");
-		String stringFromFile = FileUtils.readFileToString(htmlFile, "UTF-8");
+		String stringFromFile = FileUtils.readFileToString(htmlFile, "UTF-8"); 
 
 		WordprocessingMLPackage docxOut = WordprocessingMLPackage.createPackage();
 		NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
@@ -103,45 +103,7 @@ public class Converter {
 		OutputStream out = new FileOutputStream(file);
 		PdfConverter.getInstance().convert(document, out, options);
 		Utilities.logging(getClass(), "toPDF", "PDF wurde erstellt.");
-return file;
-//	WordprocessingMLPackage wordMLPackage;
-//
-//	Utilities.logging(getClass(), "toPDF", "Lade word-Document: " + docx.getAbsolutePath());
-//	String inputfilepath = docx.getAbsolutePath();
-//	wordMLPackage = WordprocessingMLPackage.load(docx);
-//	FieldUpdater updater = new FieldUpdater(wordMLPackage);
-//	updater.update(true);
-//	File rtn = new File(System.getProperty("user.home") + '\\' + "tmp.pdf");
-//	OutputStream os = new java.io.FileOutputStream(rtn);
-//	if (!Docx4J.pdfViaFO()) {
-//	    Utilities.logging(getClass(), "toPDF", "Using Plutext's PDF Converter; add docx4j-export-fo if you don't want that");
-//	    try {
-//		Docx4J.toPDF(wordMLPackage, os);
-//	    } catch (Docx4JException e) {
-//		new Erroropener(e.getMessage());
-//		e.printStackTrace();
-//		IOUtils.closeQuietly(os);
-//		if (e.getCause() != null && e.getCause() instanceof ConversionException) {
-//
-//		    ConversionException ce = (ConversionException) e.getCause();
-//		    ce.printStackTrace();
-//		}
-//	    }
-//	    Utilities.logging(getClass(), "toPDF", "Datei: " + rtn + " wurde gespeichert.");
-//	    return rtn;
-//	}
-//	Utilities.logging(getClass(), "toPDF", "Methode 2");
-//	FOSettings foSettings = Docx4J.createFOSettings();
-//	if (saveFO) {
-//	    foSettings.setFoDumpFile(new java.io.File(inputfilepath + ".fo"));
-//	}
-//	foSettings.setWmlPackage(wordMLPackage);
-//	Utilities.logging(getClass(), "toPDF", "Datei: " + rtn + " wurde gespeichert.");
-//	if (wordMLPackage.getMainDocumentPart().getFontTablePart() != null) {
-//	    wordMLPackage.getMainDocumentPart().getFontTablePart().deleteEmbeddedFontTempFiles();
-//	}
-//	IOUtils.closeQuietly(os);
-//	return rtn;
+		return file;
 	}
 
 	public File getDocx() {

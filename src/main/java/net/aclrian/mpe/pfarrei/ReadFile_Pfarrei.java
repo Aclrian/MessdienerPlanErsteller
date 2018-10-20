@@ -38,7 +38,7 @@ public class ReadFile_Pfarrei {
 			doc = dBuilder.parse(fXmlFile);
 		    } catch (org.xml.sax.SAXParseException e) {
 
-			new Erroropener(e.getMessage() + ": Das Dokument konnte nicht gelesen werden.");
+			new Erroropener(e);
 			doc = null;
 		    }
 		    if (doc != null) {
@@ -133,7 +133,7 @@ public class ReadFile_Pfarrei {
 		pf = new Pfarrei(einst, sm, name, orte, typen, hochaemter);
 	    }
 	} catch (Exception e) {
-	    new Erroropener(e.getMessage());
+	    new Erroropener(e);
 	    e.printStackTrace();
 	}
 

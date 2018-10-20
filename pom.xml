@@ -26,6 +26,23 @@
     <version>2.1</version>
     <scope>provided</scope>
 </dependency>
+<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+<dependency>
+    <groupId>com.googlecode.json-simple</groupId>
+    <artifactId>json-simple</artifactId>
+    <version>1.1.1</version>
+</dependency>
+<dependency>
+    <groupId>javax.json</groupId>
+    <artifactId>javax.json-api</artifactId>
+    <version>1.1</version>
+</dependency>
+
+<dependency>
+    <groupId>org.glassfish</groupId>
+    <artifactId>javax.json</artifactId>
+    <version>1.1</version>
+</dependency>
 <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
 <dependency>
     <groupId>org.apache.poi</groupId>

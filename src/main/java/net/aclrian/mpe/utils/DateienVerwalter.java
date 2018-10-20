@@ -15,6 +15,7 @@ import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.pfarrei.ReadFile_Pfarrei;
 import net.aclrian.mpe.resources.References;
 import net.aclrian.mpe.start.AData;
+import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame;
 
 /**
@@ -62,8 +63,8 @@ public class DateienVerwalter {
 		}
 		if (files.size() != 1) {
 			if (files.size() > 1) {
-				new Erroropener("Es darf nur eine Datei mit der Endung: '" + AData.pfarredateiendung
-						+ "' in dem Ordner: " + savepath + " vorhanden sein.");
+				new Erroropener(new Exception("Es darf nur eine Datei mit der Endung: '" + AData.pfarredateiendung
+						+ "' in dem Ordner: " + savepath + " vorhanden sein."));
 			} else {
 				return null;
 			}
@@ -137,13 +138,14 @@ public class DateienVerwalter {
 		return medis;
 	}
 
-	public Messdiener sucheMessdiener(String geschwi, Messdiener akt, AData ada) throws Exception {
-		for (Messdiener messdiener : ada.getMediarray()) {
+	public Messdiener sucheMessdiener(String geschwi, Messdiener akt, AProgress ap) throws Exception {
+		for (Messdiener messdiener : ap.getAda().getMediarray()) {
 			if (messdiener.makeId().equals(geschwi)) {
 				return messdiener;
 			}
 		}
-		throw new Exception("Konnte f" + References.ue + "r " + akt.makeId() + ": " + geschwi + " nicht finden");
+		throw new CouldnotFindMedi("Konnte f" + References.ue + "r " + akt.makeId() + " : " + geschwi + " nicht finden",
+				akt, geschwi, ap);
 	}
 
 	public String getSavepath() {
@@ -183,12 +185,12 @@ public class DateienVerwalter {
 					setSavepath(s);
 					bufferedWriter.close();
 				} else {
-					new Erroropener("Bitte auswaehlen beim naechsten Mal!!!");
+					new Erroropener(new Exception("Bitte auswaehlen beim naechsten Mal!!!"));
 					System.exit(1);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				new Erroropener(e.getMessage());
+				new Erroropener(e);
 			}
 		} else {
 			try {
@@ -208,8 +210,35 @@ public class DateienVerwalter {
 				bufferedReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				new Erroropener(e.getMessage());
+				new Erroropener(e);
 			}
+		}
+	}
+
+	public class CouldnotFindMedi extends Exception {
+		private static final long serialVersionUID = 1L;
+		private Messdiener me;
+
+		private String falscherEintrag;
+		private AProgress ap;
+
+		public CouldnotFindMedi(String message, Messdiener me, String falscherEintrag, AProgress ap) {
+			super(message);
+			this.me = me;
+			this.falscherEintrag = falscherEintrag;
+			this.ap = ap;
+		}
+
+		public AProgress getAp() {
+			return ap;
+		}
+
+		public Messdiener getMessdiener() {
+			return me;
+		}
+
+		public String getFalscherEintrag() {
+			return falscherEintrag;
 		}
 	}
 }

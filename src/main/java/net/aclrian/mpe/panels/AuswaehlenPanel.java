@@ -21,8 +21,8 @@ public class AuswaehlenPanel<E> extends APanel {
     private AList<E> alist;
 
     public AuswaehlenPanel(int dfbtnwidth, int dfbtnheight, ArrayList<E> hauptarray, Comparator<? super E> comp,
-	    AProgress ap) {
-	super(dfbtnwidth, dfbtnheight, true, ap);
+	    String title, AProgress ap) {
+	super(dfbtnwidth, dfbtnheight, true, title, ap);
 	alist = new AList<E>(hauptarray, comp);
 	add(pane);
 	pane.setViewportView(alist);
