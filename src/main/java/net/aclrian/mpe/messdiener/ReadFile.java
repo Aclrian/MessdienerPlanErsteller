@@ -41,7 +41,7 @@ public class ReadFile {
 		    try {
 			doc = dBuilder.parse(fXmlFile);
 		    } catch (org.xml.sax.SAXParseException e) {
-			new Erroropener(e.getMessage() + ": Das Dokument konnte nicht gelesen werden.");
+			new Erroropener(new Exception(e.getMessage() + ": Das Dokument konnte nicht gelesen werden."));
 			doc = null;
 		    }
 		    if (doc != null) {
@@ -148,7 +148,7 @@ public class ReadFile {
 		}
 	    }
 	} catch (Exception e) {
-	    new Erroropener(e.getMessage());
+	    new Erroropener(e);
 	    e.printStackTrace();
 	}
 	return me;

@@ -113,6 +113,8 @@ public class AData {
 	if (!hatsonstiges) {
 	    pf.getStandardMessen().add(sonstiges);
 	}
+	System.out.println(pf.getStandardMessen());
+	System.out.println(dv.getPfarrei());
 	Utilities.logging(this.getClass(), "erneuern", "Es wurden " + mediarray.size() + " gefunden!");
     }
 

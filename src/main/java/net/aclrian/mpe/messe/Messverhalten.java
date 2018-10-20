@@ -28,7 +28,7 @@ public class Messverhalten {
 		update(ada);
 	    }
 	} catch (NullPointerException e) {
-	    new Erroropener(e.getMessage());
+	    new Erroropener(e);
 	    e.printStackTrace();
 	}
     }
@@ -56,7 +56,7 @@ public class Messverhalten {
 	    messen.remove(gefundenbei);
 	    messen.add(new KannWelcheMesse(messe, kann));
 	} else {
-	    new Erroropener("Standardmesse (" + messe.toString() + ") existiert nicht!");
+	    new Erroropener(new Exception("Standardmesse (" + messe.toString() + ") existiert nicht!"));
 	}
     }
 
@@ -85,7 +85,7 @@ public class Messverhalten {
 		return kwm.isKanndann();
 	    }
 	}
-	new Erroropener("Standardmesse (" + messe.toString() + ") existiert nicht!");
+	new Erroropener(new Exception("Standardmesse (" + messe.toString() + ") existiert nicht!"));
 	update(ada);
 	return rt;
     }

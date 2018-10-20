@@ -245,7 +245,7 @@ public class WriteFile_Pfarrei extends JFrame {
 					bearbeiten(i);
 				} catch (Exception e2) {
 					e2.printStackTrace();
-					new Erroropener("Treffe zun" + References.ae + "chst eine Auswahl");
+					new Erroropener(new Exception("Treffe zun" + References.ae + "chst eine Auswahl"));
 				}
 			}
 		});
@@ -259,7 +259,7 @@ public class WriteFile_Pfarrei extends JFrame {
 					int i = stdmessen_table.getSelectedRow();
 					loeschen(i);
 				} catch (Exception e2) {
-					new Erroropener("Treffe zun" + References.ae + "chst eine Auswahl");
+					new Erroropener(new Exception("Treffe zun" + References.ae + "chst eine Auswahl"));
 				}
 			}
 		});
@@ -635,8 +635,15 @@ public class WriteFile_Pfarrei extends JFrame {
 		} else {
 			rdbtnf12Nein.setSelected(true);
 		}
-		rdbtnf1Ja.setSelected(false);
-		rdbtnf1Nein.setSelected(false);
+		boolean eins = false;
+		for (int i = 2; i < 20; i++) {
+			if (pf.getSettings().getDaten()[i].getAnz_dienen() != pf.getSettings().getDaten()[i + 1].getAnz_dienen()) {
+				eins = true;
+			}
+		}
+		rdbtnf1Ja.setSelected(eins);
+		rdbtnf1Nein.setSelected(!eins);
+		
 		rdbtnf2Ja.setSelected(false);
 		rdbtnf2Nein.setSelected(false);
 		if (pf.getSettings().getDaten()[1].getAnz_dienen() == 0) {
@@ -676,14 +683,14 @@ public class WriteFile_Pfarrei extends JFrame {
 	public void pfarreispeichern(AProgress ap) {
 		String name = textField.getText();
 		if (name == null || name.equals("")) {
-			new Erroropener("Bitte vorher etwas eingeben");
+			new Erroropener(new Exception("Bitte vorher etwas eingeben"));
 			return;
 		}
 		boolean error = false;
 		try {
 			this.setEinstellungenfromGUI();
 		} catch (Exception e) {
-			new Erroropener("Unzul" + References.ae + "ssige Eingabe in der Tabelle");
+			new Erroropener(new Exception("Unzul" + References.ae + "ssige Eingabe in der Tabelle"));
 			error = true;
 		}
 		if (error) {
@@ -827,10 +834,10 @@ public class WriteFile_Pfarrei extends JFrame {
 			Utilities.logging(WriteFile_Pfarrei.class, "writeFile",
 					"Pfarrei: " + pf.getName() + "wurde erfolgreich gespeichert!");
 		} catch (ParserConfigurationException pce) {
-			new Erroropener(pce.getMessage());
+			new Erroropener(pce);
 			pce.printStackTrace();
 		} catch (TransformerException tfe) {
-			new Erroropener(tfe.getMessage());
+			new Erroropener(tfe);
 			tfe.printStackTrace();
 		}
 
@@ -897,7 +904,7 @@ public class WriteFile_Pfarrei extends JFrame {
 					btnWeiter.setEnabled(true);
 				}
 			} else {
-				new Erroropener("Bitte vorher etwas eingeben");
+				new Erroropener(new Exception("Bitte vorher etwas eingeben"));
 			}
 		} else if (fragen.isVisible()) {
 			EnumDoing eh = EnumDoing.falscheEingabe;
@@ -911,7 +918,7 @@ public class WriteFile_Pfarrei extends JFrame {
 				}
 			}
 			if (eh == EnumDoing.falscheEingabe) {
-				new Erroropener("Bitte vorher alle Fragen beantworten");
+				new Erroropener(new Exception("Bitte vorher alle Fragen beantworten"));
 			} else {
 				ChangeListener listener = new ChangeListener() {
 
@@ -989,7 +996,7 @@ public class WriteFile_Pfarrei extends JFrame {
 			dlmorte.remove(i);
 			orte.remove(s);
 		} else {
-			new Erroropener("Vorher etwas ausw" + References.ae + "hlen");
+			new Erroropener(new Exception("Vorher etwas ausw" + References.ae + "hlen"));
 		}
 	}
 
@@ -1000,14 +1007,14 @@ public class WriteFile_Pfarrei extends JFrame {
 			dlmtype.remove(i);
 			typen.remove(s);
 		} else {
-			new Erroropener("Vorher etwas ausw" + References.ae + "hlen");
+			new Erroropener(new Exception("Vorher etwas ausw" + References.ae + "hlen"));
 		}
 	}
 
 	public void typadd() {
 		String s = typenfeld.getText();
 		if (s.equals("")) {
-			new Erroropener("bitte etwas eingeben");
+			new Erroropener(new Exception("bitte etwas eingeben"));
 		} else {
 			typen.add(s);
 			dlmtype.addElement(s);
@@ -1017,7 +1024,7 @@ public class WriteFile_Pfarrei extends JFrame {
 	public void ortadd() {
 		String s = ortefeld.getText();
 		if (s.equals("")) {
-			new Erroropener("bitte etwas eingeben");
+			new Erroropener(new Exception("bitter vorher etwas eingeben"));
 		} else {
 			orte.add(s);
 			dlmorte.addElement(s);

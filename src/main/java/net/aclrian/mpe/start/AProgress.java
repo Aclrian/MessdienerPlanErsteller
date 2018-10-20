@@ -8,6 +8,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
+
+import org.apache.poi.util.SystemOutLogger;
+
+import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandartMesse;
@@ -36,30 +40,43 @@ public class AProgress {
 	}
 
 	public ArrayList<Messdiener> getMediarraymitMessdaten() {
+		update();
 		if (memit != null) {
 			return memit;
 		}
 		ArrayList<Messdiener> mediarray = ada.getUtil().getAlleMedisVomOrdnerAlsList(ada.getSavepath(), ada);
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		for (Messdiener messdiener : mediarray) {
-			messdiener.setnewMessdatenDaten(ada.getUtil().getSavepath(), year, ada);
+			messdiener.setnewMessdatenDaten(ada.getUtil().getSavepath(), year, this);
 		}
 		memit = mediarray;
 		return mediarray;
+	}
+
+	private void update() {
+		for (Messdiener medi : ada.getMediarray()) {
+			for (Messdiener mmedi : memit) {
+				if (medi.toString().equals(mmedi.toString())) {
+					Messdaten md = mmedi.getMessdatenDaten();
+					md.update(medi, this);
+				}
+			}
+		}		
 	}
 
 	public void start() {
 		wam.setVisible(true);
 	}
 
-	public Object[][] getAbmeldenTableVector(String[] s) {
-		Object[][] rtn = new Object[ada.getMediarray().size()][s.length];
-		for (int i = 0; i < rtn.length; i++) {
+	public Object[][] getAbmeldenTableVector(String[] s, SimpleDateFormat df) {
+		getMediarraymitMessdaten().sort(Messdiener.compForMedis);
+		Object[][] rtn = new Object[getMediarraymitMessdaten().size()][s.length];
+		for (int i = 0; i < getMediarraymitMessdaten().size(); i++) {
 			Object[] o = rtn[i];
-			Messdiener m = ada.getMediarray().get(i);
+			Messdiener m = getMediarraymitMessdaten().get(i);
 			o[0] = m.toString();
-			for (int j = 1; j < o.length; j++) {
-				o[j] = false;
+			for (int j = 1; j < s.length; j++) {
+				o[j] = m.getMessdatenDaten().ausgeteilt(s[j]);
 			}
 		}
 		return rtn;
@@ -83,9 +100,8 @@ public class AProgress {
 							.parse(df.format(d) + "-" + sm.getBeginn_stundealsString() + ":" + sm.getBeginn_minute());
 					Messe m = new Messe(frting, sm, ada);
 					mes.add(m);
-				} catch (ParseException e) {
-					new Erroropener(
-							e.getMessage() + ": Konnte kein Datum erzeugen. Das sollte eigentlich nicht passieren.");
+				} catch (Exception e) {
+					new Erroropener(e);
 					e.printStackTrace();
 				}
 				cal.add(Calendar.DATE, 7);

@@ -6,23 +6,30 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
+
+import net.aclrian.mpe.components.ATable.ACheckBoxRenderer;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.utils.RemoveDoppelte;
 import net.aclrian.mpe.utils.Utilities;
 
-public class AbmeldenTable extends AATable {
+public class AbmeldenTable extends ATable {
 
 	private static final long serialVersionUID = -1056881678315222840L;
 
-	private AbDTM abdtm;
+	private AbDTM abdtm = new AbDTM();
 
 	public AbmeldenTable(AProgress ap) {
-		super(new AbDTM());
-		abdtm = (AbDTM) getModel();
+		super();
+		setModel(abdtm);
+		// Data
 		ArrayList<String> sarry = new ArrayList<>();
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 		for (Messe messe : ap.getAda().getMesenarray()) {
@@ -48,9 +55,48 @@ public class AbmeldenTable extends AATable {
 		sarry.add(0, "Messdiener");
 		String[] s = new String[sarry.size()];
 		sarry.toArray(s);
+		abdtm.setDataVector(ap.getAbmeldenTableVector(s, df), s);
 
-		abdtm.setDataVector(ap.getAbmeldenTableVector(s), s);
+		// Table
+		for (int i = 1; i < this.getColumnCount(); i++) {
+			this.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(new ACheckBox()));
+			this.getColumnModel().getColumn(i).getCellEditor().addCellEditorListener(new CellEditorListener() {
+
+				@Override
+				public void editingStopped(ChangeEvent e) {
+					if (e.getSource() instanceof DefaultCellEditor
+							&& ((DefaultCellEditor) e.getSource()).getComponent() instanceof ACheckBox) {
+						((ACheckBox) ((DefaultCellEditor) e.getSource()).getComponent())
+								.setHorizontalAlignment(SwingConstants.CENTER);
+					}
+				}
+
+				@Override
+				public void editingCanceled(ChangeEvent e) {
+					if (e.getSource() instanceof DefaultCellEditor
+							&& ((DefaultCellEditor) e.getSource()).getComponent() instanceof ACheckBox) {
+						((ACheckBox) ((DefaultCellEditor) e.getSource()).getComponent())
+								.setHorizontalAlignment(SwingConstants.CENTER);
+					}
+				}
+			});
+			this.getColumnModel().getColumn(i).setCellRenderer(new ACheckBoxRenderer());
+		}
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+	}
+
+	public void schreiben(AProgress ap) {
+
+	}
+
+	public void andersrum() {
+		for (int i = 0; i < abdtm.getRowCount(); i++) {
+			for (int j = 1; j < abdtm.getColumnCount(); j++) {
+				boolean b = (boolean) abdtm.getValueAt(i, j);
+				abdtm.setValueAt(!b, i, j);
+			}
+		}
 	}
 
 	public void speichern(AProgress ap, boolean kanndann) {

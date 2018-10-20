@@ -36,7 +36,7 @@ public class StandartMesse {
 	try {
 	    d = df.parse(String.valueOf(beginn_stunde) + ":" + beginn_minute);
 	} catch (ParseException e) {
-	    new Erroropener("Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen.");
+	    new Erroropener(new Exception("Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen."));
 	    e.printStackTrace();
 	}
 	SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
@@ -46,8 +46,8 @@ public class StandartMesse {
 	Date rtn = null;
 	try {
 	    rtn = dall.parse(datum + ":" + uhrzeit);
-	} catch (ParseException e) {
-	    new Erroropener("Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen.");
+	} catch (Exception e) {
+	    new Erroropener(e);
 	    e.printStackTrace();
 	}
 	return rtn;

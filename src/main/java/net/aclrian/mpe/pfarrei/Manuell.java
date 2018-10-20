@@ -44,8 +44,8 @@ public class Manuell {
 		}
 	    }
 	    if (handling.getEw() == EnumWorking.neu) {
-		new Erroropener("Um in einer neuen Standartmesse Messdiener hinzu zu f" + References.ue
-			+ "gen, bitte den Messdiener ausw" + References.ae + "hlen.");
+		new Erroropener(new Exception("Um in einer neuen Standartmesse Messdiener hinzu zu f" + References.ue
+			+ "gen, bitte den Messdiener ausw" + References.ae + "hlen."));
 		for (Messdiener m : ap.getAda().getMediarray()) {
 		    m.getDienverhalten().fuegeneueMesseHinzu(handling.getNeu());
 		}
@@ -57,7 +57,7 @@ public class Manuell {
 	    try {
 		wf.toXML(ap);
 	    } catch (IOException e) {
-		new Erroropener(e.getMessage());
+		new Erroropener(e);
 		e.printStackTrace();
 	    }
 	}

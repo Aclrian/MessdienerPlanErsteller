@@ -1,11 +1,10 @@
 package net.aclrian.mpe.panels;
 
 import java.awt.Desktop;
-import java.awt.Font;
+//import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -28,13 +27,13 @@ public class Start extends APanel {
 
 	private static final long serialVersionUID = 7258230476105946056L;
 
-	private JLabel title = new JLabel("<html><body><h1>MessdienerplanErsteller</h1></body></html>");
+	//private JLabel title = new JLabel("<html><body><h1>MessdienerplanErsteller</h1></body></html>");
 	private JLabel unterueberschrift = new JLabel();
 	private JLabel pfarreilabel = new JLabel();
 	private JButton speicherortaendern = new JButton(
-			"<html><body><h3>Speicherort<br>" + References.ae + "ndern</h3></body></html>");
-	private JButton plangenerieren = new JButton("<html><body><h3>Plan generieren</h3></body></html>");
-	private JButton pfaendern = new JButton("<html><body><h3>Pfarrei<br>" + References.ae + "ndern</h3></body></html>");
+			"<html><body>Speicherort " + References.ae + "ndern</body></html>");
+	private JButton plangenerieren = new JButton("<html><body><h2>Plan generieren</h2></body></html>");
+	private JButton pfaendern = new JButton("<html><body>Pfarrei " + References.ae + "ndern</body></html>");
 	private JButton ferienplan = new JButton("Ferienplan erstellen");
 	private JButton smanzeigen = new JButton(
 			"<html><body>Standardmesse f" + References.ue + "r <br>jeden Medi anzeigen</body></html>");
@@ -42,12 +41,12 @@ public class Start extends APanel {
 	private URI uri;
 
 	public Start(int dfbtnwidht, int dfbtnheigth, AProgress ap) {
-		super(dfbtnwidht, dfbtnheigth, false, ap);
+		super(dfbtnwidht, dfbtnheigth, false, "Willkommen beim MessdienerplanErsteller",ap);
 		this.setLayout(null);
-		Font font = title.getFont();
-		StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
+		//Font font = title.getFont();
+/*		StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
 		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;");
+		style.append("font-size:" + font.getSize() + "pt;");*/
 		uri = null;
 		try {
 			uri = new URI("https://github.com/Aclrian/MessdienerPlanErsteller/");
@@ -65,8 +64,8 @@ public class Start extends APanel {
 				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED))
 					try {
 						Desktop.getDesktop().browse(uri);
-					} catch (IOException e1) {
-						new Erroropener(e1.getMessage());
+					} catch (Exception e1) {
+						new Erroropener(e1);
 						e1.printStackTrace();
 					}
 			}
@@ -87,9 +86,9 @@ public class Start extends APanel {
 		add(pfarreilabel);
 		pfarreilabel.setVisible(true);
 
-		title.setHorizontalAlignment(JLabel.CENTER);
-		add(title);
-		title.setVisible(true);
+//		title.setHorizontalAlignment(JLabel.CENTER);
+//		add(title);
+//		title.setVisible(true);
 
 		add(smanzeigen);
 		smanzeigen.addActionListener(new ActionListener() {
@@ -110,7 +109,7 @@ public class Start extends APanel {
 			if (ap.getAda().getMesenarray().size() > 0) {
 				ap.getWAlleMessen().changeAP(EnumActivePanel.Abmelden, true);
 			} else {
-				new Erroropener("Erst Messen erstellen");
+				new Erroropener(new Exception("Erst Messen erstellen"));
 			}
 		});
 		ferienplan.setVisible(true);
@@ -135,7 +134,7 @@ public class Start extends APanel {
 			if (ap.getAda().getMesenarray().size() > 0) {
 				herzstueck(ap);
 			} else {
-				new Erroropener("Erst Messen erstellen");
+				new Erroropener(new Exception("Erst Messen erstellen"));
 			}
 		});
 		plangenerieren.setVisible(true);
@@ -159,21 +158,21 @@ public class Start extends APanel {
 		int stdhoehe = heigth / 20;
 		int abstandhoch = heigth / 100;
 		int abstandweit = width / 100;
-		title.setBounds(abstandweit, abstandhoch, width - 2 * abstandweit, stdhoehe);
-		title.setVisible(true);
+		//title.setBounds(abstandweit, abstandhoch, width - 2 * abstandweit, stdhoehe);
+		//title.setVisible(true);
 		pfarreilabel.setBounds(abstandweit, 2 * abstandhoch + stdhoehe, width - 2 * abstandweit, stdhoehe);
 		pfarreilabel.setVisible(true);
-		unterueberschrift.setBounds(abstandweit, heigth - abstandhoch - stdhoehe, width - 2 * abstandweit, stdhoehe);
+		unterueberschrift.setBounds(abstandweit, heigth - abstandhoch - stdhoehe, width - 3 * abstandweit, stdhoehe);
 		unterueberschrift.setVisible(true);
-		speicherortaendern.setBounds(abstandweit, 5 * stdhoehe, drei - abstandweit, 3 * stdhoehe);
+		speicherortaendern.setBounds(2*abstandweit, 5 * stdhoehe, drei - abstandweit, 3 * stdhoehe);
 		speicherortaendern.setVisible(true);
 		plangenerieren.setBounds(drei, 10 * stdhoehe, drei - abstandweit, 3 * stdhoehe);
 		plangenerieren.setVisible(true);
-		pfaendern.setBounds(2 * drei - abstandweit, 5 * stdhoehe, drei, 3 * stdhoehe);
+		pfaendern.setBounds(2 * drei - abstandweit, 5 * stdhoehe, drei-abstandweit, 3 * stdhoehe);
 		pfaendern.setVisible(true);
-		ep.setBounds((int) (abstandweit * 1 + 2), heigth - 44, 100, 41);
+		ep.setBounds((int) (abstandweit * 1 + 2), heigth - 50, 100, 41);
 		ep.setVisible(true);
-		ferienplan.setBounds(abstandweit, 15 * stdhoehe, drei - abstandweit, 3 * stdhoehe);
+		ferienplan.setBounds(2*abstandweit, 15 * stdhoehe, drei - abstandweit, 3 * stdhoehe);
 		smanzeigen.setBounds(2 * drei - abstandweit, 15 * stdhoehe, drei - abstandweit, 3 * stdhoehe);
 	}
 

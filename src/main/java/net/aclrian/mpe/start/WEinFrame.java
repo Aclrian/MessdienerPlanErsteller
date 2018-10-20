@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -33,20 +35,23 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerDateModel;
-import javax.swing.border.BevelBorder;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
-import net.aclrian.mpe.components.AATable;
+import net.aclrian.mpe.components.ATable;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.panels.APanel;
-import net.aclrian.mpe.panels.AbmeldenPane;
+import net.aclrian.mpe.panels.AbmeldenPanel;
 import net.aclrian.mpe.panels.Finish;
 import net.aclrian.mpe.panels.MediAnzeigen;
 import net.aclrian.mpe.panels.MesseAnzeigen;
@@ -86,10 +91,15 @@ public class WEinFrame extends JFrame {
 	public final static Color hell0 = new Color(20, 96, 88);
 	public final static Color hell1 = new Color(71, 142, 134);
 	public final static Color dunkel1 = new Color(4, 72, 65);
-	public final static Color dunkel2 = new Color(0, 46, 41, 1);
+	public final static Color ndunkel1 = new Color(72, 4, 11);
+	public final static Color dunkel2 = new Color(0, 46, 41);
 	public final static Color neuhell1 = new Color(42, 169, 156);
+	public final static Color nneuhell1 = new Color(169, 42, 55);
 	public final static Color neuhell2 = new Color(79, 189, 177);
-	public final static Border b = new BevelBorder(BevelBorder.LOWERED, hell0, hell0, hell0, hell0);
+	public final static Border b = BorderFactory.createLineBorder(neuhell1, 2, true);// new
+																						// BevelBorder(BevelBorder.LOWERED,
+																						// neuhell1, neuhell1, neuhell1,
+																						// neuhell1);
 	public final static Font f = new Font("SansSerif", 0, 45);
 	private Calendar cal;
 	private AProgress ap;
@@ -99,6 +109,7 @@ public class WEinFrame extends JFrame {
 	 * 
 	 */
 	public WEinFrame(AProgress ap) {
+		// b = BorderFactory.createLineBorder(neuhell2, 1, true);
 		listmedi.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listmesse.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jdende.setModel(new SpinnerDateModel(new Date(), null, null, Calendar.DATE));
@@ -185,7 +196,7 @@ public class WEinFrame extends JFrame {
 								try {
 									wf.toXML(ap);
 								} catch (IOException e) {
-									new Erroropener("Konnte die Datei nicht speichern");
+									new Erroropener(new Exception("Konnte die Datei nicht speichern"));
 									e.printStackTrace();
 								}
 							}
@@ -198,6 +209,7 @@ public class WEinFrame extends JFrame {
 		medipanel.add(minusmedi);
 		medipanel.add(augemedi);
 		augemedi.setIcon(new ImageIcon(References.class.getResource("auge_new2.png")));
+		augemedi.setDisabledIcon(new ImageIcon(References.class.getResource("auge_disabl.png")));
 		augemedi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -224,7 +236,7 @@ public class WEinFrame extends JFrame {
 				try {
 					messsen = ap.generireDefaultMessen(anfang, ende);
 				} catch (Exception e1) {
-					new Erroropener(e1.getMessage());
+					new Erroropener(e1);
 					messsen = new ArrayList<>();
 				}
 				for (int i = 0; i < messsen.size(); i++) {
@@ -271,6 +283,7 @@ public class WEinFrame extends JFrame {
 			}
 		});
 		augemesse.setIcon(new ImageIcon(References.class.getResource("auge_new2.png")));
+		augemesse.setDisabledIcon(new ImageIcon(References.class.getResource("auge_disabl.png")));
 		messepanel.add(augemesse);
 		addComponentListener(new ComponentAdapter() {
 
@@ -298,7 +311,6 @@ public class WEinFrame extends JFrame {
 		activepanel.setVisible(true);
 		graphics();
 		farbe(getContentPane());
-
 	}
 
 	protected Messe getMesse() {
@@ -327,7 +339,25 @@ public class WEinFrame extends JFrame {
 		setBounds(0, 0, 1600, 900);
 	}
 
+	public static void farbeFIRST() {
+		UIManager.put("TextField.caretForeground", WEinFrame.neuhell1);
+		UIManager.put("FormattedTextField.caretForeground", WEinFrame.neuhell1);
+		UIManager.put("TextField.caretForeground", WEinFrame.neuhell1);
+		UIManager.put("PasswordField.caretForeground", WEinFrame.neuhell1);
+		UIManager.put("controlDkShadow", WEinFrame.neuhell1);
+		UIManager.put("TextField.selectionForeground", nneuhell1);
+		UIManager.put("TextField.selectionBackground", ndunkel1);
+		UIManager.put("Button.disabledText", nneuhell1);
+		Border b = BorderFactory.createLineBorder(neuhell2, 1, false);
+		// BorderFactory.cra
+		UIManager.put("Table.focusCellHighlightBorder", b);
+		UIManager.put("List.focusCellHighlightBorder", b);
+		UIManager.put("Button.select", WEinFrame.dunkel2);
+	}
+
 	public static void farbe(Component c) {
+
+		Border b3 = BorderFactory.createEtchedBorder(EtchedBorder.RAISED, neuhell1, dunkel1);// Color.BLACK);
 		if (c instanceof JButton) {
 			((JButton) c).setBorder(b);
 			try {
@@ -340,9 +370,9 @@ public class WEinFrame extends JFrame {
 		}
 		if (c instanceof JList<?>) {
 			((JComponent) c).setOpaque(false);
-			c.setBackground(neuhell2);
+			c.setBackground(neuhell1);
 			((JList<?>) c).setSelectionBackground(dunkel1);
-			((JList<?>) c).setSelectionForeground(neuhell2);
+			((JList<?>) c).setSelectionForeground(neuhell1);
 		} else if (c instanceof JEditorPane) {
 			if (((JEditorPane) c).getText().toLowerCase().contains("img")) {
 				c.setForeground(Color.WHITE);
@@ -351,13 +381,13 @@ public class WEinFrame extends JFrame {
 		} else if (c instanceof CellRendererPane) {
 			c.setForeground(dunkel2);
 			c.setBackground(neuhell1);
-		} else if (c instanceof AATable) {
+		} else if (c instanceof ATable) {
 			c.setForeground(neuhell1);
 			c.setBackground(dunkel1);
-			((AATable) c).setBorder(b);
-			((AATable) c).setForegroundInHeader(dunkel1, neuhell1);
-			((AATable) c).setSelectionForeground(dunkel1);
-			((AATable) c).setSelectionBackground(neuhell1);
+			((ATable) c).setBorder(null);
+			((ATable) c).setForegroundInHeader(dunkel1, neuhell1, dunkel2, neuhell1, dunkel1);
+			((ATable) c).setSelectionForeground(dunkel1);
+			((ATable) c).setSelectionBackground(neuhell1);
 		} else if (c instanceof JComponent) {
 			c.setBackground(dunkel1);
 			c.setForeground(neuhell1);
@@ -365,46 +395,45 @@ public class WEinFrame extends JFrame {
 				farbe(co);
 			}
 			if (c instanceof JScrollPane) {
-				((JScrollPane) c).getHorizontalScrollBar().setUI(new BasicScrollBarUI()
-    {   
-        @Override
-        protected JButton createDecreaseButton(int orientation) {
-            return createZeroButton();
-        }
+				((JComponent) c).setBorder(b);
+				((JScrollPane) c).getHorizontalScrollBar().setUI(new BasicScrollBarUI() {
+					@Override
+					protected JButton createDecreaseButton(int orientation) {
+						return createZeroButton();
+					}
 
-        @Override    
-        protected JButton createIncreaseButton(int orientation) {
-              return createZeroButton();
-        }
-        @Override 
-        protected void configureScrollBarColors(){
-            this.thumbColor = neuhell1;
-        }
+					@Override
+					protected JButton createIncreaseButton(int orientation) {
+						return createZeroButton();
+					}
 
+					@Override
+					protected void configureScrollBarColors() {
+						this.thumbColor = neuhell1;
+					}
 
-    });
-				((JScrollPane) c).getVerticalScrollBar().setUI(new BasicScrollBarUI()
-    {   
-        @Override
-        protected JButton createDecreaseButton(int orientation) {
-            return createZeroButton();
-        }
+				});
+				((JScrollPane) c).getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+					@Override
+					protected JButton createDecreaseButton(int orientation) {
+						return createZeroButton();
+					}
 
-        @Override    
-        protected JButton createIncreaseButton(int orientation) {
-              return createZeroButton();
-        }
-        @Override 
-        protected void configureScrollBarColors(){
-            this.thumbColor = neuhell1;
-        }
+					@Override
+					protected JButton createIncreaseButton(int orientation) {
+						return createZeroButton();
+					}
 
+					@Override
+					protected void configureScrollBarColors() {
+						this.thumbColor = neuhell1;
+					}
 
-    });
+				});
 			}
 		} else if (c instanceof Window) {
-			if(c instanceof JFrame) {
-			farbe(((JFrame) c).getContentPane());
+			if (c instanceof JFrame) {
+				farbe(((JFrame) c).getContentPane());
 			} else if (c instanceof JDialog) {
 				farbe(((JDialog) c).getContentPane());
 			}
@@ -415,15 +444,31 @@ public class WEinFrame extends JFrame {
 				e.printStackTrace();
 			}
 		}
+		if (c instanceof JTextField) {
+			((JTextField) c).setBorder(b3);
+			((JTextField) c).setSelectionColor(neuhell1);
+			((JTextField) c).setSelectedTextColor(dunkel1);
+		}
+		if (c instanceof BasicArrowButton) {
+			((BasicArrowButton) c).setBorder(b3);
+		}
+		if (c instanceof JSpinner) {
+			((JSpinner) c).setBorder(null);
+		}
+		if (c instanceof ATable) {
+			((ATable) c).setBorder(null);
+		}
 		c.repaint();
 	}
+
 	private static JButton createZeroButton() {
-	    JButton jbutton = new JButton();
-	    jbutton.setPreferredSize(new Dimension(0, 0));
-	    jbutton.setMinimumSize(new Dimension(0, 0));
-	    jbutton.setMaximumSize(new Dimension(0, 0));
-	    return jbutton;
+		JButton jbutton = new JButton();
+		jbutton.setPreferredSize(new Dimension(0, 0));
+		jbutton.setMinimumSize(new Dimension(0, 0));
+		jbutton.setMaximumSize(new Dimension(0, 0));
+		return jbutton;
 	}
+
 	public void graphics() {
 		update(ap.getAda());
 		int width = this.getContentPane().getBounds().width;
@@ -482,7 +527,7 @@ public class WEinFrame extends JFrame {
 		int posende = abstandlinie + lhalb;
 		jdende.setBounds((int) (wviertel * 3 + achtel * 1), posende, drittel, linienoben / 2 - abstandlinie);
 		messestandarterzeugen.setBounds((int) (wviertel * 3 + achtel * 1 + drittel + abstandbreit),
-				2 * abstandlinie + 1, rest / 2 - abstandbreit, linienoben - 2 * abstandlinie + 1);
+				2 * abstandlinie + 1, rest / 2 - abstandbreit, linienoben - 3 * abstandlinie + 1);
 		setTextEqualsToSize(getContentPane());
 		Utilities.setFrameMittig(width, heigth);
 	}
@@ -597,8 +642,20 @@ public class WEinFrame extends JFrame {
 	}
 
 	public void changeAP(EnumActivePanel eap, boolean withupdate) {
+		boolean ferienplan = false;
 		try {
-			contentPane.remove(activepanel);
+			if (activepanel instanceof AbmeldenPanel) {
+				ferienplan = true;
+			}
+			if (activepanel instanceof Finish) {
+				activepanel.setBorder(null);
+				this.remove(activepanel);
+				for (Component c : contentPane.getComponents()) {
+					c.setVisible(true);
+				}
+			}// else {
+				contentPane.remove(activepanel);
+			//}
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
@@ -606,7 +663,10 @@ public class WEinFrame extends JFrame {
 		int dfbth = this.getBounds().height / 10 - 5 * (this.getBounds().height / 400);
 		switch (eap) {
 		case Finish:
-			activepanel = new Finish(dfbtw, dfbth, ap);
+			for (Component c : contentPane.getComponents()) {
+				c.setVisible(false);
+			}
+			activepanel = new Finish(dfbtw, dfbth, ferienplan, ap);
 			break;
 		case Messe:
 			activepanel = new MesseAnzeigen(dfbtw, dfbth, ap);
@@ -615,7 +675,7 @@ public class WEinFrame extends JFrame {
 			activepanel = new MediAnzeigen(dfbtw, dfbth, ap);
 			break;
 		case Abmelden:
-			activepanel = new AbmeldenPane(dfbtw, dfbth, ap);
+			activepanel = new AbmeldenPanel(dfbtw, dfbth, ap);
 			break;
 		default:
 			activepanel = new Start(dfbtw, dfbth, ap);
@@ -631,7 +691,8 @@ public class WEinFrame extends JFrame {
 		if (!(activepanel instanceof Finish)) {
 			this.add(activepanel, 1);
 		} else {
-			this.setContentPane(activepanel);
+			this.add(activepanel, 1);
+			activepanel.setBounds(getBounds());
 		}
 		activepanel.setVisible(true);
 		farbe(activepanel);
