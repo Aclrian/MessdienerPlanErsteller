@@ -1,15 +1,12 @@
 package net.aclrian.mpe.start;
 
 import java.io.File;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
-
-import org.apache.poi.util.SystemOutLogger;
 
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
