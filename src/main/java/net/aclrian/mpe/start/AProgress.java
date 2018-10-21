@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import net.aclrian.mpe.messdiener.Messdaten;
@@ -15,6 +17,7 @@ import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Manuell;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.pfarrei.WriteFile_Pfarrei;
+import net.aclrian.mpe.resources.References;
 import net.aclrian.mpe.pfarrei.Manuell.EnumWorking;
 import net.aclrian.mpe.pfarrei.Manuell.Handling;
 import net.aclrian.mpe.utils.Erroropener;
@@ -37,17 +40,17 @@ public class AProgress {
 	}
 
 	public ArrayList<Messdiener> getMediarraymitMessdaten() {
-		update();
 		if (memit != null) {
+			update();
 			return memit;
 		}
-		ArrayList<Messdiener> mediarray = ada.getUtil().getAlleMedisVomOrdnerAlsList(ada.getSavepath(), ada);
+		memit = ada.getUtil().getAlleMedisVomOrdnerAlsList(ada.getSavepath(), ada);
 		int year = Calendar.getInstance().get(Calendar.YEAR);
-		for (Messdiener messdiener : mediarray) {
+		for (Messdiener messdiener : memit) {
 			messdiener.setnewMessdatenDaten(ada.getUtil().getSavepath(), year, this);
 		}
-		memit = mediarray;
-		return mediarray;
+		update();
+		return memit;
 	}
 
 	private void update() {
@@ -195,7 +198,7 @@ public class AProgress {
 				}
 				if (!b) {
 					alte.add(alt);
-					alteS.add("�berarbeitete " + alt.toString());
+					alteS.add(References.Ue+"berarbeitete " + alt.toBenutzerfreundlichenString());
 				}
 
 			}
@@ -208,7 +211,7 @@ public class AProgress {
 					Object[] possibilities = new Object[0];
 					possibilities = alteS.toArray(possibilities);
 					String s = (String) JOptionPane.showInputDialog(null,
-							sm.toString() + " ist neu.\nIst sie wirkilch neu oder wurde sie nur �berarbeitet?",
+							sm.toString() + " ist neu.\nIst sie wirkilch neu oder wurde sie nur "+References.ue+"berarbeitet?",
 							"Customized Dialog", JOptionPane.PLAIN_MESSAGE, null, possibilities, "Neu");
 
 					if ((s != null) && (s.length() > 0)) {
@@ -249,7 +252,12 @@ public class AProgress {
 			Manuell m = new Manuell(hand, ap, pf);
 			m.act();
 			WriteFile_Pfarrei.writeFile(pf, savepath);
-			JOptionPane.showInputDialog("Das Programm wird nun beendet und mit den neuen Daten gestartet!");
+			JOptionPane op = new JOptionPane("Das Programm wird nun beendet und mit den neuen Daten gestartet!", JOptionPane.INFORMATION_MESSAGE);
+			JFrame f = new JFrame();
+			f.setAlwaysOnTop(true);
+			JDialog dialog = op.createDialog(f, "Warnung!");
+			WEinFrame.farbe(dialog);
+			dialog.setVisible(true);
 			System.exit(0);
 		} else {
 			String name = pf.getName();

@@ -85,6 +85,9 @@ public class StandartMesse {
 	return Wochentag + "_" + String.valueOf(beginn_stunde) + ":" + beginn_minute + "-" + ort + " " + typ + " "
 		+ String.valueOf(anz_messdiener);
     }
+    public String toBenutzerfreundlichenString(){
+    	return typ + " jeden " +Wochentag+ "., " + "um " + beginn_stunde+":"+beginn_minute + " in " + ort;
+    }
 
     public String toReduziertenString() {
 	String rtn = Wochentag + "-" + String.valueOf(beginn_stunde) + "-" + beginn_minute + "" + // ort+ "-" + typ +
@@ -121,8 +124,6 @@ public class StandartMesse {
 	    if (rtn.length() == 1) {
 		rtn = "";
 		rtn = "0" + String.valueOf(this.beginn_stunde);
-	    } else {
-		System.out.println("da ist was schief gegeangen!!");
 	    }
 	}
 	return rtn;

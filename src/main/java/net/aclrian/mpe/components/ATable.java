@@ -56,13 +56,10 @@ public class ATable extends JTable {
 	public Messverhalten getMessdaten(AData ada) {
 		Messverhalten mv = new Messverhalten(ada);
 		for (int i = 0; i < dtm.getRowCount(); i++) {
-			StandartMesse s = (StandartMesse) dtm.getValueAt(i, 0);
-			if (s instanceof Sonstiges) {
-				continue;
-			}
+			String s = (String) dtm.getValueAt(i, 0);
 			boolean kann = (Boolean) dtm.getValueAt(i, 1);
 			for (StandartMesse sm : ada.getSMoheSonstiges()) {
-				if (s.toString().equals(sm.toString())) {
+				if (s.equals(sm.toBenutzerfreundlichenString())) {
 					mv.editiereBestimmteMesse(ada, sm, kann);
 					continue;
 				}
@@ -126,7 +123,7 @@ public class ATable extends JTable {
 
 	private class ADTM extends DefaultTableModel {
 		private static final long serialVersionUID = 1L;
-		private Class<?>[] c = new Class[] { StandartMesse.class, Boolean.class };
+		private Class<?>[] c = new Class[] { String.class, Boolean.class };
 
 		public boolean isCellEditable(int row, int column) {
 			if (c[column].equals(Boolean.class)) {

@@ -53,8 +53,8 @@ public class Finish extends APanel {
 	private JScrollPane sPMedis = new JScrollPane();
 	private JLabel labelmesse = new JLabel("Die generierten Messen:");
 	private JLabel labelmedis = new JLabel("Nicht eingeteilte Messdiener:");
-	private JButton topdf = new JButton("Als Pdf-Dokument " + References.oe+"ffnen");
-	private JButton todocx = new JButton("Als Word-Dokument " + References.oe+"ffnen");
+	private JButton topdf = new JButton("Zum Pdf-Dokument");
+	private JButton todocx = new JButton("Zum Word-Dokument");
 	private JButton toback = new JButton("Zur" + References.ue + "ck");
 	private ArrayList<Messdiener> hauptarray;
 	private ArrayList<Messe> messen;

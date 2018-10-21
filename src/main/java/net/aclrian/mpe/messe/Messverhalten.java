@@ -56,7 +56,7 @@ public class Messverhalten {
 	    messen.remove(gefundenbei);
 	    messen.add(new KannWelcheMesse(messe, kann));
 	} else {
-	    new Erroropener(new Exception("Standardmesse (" + messe.toString() + ") existiert nicht!"));
+	    new Erroropener(new Exception("Standardmesse (" + messe.toBenutzerfreundlichenString() + ") existiert nicht!"));
 	}
     }
 
@@ -85,7 +85,7 @@ public class Messverhalten {
 		return kwm.isKanndann();
 	    }
 	}
-	new Erroropener(new Exception("Standardmesse (" + messe.toString() + ") existiert nicht!"));
+	new Erroropener(new Exception("Standardmesse (" + messe.toBenutzerfreundlichenString() + ") existiert nicht!"));
 	update(ada);
 	return rt;
     }
@@ -177,7 +177,7 @@ public class Messverhalten {
 	Object[][] rtn = new Object[messen.size()][2];
 	for (int i = 0; i < messen.size(); i++) {
 	    KannWelcheMesse sm = messen.get(i);
-	    rtn[i][0] = sm.getMesse();
+	    rtn[i][0] = sm.getMesse().toBenutzerfreundlichenString();
 	    rtn[i][1] = sm.isKanndann();
 	}
 	return rtn;
