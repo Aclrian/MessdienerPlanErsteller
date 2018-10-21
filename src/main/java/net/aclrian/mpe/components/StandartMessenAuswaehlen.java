@@ -26,7 +26,7 @@ public class StandartMessenAuswaehlen extends JList<ACheckBox> {
 	    if (new Sonstiges().isSonstiges(stdm.get(i1))) {
 		continue;
 	    }
-	    cbli.add(new ACheckBox(stdm.get(i1).toString()));
+	    cbli.add(new ACheckBox(stdm.get(i1).toBenutzerfreundlichenString()));
 	    dlm.addElement(cbli.get(cbli.size() - 1));
 	    this.stdm.add(stdm.get(i1));
 	}

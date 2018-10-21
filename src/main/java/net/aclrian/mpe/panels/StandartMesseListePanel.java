@@ -31,7 +31,7 @@ public class StandartMesseListePanel extends APanel {
 
 	public StandartMesseListePanel(int dfbtnwidth, int dfbtnheight, ArrayList<Messdiener> hauptarray,
 			Comparator<Messdiener> comp, AProgress ap, StandartMesse dfmesse) {
-		super(dfbtnwidth, dfbtnheight, true, "Standartmesse für alle Messdiener anzeigen:", ap);
+		super(dfbtnwidth, dfbtnheight, true, dfmesse.toBenutzerfreundlichenString(),ap);//"Standartmesse für alle Messdiener anzeigen:", ap);
 		alist = new AList<Messdiener>(hauptarray, comp);
 		for (Messdiener messdiener : hauptarray) {
 			if (messdiener.getDienverhalten().getBestimmtes(dfmesse, ap.getAda())) {
@@ -42,7 +42,7 @@ public class StandartMesseListePanel extends APanel {
 		add(pane);
 		pane.setViewportView(alist);
 		pane.setColumnHeaderView(label);
-		label.setText(label.getText() + " f" + References.ue + "r " + dfmesse.toString());
+		label.setText(label.getText() + " f" + References.ue + "r " + dfmesse.toBenutzerfreundlichenString());
 		getBtnSpeichern().addActionListener(new ActionListener() {
 
 			@Override
@@ -81,7 +81,7 @@ public class StandartMesseListePanel extends APanel {
 		ap.getAda().getPfarrei().getStandardMessen().sort(StandartMesse.comfuerSMs);
 		for (StandartMesse sms : ap.getAda().getPfarrei().getStandardMessen()) {
 			if (!(sms instanceof Sonstiges)) {
-				slist.add(sms.toString());
+				slist.add(sms.toBenutzerfreundlichenString());
 				smm.add(sms);
 			}
 		}
@@ -95,12 +95,18 @@ public class StandartMesseListePanel extends APanel {
 		 * JOptionPane.QUESTION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, s);
 		 */
 		JOptionPane jOptionPane = new JOptionPane("Welche Standartmesse soll angezeigt werden?",
-				JOptionPane.QUESTION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, sm);
+				JOptionPane.QUESTION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, s);
 		WEinFrame.farbe(jOptionPane);
 		JDialog inputDialog = jOptionPane.createDialog(ap.getWAlleMessen(),
 				"Welche Standartmesse soll angezeigt werden?");
 		inputDialog.setVisible(true);
-		return (StandartMesse) jOptionPane.getValue();
+		if(jOptionPane.getValue() != null) {
+		for (StandartMesse standartMesse : sm) {
+			if(standartMesse.toBenutzerfreundlichenString().equals((String)jOptionPane.getValue())) {
+				return standartMesse;
+			}
+		}}
+		return null;
 	}
 
 	@Override
