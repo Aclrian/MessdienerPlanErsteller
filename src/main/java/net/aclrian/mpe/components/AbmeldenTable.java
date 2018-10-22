@@ -8,9 +8,6 @@ import java.util.Date;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 
 import net.aclrian.mpe.messdiener.Messdiener;
@@ -59,26 +56,7 @@ public class AbmeldenTable extends ATable {
 		// Table
 		for (int i = 1; i < this.getColumnCount(); i++) {
 			this.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(new ACheckBox()));
-			this.getColumnModel().getColumn(i).getCellEditor().addCellEditorListener(new CellEditorListener() {
-
-				@Override
-				public void editingStopped(ChangeEvent e) {
-					if (e.getSource() instanceof DefaultCellEditor
-							&& ((DefaultCellEditor) e.getSource()).getComponent() instanceof ACheckBox) {
-						((ACheckBox) ((DefaultCellEditor) e.getSource()).getComponent())
-								.setHorizontalAlignment(SwingConstants.CENTER);
-					}
-				}
-
-				@Override
-				public void editingCanceled(ChangeEvent e) {
-					if (e.getSource() instanceof DefaultCellEditor
-							&& ((DefaultCellEditor) e.getSource()).getComponent() instanceof ACheckBox) {
-						((ACheckBox) ((DefaultCellEditor) e.getSource()).getComponent())
-								.setHorizontalAlignment(SwingConstants.CENTER);
-					}
-				}
-			});
+			this.getColumnModel().getColumn(i).getCellEditor().addCellEditorListener(new ACellEditorListener());
 			this.getColumnModel().getColumn(i).setCellRenderer(new ACheckBoxRenderer());
 		}
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

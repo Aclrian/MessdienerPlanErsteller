@@ -18,8 +18,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 
 import net.aclrian.mpe.components.ACheckBox;
-import net.aclrian.mpe.components.ATable;
 import net.aclrian.mpe.components.ATextField;
+import net.aclrian.mpe.components.MessverhaltenTable;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.Messverhalten;
@@ -45,7 +45,7 @@ public class MediAnzeigen extends APanel {
 	private JButton vonFreunde = new JButton(References.pfeillinks);
 	private JButton zuGeschw = new JButton(References.pfeilrechts);
 	private JButton vonGeschw = new JButton(References.pfeillinks);
-	private ATable atable = new ATable();
+	private MessverhaltenTable atable = new MessverhaltenTable();
 	private JScrollPane scrol = new JScrollPane();
 	private DefaultListModel<Messdiener> dlmfr = new DefaultListModel<Messdiener>();
 	private JList<Messdiener> freundeview = new JList<Messdiener>(dlmfr);
