@@ -2,6 +2,7 @@ package net.aclrian.mpe.start;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
@@ -20,11 +21,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -42,9 +45,13 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.basic.BasicArrowButton;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
+import net.aclrian.mpe.components.AListCellRenderer;
+//import net.aclrian.mpe.components.AComboBoxUI;
 import net.aclrian.mpe.components.ATable;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
@@ -353,6 +360,11 @@ public class WEinFrame extends JFrame {
 		UIManager.put("Table.focusCellHighlightBorder", b);
 		UIManager.put("List.focusCellHighlightBorder", b);
 		UIManager.put("Button.select", WEinFrame.dunkel2);
+		UIManager.put("CheckBox.border", b);
+		UIManager.put("ComboBox.selectionBackground", neuhell1);
+		UIManager.put("ComboBox.selectionForeground", dunkel1);
+		UIManager.put("ComboBox.buttonShadow", dunkel1);
+		UIManager.put("CheckBoxMenuItem.border", b);
 	}
 
 	public static void farbe(Component c) {
@@ -458,9 +470,20 @@ public class WEinFrame extends JFrame {
 		if (c instanceof ATable) {
 			((ATable) c).setBorder(null);
 		}
+		if(c instanceof JComboBox<?>) {
+			((JComboBox<?>) c).setUI(new BasicComboBoxUI() {
+				@Override
+				protected JButton createArrowButton() {
+					BasicArrowButton bab = new BasicArrowButton(BasicArrowButton.SOUTH, dunkel1, neuhell1, neuhell1, neuhell1);
+					bab.setBorder(b3);
+					return bab;
+				}
+			});
+			((JComboBox<?>) c).setRenderer(new AListCellRenderer());
+		}
 		c.repaint();
 	}
-
+	
 	private static JButton createZeroButton() {
 		JButton jbutton = new JButton();
 		jbutton.setPreferredSize(new Dimension(0, 0));

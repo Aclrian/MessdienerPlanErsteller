@@ -45,6 +45,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import net.aclrian.mpe.components.ATable;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Setting.Attribut;
@@ -73,7 +74,7 @@ public class WriteFile_Pfarrei extends JFrame {
 	private JButton typenrm;
 	private JButton typenadd;
 	private JButton orteadd;
-	private JTable stdmessen_table;
+	private ATable stdmessen_table;
 	private JButton stdmessen_btnSpeichern;
 	private JButton stdmessen_btnBearbeiten;
 	private JComboBox<String> stdmessen_comboBoxTyp;
@@ -210,7 +211,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		stdmessen_scrollPane.setBounds(12, 136, 557, 99);
 		stdmessen_panel.add(stdmessen_scrollPane);
 
-		stdmessen_table = new JTable(dmmm);
+		stdmessen_table = new ATable(dmmm);
 		stdmessen_scrollPane.setViewportView(stdmessen_table);
 		stdmessen_table.setRequestFocusEnabled(false);
 		stdmessen_table.setFocusable(false);
