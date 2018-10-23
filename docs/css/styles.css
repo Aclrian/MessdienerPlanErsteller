@@ -14,7 +14,7 @@
 #inhalt{
 	color: black;
 	padding: 10px;	
-	background-color: whithe;
+	background-color: white;
 }
 body{
 	background-color: lightgrey;
@@ -24,7 +24,7 @@ h1,h2{
 	text-align: center;
 }
 div.btn{
-	border: 1px solid red;
+	border: 1px solid white;
 	max-width: 150px;
 	border-radius: 0.4rem;
 	margin-left: 44%;
