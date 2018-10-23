@@ -5,6 +5,9 @@
 	background-color: white;
 	padding: 1em;
 }
+#head{
+	padding-bottom: 20px;	
+}
 body{
 	background-color: lightgrey;
 	font-family:veranda,sans-serif;
