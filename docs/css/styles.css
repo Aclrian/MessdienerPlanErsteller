@@ -23,10 +23,12 @@ body{
 h1,h2{
 	text-align: center;
 }
+div{
+	border-radius: 0.4rem;	
+}
 div.btn{
 	border: 1px solid white;
 	max-width: 150px;
-	border-radius: 0.4rem;
 	margin-left: 44%;
 	padding: 5px;
 }
