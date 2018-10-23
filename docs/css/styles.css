@@ -34,5 +34,6 @@ div.btns{
 	align-items: stretch;
 }
 a{
-	font-color: white;
+	color: white;
+	text-decoration: none;
 }
