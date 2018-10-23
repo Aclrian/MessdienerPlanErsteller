@@ -4,9 +4,16 @@
 	margin: 0 auto;
 	background-color: white;
 	padding: 1em;
+	background-color: lightseagreen;
+	color: white;
 }
 #head{
 	padding-bottom: 20px;	
+	margin-bottom: 20px;
+}
+#inhalt{
+	color: black;
+	padding: 10px;	
 }
 body{
 	background-color: lightgrey;
