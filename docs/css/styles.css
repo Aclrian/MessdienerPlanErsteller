@@ -16,6 +16,7 @@ div.btn{
 	border: 1px solid red;
 	max-width: 150px;
 	border-radius: 0.4rem;
+	margin-left: 50%;
 }
 div.btns{
 	display: flex;
