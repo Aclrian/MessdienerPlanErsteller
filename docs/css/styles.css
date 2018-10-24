@@ -50,6 +50,9 @@ h2{
 div, span,a{
 	border-radius: 0.4rem;	
 }
+#inhalt < a{
+	font-color: red;
+}
 .btn{
 	border: 1px solid white;
 	padding: 5px;
