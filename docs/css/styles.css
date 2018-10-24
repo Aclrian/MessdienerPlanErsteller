@@ -50,8 +50,8 @@ h2{
 div, span,a{
 	border-radius: 0.4rem;	
 }
-#inhalt < a{
-	font-color: red;
+#inhalt a{
+	color: rgb(21, 114, 109);
 }
 .btn{
 	border: 1px solid white;
