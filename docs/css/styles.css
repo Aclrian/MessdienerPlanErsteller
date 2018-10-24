@@ -32,6 +32,10 @@ div.btn{
 	margin-left: 44%;
 	padding: 5px;
 }
+div.btn:hover{
+	color: rgb(21, 114, 109);
+	background-color: rgba( 92, 192, 192, 15);
+}
 div.btns{
 	display: flex;
 	align-items: stretch;
