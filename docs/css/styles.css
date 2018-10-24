@@ -2,13 +2,12 @@
 	text-align: left;
 	width: 65vw;
 	margin: 0 auto;
-	padding: 1em;
+	padding: 2.5vw;/*1em;*/
 	background-color: lightseagreen;
 	color: white;
 }
 #head{
-	padding-bottom: 20px;	
-	margin-bottom: 40px;
+	margin-bottom: 21%;
 	text-align: center;
 }
 #inhalt{
@@ -40,13 +39,13 @@
 body{
 	background-color: lightgrey;
 	font-family:veranda,sans-serif;
-	font-size: 3vw;
+	font-size: 2.5vw;
 }
 h1{
 	font-size: 5vw;
 }
 h2{
-	font-size: 4vw;
+	font-size: 3vw;
 }
 div, span,a{
 	border-radius: 0.4rem;	
