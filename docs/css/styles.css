@@ -7,11 +7,8 @@
 	color: white;
 }
 #head, #head3{
-	margin-bottom: 5%;
+	margin-bottom: 4vh;
 	text-align: center;
-}
-#head3{
-	margin-bottom: 5%;
 }
 #inhalt{
 	color: black;
