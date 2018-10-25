@@ -39,14 +39,5 @@
 			</div>
 		</div>
 	</div>
-		<script>
-	function getData(){
-	$.getJSON("https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest", function( data ) {
-	//console.log(data);
-	window.location = data.assets[0].browser_download_url;
-  //do what you want with data
-});
-	}
-	</script>
 </body>
 </html>
