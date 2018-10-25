@@ -10,7 +10,7 @@
   <link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/java/net/aclrian/mpe/resources/title_32.png"/>
   <link rel="stylesheet" href="./css/styles.css">
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
+<script src="./js/main.js"></script>
   <title>MessdienerplanErsteller von Aclrian</title>
 </head>
 <body>
@@ -19,6 +19,7 @@
 			<h1>MessdienerplanErsteller</h1>
 			<div id="uheader">
 				<a href="javascript:getData()"" class="btn left"><span>Download</span></a>
+				<a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest" class="btn">alternativer Download</a>
 				<a href="https://github.com/Aclrian/MessdienerPlanErsteller/" class="btn right"><span>Soure-Code</span></a>
 			</div>
 		</div><!--Begrifserklärung Standartmesse, Anzahl   Letztere können auch durch Einstellungen auch nur manuell hinzugefügt werden.-->
@@ -58,31 +59,5 @@
 			kann man ihn auch dort bearbeiten, was aber nicht empfohlen wird, da es bei falscher Eingabe zu Fehlern kommt.</p>
 		</div>
 	</div>
-		<script>
-	function getData(){
-	var url;
-	var alternative = "https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest";
-	//document.write('<a href="./wiki.html">H</a>');
-	$.getJSON("https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest", function( data ) {
-		url = data.assets[0].browser_download_url;
-		if(url == undefined || url == null){
-			window.location = alternative;
-		} else{
-			console.log(url);
-			console.log(url.search("github.com/Aclrian/MessdienerPlanErsteller/"));
-			if(url.search("github.com/Aclrian/MessdienerPlanErsteller/") != -1){
-				window.location = url;
-				//return;
-			} else{
-				window.location = alternative;
-				//return;
-			}
-		}
-		//do what you want with data
-	});
-	if(url == undefined || url == null){
-	//window.location = "https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest";
-	}};
-	</script>
 </body>
 </html>
