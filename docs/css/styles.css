@@ -6,18 +6,24 @@
 	background-color: lightseagreen;
 	color: white;
 }
-#head{
+#head, #head3{
 	margin-bottom: 21%;
 	text-align: center;
 }
+#head3{
+	margin-bottom: 5%;
+}
 #inhalt{
 	color: black;
-	padding: 5px 10px;	
+	padding: 1vw 1vw;	
 	background-color: white;
 }
 #uheader{
 	/*display: flex;*/
 	display: block;
+}
+#uheader3{
+	display: flex;
 }
 .left{
 	float: left;
@@ -29,13 +35,16 @@
 	display: inline-block;
 	margin:0 auto;
 }
-#vorschau{
-	max-width: 55vw;
+/*#vorschau{
+	max-width: 20vw;
 	max-height: 20vw;
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-}
+}/*
+#vorschau:hover{
+	max-width: 62vw;
+}*/
 body{
 	background-color: lightgrey;
 	font-family:veranda,sans-serif;
@@ -48,7 +57,7 @@ h2{
 	font-size: 3vw;
 }
 div, span,a{
-	border-radius: 0.4rem;	
+	border-radius: 0.7rem;	
 }
 #inhalt a{
 	color: rgb(21, 114, 109);
@@ -64,4 +73,28 @@ div, span,a{
 a{
 	color: white;
 	text-decoration: none;
+}
+::selection, ::-moz-selection{
+	background: rgb(29,114,110);
+	color: white;
+}
+li{
+	list-style: none;
+}
+img{
+	max-width: 25vw;
+}
+#bilder{
+	display: inline-grid;
+	border-spacing: 10px;
+}
+#bilder img, #bilder, #vorschau{
+	transition: 2s;
+	-moz-transition: 2s;
+	-o-transition: 2s;
+	-webkit-transition: 2s;
+	/*margin: 0 auto;*/
+}
+/*#bilder*/ img:hover{
+	max-width: 62vw;
 }
