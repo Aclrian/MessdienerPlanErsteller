@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="description" content="MessdienerplanErsteller genertiert einen Messdieneplan unter der MIT-Lizenz d.h. es ist kostenlos (und man kann es bearbeiten)." />
+	<meta name="keywords" content="Messdienerplan, erstellen, generieren, Plan, Messdiener, Kaarst" /> 
+	<meta charset="utf-8"/>
+	<meta name="robots" content="index, follow"/>
+	<meta name="google-site-verification" content="ajA5dTIJMEqNQGwLDOUqQJEjzoa4aRFmlpO0vD-rhOo" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/java/net/aclrian/mpe/resources/title_32.png"/>
+	<link rel="stylesheet" href="./css/styles.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<title>MessdienerplanErsteller von Aclrian</title>
+</head>
+<body>
+	<div id="main">
+		<div id="head3">
+			<a href="./"><h1>MessdienerplanErsteller</h1></a>
+			
+			<div id="uheader3">
+				<a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest" class="btn left"><span>Download</span></a>
+				<h2 class="center">Vorschau</h2>
+				<a href="https://github.com/Aclrian/MessdienerPlanErsteller/" class="btn right"><span>Soure-Code</span></a>
+			</div>
+		</div><!--Begrifserklärung Standartmesse, Anzahl-->
+		<div id="inhalt">
+		<center>
+		<div id="bilder">
+			<!--<ul id="bilder">-->
+				<!--<li>--><a rel="#b1" href="./data/programmbild.jpg"><img class="gpics" src="./data/programmbild.jpg" /></a><!--</li>-->
+				<br></br>
+				<!--<li>--><a rel="#b2" href="./data/programmbild.jpg"><img class="gpics" src="./data/programmbild_2.jpg" /></a><!--</li>-->
+				<!--<li></li>
+				<li></li>
+				<li></li>-->
+			</div>
+			</center>
+			</div>
+		</div>
+	</div>
+		<script>
+	function getData(){
+	$.getJSON("https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest", function( data ) {
+	//console.log(data);
+	window.location = data.assets[0].browser_download_url;
+  //do what you want with data
+});
+	}
+	</script>
+</body>
+</html>
