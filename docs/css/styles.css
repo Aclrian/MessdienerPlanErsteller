@@ -2,7 +2,7 @@
 	text-align: left;
 	width: 65vw;
 	margin: 0 auto;
-	padding: 2.5vw;/*1em;*/
+	padding: 2.5vw;
 	background-color: lightseagreen;
 	color: white;
 }
@@ -16,7 +16,6 @@
 	background-color: white;
 }
 #uheader{
-	/*display: flex;*/
 	display: block;
 }
 #uheader3{
@@ -93,5 +92,9 @@ img{
 	/*margin: 0 auto;*/
 }
 /*#bilder*/ img:hover{
-	max-width: 62vw;
+	max-width: 63vw;
+}
+#footer{
+	text-align: center;
+	margin-top: 2vh;
 }
