@@ -8,7 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import net.aclrian.mpe.components.AFileChooser;
+import javax.swing.JFileChooser;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.ReadFile;
 import net.aclrian.mpe.pfarrei.Pfarrei;
@@ -80,21 +83,44 @@ public class DateienVerwalter {
 	 * @throws NullPointerException
 	 */
 	private String waehleOrdner() throws NullPointerException {
-		AFileChooser f = new AFileChooser();
-
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (javax.swing.UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+		
+		JFileChooser f = new JFileChooser();
 		String s = "Ordner w" + References.ae + "hlen, in dem alles gespeichert werden soll:";
 		f.setDialogTitle(s);
 		f.setApproveButtonText("Ausw" + References.ae + "hlen");
-		f.setFileSelectionMode(AFileChooser.DIRECTORIES_ONLY);
+		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int i = f.getBounds().width + 100;
 		f.setBounds(f.getBounds().x, f.getBounds().y, i, f.getBounds().height);
-		WEinFrame.farbe(f);
-		if (f.showOpenDialog(null) == AFileChooser.APPROVE_OPTION) {
+		//WEinFrame.farbe(f);
+		if (f.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			zurueckZumJavaLookandFeel();
 			Utilities.logging(this.getClass(), "waehleOrdner", f.getSelectedFile().getPath());
 			return f.getSelectedFile().getPath();
 		} else {
+			zurueckZumJavaLookandFeel();
 			return null;
 		}
+	}
+
+	private void zurueckZumJavaLookandFeel() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 
 	private ArrayList<File> getPaths(File file, ArrayList<File> list) {

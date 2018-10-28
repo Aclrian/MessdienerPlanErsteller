@@ -63,10 +63,6 @@ public class AbmeldenTable extends ATable {
 
 	}
 
-	public void schreiben(AProgress ap) {
-
-	}
-
 	public void andersrum() {
 		for (int i = 0; i < abdtm.getRowCount(); i++) {
 			for (int j = 1; j < abdtm.getColumnCount(); j++) {

@@ -260,6 +260,7 @@ public class WriteFile_Pfarrei extends JFrame {
 				try {
 					int i = stdmessen_table.getSelectedRow();
 					loeschen(i);
+					update();
 				} catch (Exception e2) {
 					new Erroropener(new Exception("Treffe zun" + References.ae + "chst eine Auswahl"));
 				}
@@ -685,6 +686,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		for (int i = 0; i < sm.size(); i++) {
 			dmmm.addRow(getTableData()[i]);
 		}
+		stdmessen_table.clearSelection();
 	}
 
 	public void pfarreispeichern(AProgress ap) {

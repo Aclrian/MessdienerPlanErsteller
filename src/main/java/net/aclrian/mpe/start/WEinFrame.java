@@ -361,7 +361,10 @@ public class WEinFrame extends JFrame {
 		UIManager.put("ComboBox.buttonShadow", dunkel1);
 		UIManager.put("CheckBoxMenuItem.border", b);
 		UIManager.put("Label.disabledForeground", nneuhell1);
-	//	UIManager.put("Spinner:\"Spinner.nextButton\"[Disabled].foregroundPainter", new SpinnerNextPainter);
+
+		// UIManager.put("Spinner:\"Spinner.nextButton\"[Disabled].foregroundPainter",
+		// new SpinnerNextPainter);
+
 	}
 
 	public static void farbe(Component c) {
@@ -375,7 +378,8 @@ public class WEinFrame extends JFrame {
 			} catch (NullPointerException e) {
 				// new Errorpoener("no error")
 			}
-		} if (c instanceof JList<?>) {
+		}
+		if (c instanceof JList<?>) {
 			((JComponent) c).setOpaque(false);
 			c.setBackground(neuhell1);
 			((JList<?>) c).setSelectionBackground(dunkel1);
@@ -458,18 +462,17 @@ public class WEinFrame extends JFrame {
 		}
 		if (c instanceof BasicArrowButton) {
 			((BasicArrowButton) c).setBorder(b3);
-			if(!c.isEnabled()) {
-				System.out.println("dsf");
+			if (!c.isEnabled()) {
 				c.setBackground(ndunkel1);
 			}
 		}
 		if (c instanceof JSpinner) {
 			((JSpinner) c).setBorder(null);
-			if(!c.isEnabled()) {
+			if (!c.isEnabled()) {
 				JTextField field = ((JSpinner.DefaultEditor) ((JSpinner) c).getEditor()).getTextField();
-		        field.setEditable(false);
-		        field.setBackground(ndunkel1);
-		        field.setForeground(UIManager.getColor("FormattedTextField.foreground"));
+				field.setEditable(false);
+				field.setBackground(ndunkel1);
+				// field.setForeground(UIManager.getColor("FormattedTextField.foreground"));
 			}
 		}
 		if (c instanceof ATable) {
@@ -477,7 +480,7 @@ public class WEinFrame extends JFrame {
 		}
 		c.repaint();
 	}
-	
+
 	private static JButton createZeroButton() {
 		JButton jbutton = new JButton();
 		jbutton.setPreferredSize(new Dimension(0, 0));
@@ -670,9 +673,9 @@ public class WEinFrame extends JFrame {
 				for (Component c : contentPane.getComponents()) {
 					c.setVisible(true);
 				}
-			}// else {
-				contentPane.remove(activepanel);
-			//}
+			} // else {
+			contentPane.remove(activepanel);
+			// }
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
