@@ -124,8 +124,6 @@ public class ReadFile_Pfarrei {
 		} else {
 		    return pf;
 		}
-		String s1 = "\\" + File.separator;
-		Utilities.logging(ReadFile_Pfarrei.class, "getPfarrei", "Der Fileseperator vom OS: " + s1);
 		String[] s2 = pfadMitDateiundmitEndung.split("\\" + File.separator);
 		name = s2[s2.length - 1];
 		name = name.substring(0, name.length() - AData.pfarredateiendung.length());

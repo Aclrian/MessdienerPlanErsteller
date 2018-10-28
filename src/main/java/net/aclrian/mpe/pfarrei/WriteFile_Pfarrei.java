@@ -1,6 +1,5 @@
 package net.aclrian.mpe.pfarrei;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,10 +9,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -24,9 +21,9 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -57,10 +54,11 @@ import net.aclrian.mpe.utils.Erroropener;
 import net.aclrian.mpe.utils.Utilities;
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
-import javax.swing.JRadioButton;
+import net.aclrian.mpe.components.ARadioButton;
 
 public class WriteFile_Pfarrei extends JFrame {
 
@@ -77,12 +75,15 @@ public class WriteFile_Pfarrei extends JFrame {
 	private ATable stdmessen_table;
 	private JButton stdmessen_btnSpeichern;
 	private JButton stdmessen_btnBearbeiten;
-	private JComboBox<String> stdmessen_comboBoxTyp;
-	private JComboBox<String> stdmessen_comboBoxOrt;
+	private JSpinner stdmessen_comboBoxTyp;
+	private SpinnerListModel modelTyp;
+	private JSpinner stdmessen_comboBoxOrt;
+	private SpinnerListModel modelOrt;
 	private JLabel stdmessen_lblOrt;
 	private JLabel stdmessen_lblTyp;
 	private JSpinner stdmessen_spinnerstd;
-	private JComboBox<String> stdmessen_comboBoxTag;
+	private JSpinner stdmessen_comboBoxTag;
+	private SpinnerListModel modelTag;
 	private JSpinner stdmessen_spinnermin;
 	private JScrollPane stdmessen_scrollPane;
 	private DefaultListModel<String> dlmtype = new DefaultListModel<String>();
@@ -127,12 +128,12 @@ public class WriteFile_Pfarrei extends JFrame {
 	private JSpinner spinner_max_andere;
 	private Einstellungen seting;
 	private JPanel einstellungenpanel;
-	private JRadioButton rdbtnf3Ja;
-	private JRadioButton rdbtnf3Nein;
-	private JRadioButton rdbtnf2Nein;
-	private JRadioButton rdbtnf2Ja;
-	private JRadioButton rdbtnf1Ja;
-	private JRadioButton rdbtnf1Nein;
+	private ARadioButton rdbtnf3Ja;
+	private ARadioButton rdbtnf3Nein;
+	private ARadioButton rdbtnf2Nein;
+	private ARadioButton rdbtnf2Ja;
+	private ARadioButton rdbtnf1Ja;
+	private ARadioButton rdbtnf1Nein;
 	private JPanel fragen;
 	private ButtonGroup bg1 = new ButtonGroup();
 	private ButtonGroup bg12 = new ButtonGroup();
@@ -141,8 +142,8 @@ public class WriteFile_Pfarrei extends JFrame {
 	private JLabel lblLeitern;
 	private JPanel frage12;
 	private JLabel lblf12;
-	private JRadioButton rdbtnf12Ja;
-	private JRadioButton rdbtnf12Nein;
+	private ARadioButton rdbtnf12Ja;
+	private ARadioButton rdbtnf12Nein;
 	private JPanel frage3;
 	private JLabel lblAnderen;
 	private JLabel lblStandardAnzahlPro;
@@ -160,7 +161,7 @@ public class WriteFile_Pfarrei extends JFrame {
 
 	public void start(AProgress ap) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("Getting start...");
+		setTitle("Erste Schritte: Einstellungen erstellen");
 		setIconImage(References.getIcon());
 		setBounds(0, 0, 615, 365);
 		setBounds(Utilities.setFrameMittig(623, 375));
@@ -202,7 +203,7 @@ public class WriteFile_Pfarrei extends JFrame {
 
 		stdmessen_panel.setVisible(false);
 		stdmessen_panel.setBorder(
-				new TitledBorder(null, "Standartmessen", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+				new TitledBorder(WEinFrame.b, "Standartmessen", TitledBorder.LEADING, TitledBorder.TOP, null, WEinFrame.neuhell1));
 		stdmessen_panel.setBounds(12, 12, 581, 278);
 		getContentPane().add(stdmessen_panel);
 		stdmessen_panel.setLayout(null);
@@ -272,11 +273,15 @@ public class WriteFile_Pfarrei extends JFrame {
 		label_2.setBounds(299, 0, 14, 25);
 		panel_1.add(label_2);
 
-		stdmessen_comboBoxTyp = new JComboBox<String>();
+		modelTyp = new SpinnerListModel();
+		stdmessen_comboBoxTyp = new JSpinner(modelTyp);
+		((DefaultEditor) stdmessen_comboBoxTyp.getEditor()).getTextField().setEditable(false);
 		stdmessen_comboBoxTyp.setBounds(467, 17, 102, 25);
 		stdmessen_panel.add(stdmessen_comboBoxTyp);
 
-		stdmessen_comboBoxOrt = new JComboBox<String>();
+		modelOrt = new SpinnerListModel();
+		stdmessen_comboBoxOrt = new JSpinner(modelOrt);
+		((DefaultEditor) stdmessen_comboBoxOrt.getEditor()).getTextField().setEditable(false);
 		stdmessen_comboBoxOrt.setBounds(292, 17, 114, 25);
 		stdmessen_panel.add(stdmessen_comboBoxOrt);
 
@@ -288,11 +293,12 @@ public class WriteFile_Pfarrei extends JFrame {
 		stdmessen_lblOrt.setBounds(243, 17, 37, 25);
 		stdmessen_panel.add(stdmessen_lblOrt);
 
-		stdmessen_comboBoxTag = new JComboBox<String>();
+		modelTag = new SpinnerListModel(new String[] { "Mo", "Di", "Mi", "Do", "Fr", "Sa", "So" });
+		stdmessen_comboBoxTag = new JSpinner(modelTag);
+		((DefaultEditor) stdmessen_comboBoxTag.getEditor()).getTextField().setEditable(false);
 		stdmessen_comboBoxTag.setBounds(117, 17, 114, 25);
 		stdmessen_panel.add(stdmessen_comboBoxTag);
-		stdmessen_comboBoxTag
-				.setModel(new DefaultComboBoxModel<String>(new String[] { "Mo", "Di", "Mi", "Do", "Fr", "Sa", "So" }));
+		//stdmessen_comboBoxTag.setModel(new DefaultComboBoxModel<String>());
 
 		panel = new JPanel();
 		panel.setBounds(100, 59, 114, 20);
@@ -338,7 +344,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		stdmessen_panel.setVisible(false);
 
 		fragen = new JPanel();
-		fragen.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		fragen.setBorder(new TitledBorder(WEinFrame.b, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		fragen.setBounds(12, 12, 581, 278);
 		getContentPane().add(fragen);
 		fragen.setLayout(null);
@@ -355,11 +361,11 @@ public class WriteFile_Pfarrei extends JFrame {
 		lblf1.setBounds(20, 11, 517, 24);
 		frageeins.add(lblf1);
 
-		rdbtnf1Ja = new JRadioButton("Ja");
+		rdbtnf1Ja = new ARadioButton("Ja");
 		rdbtnf1Ja.setBounds(20, 42, 109, 23);
 		frageeins.add(rdbtnf1Ja);
 
-		rdbtnf1Nein = new JRadioButton("Nein");
+		rdbtnf1Nein = new ARadioButton("Nein");
 		rdbtnf1Nein.setBounds(292, 42, 109, 23);
 		frageeins.add(rdbtnf1Nein);
 
@@ -372,11 +378,11 @@ public class WriteFile_Pfarrei extends JFrame {
 		lblF2.setBounds(22, 11, 517, 24);
 		fragezwei.add(lblF2);
 
-		rdbtnf2Ja = new JRadioButton("Ja");
+		rdbtnf2Ja = new ARadioButton("Ja");
 		rdbtnf2Ja.setBounds(22, 42, 109, 23);
 		fragezwei.add(rdbtnf2Ja);
 
-		rdbtnf2Nein = new JRadioButton("Nein");
+		rdbtnf2Nein = new ARadioButton("Nein");
 		rdbtnf2Nein.setBounds(294, 42, 109, 23);
 		rdbtnf2Nein.addChangeListener(new ChangeListener() {
 
@@ -400,11 +406,11 @@ public class WriteFile_Pfarrei extends JFrame {
 		lblf3.setBounds(22, 11, 517, 24);
 		frage3.add(lblf3);
 
-		rdbtnf3Ja = new JRadioButton("Ja");
+		rdbtnf3Ja = new ARadioButton("Ja");
 		rdbtnf3Ja.setBounds(22, 42, 109, 23);
 		frage3.add(rdbtnf3Ja);
 
-		rdbtnf3Nein = new JRadioButton("Nein");
+		rdbtnf3Nein = new ARadioButton("Nein");
 		rdbtnf3Nein.setBounds(294, 42, 109, 23);
 		frage3.add(rdbtnf3Nein);
 
@@ -426,19 +432,19 @@ public class WriteFile_Pfarrei extends JFrame {
 		lblf12.setBounds(22, 11, 517, 24);
 		frage12.add(lblf12);
 
-		rdbtnf12Ja = new JRadioButton("Ja");
+		rdbtnf12Ja = new ARadioButton("Ja");
 		rdbtnf12Ja.setBounds(22, 42, 109, 23);
 		frage12.add(rdbtnf12Ja);
 		bg12.add(rdbtnf12Ja);
 
-		rdbtnf12Nein = new JRadioButton("Nein");
+		rdbtnf12Nein = new ARadioButton("Nein");
 		rdbtnf12Nein.setBounds(294, 42, 109, 23);
 		frage12.add(rdbtnf12Nein);
 		bg12.add(rdbtnf12Nein);
 
 		einstellungenpanel = new JPanel();
-		einstellungenpanel.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Einstellungen",
-				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+		einstellungenpanel.setBorder(new TitledBorder(WEinFrame.b, "Einstellungen",
+				TitledBorder.LEADING, TitledBorder.TOP, null, WEinFrame.neuhell1));
 		einstellungenpanel.setBounds(12, 12, 581, 278);
 		getContentPane().add(einstellungenpanel);
 		einstellungenpanel.setLayout(null);
@@ -447,7 +453,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		scrollPane_2.setBounds(304, 37, 265, 229);
 		einstellungenpanel.add(scrollPane_2);
 
-		table = new JTable(dmmm2);
+		table = new ATable(dmmm2);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		table.doLayout();
 		scrollPane_2.setViewportView(table);
@@ -510,9 +516,9 @@ public class WriteFile_Pfarrei extends JFrame {
 		TableColumnModel columnModel = table.getColumnModel();
 		einstellungenpanel.setVisible(false);
 
-		ortetypenpanel.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)),
-				"Standard Orte und Messetypen hizuf" + References.ue + "gen", TitledBorder.LEADING, TitledBorder.TOP,
-				null, new Color(51, 51, 51)));
+		ortetypenpanel.setBorder(new TitledBorder(WEinFrame.b,
+				"Orte und Messetypen hizuf" + References.ue + "gen", TitledBorder.LEADING, TitledBorder.TOP,
+				null, WEinFrame.neuhell1));
 		ortetypenpanel.setBounds(12, 12, 581, 278);
 		getContentPane().add(ortetypenpanel);
 		ortetypenpanel.setLayout(null);
@@ -551,12 +557,12 @@ public class WriteFile_Pfarrei extends JFrame {
 		typenrm.setBounds(435, 232, 114, 25);
 		ortetypenpanel.add(typenrm);
 
-		orteadd = new JButton("+");
+		orteadd = new JButton(" + ");
 		orteadd.addActionListener(e -> ortadd());
 		orteadd.setBounds(138, 52, 44, 25);
 		ortetypenpanel.add(orteadd);
 
-		typenadd = new JButton("+");
+		typenadd = new JButton(" + ");
 		typenadd.addActionListener(e -> typadd());
 		typenadd.setBounds(379, 51, 44, 25);
 		ortetypenpanel.add(typenadd);
@@ -658,9 +664,9 @@ public class WriteFile_Pfarrei extends JFrame {
 
 	public void bearbeiten(int i) {
 		StandartMesse stdm = sm.get(i);
-		stdmessen_comboBoxTag.setSelectedItem(stdm.getWochentag());
-		stdmessen_comboBoxOrt.setSelectedItem(stdm.getOrt());
-		stdmessen_comboBoxTyp.setSelectedItem(stdm.getTyp());
+		stdmessen_comboBoxTag.getModel().setValue(stdm.getWochentag());
+		stdmessen_comboBoxOrt.getModel().setValue(stdm.getOrt());
+		stdmessen_comboBoxTyp.getModel().setValue(stdm.getTyp());
 		stdmessen_spinnerstd.setValue(stdm.getBeginn_stunde());
 		stdmessen_spinnermin.setValue(Integer.parseInt(stdm.getBeginn_minute()));
 		stdmessen_spinneranz.setValue(stdm.getAnz_messdiener());
@@ -845,9 +851,9 @@ public class WriteFile_Pfarrei extends JFrame {
 	}
 
 	public void stdmessen_speichern() {
-		String tag = (String) stdmessen_comboBoxTag.getSelectedItem();
-		String ort = (String) stdmessen_comboBoxOrt.getSelectedItem();
-		String typ = (String) stdmessen_comboBoxTyp.getSelectedItem();
+		String tag = (String) stdmessen_comboBoxTag.getModel().getValue();
+		String ort = (String) stdmessen_comboBoxOrt.getModel().getValue();
+		String typ = (String) stdmessen_comboBoxTyp.getModel().getValue();
 		int beginn_h = (int) stdmessen_spinnerstd.getValue();
 		String beginn_min = Integer.toString((int) stdmessen_spinnermin.getValue());
 		if (beginn_min.length() == 1) {
@@ -894,10 +900,8 @@ public class WriteFile_Pfarrei extends JFrame {
 		if (ortetypenpanel.isVisible()) {
 			if (orte.size() > 0 && typen.size() > 0) {
 				ortetypenpanel.setVisible(false);
-				String[] ortearray = new String[orte.size()];
-				stdmessen_comboBoxOrt.setModel(new DefaultComboBoxModel<String>(orte.toArray(ortearray)));
-				String[] typenarray = new String[typen.size()];
-				stdmessen_comboBoxTyp.setModel(new DefaultComboBoxModel<String>(typen.toArray(typenarray)));
+				modelOrt.setList(orte);
+				modelTyp.setList(typen);
 				stdmessen_panel.setVisible(true);
 				btnZurck.setEnabled(true);
 				btnWeiter.setEnabled(false);
@@ -981,6 +985,7 @@ public class WriteFile_Pfarrei extends JFrame {
 				}
 				btnWeiter.setEnabled(false);
 				btnSpeichern.setEnabled(true);
+				WEinFrame.farbe(this.getContentPane());
 			}
 
 		} else {

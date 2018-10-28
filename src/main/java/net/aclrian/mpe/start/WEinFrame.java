@@ -2,7 +2,6 @@ package net.aclrian.mpe.start;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
@@ -21,13 +20,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -36,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -45,13 +43,9 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
-import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.basic.BasicArrowButton;
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
-import net.aclrian.mpe.components.AListCellRenderer;
-//import net.aclrian.mpe.components.AComboBoxUI;
 import net.aclrian.mpe.components.ATable;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
@@ -188,6 +182,7 @@ public class WEinFrame extends JFrame {
 					try {
 						int selectedValue = (int) op.getValue();
 						if (selectedValue == 0) {
+							System.out.println("ds");
 							File file = m.getFile();
 							file.delete();
 							ArrayList<Messdiener> ueberarbeitete = new ArrayList<Messdiener>();
@@ -365,10 +360,11 @@ public class WEinFrame extends JFrame {
 		UIManager.put("ComboBox.selectionForeground", dunkel1);
 		UIManager.put("ComboBox.buttonShadow", dunkel1);
 		UIManager.put("CheckBoxMenuItem.border", b);
+		UIManager.put("Label.disabledForeground", nneuhell1);
+	//	UIManager.put("Spinner:\"Spinner.nextButton\"[Disabled].foregroundPainter", new SpinnerNextPainter);
 	}
 
 	public static void farbe(Component c) {
-
 		Border b3 = BorderFactory.createEtchedBorder(EtchedBorder.RAISED, neuhell1, dunkel1);// Color.BLACK);
 		if (c instanceof JButton) {
 			((JButton) c).setBorder(b);
@@ -379,8 +375,7 @@ public class WEinFrame extends JFrame {
 			} catch (NullPointerException e) {
 				// new Errorpoener("no error")
 			}
-		}
-		if (c instanceof JList<?>) {
+		} if (c instanceof JList<?>) {
 			((JComponent) c).setOpaque(false);
 			c.setBackground(neuhell1);
 			((JList<?>) c).setSelectionBackground(dunkel1);
@@ -463,23 +458,22 @@ public class WEinFrame extends JFrame {
 		}
 		if (c instanceof BasicArrowButton) {
 			((BasicArrowButton) c).setBorder(b3);
+			if(!c.isEnabled()) {
+				System.out.println("dsf");
+				c.setBackground(ndunkel1);
+			}
 		}
 		if (c instanceof JSpinner) {
 			((JSpinner) c).setBorder(null);
+			if(!c.isEnabled()) {
+				JTextField field = ((JSpinner.DefaultEditor) ((JSpinner) c).getEditor()).getTextField();
+		        field.setEditable(false);
+		        field.setBackground(ndunkel1);
+		        field.setForeground(UIManager.getColor("FormattedTextField.foreground"));
+			}
 		}
 		if (c instanceof ATable) {
 			((ATable) c).setBorder(null);
-		}
-		if(c instanceof JComboBox<?>) {
-			((JComboBox<?>) c).setUI(new BasicComboBoxUI() {
-				@Override
-				protected JButton createArrowButton() {
-					BasicArrowButton bab = new BasicArrowButton(BasicArrowButton.SOUTH, dunkel1, neuhell1, neuhell1, neuhell1);
-					bab.setBorder(b3);
-					return bab;
-				}
-			});
-			((JComboBox<?>) c).setRenderer(new AListCellRenderer());
 		}
 		c.repaint();
 	}
