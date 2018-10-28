@@ -35,6 +35,7 @@ public class ARadioButton extends JRadioButton {
 				
 			}
 		});
+		setSelected(false);
 	}
 
 

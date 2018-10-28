@@ -152,6 +152,7 @@ public class AProgress {
 		WriteFile_Pfarrei wf = new WriteFile_Pfarrei(pf, this);
 		if (wam != null) {
 			wam.setVisible(false);
+			wam.dispose();//Geht das?
 		}
 		WEinFrame.farbe(wf);
 		wf.setVisible(true);
@@ -261,9 +262,12 @@ public class AProgress {
 			System.exit(0);
 		} else {
 			String name = pf.getName();
-			name = name.replaceAll(" ", "_");
-			File f = new File(savepath + "\\" + name + AData.pfarredateiendung);
+			//WARUM?: name = name.replaceAll(" ", "_");
+			File f = new File(savepath, name + AData.pfarredateiendung);
 			f.delete();
+			name = name.replaceAll(" ", "_");
+			File f2 = new File(savepath, name + AData.pfarredateiendung);
+			f2.delete();
 			ada.setPfarrei(pf);
 			WriteFile_Pfarrei.writeFile(pf, savepath);
 		}
@@ -282,4 +286,9 @@ public class AProgress {
 		}
 	}
 
+	public void setNeu() {
+		wam.dispose();
+		AProgress ap = new AProgress();
+		ap.start();
+	}
 }

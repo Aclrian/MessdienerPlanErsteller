@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -33,11 +34,13 @@ public class VersionIDHandler {
 	public static final String urlToLatestReleaseJsonFile = "https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest";
 	public static final String downloadurltag = "browser_download_url";
 	private URI downloadurl;
+	private URI directdownload;
 	public static final String alternativedownloadurl = "https://github.com/Aclrian/MessdienerPlanErsteller/releases";
 
 	public String searchVersionID() throws FileNotFoundException, URISyntaxException, IOException, ParseException {
 		JSONObject jsonobj = doThigswithExceptions();
 		String s = (String) jsonobj.get(tag);
+		directdownload = new URI((String) ((JSONObject)((JSONArray)jsonobj.get("assets")).get(0)).get("browser_download_url"));
 		return s;
 	}
 
@@ -153,6 +156,11 @@ public class VersionIDHandler {
 			JOptionPane.showMessageDialog(f, ep, "Neue Beta-Version", JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case isOld:
+			try {
+				Desktop.getDesktop().browse(directdownload);
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
 			JLabel label1 = new JLabel();
 			label1.setForeground(WEinFrame.neuhell1);
 			Font font1 = label1.getFont();
@@ -163,9 +171,9 @@ public class VersionIDHandler {
 					+ WEinFrame.dunkel1.getBlue() + ");");
 			style1.append("background:" + "rgb(" + WEinFrame.neuhell1.getRed() + "," + WEinFrame.neuhell1.getGreen()
 					+ "," + WEinFrame.neuhell1.getBlue() + ");}");
-			System.out.println(style1);
+			//System.out.println(style1);
 			JEditorPane ep1 = new JEditorPane("text/html", "<html>"
-					+ "<head><style>a{font-weight:bold;font-size:12pt;color:rgb(4,72,65);background:rgb(42,169,156);}</style></head><body>"
+					+ "<head><style>body{background:rgb(42,169,156);}a{font-weight:bold;font-size:12pt;color:rgb(4,72,65);background:rgb(42,169,156);}</style></head><body>"
 					+ //
 					"<a href=\"" + downloadurl + "\">Das Programm fand eine neue Version. Zum Update klicke hier</a>"
 					+ "</body></html>");

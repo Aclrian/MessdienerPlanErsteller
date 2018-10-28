@@ -123,8 +123,8 @@ public class Start extends APanel {
 				s += AData.textdatei;
 				File f = new File(s);
 				f.delete();
-				ap.getAda().erneuern(ap, ap.getAda().getSavepath());
-				ap.getWAlleMessen().update(ap.getAda());
+				ap.getWAlleMessen().dispose();
+				ap.setNeu();
 			}
 		});
 		speicherortaendern.setVisible(true);
