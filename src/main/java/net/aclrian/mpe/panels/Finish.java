@@ -235,11 +235,12 @@ public class Finish extends APanel {
 							messdiener.getMessdatenDaten().addtomaxanz(medishinzufuegen, ap.getAda(),
 									messdiener.isIstLeiter());
 						}
+						String mitteilung = "Zu den Messdienern, die am " + sm.getWochentag() + " um " + sm.getBeginn_stunde()
+								+ " koennen, werden + " + medishinzufuegen
+								+ " zu ihrem normalen Wert hinzugefuegt!";
 						Utilities.logging(this.getClass(), "neuerAlorythmus",
-								"Zu den Messdienern, die am " + sm.getWochentag() + " um " + sm.getBeginn_stunde()
-										+ " koennen, werden + " + medishinzufuegen
-										+ " zu ihrem normalen Wert hinzugefuegt!");
-
+								mitteilung);
+						new Erroropener(new Exception(mitteilung));
 					} catch (ArithmeticException e) {
 						Utilities.logging(this.getClass(), "neuerAlorythmus", "Kein Messdiener kann: "
 								+ sm.getWochentag() + sm.getBeginn_stunde() + ":" + sm.getBeginn_minute());
