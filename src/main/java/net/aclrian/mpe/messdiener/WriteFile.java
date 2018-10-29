@@ -218,7 +218,7 @@ public class WriteFile {
 				path.replaceAll("/", "//");
 			}
 			String datei = this.me.getNachnname() + ", " + this.me.getVorname();
-			datei = new String(datei.getBytes(), "UTF-8");
+			//datei = new String(datei.getBytes(), "UTF-8");
 
 			File file = new File(path, datei + ".xml");
 			//
@@ -236,7 +236,7 @@ public class WriteFile {
 					break;
 				} else {
 					if (m.toString().equals(me.toString())) {
-						me.getFile().delete();
+						m.getFile().delete();
 					}
 				}
 			}
