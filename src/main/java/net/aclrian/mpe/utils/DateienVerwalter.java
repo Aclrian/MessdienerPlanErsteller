@@ -19,7 +19,6 @@ import net.aclrian.mpe.pfarrei.ReadFile_Pfarrei;
 import net.aclrian.mpe.resources.References;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.start.WEinFrame;
 
 /**
  * Sonstige Klasse, die viel mit Ordnerverwaltung und Sortieren zu tun hat.
