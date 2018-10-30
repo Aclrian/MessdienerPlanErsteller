@@ -26,7 +26,7 @@ import net.aclrian.mpe.utils.Utilities;
 public class AProgress {
 
 	private AData ada;
-	public static final String VersionID = "b600";
+	public static final String VersionID = "b650";
 	private ArrayList<Messdiener> memit;
 	WEinFrame wam;
 
