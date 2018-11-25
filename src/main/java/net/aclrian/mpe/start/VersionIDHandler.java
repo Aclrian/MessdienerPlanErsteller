@@ -40,7 +40,7 @@ public class VersionIDHandler {
 	public String searchVersionID() throws FileNotFoundException, URISyntaxException, IOException, ParseException {
 		JSONObject jsonobj = doThigswithExceptions();
 		String s = (String) jsonobj.get(tag);
-		directdownload = new URI((String) ((JSONObject)((JSONArray)jsonobj.get("assets")).get(0)).get("browser_download_url"));
+		directdownload = new URI((String) "https://aclrian.github.io/MessdienerPlanErsteller/download.html");//((JSONObject)((JSONArray)jsonobj.get("assets")).get(0)).get("browser_download_url"));
 		return s;
 	}
 
