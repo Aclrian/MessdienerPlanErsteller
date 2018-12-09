@@ -44,7 +44,7 @@
 body{
 	background-color: lightgrey;
 	font-family:veranda,sans-serif;
-	font-size: 2.5vw;
+	font-size: 2.75vw;
 	/* font-size: max(100em, 1200px);*/
 }
 h1{
@@ -67,9 +67,11 @@ div, span,a{
 	
 vertical-align: middle;
 
-margin: 1vw 2vw;
 
 height: 3.25vw;
+}
+.ni{
+	margin: 1vw 2vw;
 }
 .btn span {
     vertical-align: inherit;
