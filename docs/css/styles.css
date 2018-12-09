@@ -1,6 +1,6 @@
 #main{
-	text-align: left;
-	width: 65vw;
+	text-align: justify;
+	width: 85vw;
 	margin: 0 auto;
 	padding: 2.5vw;
 	background-color: lightseagreen;
@@ -12,7 +12,7 @@
 }
 #inhalt{
 	color: black;
-	padding: 1vw 1vw;	
+	padding: 1vw 2vw;	
 	background-color: white;
 }
 #uheader{
@@ -45,12 +45,15 @@ body{
 	background-color: lightgrey;
 	font-family:veranda,sans-serif;
 	font-size: 2.5vw;
+	/* font-size: max(100em, 1200px);*/
 }
 h1{
-	font-size: 5vw;
+	font-size: 7vw;
+	text-align: center;
 }
 h2{
-	font-size: 3vw;
+	font-size: 5vw;
+	text-align: left;
 }
 div, span,a{
 	border-radius: 0.7rem;	
@@ -61,6 +64,15 @@ div, span,a{
 .btn{
 	border: 1px solid white;
 	padding: 5px;
+	
+vertical-align: middle;
+
+margin: 1vw 2vw;
+
+height: 3.25vw;
+}
+.btn span {
+    vertical-align: inherit;
 }
 .btn:hover{
 	color: rgb(21, 114, 109);
@@ -92,9 +104,12 @@ img{
 	/*margin: 0 auto;*/
 }
 /*#bilder*/ img:hover{
-	max-width: 63vw;
+	max-width: 80vw;
 }
 #footer{
 	text-align: center;
 	margin-top: 2vh;
+}
+#dow{
+	font-style: italic;
 }
