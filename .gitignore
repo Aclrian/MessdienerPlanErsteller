@@ -27,6 +27,8 @@ html_output.docx
 html_output.docx
 /target/
 /.idea/
+*.exe
+!mpe.exe
 *.prefs
 .idea/.name
 src/main/java/net/aclrian/mpe/utils/UIBorder.java

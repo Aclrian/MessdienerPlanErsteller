@@ -206,6 +206,7 @@ public class VersionIDHandler {
 	}
 
 	public static void main(String[] args) {
+		System.out.println(args[0]);
 		WEinFrame.farbeFIRST();
 		VersionIDHandler vidh = new VersionIDHandler();
 		vidh.act();

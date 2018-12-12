@@ -1,0 +1,4 @@
+launch launch4j
+open test2.xml
+press 'setting' then 'play'
+start inno setup compiler
