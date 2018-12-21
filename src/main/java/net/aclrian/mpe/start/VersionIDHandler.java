@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.json.simple.JSONArray;
+//import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -206,7 +206,7 @@ public class VersionIDHandler {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(args[0]);
+		//System.out.println(args[0]);
 		WEinFrame.farbeFIRST();
 		VersionIDHandler vidh = new VersionIDHandler();
 		vidh.act();
