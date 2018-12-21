@@ -81,11 +81,10 @@ public class Messdaten {
 		try {
 			if (kannvorzeitg(date, medi.isIstLeiter(), ada)) {
 				eingeteilt.add(date);
-				pause.add(gettheNextDay(date));
-				anz_messen++;
 				insgesamtEingeteilt++;
-				if (hochamt) {
-					anz_messen--;
+				if (!hochamt) {
+					pause.add(gettheNextDay(date));
+					anz_messen++;
 				}
 			}
 		} catch (Exception e) {
@@ -159,16 +158,7 @@ public class Messdaten {
 	}
 
 	public boolean kannvorzeitg(Date date, boolean leiter, AData ada) {
-		boolean eins = kanndann(date, false);
-		boolean zwei = kannnoch();
-		if (leiter && ada.getPfarrei().getSettings().getDaten()[1].getAnz_dienen() == 0) {
-			zwei = true;
-		}
-		if (eins == zwei == true) {
-			return eins;
-		} else {
-			return false;
-		}
+		return contains(date, ausgeteilt) ? false: true;
 	}
 
 	public boolean kann(Date date, boolean zwang) {
