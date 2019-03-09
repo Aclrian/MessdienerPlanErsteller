@@ -1,2 +1,3 @@
 User-agent: *
 Disallow:
+Sitemap: https://aclrian.github.io/MessdienerPlanErsteller/sitemap.xml
