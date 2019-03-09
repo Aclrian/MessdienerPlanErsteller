@@ -103,9 +103,10 @@ a img{
 	-moz-transition: 2s;
 	-o-transition: 2s;
 	-webkit-transition: 2s;
+	width: 60vw;
 	/*margin: 0 auto;*/
 }
-/*#bilder*/ img:hover{
+/*#bilder*/ img:hover, #vorschau:hover{
 	max-width: 80vw;
 }
 #footer{
