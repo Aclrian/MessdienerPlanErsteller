@@ -3,9 +3,10 @@ package net.aclrian.mpe.utils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
@@ -42,7 +43,7 @@ public class DateienVerwalter {
 		this.setSavepath(savepath);
 	}
 
-	public Pfarrei getPfarrei() {
+	public Pfarrei getPfarrei() throws NullPointerException {
 		File f = getPfarreFile();
 		Utilities.logging(getClass(), "getPfarrei", "Pfarrei gefunden in: " + f.toString());
 		Pfarrei rtn = ReadFile_Pfarrei.getPfarrei(f.getAbsolutePath());
@@ -56,6 +57,9 @@ public class DateienVerwalter {
 	private File getPfarreFile() {
 		ArrayList<File> files = new ArrayList<File>();
 		File f = new File(savepath);
+		if (f.listFiles().length == 0) {
+			return null;
+		}
 		for (File file : f.listFiles()) {
 			String s = file.toString();
 			if (s.endsWith(AData.pfarredateiendung)) {
@@ -67,13 +71,13 @@ public class DateienVerwalter {
 			if (files.size() > 1) {
 				new Erroropener(new Exception("Es darf nur eine Datei mit der Endung: '" + AData.pfarredateiendung
 						+ "' in dem Ordner: " + savepath + " vorhanden sein."));
+				return files.get(0);
 			} else {
 				return null;
 			}
 		} else {
 			return files.get(0);
 		}
-		return null;
 	}
 
 	/**
@@ -93,7 +97,7 @@ public class DateienVerwalter {
 		} catch (javax.swing.UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		
+
 		JFileChooser f = new JFileChooser();
 		String s = "Ordner w" + References.ae + "hlen, in dem alles gespeichert werden soll:";
 		f.setDialogTitle(s);
@@ -101,7 +105,7 @@ public class DateienVerwalter {
 		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int i = f.getBounds().width + 100;
 		f.setBounds(f.getBounds().x, f.getBounds().y, i, f.getBounds().height);
-		//WEinFrame.farbe(f);
+		// WEinFrame.farbe(f);
 		if (f.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			zurueckZumJavaLookandFeel();
 			Utilities.logging(this.getClass(), "waehleOrdner", f.getSelectedFile().getPath());
@@ -119,7 +123,7 @@ public class DateienVerwalter {
 				| UnsupportedLookAndFeelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	private ArrayList<File> getPaths(File file, ArrayList<File> list) {
@@ -220,7 +224,7 @@ public class DateienVerwalter {
 		} else {
 			try {
 				String line = null;
-				FileReader fileReader = new FileReader(homedir);
+				InputStreamReader fileReader = new InputStreamReader(new FileInputStream(homedir),"UTF-8");
 				BufferedReader bufferedReader = new BufferedReader(fileReader);
 				while ((line = bufferedReader.readLine()) != null) {
 					File savepath = new File(line);

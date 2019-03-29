@@ -148,11 +148,7 @@ public class Messdiener {
 	}
 
 	public void setEintritt(int eintritt) {
-		if ((eintritt < 2200) && (eintritt > 1900)) {
-			this.Eintritt = eintritt;
-		} else {
-			new Erroropener(new Exception("Hast du dich beim Eintrittsjahr vertippt?"));
-		}
+		this.Eintritt = eintritt;
 	}
 
 	public void setIstLeiter(boolean istLeiter) {

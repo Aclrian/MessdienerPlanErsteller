@@ -336,7 +336,7 @@ public class WEinFrame extends JFrame {
 	 * @wbp.parser.constructor
 	 */
 	public WEinFrame(boolean onlyWindowbilderUse) {
-		this(new AProgress());
+		this(new AProgress(true));
 		setBounds(0, 0, 1600, 900);
 	}
 

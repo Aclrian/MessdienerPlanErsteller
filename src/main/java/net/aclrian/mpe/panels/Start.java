@@ -124,7 +124,7 @@ public class Start extends APanel {
 				File f = new File(s);
 				f.delete();
 				ap.getWAlleMessen().dispose();
-				ap.setNeu();
+				ap.setNeu(true);
 			}
 		});
 		speicherortaendern.setVisible(true);

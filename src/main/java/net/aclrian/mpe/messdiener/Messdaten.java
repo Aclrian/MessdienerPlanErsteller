@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import net.aclrian.mpe.pfarrei.Einstellungen;
-import net.aclrian.mpe.pfarrei.Setting;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.utils.Erroropener;
@@ -44,13 +43,13 @@ public class Messdaten {
 			id++;
 		}
 		int eins;
-		int zwei = einst.getDaten()[id].getAnz_dienen();
+		int zwei = einst.getDaten(id).getAnz_dienen();
 		if (eintritt < aktdatum) {
 			int abstand = aktdatum - eintritt;
 			if (abstand >= Einstellungen.lenght) {
 				abstand = Einstellungen.lenght - 1;
 			}
-			eins = einst.getDaten()[abstand + 2].getAnz_dienen();
+			eins = einst.getDaten(abstand + 2).getAnz_dienen();
 			if (zwei < eins) {
 				eins = zwei;
 			}
@@ -250,13 +249,12 @@ public class Messdaten {
 
 	public void addtomaxanz(int medishinzufuegen, AData ada, boolean isLeiter) {
 		max_messen += medishinzufuegen;
-		Setting[] set = ada.getPfarrei().getSettings().getDaten();
 		int id = 0;
 		if (isLeiter) {
 			id++;
 		}
-		if (max_messen > set[id].getAnz_dienen()) {
-			max_messen = set[id].getAnz_dienen();
+		if (max_messen >  ada.getPfarrei().getSettings().getDaten(id).getAnz_dienen()) {
+			max_messen =  ada.getPfarrei().getSettings().getDaten(id).getAnz_dienen();
 		}
 	}
 

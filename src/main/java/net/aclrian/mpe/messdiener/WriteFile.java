@@ -216,14 +216,14 @@ public class WriteFile {
 				path.replaceAll("/", "//");
 			}
 			String datei = this.me.getNachnname() + ", " + this.me.getVorname();
-			//datei = new String(datei.getBytes(), "UTF-8");
+			// datei = new String(datei.getBytes(), "UTF-8");
 
 			File file = new File(path, datei + ".xml");
 			//
 			OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
 			StreamResult result = new StreamResult(out);
 			transformer.transform(domSource, result);
-			Utilities.logging(this.getClass(), "toXML", "Datei wird gespeichert in :" + path + "//" + datei + ".xml");
+			Utilities.logging(this.getClass(), "toXML", "Datei wird gespeichert in: " + path + "//" + datei + ".xml");
 			me.setFile(file);
 			boolean b = false;
 			for (Messdiener m : ap.getAda().getMediarray()) {
@@ -240,7 +240,9 @@ public class WriteFile {
 			}
 			if (b == false) {
 				ap.getAda().getMediarray().add(me);
-				ap.getWAlleMessen().update(ap.getAda());
+				if (ap.getWAlleMessen() != null) {
+					ap.getWAlleMessen().update(ap.getAda());
+				}
 			}
 		} catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
