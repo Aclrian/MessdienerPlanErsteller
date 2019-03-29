@@ -636,8 +636,8 @@ public class WriteFile_Pfarrei extends JFrame {
 		sm.removeIf(t -> new Sonstiges().isSonstiges(t));
 		dmmm.setDataVector(getTableData(), columnNames);
 		update();
-		spinner_max_andere.setValue(pf.getSettings().getDaten()[0].getAnz_dienen());
-		spinner_max_leiter.setValue(pf.getSettings().getDaten()[1].getAnz_dienen());
+		spinner_max_andere.setValue(pf.getSettings().getDaten(0).getAnz_dienen());
+		spinner_max_leiter.setValue(pf.getSettings().getDaten(1).getAnz_dienen());
 		if (pf.zaehlenHochaemterMit()) {
 			rdbtnf12Ja.setSelected(true);
 		} else {
@@ -645,7 +645,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		}
 		boolean eins = false;
 		for (int i = 2; i < 20; i++) {
-			if (pf.getSettings().getDaten()[i].getAnz_dienen() != pf.getSettings().getDaten()[i + 1].getAnz_dienen()) {
+			if (pf.getSettings().getDaten(i).getAnz_dienen() != pf.getSettings().getDaten(i + 1).getAnz_dienen()) {
 				eins = true;
 			}
 		}
@@ -654,7 +654,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		
 		rdbtnf2Ja.setSelected(false);
 		rdbtnf2Nein.setSelected(false);
-		if (pf.getSettings().getDaten()[1].getAnz_dienen() == 0) {
+		if (pf.getSettings().getDaten(1).getAnz_dienen() == 0) {
 			rdbtnf2Nein.setSelected(true);
 			rdbtnf3Nein.setSelected(true);
 		} else {
@@ -699,6 +699,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		try {
 			this.setEinstellungenfromGUI();
 		} catch (Exception e) {
+			e.printStackTrace();
 			new Erroropener(new Exception("Unzul" + References.ae + "ssige Eingabe in der Tabelle"));
 			error = true;
 		}
@@ -809,12 +810,12 @@ public class WriteFile_Pfarrei extends JFrame {
 			einst.appendChild(hochamt);
 
 			// Settings
-			Setting[] set = pf.getSettings().getDaten();
 			for (int i = 0; i < Einstellungen.lenght; i++) {
-				Attribut a = set[i].getA();
-				int anz = set[i].getAnz_dienen();
+				Setting s = pf.getSettings().getDaten(i);
+				Attribut a = s.getA();
+				int anz = s.getAnz_dienen();
 				String val = String.valueOf(anz);
-				int id = set[i].getId();
+				int id = s.getId();
 				String id_s = String.valueOf(id);
 				switch (a) {
 				case year:
@@ -1026,6 +1027,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		} else {
 			typen.add(s);
 			dlmtype.addElement(s);
+			typenfeld.setText("");
 		}
 	}
 
@@ -1036,6 +1038,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		} else {
 			orte.add(s);
 			dlmorte.addElement(s);
+			ortefeld.setText("");
 		}
 	}
 

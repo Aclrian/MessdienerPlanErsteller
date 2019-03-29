@@ -27,6 +27,7 @@ public class AData {
 
 	public AData(AProgress ap) {
 		dv = new DateienVerwalter();
+		System.out.println();
 		savepath = dv.getSavepath();
 		try {
 			pf = dv.getPfarrei();

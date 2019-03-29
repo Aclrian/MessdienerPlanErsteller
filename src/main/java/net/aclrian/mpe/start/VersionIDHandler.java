@@ -2,6 +2,7 @@ package net.aclrian.mpe.start;
 
 import java.awt.Desktop;
 import java.awt.Font;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,17 +15,21 @@ import java.nio.charset.Charset;
 
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.filechooser.FileFilter;
 
+import org.apache.log4j.BasicConfigurator;
 //import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import net.aclrian.mpe.resources.References;
 import net.aclrian.mpe.utils.Erroropener;
 import net.aclrian.mpe.utils.Utilities;
 
@@ -206,12 +211,31 @@ public class VersionIDHandler {
 	}
 
 	public static void main(String[] args) {
-		//System.out.println(args[0]);
+		if(args.length < 1) {
 		WEinFrame.farbeFIRST();
+		BasicConfigurator.configure();
 		VersionIDHandler vidh = new VersionIDHandler();
 		vidh.act();
-		AProgress ap = new AProgress();
+		AProgress ap = new AProgress(true);
 		ap.start();
+		} else if(args[0].startsWith("csv")) {
+			JFileChooser fc = new JFileChooser();
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fc.setFileFilter(new FileFilter() {
+				
+				@Override
+				public String getDescription() {
+					return "Beschreibung";
+				}
+				
+				@Override
+				public boolean accept(File f) {
+					return f.getName().endsWith(".csv");
+				}
+			});
+			fc.setDialogTitle("W"+References.ae+"hle CSV-Datei");
+			fc.setApproveButtonText("Ausw" + References.ae + "hlen");
+		}
 	}
 
 	public enum EnumHandling {

@@ -203,7 +203,7 @@ public class Finish extends APanel {
 					if (medi.isIstLeiter()) {
 						id++;
 					}
-					int ii = ap.getAda().getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
+					int ii = ap.getAda().getPfarrei().getSettings().getDaten(id).getAnz_dienen();
 					if (medi.getDienverhalten().getBestimmtes(sm, ap.getAda()) && ii != 0) {
 						array.add(medi);
 						anz_monat += medi.getMessdatenDaten().getkannnochAnz();
@@ -389,7 +389,7 @@ public class Finish extends APanel {
 					if (messdiener.isIstLeiter()) {
 						id++;
 					}
-					int ii = e.getDaten()[id].getAnz_dienen();
+					int ii = e.getDaten(id).getAnz_dienen();
 					if (ii != 0 && i < m.getnochbenoetigte()) {
 						new Erroropener(new Exception("<html><body>Bei der Messe: " + m.getID()
 								+ "<br></br>herrscht GRO" + References.GROssenSZ
@@ -414,7 +414,7 @@ public class Finish extends APanel {
 			if (medi.isIstLeiter()) {
 				id++;
 			}
-			int ii = ada.getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
+			int ii = ada.getPfarrei().getSettings().getDaten(id).getAnz_dienen();
 			if (medi.getDienverhalten().getBestimmtes(sm, ada) == true && ii != 0
 					&& medi.getMessdatenDaten().kann(m.getDate(), false)) {
 				al.add(medi);
@@ -433,7 +433,7 @@ public class Finish extends APanel {
 			if (medi.isIstLeiter()) {
 				id++;
 			}
-			int ii = ada.getPfarrei().getSettings().getDaten()[id].getAnz_dienen();
+			int ii = ada.getPfarrei().getSettings().getDaten(id).getAnz_dienen();
 			if (medi.getDienverhalten().getBestimmtes(sm, ada) == true && ii != 0) {
 				if (medi.getMessdatenDaten().kann(d, false)) {
 					al.add(medi);

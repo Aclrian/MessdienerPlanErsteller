@@ -75,7 +75,10 @@ public class Einstellungen {
 		return rtn;
 	}
 	
-	public Setting[] getDaten() {
-		return settings;
+	public Setting getDaten(int index) {
+		if (index>20) {
+			return settings[20];
+		}
+		return settings[index];
 	}
 }
