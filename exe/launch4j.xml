@@ -1,0 +1,22 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>E:\Adrian\Documents\GitHub\MessdienerPlanErsteller\exe\MessdienerPlanErstellerb660-20190331.jar</jar>
+  <outfile>E:\Adrian\Documents\GitHub\MessdienerPlanErsteller\exe\neu\Mpe.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>E:\Adrian\Documents\GitHub\MessdienerPlanErsteller\exe\title_32.ico</icon>
+  <jre>
+    <path></path>
+    <minVersion>1.8.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+  </jre>
+</launch4jConfig>
