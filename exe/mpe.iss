@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "MessdienerplanErsteller"
-#define MyAppVersion "b650"
+#define MyAppVersion "b660"
 #define MyAppPublisher "aclrian"
 #define MyAppURL "https://aclrian.github.io/MessdienerPlanErsteller/"
 #define MyAppExeName "mpe.exe"
