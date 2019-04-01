@@ -241,6 +241,24 @@ public class DateienVerwalter {
 				e.printStackTrace();
 				new Erroropener(e);
 			}
+			if(savepath == null) {
+				savepath = waehleOrdner();
+				try {
+					f.createNewFile();
+					FileWriter fileWriter = new FileWriter(homedir);
+					BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+					if (savepath != null) {
+						bufferedWriter.write(savepath);
+						bufferedWriter.close();
+					} else {
+						new Erroropener(new Exception("Bitte auswaehlen beim naechsten Mal!!!"));
+						System.exit(1);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+					new Erroropener(e);
+				}
+			}
 		}
 	}
 
