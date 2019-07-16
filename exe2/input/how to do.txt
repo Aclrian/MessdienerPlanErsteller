@@ -1,0 +1,4 @@
+launch launch4j
+open \richtige config.xml
+press 'setting' then 'play'
+start inno setup compiler mit \launch4j\mpe_new.iss
