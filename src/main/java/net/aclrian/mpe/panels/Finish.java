@@ -1,6 +1,7 @@
 package net.aclrian.mpe.panels;
 
 import java.awt.Desktop;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -67,6 +68,7 @@ public class Finish extends APanel {
 		sPMessen.setColumnHeaderView(labelmesse);
 		sPMedis.setViewportView(list);
 		sPMedis.setColumnHeaderView(labelmedis);
+		editorPane.setFont(new Font(Font.SANS_SERIF, editorPane.getFont().getSize(), editorPane.getFont().getSize()));
 		editorPane.setText("<html><h1>Der Fertige Messdienerplan</h1></html>");
 		add(sPMedis);
 		add(sPMessen);
@@ -83,7 +85,7 @@ public class Finish extends APanel {
 			public void actionPerformed(ActionEvent e) {
 				if (ferienplan) {
 					JOptionPane op = new JOptionPane(
-							"Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen/Abmeldungen generieren zu können?",
+							"Soll die aktuelle Einteilung gel"+References.oe+"scht werden, um einen neuen Plan mit ggf. ge"+References.ae+"nderten Messen/Abmeldungen generieren zu k\"+References.oe+\"nnen?",
 							JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
 					JFrame f = new JFrame();
 					f.setAlwaysOnTop(true);
@@ -100,7 +102,7 @@ public class Finish extends APanel {
 					}
 				} else {
 					JOptionPane op = new JOptionPane(
-							"Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?",
+							"Soll die aktuelle Einteilung gel"+References.oe+"scht werden, um einen neuen Plan mit ggf. ge"+References.ae+"nderten Messen generieren zu k\"+References.oe+\"nnen?",
 							JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
 					JFrame f = new JFrame();
 					f.setAlwaysOnTop(true);
@@ -237,7 +239,7 @@ public class Finish extends APanel {
 						}
 						String mitteilung = "Zu den Messdienern, die am " + sm.getWochentag() + " um " + sm.getBeginn_stunde()
 								+ " koennen, werden + " + medishinzufuegen
-								+ " zu ihrem normalen Wert hinzugefuegt!";
+								+ " zu ihrem normalen Wert hinzugef"+References.ue+"gt!";
 						Utilities.logging(this.getClass(), "neuerAlorythmus",
 								mitteilung);
 						new Erroropener(new Exception(mitteilung));
