@@ -6,6 +6,11 @@
 	<artifactId>messdienerplan-ersteller</artifactId>
 	<version>b667</version>
 	<dependencies>
+	<dependency>
+    <groupId>com.jfoenix</groupId>
+    <artifactId>jfoenix</artifactId>
+    <version>9.0.9</version>
+    </dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
@@ -159,9 +164,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
-					<!-- or whatever version you use -->
-					<source>1.8</source>
-					<target>1.8</target>
+					 <source>11</source>
+                    <target>11</target>
 				</configuration>
 			</plugin>
 		</plugins>
