@@ -22,6 +22,8 @@ import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;*/
 
+//import com.lowagie.text.FontFactory;
+
 import net.aclrian.mpe.panels.Finish;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.start.AProgress;
@@ -36,8 +38,9 @@ public class Converter {
 	static boolean saveFO;
 
 	public Converter(Finish finish) throws IOException {
+		//FontFactory.registerDirectories();
 		html = finish.getText();
-		FileWriter fw = new FileWriter(System.getProperty("user.home") + '\\' + "tmp.html");
+		FileWriter fw = new FileWriter(System.getProperty("user.home") + File.separator + "tmp.html");
 		html = html.replaceAll("\n", "");
 		html = html.replaceAll("<br>", "<br></br>");
 
@@ -55,12 +58,15 @@ public class Converter {
 		html += "<br></br><p>Der Messdienerplan wurde erstellt mit: <a href='" + url + "'>MessdienerplanErsteller "
 				+ Main.VersionID + "</a></p>" + "</body></html>";
 		html = html.replaceAll("<head></head>",
-				"<head><style>h1{font-size: 18px; font-weight: bold;}h2{font-weight: bold;font-size: 14px}p{font-size: 12x}</style></head>");
-
+				"<head><style>* {\n" + 
+				" font-size: 100%;\n" + 
+				" font-family: sans-serif;\n" + 
+				"}h1{font-size: 18px; font-weight: bold;}h2{font-weight: bold;font-size: 14px}p{font-size: 12x}</style></head>");
+		
 		fw.write(html);
 		fw.flush();
 		fw.close();
-		setHtmlFile(new File(System.getProperty("user.home") + '\\' + "tmp.html"));
+		setHtmlFile(new File(System.getProperty("user.home") + File.separator + "tmp.html"));
 		try {
 			docx = toWord();
 		} catch (Exception e) {
@@ -69,8 +75,9 @@ public class Converter {
 		}
 	}
 
-	private File toWord() {return  null;}/*throws IOException, JAXBException, Docx4JException {
-		File docx = new java.io.File(System.getProperty("user.home") + "\\tmp.docx");
+@Deprecated
+	private File toWord() {return null;} /*throws IOException, JAXBException, Docx4JException {
+		File docx = new java.io.File(System.getProperty("user.home") + File.separator +"tmp.docx");
 		String stringFromFile = FileUtils.readFileToString(htmlFile, "UTF-8"); 
 
 		WordprocessingMLPackage docxOut = WordprocessingMLPackage.createPackage();
@@ -102,7 +109,7 @@ public class Converter {
 		InputStream doc = new FileInputStream(docx);
 		XWPFDocument document = new XWPFDocument(doc);
 		PdfOptions options = PdfOptions.create();
-		File file = new File(System.getProperty("user.home") + '\\' + "tmp.pdf");
+		File file = new File(System.getProperty("user.home") + File.separator + "tmp.pdf");
 		OutputStream out = new FileOutputStream(file);
 		PdfConverter.getInstance().convert(document, out, options);
 		Utilities.logging(getClass(), "toPDF", "PDF wurde erstellt.");
@@ -110,6 +117,9 @@ public class Converter {
 	}*/
 
 	public File getDocx() {
+		if(docx == null) {
+			return new File(System.getProperty("user.home") + File.separator + "tmp.docx");
+		}
 		return docx;
 	}
 
