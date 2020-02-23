@@ -26,6 +26,7 @@ import net.aclrian.mpe.utils.Utilities;
 
 public class AProgress {
 
+
 	public void pfarreiaendern(Pfarrei pf) {
 		WriteFile_Pfarrei wf = new WriteFile_Pfarrei(pf, this);
 		if (wam != null) {
