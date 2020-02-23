@@ -1,4 +1,4 @@
-package net.aclrian.mpe.resources;
+package net.aclrian.mpe.start;
 
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -24,7 +24,7 @@ public class References {
     }
 
     public static Image getIcon() {
-	return Toolkit.getDefaultToolkit().getImage(References.class.getResource("title_32.png"));
+	return Toolkit.getDefaultToolkit().getImage(References.class.getResource("/resources/title_32.png"));
     }
 
 }

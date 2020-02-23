@@ -1,36 +1,37 @@
 package net.aclrian.mpe.start;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
+import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Utilities;
+import net.aclrian.mpe.utils.Erroropener;
+import net.aclrian.mpe.utils.Log;
 
 public class AData {
+	
+	
+	
 	public static final Sonstiges sonstiges = new Sonstiges();
 	/**
 	 * Hier werden alle Messdiener aus {@link AData#savepath} gespeichert!
 	 */
 	private ArrayList<Messdiener> mediarray;
 	private ArrayList<Messe> messenarray = new ArrayList<Messe>();
-	private DateienVerwalter dv;
-	private String savepath = "";
 	private Pfarrei pf;
-	public static final String pfarredateiendung = ".xml.pfarrei";
-	public static final String textdatei = "//.messdienerOrdnerPfad.txt";
 	private HashMap<Messe, ArrayList<Messdiener>> voreingeteilte = new HashMap<>();
 
-	public AData(AProgress ap) {
-		dv = new DateienVerwalter();
-		System.out.println();
-		savepath = dv.getSavepath();
+	public AData() {
 		try {
-			pf = dv.getPfarrei();
+			pf = DateienVerwalter.dv.getPfarrei();
 		} catch (NullPointerException e) {
 			ap.getPfarreiNeu();
 			return;
@@ -40,9 +41,9 @@ public class AData {
 			return;
 		}
 		pf.getStandardMessen().add(sonstiges);
-		mediarray = dv.getAlleMedisVomOrdnerAlsList(savepath, this);
+		mediarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList(DateienVerwalter.dv.getSavepath(), pf.getStandardMessen());
 		mediarray.sort(Messdiener.compForMedis);
-		Utilities.logging(this.getClass(), "init", "Es wurden " + mediarray.size() + " gefunden!");
+		Log.getLogger().info("Es wurden " + mediarray.size() + " gefunden!");
 		/*
 		 * for (StandartMesse sm : pf.getStandardMessen()) { System.out.println(sm +
 		 * ":"); if (!(sm instanceof Sonstiges)) { for (Messdiener messdiener :
@@ -55,6 +56,96 @@ public class AData {
 		 * System.out.println(messdiener); } }
 		 */
 	}
+	public Object[][] getAbmeldenTableVector(String[] s, SimpleDateFormat df) {
+		mediarray.sort(Messdiener.compForMedis);
+		Object[][] rtn = new Object[mediarray.size()][s.length];
+		for (int i = 0; i < mediarray.size(); i++) {
+			Object[] o = rtn[i];
+			Messdiener m = mediarray.get(i);
+			o[0] = m.toString();
+			for (int j = 1; j < s.length; j++) {
+				o[j] = m.getMessdatenDaten().ausgeteilt(s[j]);
+			}
+		}
+		return rtn;
+	}
+	
+	/*private void update() {
+		mediarray = dv.getAlleMedisVomOrdnerAlsList(savepath, this);
+		for (Messdiener medi : mediarray) {
+					Messdaten md = mmedi.getMessdatenDaten();
+					md.update(medi, this);
+				}
+	}*/
+
+	public void  generateMessdaten() {
+		mediarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList(DateienVerwalter.dv.getSavepath(), pf.getStandardMessen());
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		for (Messdiener messdiener : mediarray) {
+			messdiener.setnewMessdatenDaten(DateienVerwalter.dv.getSavepath(), year, pf, mediarray);
+		}
+	}
+	public ArrayList<Messe> optimieren(Calendar cal, StandartMesse sm, Date end, ArrayList<Messe> mes)
+			throws Exception {
+		if (cal.getTime().before(end) && !(sm instanceof Sonstiges)) {
+			SimpleDateFormat wochendagformat = new SimpleDateFormat("EEE");
+			String tag = wochendagformat.format(cal.getTime());
+			if (tag.startsWith(sm.getWochentag())) {
+				Date d = cal.getTime();
+				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+				SimpleDateFormat dfuhr = new SimpleDateFormat("dd-MM-yyyy-HH:mm");
+				try {
+					Date frting = dfuhr
+							.parse(df.format(d) + "-" + sm.getBeginn_stundealsString() + ":" + sm.getBeginn_minute());
+					Messe m = new Messe(frting, sm, pf.getStandardMessen());
+					mes.add(m);
+				} catch (Exception e) {
+					new Erroropener(e);
+					e.printStackTrace();
+				}
+				cal.add(Calendar.DATE, 7);
+				mes = optimieren(cal, sm, end, mes);
+			} else {
+				cal.add(Calendar.DATE, 1);
+				mes = optimieren(cal, sm, end, mes);
+			}
+		}
+		return mes;
+	}
+
+	public ArrayList<Messe> generireDefaultMessen(Date anfang, Date ende) throws Exception {
+		ArrayList<Messe> rtn = new ArrayList<Messe>();
+		Calendar start = Calendar.getInstance();
+		for (StandartMesse sm : pf.getStandardMessen()) {
+			if (!(sm instanceof Sonstiges)) {
+				start.setTime(anfang);
+				ArrayList<Messe> m = optimieren(start, sm, ende, new ArrayList<Messe>());
+				rtn.addAll(m);
+			}
+		}
+		rtn.sort(Messe.compForMessen);
+		Utilities.logging(getClass(), "generireDefaultMessen", "DefaultMessen generiert");
+		return rtn;
+	}
+
+	public ArrayList<Messdiener> getLeiter(ArrayList<Messdiener> param) {
+		ArrayList<Messdiener> rtn = new ArrayList<Messdiener>();
+		for (Messdiener messdiener : param) {
+			if (messdiener.isIstLeiter()) {
+				rtn.add(messdiener);
+			}
+		}
+		return rtn;
+	}
+
+	public Messdiener getMessdienerFromString(String valueAt, ArrayList<Messdiener> arrayList) {
+		for (Messdiener messdiener : arrayList) {
+			if (messdiener.toString().equals(valueAt)) {
+				return messdiener;
+			}
+		}
+		return null;
+	}
 
 	public ArrayList<Messdiener> getMediarray() {
 		return mediarray;
@@ -62,14 +153,6 @@ public class AData {
 
 	public ArrayList<Messe> getMesenarray() {
 		return messenarray;
-	}
-
-	public DateienVerwalter getUtil() {
-		return dv;
-	}
-
-	public String getSavepath() {
-		return savepath;
 	}
 
 	public Pfarrei getPfarrei() {
@@ -80,7 +163,7 @@ public class AData {
 		ArrayList<StandartMesse> sm = new ArrayList<StandartMesse>();
 		sm.addAll(pf.getStandardMessen());
 		for (int i = 0; i < sm.size(); i++) {
-			if (sonstiges.isSonstiges(sm.get(i))) {
+			if (sm.get(i) instanceof Sonstiges) {
 				sm.remove(i);
 			}
 		}
@@ -89,10 +172,10 @@ public class AData {
 	}
 
 	public void erneuern(AProgress ap, String savepath) {
-		dv = new DateienVerwalter();
-		savepath = dv.getSavepath();
+		DateienVerwalter.erneuern();
+		savepath = DateienVerwalter.dv.getSavepath();
 		try {
-			pf = dv.getPfarrei();
+			pf = DateienVerwalter.dv.getPfarrei();
 			if (pf == null) {
 				ap.getPfarreiNeu();
 			}
@@ -103,12 +186,12 @@ public class AData {
 		pf.getStandardMessen().clear();
 		pf.getStandardMessen().add(sonstiges);
 		boolean hatsonstiges = false;
-		mediarray = dv.getAlleMedisVomOrdnerAlsList(savepath, this);
+		mediarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList(savepath, pf.getStandardMessen());
 		if (!hatsonstiges) {
 			pf.getStandardMessen().add(sonstiges);
 		}
 		System.out.println(pf.getStandardMessen());
-		System.out.println(dv.getPfarrei());
+		System.out.println(DateienVerwalter.dv.getPfarrei());
 		Utilities.logging(this.getClass(), "erneuern", "Es wurden " + mediarray.size() + " gefunden!");
 	}
 

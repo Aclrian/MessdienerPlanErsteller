@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.resources.References;
+import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AProgress;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Erroropener;
 
 public class Manuell {
@@ -27,35 +28,35 @@ public class Manuell {
     public static StandartMesse Son_taufe = new StandartMesse("So", 15, "00", sm, 2, tf);
     public static StandartMesse Son_abend = new StandartMesse("So", 18, "00", sm, 6, hlm);
     private ArrayList<Handling> hand;
-    private AProgress ap;
+    private ArrayList<Messdiener> medis;
     private Pfarrei pf;
 
-    public Manuell(ArrayList<Handling> hand, AProgress ap, Pfarrei pf) {
+    public Manuell(ArrayList<Handling> hand, ArrayList<Messdiener> medis, Pfarrei pf) {
 	this.hand = hand;
-	this.ap = ap;
+	this.medis = medis;
 	this.pf = pf;
     }
 
     public void act() {
 	for (Handling handling : hand) {
 	    if (handling.getEw() == EnumWorking.ueberarbeitet) {
-		for (Messdiener m : ap.getAda().getMediarray()) {
+		for (Messdiener m : medis) {
 		    m.getDienverhalten().ueberschreibeStandartMesse(handling.getAlt(), handling.getNeu());
 		}
 	    }
 	    if (handling.getEw() == EnumWorking.neu) {
 		new Erroropener(new Exception("Um in einer neuen Standartmesse Messdiener hinzu zu f" + References.ue
 			+ "gen, bitte den Messdiener ausw" + References.ae + "hlen."));
-		for (Messdiener m : ap.getAda().getMediarray()) {
+		for (Messdiener m : medis) {
 		    m.getDienverhalten().fuegeneueMesseHinzu(handling.getNeu());
 		}
 	    }
 	}
-	WriteFile_Pfarrei.writeFile(pf, ap.getAda().getUtil().getSavepath());
-	for (Messdiener m : ap.getAda().getMediarray()) {
-	    WriteFile wf = new WriteFile(m, ap.getAda().getUtil().getSavepath());
+	WriteFile_Pfarrei.writeFile(pf, DateienVerwalter.dv.getSavepath());
+	for (Messdiener m : medis) {
+	    WriteFile wf = new WriteFile(m, DateienVerwalter.dv.getSavepath());
 	    try {
-		wf.toXML(ap);
+		wf.toXML(pf.getStandardMessen(),medis);
 	    } catch (IOException e) {
 		new Erroropener(e);
 		e.printStackTrace();

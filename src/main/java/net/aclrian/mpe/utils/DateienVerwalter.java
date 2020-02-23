@@ -9,17 +9,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import javax.swing.JFileChooser;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Window;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.ReadFile;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.pfarrei.ReadFile_Pfarrei;
-import net.aclrian.mpe.resources.References;
-import net.aclrian.mpe.start.AData;
-import net.aclrian.mpe.start.AProgress;
+import net.aclrian.mpe.start.References;
 
 /**
  * Sonstige Klasse, die viel mit Ordnerverwaltung und Sortieren zu tun hat.
@@ -34,24 +30,49 @@ public class DateienVerwalter {
 	 * andere Klassen erzeugen hiermit neue Messdiener an dem selben Ort</br>
 	 */
 	private String savepath;
+	private Pfarrei pf;
+	private static boolean ersterStart = true;
 
-	public DateienVerwalter() {
-		this.getSpeicherort();
-	}
+	public static final String pfarredateiendung = ".xml.pfarrei";
+	public static final String textdatei = File.separator+".messdienerOrdnerPfad.txt";
 
-	public DateienVerwalter(String savepath) {
-		this.setSavepath(savepath);
-	}
-
-	public Pfarrei getPfarrei() throws NullPointerException {
-		File f = getPfarreFile();
-		Utilities.logging(getClass(), "getPfarrei", "Pfarrei gefunden in: " + f.toString());
-		Pfarrei rtn = ReadFile_Pfarrei.getPfarrei(f.getAbsolutePath());
-		if (rtn == null) {
-			return null;
+	
+	public static DateienVerwalter dv;
+	
+	public static void re_start(Window window) {
+		if (ersterStart) {
+			dv = new DateienVerwalter(window);
 		} else {
-			return rtn;
+			dv.getSavepath(window);
+			dv.reloadPfarrei();
 		}
+		
+	}
+	
+	private DateienVerwalter(Window window) {
+		this.getSpeicherort(window);
+		File f = getPfarreFile();
+		if(f == null) {
+			//TODO start WriteFile_Pfarrei or similar
+		}
+		pf = ReadFile_Pfarrei.getPfarrei(f.getAbsolutePath());
+	}
+
+	
+	public Pfarrei getPfarrei() {
+		if(pf==null) {
+			reloadPfarrei();
+		}
+		return pf;
+	}
+	
+	private void reloadPfarrei() {
+		File f = getPfarreFile();
+		if (f == null) {
+			Dialogs.fatal("Es konnte keine ");
+		}
+		Log.getLogger().info("Pfarrei gefunden in: " + f.toString());
+		pf = ReadFile_Pfarrei.getPfarrei(f.getAbsolutePath());
 	}
 
 	private File getPfarreFile() {
@@ -62,15 +83,14 @@ public class DateienVerwalter {
 		}
 		for (File file : f.listFiles()) {
 			String s = file.toString();
-			if (s.endsWith(AData.pfarredateiendung)) {
+			if (s.endsWith(pfarredateiendung)) {
 				files.add(file);
 			}
 
 		}
 		if (files.size() != 1) {
 			if (files.size() > 1) {
-				new Erroropener(new Exception("Es darf nur eine Datei mit der Endung: '" + AData.pfarredateiendung
-						+ "' in dem Ordner: " + savepath + " vorhanden sein."));
+				Dialogs.warn("Es darf nur eine Datei mit der Endung: '" + pfarredateiendung+ "' in dem Ordner: " + savepath + " vorhanden sein.");
 				return files.get(0);
 			} else {
 				return null;
@@ -85,45 +105,12 @@ public class DateienVerwalter {
 	 * @return Ausgewaehlten Ordnerpfad
 	 * @throws NullPointerException
 	 */
-	private String waehleOrdner() throws NullPointerException {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (javax.swing.UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
-
-		JFileChooser f = new JFileChooser();
+	private String waehleOrdner(Window window) throws NullPointerException {
+		DirectoryChooser f = new DirectoryChooser();
 		String s = "Ordner w" + References.ae + "hlen, in dem alles gespeichert werden soll:";
-		f.setDialogTitle(s);
-		f.setApproveButtonText("Ausw" + References.ae + "hlen");
-		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int i = f.getBounds().width + 100;
-		f.setBounds(f.getBounds().x, f.getBounds().y, i, f.getBounds().height);
-		// WEinFrame.farbe(f);
-		if (f.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-			zurueckZumJavaLookandFeel();
-			Utilities.logging(this.getClass(), "waehleOrdner", f.getSelectedFile().getPath());
-			return f.getSelectedFile().getPath();
-		} else {
-			zurueckZumJavaLookandFeel();
-			return null;
-		}
-	}
-
-	private void zurueckZumJavaLookandFeel() {
-		try {
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		f.setTitle(s);
+		File file = f.showDialog(window);
+		return file == null ? null : file.getPath();
 	}
 
 	private ArrayList<File> getPaths(File file, ArrayList<File> list) {
@@ -141,7 +128,7 @@ public class DateienVerwalter {
 
 	private ArrayList<File> getAlleMessdienerFiles(String path) {// 2
 		String verzName = path;
-		Utilities.logging(this.getClass(), "getAlleMessdienerFiles2", "verzName: " + verzName);
+		Log.getLogger().info("verzName: " + verzName);
 		ArrayList<File> files = getPaths(new File(verzName), new ArrayList<File>());
 		if (files == null) {
 			return new ArrayList<File>();
@@ -153,13 +140,15 @@ public class DateienVerwalter {
 	 * 
 	 * @return Messdiener als List
 	 */
-	public ArrayList<Messdiener> getAlleMedisVomOrdnerAlsList(String pfad, AData ada) {
-		ArrayList<File> files = getAlleMessdienerFiles(pfad);
+	public ArrayList<Messdiener> getAlleMedisVomOrdnerAlsList() {
+		if (pf == null) {
+			reloadPfarrei();
+		}
+		ArrayList<File> files = getAlleMessdienerFiles(savepath);
 		ArrayList<Messdiener> medis = new ArrayList<Messdiener>();
 		for (File file : files) {
 			ReadFile rf = new ReadFile();
-			Utilities.logging(this.getClass(), "getAlleMedisVomOrdnerAlsList", file.getAbsolutePath());
-			Messdiener m = rf.getMessdiener(file.getAbsolutePath(), ada);
+			Messdiener m = rf.getMessdiener(file.getAbsolutePath());
 			if (m != null) {
 				medis.add(m);
 			}
@@ -167,19 +156,9 @@ public class DateienVerwalter {
 		return medis;
 	}
 
-	public Messdiener sucheMessdiener(String geschwi, Messdiener akt, AProgress ap) throws Exception {
-		for (Messdiener messdiener : ap.getAda().getMediarray()) {
-			if (messdiener.makeId().equals(geschwi)) {
-				return messdiener;
-			}
-		}
-		throw new CouldnotFindMedi("Konnte f" + References.ue + "r " + akt.makeId() + " : " + geschwi + " nicht finden",
-				akt, geschwi, ap);
-	}
-
-	public String getSavepath() {
+	public String getSavepath(Window window) {
 		if (savepath == null || savepath.equals("")) {
-			savepath = waehleOrdner();
+			savepath = waehleOrdner(window);
 		}
 		return savepath;
 	}
@@ -188,20 +167,20 @@ public class DateienVerwalter {
 		this.savepath = savepath;
 	}
 
-	public void erneuereSavepath() {
+	public void erneuereSavepath(Window window) {
 		this.savepath = "";
-		getSpeicherort();
+		getSpeicherort(window);
 	}
 
-	private void getSpeicherort() {
+	private void getSpeicherort(Window window) {
 		String homedir = System.getProperty("user.home");
-		homedir = homedir + AData.textdatei;
-		Utilities.logging(this.getClass(), "getSpeicherort", "Das Home-Verzeichniss wurde gefunden: " + homedir);
+		homedir = homedir + textdatei;
+		Log.getLogger().info("Das Home-Verzeichniss wurde gefunden: " + homedir);
 		File f = new File(homedir);
 		if (!f.exists()) {
 			String s;
 			if (savepath == null || savepath.equals("")) {
-				s = this.waehleOrdner();
+				s = this.waehleOrdner(window);
 			} else {
 				s = savepath;
 			}
@@ -210,16 +189,17 @@ public class DateienVerwalter {
 				FileWriter fileWriter = new FileWriter(homedir);
 				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 				if (s != null) {
+					Log.getLogger().info(s);
 					bufferedWriter.write(s);
 					setSavepath(s);
 					bufferedWriter.close();
 				} else {
-					new Erroropener(new Exception("Bitte auswaehlen beim naechsten Mal!!!"));
-					System.exit(1);
+					//TODO funktioniert das ?
+					Dialogs.warn("Es wird ein Speicherort benötigt, um dort Messdiener zu speichern.\nBitte einen Speicherort eingeben!");
+					getSpeicherort(window);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
-				new Erroropener(e);
+				Dialogs.error(e, "Der Speicherort konnte nicht gespeichert werden.");
 			}
 		} else {
 			try {
@@ -231,18 +211,16 @@ public class DateienVerwalter {
 					if (savepath.exists()) {
 						setSavepath(line);
 					} else {
-						Utilities.logging(this.getClass(), "getSpeicheort", "das sollte nicht passieren!!");
-						savepath.mkdir();
-						setSavepath(line);
+						Log.getLogger().info("Der Speicherort '" + f + "' existiert nicht!");
+						getSpeicherort(window);
 					}
 				}
 				bufferedReader.close();
 			} catch (IOException e) {
-				e.printStackTrace();
-				new Erroropener(e);
+				Dialogs.error(e, "Die Datei '" + homedir+ "' konnte nicht gelesen werden.");
 			}
 			if(savepath == null) {
-				savepath = waehleOrdner();
+				savepath = waehleOrdner(window);
 				try {
 					f.createNewFile();
 					FileWriter fileWriter = new FileWriter(homedir);
@@ -251,41 +229,15 @@ public class DateienVerwalter {
 						bufferedWriter.write(savepath);
 						bufferedWriter.close();
 					} else {
-						new Erroropener(new Exception("Bitte auswaehlen beim naechsten Mal!!!"));
-						System.exit(1);
+						Dialogs.warn("Es wird ein Speicherort benötigt, um dort Messdiener zu speichern.\nBitte einen Speicherort eingeben!");
+						getSpeicherort(window);
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
-					new Erroropener(e);
+					Log.getLogger().info("Auf den Speicherort '" + f + "' kann nicht zugegriffen werden!");
+					getSpeicherort(window);
 				}
 			}
 		}
-	}
-
-	public class CouldnotFindMedi extends Exception {
-		private static final long serialVersionUID = 1L;
-		private Messdiener me;
-
-		private String falscherEintrag;
-		private AProgress ap;
-
-		public CouldnotFindMedi(String message, Messdiener me, String falscherEintrag, AProgress ap) {
-			super(message);
-			this.me = me;
-			this.falscherEintrag = falscherEintrag;
-			this.ap = ap;
-		}
-
-		public AProgress getAp() {
-			return ap;
-		}
-
-		public Messdiener getMessdiener() {
-			return me;
-		}
-
-		public String getFalscherEintrag() {
-			return falscherEintrag;
-		}
+		Log.getLogger().info("Der Speicherort liegt in: " + savepath);
 	}
 }

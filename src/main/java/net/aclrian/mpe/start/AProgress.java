@@ -17,138 +17,14 @@ import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Manuell;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.pfarrei.WriteFile_Pfarrei;
-import net.aclrian.mpe.resources.References;
+import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.pfarrei.Manuell.EnumWorking;
 import net.aclrian.mpe.pfarrei.Manuell.Handling;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Erroropener;
 import net.aclrian.mpe.utils.Utilities;
 
 public class AProgress {
-
-	private AData ada;
-	public static final String VersionID = "b667";
-	private ArrayList<Messdiener> memit;
-	WEinFrame wam;
-
-	public AProgress(boolean startWeF) {
-		ada = new AData(this);
-		if (startWeF) {
-			wam = new WEinFrame(this);
-		}
-	}
-
-	public AData getAda() {
-		return ada;
-	}
-
-	public ArrayList<Messdiener> getMediarraymitMessdaten() {
-		if (memit != null) {
-			update();
-			return memit;
-		}
-		memit = ada.getUtil().getAlleMedisVomOrdnerAlsList(ada.getSavepath(), ada);
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-		for (Messdiener messdiener : memit) {
-			messdiener.setnewMessdatenDaten(ada.getUtil().getSavepath(), year, this);
-		}
-		update();
-		return memit;
-	}
-
-	private void update() {
-		for (Messdiener medi : ada.getMediarray()) {
-			for (Messdiener mmedi : memit) {
-				if (medi.toString().equals(mmedi.toString())) {
-					Messdaten md = mmedi.getMessdatenDaten();
-					md.update(medi, this);
-				}
-			}
-		}
-	}
-
-	public void start() {
-		wam.setVisible(true);
-	}
-
-	public Object[][] getAbmeldenTableVector(String[] s, SimpleDateFormat df) {
-		getMediarraymitMessdaten().sort(Messdiener.compForMedis);
-		Object[][] rtn = new Object[getMediarraymitMessdaten().size()][s.length];
-		for (int i = 0; i < getMediarraymitMessdaten().size(); i++) {
-			Object[] o = rtn[i];
-			Messdiener m = getMediarraymitMessdaten().get(i);
-			o[0] = m.toString();
-			for (int j = 1; j < s.length; j++) {
-				o[j] = m.getMessdatenDaten().ausgeteilt(s[j]);
-			}
-		}
-		return rtn;
-	}
-
-	public WEinFrame getWAlleMessen() {
-		return wam;
-	}
-
-	public ArrayList<Messe> optimieren(Calendar cal, StandartMesse sm, Date end, ArrayList<Messe> mes)
-			throws Exception {
-		if (cal.getTime().before(end) && !AData.sonstiges.isSonstiges(sm)) {
-			SimpleDateFormat wochendagformat = new SimpleDateFormat("EEE");
-			String tag = wochendagformat.format(cal.getTime());
-			if (tag.startsWith(sm.getWochentag())) {
-				Date d = cal.getTime();
-				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-				SimpleDateFormat dfuhr = new SimpleDateFormat("dd-MM-yyyy-HH:mm");
-				try {
-					Date frting = dfuhr
-							.parse(df.format(d) + "-" + sm.getBeginn_stundealsString() + ":" + sm.getBeginn_minute());
-					Messe m = new Messe(frting, sm, ada);
-					mes.add(m);
-				} catch (Exception e) {
-					new Erroropener(e);
-					e.printStackTrace();
-				}
-				cal.add(Calendar.DATE, 7);
-				mes = optimieren(cal, sm, end, mes);
-			} else {
-				cal.add(Calendar.DATE, 1);
-				mes = optimieren(cal, sm, end, mes);
-			}
-		}
-		return mes;
-	}
-
-	public ArrayList<Messe> generireDefaultMessen(Date anfang, Date ende) throws Exception {
-		ArrayList<Messe> rtn = new ArrayList<Messe>();
-		Calendar start = Calendar.getInstance();
-		for (StandartMesse sm : ada.getPfarrei().getStandardMessen()) {
-			if (!AData.sonstiges.isSonstiges(sm)) {
-				start.setTime(anfang);
-				ArrayList<Messe> m = optimieren(start, sm, ende, new ArrayList<Messe>());
-				rtn.addAll(m);
-			}
-		}
-		rtn.sort(Messe.compForMessen);
-		Utilities.logging(getClass(), "generireDefaultMessen", "DefaultMessen generiert");
-		return rtn;
-	}
-
-	public ArrayList<Messdiener> getLeiter(ArrayList<Messdiener> param) {
-		ArrayList<Messdiener> rtn = new ArrayList<Messdiener>();
-		for (Messdiener messdiener : param) {
-			if (messdiener.isIstLeiter()) {
-				rtn.add(messdiener);
-			}
-		}
-		return rtn;
-	}
-
-	public Messdiener getMessdienerFromString(String valueAt, ArrayList<Messdiener> arrayList) {
-		for (Messdiener messdiener : arrayList) {
-			if (messdiener.toString().equals(valueAt)) {
-				return messdiener;
-			}
-		}
-		return null;
-	}
 
 	public void pfarreiaendern(Pfarrei pf) {
 		WriteFile_Pfarrei wf = new WriteFile_Pfarrei(pf, this);
@@ -257,32 +133,32 @@ public class AProgress {
 				Manuell m = new Manuell(hand, ap, pf);
 				m.act();
 				WriteFile_Pfarrei.writeFile(pf, savepath);
-				JOptionPane op = new JOptionPane("Das Programm wird nun beendet und mit den neuen Daten gestartet!",
-						JOptionPane.INFORMATION_MESSAGE);
-				JFrame f = new JFrame();
-				f.setAlwaysOnTop(true);
-				JDialog dialog = op.createDialog(f, "Warnung!");
-				WEinFrame.farbe(dialog);
-				dialog.setVisible(true);
+			//	JOptionPane op = new JOptionPane("Das Programm wird nun beendet und mit den neuen Daten gestartet!",
+				//		JOptionPane.INFORMATION_MESSAGE);
+			//	JFrame f = new JFrame();
+				//f.setAlwaysOnTop(true);
+				//JDialog dialog = op.createDialog(f, "Warnung!");
+				//WEinFrame.farbe(dialog);
+				//dialog.setVisible(true);
 				System.exit(0);
 			} else {
 				String name = pf.getName();
 				// WARUM?: name = name.replaceAll(" ", "_");
-				File f = new File(savepath, name + AData.pfarredateiendung);
+				File f = new File(savepath, name + DateienVerwalter.pfarredateiendung);
 				f.delete();
 				name = name.replaceAll(" ", "_");
-				File f2 = new File(savepath, name + AData.pfarredateiendung);
+				File f2 = new File(savepath, name + DateienVerwalter.pfarredateiendung);
 				f2.delete();
-				ada.setPfarrei(pf);
+				//ada.setPfarrei(pf);
 				WriteFile_Pfarrei.writeFile(pf, savepath);
 			}
 		} catch (NullPointerException e) {
 		}
 		WriteFile_Pfarrei.writeFile(pf, savepath);
-		ada.erneuern(ap, savepath);
-		wfp.dispose();
-		wam = new WEinFrame(this);
-		start();
+		//ada.erneuern(ap, savepath);
+//		wfp.dispose();
+	//	wam = new WEinFrame(this);
+		//start();
 	}
 
 	private void remove(ArrayList<StandartMesse> smarray, StandartMesse sm) {
@@ -294,9 +170,8 @@ public class AProgress {
 		}
 	}
 
-	public void setNeu(boolean startWeF) {
-		wam.dispose();
-		AProgress ap = new AProgress(startWeF);
-		ap.start();
-	}
+	/*
+	 * public void setNeu(boolean startWeF) { wam.dispose(); AProgress ap = new
+	 * AProgress(startWeF); ap.start(); }
+	 */
 }

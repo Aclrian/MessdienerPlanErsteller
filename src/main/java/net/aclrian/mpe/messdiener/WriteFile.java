@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,10 +16,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messe.Messverhalten.NotFoundException;
+import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.start.AData;
-import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.utils.Utilities;
+import net.aclrian.mpe.utils.Log;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,7 +49,7 @@ public class WriteFile {
 	 * 
 	 * @throws IOException wirft IOException bei bspw. zu wenig Rechten
 	 */
-	public void toXML(AProgress ap) throws IOException {
+	public boolean toXML(ArrayList<StandartMesse> sm, ArrayList<Messdiener> medis) throws IOException {
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty("indent", "yes");
@@ -67,40 +69,50 @@ public class WriteFile {
 			security.appendChild(document.createTextNode("Aclrian"));
 			root.appendChild(security);
 
-			Element employee = document.createElement("Body");
-			xml.appendChild(employee);
+			Element body = document.createElement("Body");
+			xml.appendChild(body);
 
 			Element vName = document.createElement("Vorname");
 			vName.appendChild(document.createTextNode(this.me.getVorname()));
-			employee.appendChild(vName);
+			body.appendChild(vName);
 
 			Element nname = document.createElement("Nachname");
 			nname.appendChild(document.createTextNode(this.me.getNachnname()));
-			employee.appendChild(nname);
+			body.appendChild(nname);
+			
+			Element mail = document.createElement("Email");
+			mail.appendChild(document.createTextNode(this.me.getEmail()));
+			body.appendChild(mail);
 
 			Element mv = document.createElement("Messverhalten");
 			Messverhalten dv = this.me.getDienverhalten();
 
-			for (int i = 0; i < ap.getAda().getPfarrei().getStandardMessen().size(); i++) {
-				StandartMesse messe = ap.getAda().getPfarrei().getStandardMessen().get(i);
-				if (AData.sonstiges.isSonstiges(messe)) {
+			for (int i = 0; i < sm.size(); i++) {
+				StandartMesse messe = sm.get(i);
+				if (messe instanceof Sonstiges) {
 					continue;
 				}
-				boolean kwm = dv.getBestimmtes(messe, ap.getAda());
+				boolean kwm;
+				try {
+					kwm = dv.getBestimmtes(messe);
+				} catch (NotFoundException e) {
+					Log.getLogger().info("Konnte die StandartMesse: " + messe + " nicht finden.");
+					kwm = false;
+				}
 				String s = messe.toReduziertenString();
 				Element kwmesse = document.createElement(s);
 				kwmesse.appendChild(document.createTextNode(String.valueOf(kwm)));
 				mv.appendChild(kwmesse);
 			}
-			employee.appendChild(mv);
+			body.appendChild(mv);
 
 			Element leiter = document.createElement("Leiter");
 			leiter.appendChild(document.createTextNode(String.valueOf(this.me.isIstLeiter())));
-			employee.appendChild(leiter);
+			body.appendChild(leiter);
 
 			Element eintritt = document.createElement("Eintritt");
 			eintritt.appendChild(document.createTextNode(String.valueOf(this.me.getEintritt())));
-			employee.appendChild(eintritt);
+			body.appendChild(eintritt);
 
 			// Freunde und Geschwister
 			String[] f = me.getFreunde();
@@ -208,7 +220,7 @@ public class WriteFile {
 			}
 			anvertraute.appendChild(g3);
 
-			employee.appendChild(anvertraute);
+			body.appendChild(anvertraute);
 
 			DOMSource domSource = new DOMSource(document);
 			if (this.path.contains("//")) {
@@ -223,14 +235,14 @@ public class WriteFile {
 			OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
 			StreamResult result = new StreamResult(out);
 			transformer.transform(domSource, result);
-			Utilities.logging(this.getClass(), "toXML", "Datei wird gespeichert in: " + path + "//" + datei + ".xml");
+			Log.getLogger().info("Datei wird gespeichert in: " + path + "//" + datei + ".xml");
 			me.setFile(file);
 			boolean b = false;
-			for (Messdiener m : ap.getAda().getMediarray()) {
+			for (Messdiener m : medis) {
 				if (m.getFile().equals(me.getFile())) {
 					b = true;
-					ap.getAda().getMediarray().remove(m);
-					ap.getAda().getMediarray().add(me);
+					medis.remove(m);
+					medis.add(me);
 					break;
 				} else {
 					if (m.toString().equals(me.toString())) {
@@ -239,15 +251,14 @@ public class WriteFile {
 				}
 			}
 			if (b == false) {
-				ap.getAda().getMediarray().add(me);
-				if (ap.getWAlleMessen() != null) {
-					ap.getWAlleMessen().update(ap.getAda());
-				}
+				medis.add(me);
+				return true;
 			}
 		} catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
 		} catch (TransformerException tfe) {
 			tfe.printStackTrace();
 		}
+		return false;
 	}
 }

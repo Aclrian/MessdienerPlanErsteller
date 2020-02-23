@@ -16,10 +16,11 @@ import javax.swing.event.HyperlinkListener;
 
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.resources.References;
+import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Erroropener;
 import net.aclrian.mpe.utils.Utilities;
 
@@ -120,7 +121,7 @@ public class Start extends APanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String s = System.getProperty("user.home");
-				s += AData.textdatei;
+				s += DateienVerwalter.textdatei;
 				File f = new File(s);
 				f.delete();
 				ap.getWAlleMessen().dispose();

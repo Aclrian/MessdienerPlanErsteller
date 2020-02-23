@@ -23,7 +23,7 @@ import net.aclrian.mpe.components.MessverhaltenTable;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.resources.References;
+import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
 import net.aclrian.mpe.utils.Erroropener;
@@ -142,7 +142,7 @@ public class MediAnzeigen extends APanel {
 					update();
 				} else {
 					new Erroropener(
-							new Exception("Es können nur maximal " + Messdiener.freundelenght + " Messdiener eingetragen werden."));
+							new Exception("Es kï¿½nnen nur maximal " + Messdiener.freundelenght + " Messdiener eingetragen werden."));
 				}
 				update();
 			}
@@ -163,7 +163,7 @@ public class MediAnzeigen extends APanel {
 
 				} else {
 					new Erroropener(
-							new Exception("Es können nur maximal " + Messdiener.geschwilenght + " Messdiener eingetragen werden."));
+							new Exception("Es kï¿½nnen nur maximal " + Messdiener.geschwilenght + " Messdiener eingetragen werden."));
 				}
 				update();
 			}

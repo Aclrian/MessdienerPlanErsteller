@@ -30,7 +30,7 @@ import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Einstellungen;
-import net.aclrian.mpe.resources.References;
+import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame;

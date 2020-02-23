@@ -5,7 +5,7 @@ import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.aclrian.mpe.resources.References;
+import net.aclrian.mpe.start.References;
 
 public class ARadioButton extends JRadioButton {
 /**

@@ -11,10 +11,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.resources.References;
-import net.aclrian.mpe.start.AData;
+import net.aclrian.mpe.start.References;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Erroropener;
-import net.aclrian.mpe.utils.Utilities;
+import net.aclrian.mpe.utils.Log;
 
 public class ReadFile_Pfarrei {
 
@@ -30,7 +30,7 @@ public class ReadFile_Pfarrei {
 	    File fXmlFile = new File(pfadMitDateiundmitEndung);
 	    if (!fXmlFile.isDirectory()) {
 		String s = fXmlFile.getAbsolutePath();
-		if (s.endsWith(AData.pfarredateiendung)) {
+		if (s.endsWith(DateienVerwalter.pfarredateiendung)) {
 		    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		    Document doc;
@@ -103,7 +103,7 @@ public class ReadFile_Pfarrei {
 				    if (i < Einstellungen.lenght && i > -1) {
 					einst.editiereYear(i, anz);
 				    } else
-					Utilities.logging(ReadFile_Pfarrei.class, "getPfarrei",
+				    	Log.getLogger().info(
 						"id ist zu gro" + References.ss + "!");
 				} else if (eE.hasAttribute("Lleiter")) {
 				    String id = eE.getAttribute("Lleiter");
@@ -111,11 +111,11 @@ public class ReadFile_Pfarrei {
 				    if (i == 0 || i == 1) {
 					einst.editMaxDienen(id.equals("1"), anz);
 				    } else {
-					Utilities.logging(ReadFile_Pfarrei.class, "getPfarrei", "id Fehler!");
+				    	Log.getLogger().info("id Fehler!");
 				    }
 
 				} else {
-				    Utilities.logging(ReadFile_Pfarrei.class, "getPfarrei",
+					Log.getLogger().info(
 					    "unbekannte Node:" + eE.getTagName());
 				}
 			    }
@@ -126,7 +126,7 @@ public class ReadFile_Pfarrei {
 		}
 		String[] s2 = pfadMitDateiundmitEndung.split("\\" + File.separator);
 		name = s2[s2.length - 1];
-		name = name.substring(0, name.length() - AData.pfarredateiendung.length());
+		name = name.substring(0, name.length() - DateienVerwalter.pfarredateiendung.length());
 		name = name.replaceAll("_", " ");
 		pf = new Pfarrei(einst, sm, name, orte, typen, hochaemter);
 	    }

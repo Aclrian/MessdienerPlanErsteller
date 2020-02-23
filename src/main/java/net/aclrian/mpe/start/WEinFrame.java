@@ -57,7 +57,7 @@ import net.aclrian.mpe.panels.MediAnzeigen;
 import net.aclrian.mpe.panels.MesseAnzeigen;
 import net.aclrian.mpe.panels.StandartMesseListePanel;
 import net.aclrian.mpe.panels.Start;
-import net.aclrian.mpe.resources.References;
+import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.utils.Erroropener;
 import net.aclrian.mpe.utils.Utilities;
 
