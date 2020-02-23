@@ -23,7 +23,7 @@ import net.aclrian.mpe.components.ACheckBox;
 import net.aclrian.mpe.components.AList;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.resources.References;
+import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame;
 import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;

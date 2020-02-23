@@ -7,10 +7,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.resources.References;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.utils.Erroropener;
-import net.aclrian.mpe.utils.Utilities;
+import net.aclrian.mpe.utils.Log;
 
 /**
  * Klasse von Messen
@@ -43,20 +42,20 @@ public class Messe {
 	private ArrayList<Messdiener> leiter = new ArrayList<Messdiener>();
 	private String titel = "";
 
-	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, String titel,
-			AData ada) {
-		if (ada.getPfarrei().getOrte().contains(ort) && ada.getPfarrei().getTypen().contains(typ)) {
-			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, ada);
+	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, String titel) {
+			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ);
 			this.titel = titel;
-		} else {
-			Utilities.logging(getClass(), "init", "da ging was schief");
-		}
-
 	}
 
-	public Messe(Date d, StandartMesse sm, AData ada) {
+	/*
+	 * 
+	 */
+	public Messe(Date d, StandartMesse sm, ArrayList<StandartMesse> stme) {
 		boolean isdrin = false;
-		for (StandartMesse stm : ada.getSMoheSonstiges()) {
+		for (StandartMesse stm : stme) {
+			if (sm instanceof Sonstiges) {
+				continue;
+			}
 			if (sm.toString().equals(stm.toString())) {
 				isdrin = true;
 				break;
@@ -64,9 +63,9 @@ public class Messe {
 		}
 		if (isdrin) {
 			this.em = sm;
-			bearbeiten(false, sm.getAnz_messdiener(), d, sm.getOrt(), sm.getTyp(), ada);
+			bearbeiten(false, sm.getAnz_messdiener(), d, sm.getOrt(), sm.getTyp());
 		} else {
-			Utilities.logging(getClass(), "init2", "da ging was schief");
+			Log.getLogger().info("da ging was schief");
 		}
 	}
 
@@ -81,13 +80,8 @@ public class Messe {
 	 * @param kirche
 	 * @param type
 	 */
-	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, AData ada) {
-		if (ada.getPfarrei().getOrte().contains(ort) && ada.getPfarrei().getTypen().contains(typ)) {
-			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ, ada);
-		} else {
-			Utilities.logging(getClass(), "init3", "da ging was schief");
-		}
-
+	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ) {
+			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ);
 	}
 
 	public String ausgeben() {
@@ -172,13 +166,13 @@ public class Messe {
 	 * @param kirche
 	 * @param type
 	 */
-	public void bearbeiten(boolean hochamt, int anz_messdiener, Date date, String kirche, String type, AData ada) {
+	public void bearbeiten(boolean hochamt, int anz_messdiener, Date date, String kirche, String type) {
 		this.Wochentag = df.format(date);
 		this.hochamt = hochamt;
 		this.kirche = kirche;
 		this.typ = type;
 		this.date = date;
-		setAnz_messdiener(anz_messdiener, ada);
+		setAnz_messdiener(anz_messdiener);
 	}
 
 	public void einteilen(Messdiener medi) {
@@ -333,13 +327,8 @@ public class Messe {
 		}
 	}
 
-	private void setAnz_messdiener(int anz_messdiener, AData ada) {
-		if (anz_messdiener <= ada.getMediarray().size()) {
+	private void setAnz_messdiener(int anz_messdiener) {
 			this.anz_messdiener = anz_messdiener;
-		} else {
-			new Erroropener(new Exception("zu gro" + References.ss + "e Anzahl an Messdiener!"));
-			this.anz_messdiener = 0;
-		}
 	}
 
 	public void setDate(Date date) {

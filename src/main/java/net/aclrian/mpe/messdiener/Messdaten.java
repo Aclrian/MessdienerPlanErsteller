@@ -5,14 +5,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Einstellungen;
+import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.start.AProgress;
+import net.aclrian.mpe.start.References;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Erroropener;
+import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-import net.aclrian.mpe.utils.Utilities;
 
 public class Messdaten {
+
+	
+	
 	private ArrayList<Messdiener> geschwister;
 	private ArrayList<Messdiener> freunde;
 	private int anz_messen;
@@ -21,16 +28,18 @@ public class Messdaten {
 	private ArrayList<Date> eingeteilt = new ArrayList<>();
 	private ArrayList<Date> ausgeteilt = new ArrayList<>();
 	private ArrayList<Date> pause = new ArrayList<>();
-
+	private ArrayList<StandartMesse> sm;
 	RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
 
-	public Messdaten(Messdiener m, AProgress ap, int aktdatum) {
+
+	public Messdaten(Messdiener m, ArrayList<Messdiener> alle, ArrayList<StandartMesse> sm, Pfarrei pf, int aktdatum) {
 		geschwister = new ArrayList<>();
 		freunde = new ArrayList<>();
-		update(m, ap);
-		max_messen = berecheMax(m.getEintritt(), aktdatum, m.isIstLeiter(), ap.getAda().getPfarrei().getSettings());
+		update(m, alle);
+		max_messen = berecheMax(m.getEintritt(), aktdatum, m.isIstLeiter(), pf.getSettings());
 		anz_messen = 0;
 		insgesamtEingeteilt = 0;
+		this.sm = sm;
 	}
 
 	public void austeilen(Date d) {
@@ -271,27 +280,65 @@ public class Messdaten {
 		return insgesamtEingeteilt;
 	}
 
-	public void update(Messdiener m, AProgress ap) {
-		update(m.getGeschwister(),geschwister,m,ap);
-		update(m.getFreunde(),freunde,m,ap);
+	public void update(Messdiener m,ArrayList<Messdiener> alle) {
+		update(m.getGeschwister(),geschwister,m,alle);
+		update(m.getFreunde(),freunde,m,alle);
 	}
-	private void update(String[] s, ArrayList<Messdiener> anvertraute, Messdiener m,AProgress ap) {
+	private void update(String[] s, ArrayList<Messdiener> anvertraute, Messdiener m, ArrayList<Messdiener> alle) {
 		for (int i = 0; i < s.length; i++) {
 			Messdiener medi = null;
 			if (!s[i].equals("") && !s[i].equals("LEER")
 					&& !s[i].equals("Vorname, Nachname")) {
 				try {
-					medi = ap.getAda().getUtil().sucheMessdiener(s[i], m, ap);
+					medi = sucheMessdiener(s[i], m, alle);
 					if (medi != null) {
 						this.geschwister.add(medi);
 						rd.removeDuplicatedEntries(this.geschwister);
 					}
 				} catch (Exception e) {
 					new Erroropener(e);
-					Utilities.logging(this.getClass(), null, e.getMessage());
+					Log.getLogger().info(e.getMessage());
 				}
 			}
 		}
 	}
+	public Messdiener sucheMessdiener(String geschwi, Messdiener akt, ArrayList<Messdiener> medis) throws Exception {
+		for (Messdiener messdiener : medis) {
+			if (messdiener.makeId().equals(geschwi)) {
+				return messdiener;
+			}
+		}
+		throw new CouldnotFindMedi("Konnte f" + References.ue + "r " + akt.makeId() + " : " + geschwi + " nicht finden",
+				akt, geschwi, medis, sm);
+	}
 
+	public class CouldnotFindMedi extends Exception {
+		private Messdiener me;
+		private String falscherEintrag;
+		private ArrayList<Messdiener> medis;
+		private ArrayList<StandartMesse> sm;
+
+		public CouldnotFindMedi(String message, Messdiener me, String falscherEintrag, ArrayList<Messdiener> medis, ArrayList<StandartMesse> sm) {
+			super(message);
+			this.me = me;
+			this.falscherEintrag = falscherEintrag;
+			this.medis = medis;
+			this.sm = sm;
+		}
+
+		public Messdiener getMessdiener() {
+			return me;
+		}
+
+		public String getFalscherEintrag() {
+			return falscherEintrag;
+		}
+		
+		public ArrayList<Messdiener> getAlleMessdiener() {
+			return medis;
+		}
+		public ArrayList<StandartMesse> getStandartMesse() {
+			return sm;
+		}
+	}
 }

@@ -3,8 +3,7 @@ package net.aclrian.mpe.pfarrei;
 import java.util.Calendar;
 
 import net.aclrian.mpe.pfarrei.Setting.Attribut;
-import net.aclrian.mpe.utils.Utilities;
-
+import net.aclrian.mpe.utils.Log;
 public class Einstellungen {
 
 	public static final int lenght = 21;
@@ -41,7 +40,7 @@ public class Einstellungen {
 		}
 		settings[i] = new Setting(Attribut.year, eintrittabstandzumaktjahr, anz_max_dienen);
 		if (anz_max_dienen > settings[0].getAnz_dienen()) {
-			Utilities.logging(this.getClass(),this.getClass().getEnclosingMethod().getName() ,"Die Anzahl (" + anz_max_dienen + ") von der ID: year=" + eintrittabstandzumaktjahr
+			Log.getLogger().info("Die Anzahl (" + anz_max_dienen + ") von der ID: year=" + eintrittabstandzumaktjahr
 					+ " ist groesser als der Maximale Standardwert von allen nicht Leitern. Dieser max. Wert wird somit neu gesetzt.");
 			settings[0] = new Setting(Attribut.max, 0, anz_max_dienen);
 		}

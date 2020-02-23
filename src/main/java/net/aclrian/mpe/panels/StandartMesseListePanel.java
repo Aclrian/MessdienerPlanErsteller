@@ -15,7 +15,7 @@ import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.resources.References;
+import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame;
 import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
@@ -31,7 +31,7 @@ public class StandartMesseListePanel extends APanel {
 
 	public StandartMesseListePanel(int dfbtnwidth, int dfbtnheight, ArrayList<Messdiener> hauptarray,
 			Comparator<Messdiener> comp, AProgress ap, StandartMesse dfmesse) {
-		super(dfbtnwidth, dfbtnheight, true, dfmesse.toBenutzerfreundlichenString(),ap);//"Standartmesse für alle Messdiener anzeigen:", ap);
+		super(dfbtnwidth, dfbtnheight, true, dfmesse.toBenutzerfreundlichenString(),ap);//"Standartmesse fï¿½r alle Messdiener anzeigen:", ap);
 		alist = new AList<Messdiener>(hauptarray, comp);
 		for (Messdiener messdiener : hauptarray) {
 			if (messdiener.getDienverhalten().getBestimmtes(dfmesse, ap.getAda())) {

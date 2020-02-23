@@ -1,12 +1,17 @@
 package net.aclrian.mpe.messdiener;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Comparator;
 
+import org.apache.commons.validator.routines.EmailValidator;
+
+import javafx.stage.Window;
 import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.utils.Erroropener;
-import net.aclrian.mpe.utils.Utilities;
+import net.aclrian.mpe.messe.StandartMesse;
+import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
 
 /**
  * Klasse, mit der Messdiener digital gespeichert werden koennen
@@ -15,11 +20,20 @@ import net.aclrian.mpe.utils.Utilities;
  *
  */
 public class Messdiener {
+	/**
+	 * Dies ist die Anzahl, wie viele Freunde ein Messdiener haben kann.
+	 */
+	public static int freundelenght = 5;
+	
+	/**
+	 * Dies ist die Anzahl, wie viele Freunde ein Messdiener haben kann.
+	 */
+	public static int geschwilenght = 3;
 	private String Vorname = "";
 	private String Nachname = "";
-	public static int freundelenght = 5;
+	private String Email = "";
 	private String[] Freunde = new String[freundelenght];
-	public static int geschwilenght = 3;
+
 	private String[] Geschwister = new String[geschwilenght];
 	private Messverhalten dienverhalten;
 	private int Eintritt = 2000;
@@ -89,21 +103,50 @@ public class Messdiener {
 	 *                      eingeteilt werden soll
 	 * @param dienverhalten Wann kann er zu welchen Standart Messen (bspw. Sontag
 	 *                      Morgen oder Dienstag Abend) dienen
+	 * @param email			eine gültige Email-Addresse
+	 * @throws Exception 
 	 */
 	public void setzeAllesNeu(String vname, String nname, int Eintritt, boolean istLeiter,
+			Messverhalten dienverhalten, String email) throws NotValidException {
+		setVorname(vname);
+		setNachnname(nname);
+		setEintritt(Eintritt);
+		setIstLeiter(istLeiter);
+		setDienverhalten(dienverhalten);
+		setEmail(email);
+	}
+	
+	/**
+	 * 
+	 * @param vname         Vorname
+	 * @param nname         Nachname
+	 * @param Eintritt      Jahr des Einfuehrung Ist davon abhaengig, wie oft der
+	 *                      Messdiener eingeteilt werden soll
+	 * @param istLeiter     Leiter, Ist davon abhaengig, wie oft der Messdiener
+	 *                      eingeteilt werden soll
+	 * @param dienverhalten Wann kann er zu welchen Standart Messen (bspw. Sontag
+	 *                      Morgen oder Dienstag Abend) dienen
+	 * @throws Exception 
+	 */
+	public void setzeAllesNeuUndMailLeer(String vname, String nname, int Eintritt, boolean istLeiter,
 			Messverhalten dienverhalten) {
 		setVorname(vname);
 		setNachnname(nname);
 		setEintritt(Eintritt);
 		setIstLeiter(istLeiter);
 		setDienverhalten(dienverhalten);
+		setEmailEmpty();
 	}
 
 	/**
 	 * setzt Standart Werte
 	 */
 	private void setDeafault() {
-		setzeAllesNeu("Vorname", "Nachname", 2000, this.istLeiter, new Messverhalten(null));
+		try {
+			setzeAllesNeu("Vorname", "Nachname", 2000, this.istLeiter, new Messverhalten(), "");
+		} catch (NotValidException e) {
+			e.printStackTrace();
+		}
 		for (int i = 0; i < Freunde.length; i++) {
 			Freunde[i] = "";
 		}
@@ -154,20 +197,33 @@ public class Messdiener {
 	public void setIstLeiter(boolean istLeiter) {
 		this.istLeiter = istLeiter;
 	}
+	
+	public String getEmail() {
+		return Email;
+	}
+	
+	public void setEmail(String email) throws NotValidException {
+		if(email.contentEquals("") || EmailValidator.getInstance().isValid(email)) {
+			Email = email;
+			return;
+		}
+		throw new NotValidException();
+	}
+	public void setEmailEmpty(){
+		Email = "";
+	}
 
 	/**
 	 * Mit dieser Methode wird der Messdiener als .xml Datei lokal gespeichert
 	 * 
 	 * @param pfad
 	 */
-	public void makeXML(AProgress ap) {
-		WriteFile wf = new WriteFile(this, ap.getAda().getSavepath());
+	public void makeXML(ArrayList<Messdiener> medis, ArrayList<StandartMesse> sm, Window window) {
+		WriteFile wf = new WriteFile(this, DateienVerwalter.dv.getSavepath(window));
 		try {
-			wf.toXML(ap);
+			wf.toXML(sm, medis);
 		} catch (Exception e) {
-			new Erroropener(e);
-			Utilities.logging(this.getClass(), "makeXML", e.getMessage());
-			e.printStackTrace();
+			Dialogs.error(e, "Der Messdiener '"+makeId()+"' konnte nicht gespeichert werden.");
 		}
 	}
 
@@ -215,8 +271,8 @@ public class Messdiener {
 		this.daten = daten;
 	}
 
-	public void setnewMessdatenDaten(String savepath, int aktdatum, AProgress ap) {
-		this.daten = new Messdaten(this, ap, aktdatum);
+	public void setnewMessdatenDaten(String savepath, int aktdatum, Pfarrei pf, ArrayList<Messdiener> alle, ArrayList<StandartMesse> sm) {
+		this.daten = new Messdaten(this, alle, sm, pf, aktdatum);
 	}
 
 	public File getFile() {
@@ -226,5 +282,11 @@ public class Messdiener {
 	public void setFile(File file) {
 		this.file = file;
 
+	}
+	
+	public class NotValidException extends Exception{
+		public NotValidException() {
+			super("Keine gültige E-Mail Addresse");
+		}
 	}
 }

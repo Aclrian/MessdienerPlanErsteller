@@ -46,12 +46,16 @@ import net.aclrian.mpe.components.ATable;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Setting.Attribut;
-import net.aclrian.mpe.resources.References;
+import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Erroropener;
-import net.aclrian.mpe.utils.Utilities;
+import net.aclrian.mpe.utils.Log;
+
+//import net.aclrian.mpe.utils.Erroropener;
+//import net.aclrian.mpe.utils.Utilities;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JSpinner.DefaultEditor;
@@ -164,7 +168,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		setTitle("Erste Schritte: Einstellungen erstellen");
 		setIconImage(References.getIcon());
 		setBounds(0, 0, 615, 365);
-		setBounds(Utilities.setFrameMittig(623, 375));
+		// setBounds(Utilities.setFrameMittig(623, 375));
 		getContentPane().setLayout(null);
 
 		addComponentListener(new ComponentAdapter() {
@@ -202,8 +206,8 @@ public class WriteFile_Pfarrei extends JFrame {
 		getContentPane().add(btnWeiter);
 
 		stdmessen_panel.setVisible(false);
-		stdmessen_panel.setBorder(
-				new TitledBorder(WEinFrame.b, "Standartmessen", TitledBorder.LEADING, TitledBorder.TOP, null, WEinFrame.neuhell1));
+		stdmessen_panel.setBorder(new TitledBorder(WEinFrame.b, "Standartmessen", TitledBorder.LEADING,
+				TitledBorder.TOP, null, WEinFrame.neuhell1));
 		stdmessen_panel.setBounds(12, 12, 581, 278);
 		getContentPane().add(stdmessen_panel);
 		stdmessen_panel.setLayout(null);
@@ -299,7 +303,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		((DefaultEditor) stdmessen_comboBoxTag.getEditor()).getTextField().setEditable(false);
 		stdmessen_comboBoxTag.setBounds(117, 17, 114, 25);
 		stdmessen_panel.add(stdmessen_comboBoxTag);
-		//stdmessen_comboBoxTag.setModel(new DefaultComboBoxModel<String>());
+		// stdmessen_comboBoxTag.setModel(new DefaultComboBoxModel<String>());
 
 		panel = new JPanel();
 		panel.setBounds(100, 59, 114, 20);
@@ -444,8 +448,8 @@ public class WriteFile_Pfarrei extends JFrame {
 		bg12.add(rdbtnf12Nein);
 
 		einstellungenpanel = new JPanel();
-		einstellungenpanel.setBorder(new TitledBorder(WEinFrame.b, "Einstellungen",
-				TitledBorder.LEADING, TitledBorder.TOP, null, WEinFrame.neuhell1));
+		einstellungenpanel.setBorder(new TitledBorder(WEinFrame.b, "Einstellungen", TitledBorder.LEADING,
+				TitledBorder.TOP, null, WEinFrame.neuhell1));
 		einstellungenpanel.setBounds(12, 12, 581, 278);
 		getContentPane().add(einstellungenpanel);
 		einstellungenpanel.setLayout(null);
@@ -517,9 +521,8 @@ public class WriteFile_Pfarrei extends JFrame {
 		TableColumnModel columnModel = table.getColumnModel();
 		einstellungenpanel.setVisible(false);
 
-		ortetypenpanel.setBorder(new TitledBorder(WEinFrame.b,
-				"Orte und Messetypen hizuf" + References.ue + "gen", TitledBorder.LEADING, TitledBorder.TOP,
-				null, WEinFrame.neuhell1));
+		ortetypenpanel.setBorder(new TitledBorder(WEinFrame.b, "Orte und Messetypen hizuf" + References.ue + "gen",
+				TitledBorder.LEADING, TitledBorder.TOP, null, WEinFrame.neuhell1));
 		ortetypenpanel.setBounds(12, 12, 581, 278);
 		getContentPane().add(ortetypenpanel);
 		ortetypenpanel.setLayout(null);
@@ -614,7 +617,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		btnZurck.setEnabled(true);
 		btnZurck.addActionListener(e -> {
 			if (ortetypenpanel.isVisible()) {
-				ap.fertig(this, pf, ap.getAda().getSavepath(), ap);
+				ap.fertig(this, pf, DateienVerwalter.dv.getSavepath(), ap);
 				this.setVisible(false);
 				this.dispose();
 			}
@@ -633,7 +636,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		seting = pf.getSettings();
 		dmmm2.setDataVector(seting.getDatafuerTabelle(), columnNames2);
 		sm = pf.getStandardMessen();
-		sm.removeIf(t -> new Sonstiges().isSonstiges(t));
+		sm.removeIf(t -> t instanceof Sonstiges);
 		dmmm.setDataVector(getTableData(), columnNames);
 		update();
 		spinner_max_andere.setValue(pf.getSettings().getDaten(0).getAnz_dienen());
@@ -651,7 +654,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		}
 		rdbtnf1Ja.setSelected(eins);
 		rdbtnf1Nein.setSelected(!eins);
-		
+
 		rdbtnf2Ja.setSelected(false);
 		rdbtnf2Nein.setSelected(false);
 		if (pf.getSettings().getDaten(1).getAnz_dienen() == 0) {
@@ -706,7 +709,7 @@ public class WriteFile_Pfarrei extends JFrame {
 		if (error) {
 			return;
 		}
-		String s = ap.getAda().getUtil().getSavepath();// waehleOrdner();
+		String s = DateienVerwalter.dv.getSavepath();// waehleOrdner();
 		boolean hochaemter = rdbtnf12Ja.isSelected();
 		if (s != null) {
 			Pfarrei pf = new Pfarrei(seting, sm, name, orte, typen, hochaemter);
@@ -716,7 +719,6 @@ public class WriteFile_Pfarrei extends JFrame {
 
 	public static void writeFile(Pfarrei pf, String pfad) {
 		try {
-			Sonstiges son = new Sonstiges();
 			ArrayList<StandartMesse> Wsm = pf.getStandardMessen();
 
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -743,7 +745,7 @@ public class WriteFile_Pfarrei extends JFrame {
 			employee.appendChild(standartmessen);
 			for (int i = 0; i < Wsm.size(); i++) {
 				StandartMesse m = Wsm.get(i);
-				if (son.isSonstiges(m)) {
+				if (m instanceof Sonstiges) {
 					continue;
 				}
 
@@ -837,12 +839,12 @@ public class WriteFile_Pfarrei extends JFrame {
 			DOMSource domSource = new DOMSource(doc);
 			String datei = pf.getName();
 			datei = datei.replaceAll(" ", "_");
-			Utilities.logging(WriteFile_Pfarrei.class, "writeFile",
-					"Pfarrei wird gespeichert in :" + pfad + "//" + datei + AData.pfarredateiendung);
-			StreamResult streamResult = new StreamResult(new File(pfad + "//" + datei + AData.pfarredateiendung));
+			Log.getLogger()
+					.info("Pfarrei wird gespeichert in :" + pfad + "//" + datei + DateienVerwalter.pfarredateiendung);
+			StreamResult streamResult = new StreamResult(
+					new File(pfad + "//" + datei + DateienVerwalter.pfarredateiendung));
 			transformer.transform(domSource, streamResult);
-			Utilities.logging(WriteFile_Pfarrei.class, "writeFile",
-					"Pfarrei: " + pf.getName() + "wurde erfolgreich gespeichert!");
+			Log.getLogger().info("Pfarrei: " + pf.getName() + "wurde erfolgreich gespeichert!");
 		} catch (ParserConfigurationException pce) {
 			new Erroropener(pce);
 			pce.printStackTrace();
