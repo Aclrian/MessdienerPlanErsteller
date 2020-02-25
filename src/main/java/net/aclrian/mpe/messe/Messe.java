@@ -8,7 +8,7 @@ import java.util.Locale;
 
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.start.AData;
-import net.aclrian.mpe.utils.Erroropener;
+import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 
 /**
@@ -361,7 +361,7 @@ public class Messe {
 				|| (wochentag.startsWith("So"))) {
 			Wochentag = wochentag;
 		} else {
-			new Erroropener(new Exception("Wochentag: " + wochentag));
+			Dialogs.warn("Wochentag: " + wochentag + " existiert nicht!");
 		}
 	}
 

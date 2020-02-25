@@ -214,6 +214,7 @@ public class DateienVerwalter {
 						Log.getLogger().info("Der Speicherort '" + f + "' existiert nicht!");
 						getSpeicherort(window);
 					}
+					break;
 				}
 				bufferedReader.close();
 			} catch (IOException e) {
@@ -239,5 +240,13 @@ public class DateienVerwalter {
 			}
 		}
 		Log.getLogger().info("Der Speicherort liegt in: " + savepath);
+	}
+	
+	public void speicherortWechseln(Window window) {
+		String homedir = System.getProperty("user.home");
+		homedir = homedir + textdatei;
+		File f = new File(homedir);
+		f.delete();
+		getSpeicherort(window);
 	}
 }

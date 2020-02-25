@@ -1,6 +1,7 @@
 package net.aclrian.mpe.messe;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import net.aclrian.mpe.messdiener.KannWelcheMesse;
 import net.aclrian.mpe.start.References;
@@ -23,6 +24,14 @@ public class Messverhalten {
 					this.messen.add(new KannWelcheMesse(standartMesse, false));
 				}
 			}
+	}
+	
+	private Messverhalten(Collection<KannWelcheMesse> kwm) {
+		messen = new ArrayList<KannWelcheMesse>(kwm);
+	}
+	
+	public ArrayList<KannWelcheMesse> getKannWelcheMessen() {
+		return messen;
 	}
 
 	/**
@@ -158,18 +167,6 @@ public class Messverhalten {
 		return messen.toString();
 	}
 
-	public Object[][] getData(ArrayList<StandartMesse> asm) {
-		update(asm);
-		messen.sort(KannWelcheMesse.sort);
-		Object[][] rtn = new Object[messen.size()][2];
-		for (int i = 0; i < messen.size(); i++) {
-			KannWelcheMesse sm = messen.get(i);
-			rtn[i][0] = sm.getMesse().toBenutzerfreundlichenString();
-			rtn[i][1] = sm.isKanndann();
-		}
-		return rtn;
-	}
-
 	public void fuegeneueMesseHinzu(StandartMesse sm) {
 		messen.add(new KannWelcheMesse(sm, false));
 	}
@@ -186,5 +183,9 @@ public class Messverhalten {
 			return messe;
 		}
 
+	}
+
+	public static Messverhalten convert(Collection<KannWelcheMesse> col) {
+		return new Messverhalten(col);
 	}
 }

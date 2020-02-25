@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import javafx.stage.Window;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
@@ -78,8 +79,8 @@ public class AData {
 				}
 	}*/
 
-	public void  generateMessdaten() {
-		mediarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList(DateienVerwalter.dv.getSavepath(), pf.getStandardMessen());
+	public void  generateMessdaten(Window window) {
+		mediarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		for (Messdiener messdiener : mediarray) {
 			messdiener.setnewMessdatenDaten(DateienVerwalter.dv.getSavepath(), year, pf, mediarray);
@@ -124,7 +125,7 @@ public class AData {
 			}
 		}
 		rtn.sort(Messe.compForMessen);
-		Utilities.logging(getClass(), "generireDefaultMessen", "DefaultMessen generiert");
+		Log.getLogger().info("DefaultMessen generiert");
 		return rtn;
 	}
 
@@ -171,9 +172,9 @@ public class AData {
 		return sm;
 	}
 
-	public void erneuern(AProgress ap, String savepath) {
-		DateienVerwalter.erneuern();
-		savepath = DateienVerwalter.dv.getSavepath();
+	public void erneuern(Window window, String savepath) {
+		savepath = DateienVerwalter.dv.getSavepath(window);
+		DateienVerwalter.re_start(window);
 		try {
 			pf = DateienVerwalter.dv.getPfarrei();
 			if (pf == null) {
@@ -186,13 +187,13 @@ public class AData {
 		pf.getStandardMessen().clear();
 		pf.getStandardMessen().add(sonstiges);
 		boolean hatsonstiges = false;
-		mediarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList(savepath, pf.getStandardMessen());
+		mediarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 		if (!hatsonstiges) {
 			pf.getStandardMessen().add(sonstiges);
 		}
 		System.out.println(pf.getStandardMessen());
 		System.out.println(DateienVerwalter.dv.getPfarrei());
-		Utilities.logging(this.getClass(), "erneuern", "Es wurden " + mediarray.size() + " gefunden!");
+		Log.getLogger().info("Es wurden " + mediarray.size() + " gefunden!");
 	}
 
 	public void addMesse(Messe m) {

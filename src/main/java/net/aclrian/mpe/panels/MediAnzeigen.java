@@ -2,7 +2,7 @@ package net.aclrian.mpe.panels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
+//import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -21,15 +21,15 @@ import net.aclrian.mpe.components.ACheckBox;
 import net.aclrian.mpe.components.ATextField;
 import net.aclrian.mpe.components.MessverhaltenTable;
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messdiener.WriteFile;
-import net.aclrian.mpe.messe.Messverhalten;
+//import net.aclrian.mpe.messdiener.WriteFile;
+//import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
+//import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
 import net.aclrian.mpe.utils.Erroropener;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-import net.aclrian.mpe.utils.Utilities;
-
+//import net.aclrian.mpe.utils.Utilities;
+@Deprecated
 public class MediAnzeigen extends APanel {
 	private static final long serialVersionUID = 9198327596275692676L;
 	private ATextField jtfvorname = new ATextField("Vorname");
@@ -65,7 +65,7 @@ public class MediAnzeigen extends APanel {
 		setLayout(null);
 		geschwisterview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		freundeview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		atable.setMessverhalten(new Messverhalten(ap.getAda()), ap.getAda());
+		//atable.setMessverhalten(new Messverhalten(ap.getAda()), ap.getAda());
 		scrol.setViewportView(atable);
 		spinner.setModel(new SpinnerNumberModel(currentyear, currentyear - 18, currentyear, 1));
 		add(scrol);
@@ -87,7 +87,7 @@ public class MediAnzeigen extends APanel {
 		freundscroll.setViewportView(freundeview);
 		add(this.getBtnAbbrechen());
 		add(this.getBtnSpeichern());
-		getBtnAbbrechen().addActionListener(new ActionListener() {
+		/*getBtnAbbrechen().addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -96,7 +96,7 @@ public class MediAnzeigen extends APanel {
 				}
 				ap.getWAlleMessen().changeAP(EnumActivePanel.Start, true);
 			}
-		});
+		});*/
 
 		getBtnSpeichern().addActionListener(e -> speichern(ap));
 
@@ -122,7 +122,7 @@ public class MediAnzeigen extends APanel {
 					geschwisterview.remove(geschwisterview.getSelectedIndex());
 					update();
 				} catch (ArrayIndexOutOfBoundsException e2) {
-					Utilities.logging(getClass(), "vonGeschwi:ActionListener", e2.getMessage());
+				//	Utilities.logging(getClass(), "vonGeschwi:ActionListener", e2.getMessage());
 				}
 				update();
 			}
@@ -133,9 +133,9 @@ public class MediAnzeigen extends APanel {
 			public void actionPerformed(ActionEvent e) {
 				if (freunde.size() < Messdiener.freundelenght) {
 					try {
-						Messdiener m = ap.getWAlleMessen().getMedi();
+						/*Messdiener m = ap.getWAlleMessen().getMedi();
 						freunde.add(m);
-						dlmfr.addElement(m);
+						dlmfr.addElement(m);*/
 					} catch (NullPointerException e2) {
 						new Erroropener(new Exception("erst einen Messdiener ausw" + References.ae + "hlen"));
 					}
@@ -147,7 +147,7 @@ public class MediAnzeigen extends APanel {
 				update();
 			}
 		});
-		zuGeschw.addActionListener(new ActionListener() {
+		/*zuGeschw.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -167,7 +167,7 @@ public class MediAnzeigen extends APanel {
 				}
 				update();
 			}
-		});
+		});*/
 		graphics();
 		setVisible(true);
 	}
@@ -224,10 +224,10 @@ public class MediAnzeigen extends APanel {
 	public void setMedi(Messdiener medi, AProgress ap) {
 		setArt(Art.bearbeiten);
 		this.moben = medi;
-		atable.setMessverhalten(medi.getDienverhalten(), ap.getAda());
+		//atable.setMessverhalten(medi.getDienverhalten(), ap.getAda());
 		chckbxLeiter.setSelected(medi.isIstLeiter());
 		ArrayList<Messdiener> medis = new ArrayList<Messdiener>();
-		medis.addAll(ap.getAda().getMediarray());
+	//	medis.addAll(ap.getAda().getMediarray());
 		medis.removeIf(e -> e.toString().equals(medi.toString()));
 		setMedis(medi.getFreunde(), ap, freundeview, freunde);
 		setMedis(medi.getGeschwister(), ap, geschwisterview, geschwi);
@@ -244,7 +244,7 @@ public class MediAnzeigen extends APanel {
 	}
 
 	private void setMedis(String[] anv, AProgress ap, JList<Messdiener> m, ArrayList<Messdiener> array) {
-		for (String string : anv) {
+		/*for (String string : anv) {
 			for (Messdiener medi : ap.getAda().getMediarray()) {
 				if (medi.toString().equals(string)) {
 					((DefaultListModel<Messdiener>) m.getModel()).addElement(medi);
@@ -252,7 +252,7 @@ public class MediAnzeigen extends APanel {
 					continue;
 				}
 			}
-		}
+		}*/
 	}
 
 	public void speichern(AProgress ap) {
@@ -263,9 +263,9 @@ public class MediAnzeigen extends APanel {
 			if (getArt() == Art.bearbeiten) {
 				m.setFile(moben.getFile());
 			}
-			m.setzeAllesNeu(jtfvorname.getText(), jtfnachname.getText(),
+			/*m.setzeAllesNeu(jtfvorname.getText(), jtfnachname.getText(),
 					(int) ((SpinnerNumberModel) spinner.getModel()).getValue(), chckbxLeiter.isSelected(),
-					atable.getMessdaten(ap.getAda()));
+					atable.getMessdaten(ap.getAda()));*/
 			if (getArt() == Art.bearbeiten) {
 				boolean b = moben.getNachnname().equals(m.getNachnname());
 				boolean bo = moben.getVorname().equals(m.getVorname());
@@ -275,14 +275,14 @@ public class MediAnzeigen extends APanel {
 			}
 			m.setFreunde(getArrayString(freunde, m.getFreunde().length));
 			m.setGeschwister(getArrayString(geschwi, m.getGeschwister().length));
-			for (Messdiener messdiener : ap.getAda().getMediarray()) {
+			/*for (Messdiener messdiener : ap.getAda().getMediarray()) {
 				alteloeschen(m, messdiener.getFreunde(), bearbeitete);
 				alteloeschen(m, messdiener.getGeschwister(), bearbeitete);
 				if (moben != null) {
 					alteloeschen(moben, messdiener.getFreunde(), bearbeitete);
 					alteloeschen(moben, messdiener.getGeschwister(), bearbeitete);
 				}
-			}
+			}*/
 			for (int i = 0; i < geschwi.size(); i++) {
 				Messdiener medi = geschwi.get(i);
 				addBekanntschaft(medi, m, true);
@@ -294,7 +294,7 @@ public class MediAnzeigen extends APanel {
 			// speichern
 			RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<Messdiener>();
 			rd.removeDuplicatedEntries(bearbeitete);
-			try {
+			/*try {
 				for (Messdiener messdiener : bearbeitete) {
 					WriteFile wf = new WriteFile(messdiener, ap.getAda().getUtil().getSavepath());
 					wf.toXML(ap);
@@ -307,6 +307,7 @@ public class MediAnzeigen extends APanel {
 				e.printStackTrace();
 			}
 			ap.getWAlleMessen().changeAP(EnumActivePanel.Start, true);
+			*/
 		} else if (geschwi.size() > 3) {
 			new Erroropener(new Exception("Man kann nur maximal 3 Geschwister haben"));
 		} else if (freunde.size() > 5) {
