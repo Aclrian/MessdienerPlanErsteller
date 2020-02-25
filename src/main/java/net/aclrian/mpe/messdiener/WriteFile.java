@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,10 +18,13 @@ import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.messe.Messverhalten.NotFoundException;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Log;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javafx.stage.Window;
 
 /**
  * Mit dieser Klasse werden Mesdiener in xml-Dateien gespeichert
@@ -32,24 +34,23 @@ import org.w3c.dom.Element;
  */
 public class WriteFile {
 	private Messdiener me;
-	private String path;
 
 	/**
 	 * 
 	 * @param ps   der Messdiener, der gespeichert werden soll
 	 * @param path der Pfad, bei dem der Messdienergespeichter werden soll
 	 */
-	public WriteFile(Messdiener ps, String path) {
+	public WriteFile(Messdiener ps) {
 		this.me = ps;
-		this.path = path;
 	}
 
 	/**
 	 * speichert den Messdiener
+	 * @param window 
 	 * 
 	 * @throws IOException wirft IOException bei bspw. zu wenig Rechten
 	 */
-	public boolean toXML(ArrayList<StandartMesse> sm, ArrayList<Messdiener> medis) throws IOException {
+	public boolean toXML(Window window) throws IOException {
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty("indent", "yes");
@@ -87,8 +88,8 @@ public class WriteFile {
 			Element mv = document.createElement("Messverhalten");
 			Messverhalten dv = this.me.getDienverhalten();
 
-			for (int i = 0; i < sm.size(); i++) {
-				StandartMesse messe = sm.get(i);
+			for (int i = 0; i < DateienVerwalter.dv.getPfarrei().getStandardMessen().size(); i++) {
+				StandartMesse messe = DateienVerwalter.dv.getPfarrei().getStandardMessen().get(i);
 				if (messe instanceof Sonstiges) {
 					continue;
 				}
@@ -223,37 +224,15 @@ public class WriteFile {
 			body.appendChild(anvertraute);
 
 			DOMSource domSource = new DOMSource(document);
-			if (this.path.contains("//")) {
-				path.replaceAll("//", "/");
-				path.replaceAll("/", "//");
-			}
+			String path = DateienVerwalter.dv.getSavepath(window);
 			String datei = this.me.getNachnname() + ", " + this.me.getVorname();
-			// datei = new String(datei.getBytes(), "UTF-8");
 
 			File file = new File(path, datei + ".xml");
-			//
 			OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
 			StreamResult result = new StreamResult(out);
 			transformer.transform(domSource, result);
 			Log.getLogger().info("Datei wird gespeichert in: " + path + "//" + datei + ".xml");
 			me.setFile(file);
-			boolean b = false;
-			for (Messdiener m : medis) {
-				if (m.getFile().equals(me.getFile())) {
-					b = true;
-					medis.remove(m);
-					medis.add(me);
-					break;
-				} else {
-					if (m.toString().equals(me.toString())) {
-						m.getFile().delete();
-					}
-				}
-			}
-			if (b == false) {
-				medis.add(me);
-				return true;
-			}
 		} catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
 		} catch (TransformerException tfe) {

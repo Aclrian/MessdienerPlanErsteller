@@ -21,7 +21,7 @@ public class Main extends Application {
 	 * Das ist die Versionsnummer. Das b zeigt eine Beta-Version an.
 	 */
 	public static final String VersionID = "b699";
-
+//TODO Medi speichern
 	@Override
 	public void start(Stage stage) throws Exception {
 		getLogger().info("MpE: Version: " + VersionID);

@@ -36,7 +36,7 @@ public class StandartMesse {
 	try {
 	    d = df.parse(String.valueOf(beginn_stunde) + ":" + beginn_minute);
 	} catch (ParseException e) {
-	    new Erroropener(new Exception("Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen."));
+	    new Erroropener(new Exception("Es konnte kein Datum erstellt werden. Bitte die Eingaben Ã¼berpr" + References.ue + "fen."));
 	    e.printStackTrace();
 	}
 	SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
@@ -85,6 +85,12 @@ public class StandartMesse {
 	return Wochentag + "_" + String.valueOf(beginn_stunde) + ":" + beginn_minute + "-" + ort + " " + typ + " "
 		+ String.valueOf(anz_messdiener);
     }
+    
+    public String tokurzerBenutzerfreundlichenString(){
+    	return Wochentag +". "+ beginn_stunde+":"+beginn_minute + ": " + ort + " " +typ+ " (" + anz_messdiener + ")";
+    }
+
+    
     public String toBenutzerfreundlichenString(){
     	return typ + " jeden " +Wochentag+ "., " + "um " + beginn_stunde+":"+beginn_minute + " in " + ort;
     }

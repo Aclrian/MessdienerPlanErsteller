@@ -2,8 +2,6 @@ package net.aclrian.mpe.controller;
 
 import java.util.ArrayList;
 
-import com.jfoenix.controls.JFXListView;
-
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;

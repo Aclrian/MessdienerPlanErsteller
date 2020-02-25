@@ -61,10 +61,10 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TableView nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="table" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0">
               <columns>
-                <TableColumn prefWidth="75.0" sortable="false" text="Standardmesse" />
-                <TableColumn prefWidth="75.0" text="Kann dann" />
+                <TableColumn fx:id="stdm" prefWidth="75.0" sortable="false" text="Standardmesse" />
+                <TableColumn fx:id="kann" prefWidth="75.0" text="Kann" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -72,23 +72,23 @@
             </TableView>
          </children>
       </GridPane>
-      <SplitMenuButton maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" text="Speichern" GridPane.columnIndex="12" GridPane.columnSpan="4" GridPane.rowIndex="1">
+      <SplitMenuButton fx:id="button" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" onAction="#save" text="Speichern" GridPane.columnIndex="12" GridPane.columnSpan="4" GridPane.rowIndex="1">
         <items>
-          <MenuItem mnemonicParsing="false" text="Abbrechen" />
-          <MenuItem mnemonicParsing="false" text="Löschen" />
-            <MenuItem mnemonicParsing="false" text="Neu" />
+          <MenuItem mnemonicParsing="false" onAction="#cancel" text="Abbrechen" />
+          <MenuItem mnemonicParsing="false" onAction="#remove" text="Löschen" />
+            <MenuItem mnemonicParsing="false" onAction="#neu" text="Neu" />
         </items>
       </SplitMenuButton>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="8" GridPane.columnSpan="7" GridPane.rowIndex="4" GridPane.rowSpan="4">
         <tabs>
           <Tab text="Freunde">
                <content>
-                  <ListView prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="freunde" prefHeight="200.0" prefWidth="200.0" />
                </content>
           </Tab>
           <Tab text="Geschwister">
                <content>
-                  <ListView prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="geschwie" prefHeight="200.0" prefWidth="200.0" />
                </content>
           </Tab>
         </tabs>

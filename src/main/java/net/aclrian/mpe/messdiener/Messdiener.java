@@ -1,16 +1,12 @@
 package net.aclrian.mpe.messdiener;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Comparator;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
 import javafx.stage.Window;
 import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 
 /**
@@ -218,10 +214,10 @@ public class Messdiener {
 	 * 
 	 * @param pfad
 	 */
-	public void makeXML(ArrayList<Messdiener> medis, ArrayList<StandartMesse> sm, Window window) {
-		WriteFile wf = new WriteFile(this, DateienVerwalter.dv.getSavepath(window));
+	public void makeXML(Window window) {
+		WriteFile wf = new WriteFile(this);
 		try {
-			wf.toXML(sm, medis);
+			wf.toXML(window);
 		} catch (Exception e) {
 			Dialogs.error(e, "Der Messdiener '"+makeId()+"' konnte nicht gespeichert werden.");
 		}
@@ -271,8 +267,8 @@ public class Messdiener {
 		this.daten = daten;
 	}
 
-	public void setnewMessdatenDaten(String savepath, int aktdatum, Pfarrei pf, ArrayList<Messdiener> alle, ArrayList<StandartMesse> sm) {
-		this.daten = new Messdaten(this, alle, sm, pf, aktdatum);
+	public void setnewMessdatenDaten(int aktdatum) {
+		this.daten = new Messdaten(this);
 	}
 
 	public File getFile() {

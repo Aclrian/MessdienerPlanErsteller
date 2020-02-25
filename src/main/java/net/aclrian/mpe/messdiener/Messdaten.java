@@ -28,18 +28,24 @@ public class Messdaten {
 	private ArrayList<Date> eingeteilt = new ArrayList<>();
 	private ArrayList<Date> ausgeteilt = new ArrayList<>();
 	private ArrayList<Date> pause = new ArrayList<>();
-	private ArrayList<StandartMesse> sm;
 	RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
 
 
-	public Messdaten(Messdiener m, ArrayList<Messdiener> alle, ArrayList<StandartMesse> sm, Pfarrei pf, int aktdatum) {
+	public Messdaten(Messdiener m) {
 		geschwister = new ArrayList<>();
 		freunde = new ArrayList<>();
-		update(m, alle);
-		max_messen = berecheMax(m.getEintritt(), aktdatum, m.isIstLeiter(), pf.getSettings());
+		update(m);
+		max_messen = berecheMax(m.getEintritt(), getMaxYear(), m.isIstLeiter(), DateienVerwalter.dv.getPfarrei().getSettings());
 		anz_messen = 0;
 		insgesamtEingeteilt = 0;
-		this.sm = sm;
+	}
+	
+	public static int getMinYear() {
+		return getMaxYear() - 18;
+	}
+
+	public static int getMaxYear() {
+		return Calendar.getInstance().get(Calendar.YEAR);
 	}
 
 	public void austeilen(Date d) {
@@ -229,7 +235,6 @@ public class Messdaten {
 	}
 
 	public void einteilenZwang(Date date, boolean hochamt) {
-		try {
 			if (!contains(date, ausgeteilt)) {
 				eingeteilt.add(date);
 				anz_messen++;
@@ -238,11 +243,6 @@ public class Messdaten {
 					anz_messen--;
 				}
 			}
-		} catch (Exception e) {
-			new Erroropener(e);
-			e.printStackTrace();
-		}
-
 	}
 
 	private Date gettheNextDay(Date date) {
@@ -280,17 +280,17 @@ public class Messdaten {
 		return insgesamtEingeteilt;
 	}
 
-	public void update(Messdiener m,ArrayList<Messdiener> alle) {
-		update(m.getGeschwister(),geschwister,m,alle);
-		update(m.getFreunde(),freunde,m,alle);
+	public void update(Messdiener m) {
+		update(m.getGeschwister(),geschwister,m);
+		update(m.getFreunde(),freunde,m);
 	}
-	private void update(String[] s, ArrayList<Messdiener> anvertraute, Messdiener m, ArrayList<Messdiener> alle) {
+	private void update(String[] s, ArrayList<Messdiener> anvertraute, Messdiener m) {
 		for (int i = 0; i < s.length; i++) {
 			Messdiener medi = null;
 			if (!s[i].equals("") && !s[i].equals("LEER")
 					&& !s[i].equals("Vorname, Nachname")) {
 				try {
-					medi = sucheMessdiener(s[i], m, alle);
+					medi = sucheMessdiener(s[i], m);
 					if (medi != null) {
 						this.geschwister.add(medi);
 						rd.removeDuplicatedEntries(this.geschwister);
@@ -302,28 +302,24 @@ public class Messdaten {
 			}
 		}
 	}
-	public Messdiener sucheMessdiener(String geschwi, Messdiener akt, ArrayList<Messdiener> medis) throws Exception {
-		for (Messdiener messdiener : medis) {
+	public Messdiener sucheMessdiener(String geschwi, Messdiener akt) throws Exception {
+		for (Messdiener messdiener : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
 			if (messdiener.makeId().equals(geschwi)) {
 				return messdiener;
 			}
 		}
 		throw new CouldnotFindMedi("Konnte f" + References.ue + "r " + akt.makeId() + " : " + geschwi + " nicht finden",
-				akt, geschwi, medis, sm);
+				akt, geschwi);
 	}
 
 	public class CouldnotFindMedi extends Exception {
 		private Messdiener me;
 		private String falscherEintrag;
-		private ArrayList<Messdiener> medis;
-		private ArrayList<StandartMesse> sm;
 
-		public CouldnotFindMedi(String message, Messdiener me, String falscherEintrag, ArrayList<Messdiener> medis, ArrayList<StandartMesse> sm) {
+		public CouldnotFindMedi(String message, Messdiener me, String falscherEintrag) {
 			super(message);
 			this.me = me;
 			this.falscherEintrag = falscherEintrag;
-			this.medis = medis;
-			this.sm = sm;
 		}
 
 		public Messdiener getMessdiener() {
@@ -332,13 +328,6 @@ public class Messdaten {
 
 		public String getFalscherEintrag() {
 			return falscherEintrag;
-		}
-		
-		public ArrayList<Messdiener> getAlleMessdiener() {
-			return medis;
-		}
-		public ArrayList<StandartMesse> getStandartMesse() {
-			return sm;
 		}
 	}
 }

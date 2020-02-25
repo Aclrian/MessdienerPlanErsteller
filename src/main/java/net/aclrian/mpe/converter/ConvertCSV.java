@@ -9,16 +9,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import javafx.stage.Window;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.Messdiener.NotValidException;
 import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.utils.Erroropener;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Log;
 
 public class ConvertCSV {
 	// public void setzeAllesNeu(String vname, String nname, int Eintritt, boolean
 	// istLeiter,
-	// Messverhalten dienverhalten) {
+	// Messverhalten dienverhalten String email) {
 	// value: anweisung für medi, key ist index in welcher Zeile es steht
 	/*
 	 * 0:vorname| nur 1:nachname| nur 2:Eintritt 3:leiter|
@@ -27,10 +28,8 @@ public class ConvertCSV {
 	 * 
 	 */
 
-	public ConvertCSV(File f, ArrayList<Integer> sortierung) throws IOException {
-		AProgress ap = new AProgress(false);
-		new Erroropener(new Exception(
-				"Das Unter-Programm unterstützt die Vorlieben von Messdienern nicht!\n-Also wann sie dienen können"));
+	public ConvertCSV(File f, ArrayList<Integer> sortierung, Window window) throws IOException {
+		Log.getLogger().warning("Das Unter-Programm unterstützt die Vorlieben von Messdienern nicht!\n-Also wann sie dienen können");
 		if (f.exists() && f.getName().endsWith(".csv")) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f),"UTF-8"));
 			String line = "";
@@ -104,33 +103,33 @@ public class ConvertCSV {
 						break;
 					}
 				}
-				Messdiener m = new Messdiener(new File(ap.getAda().getSavepath()+File.separator+nachname+", "+vorname+".xml"));
-				m.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, new Messverhalten(ap.getAda()));
+				Messdiener m = new Messdiener(new File(DateienVerwalter.dv.getSavepath(window)+File.separator+nachname+", "+vorname+".xml"));
+				m.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, new Messverhalten());
 				try {
 				m.setEmail(email);
 				} catch (NotValidException e) {
-					new Erroropener(new Exception(email + " von " + m.makeId() + " ist nicht gültig"));
+					Log.getLogger().info(email + " von " + m.makeId() + " ist nicht gültig");
 					m.setEmailEmpty();
 				}
-				m.makeXML(ap);
+				m.makeXML(window);
 			}
 			br.close();
 		}
 	}
 
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		ArrayList<Integer> a = new ArrayList<>();
 		a.add(0);
 		a.add(1);
 		a.add(3);
 		a.add(2);
 		try {
-			new ConvertCSV(new File("C:\\Users\\Aclrian\\Desktop\\m.csv"), a );
+			new ConvertCSV(new File(""), a );
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.exit(0);
-	}
+	}*/
 }

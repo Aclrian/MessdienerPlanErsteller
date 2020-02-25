@@ -10,7 +10,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import net.aclrian.mpe.controller.MediController;
 import net.aclrian.mpe.messdiener.Messdiener.NotValidException;
 import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.messe.Sonstiges;
@@ -64,11 +63,11 @@ public class ReadFile {
 								}
 								int Eintritt = Integer
 										.parseInt(eElement.getElementsByTagName("Eintritt").item(0).getTextContent());
-								if(Eintritt < MediController.getMinYear()) {
-									Eintritt =MediController.getMinYear();
+								if(Eintritt < Messdaten.getMinYear()) {
+									Eintritt =Messdaten.getMinYear();
 								}
-								if(Eintritt > MediController.getMaxYear()) {
-									Eintritt = MediController.getMaxYear();
+								if(Eintritt > Messdaten.getMaxYear()) {
+									Eintritt = Messdaten.getMaxYear();
 								}
 								boolean istLeiter = Boolean
 										.valueOf(eElement.getElementsByTagName("Leiter").item(0).getTextContent());
