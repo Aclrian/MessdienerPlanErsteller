@@ -11,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import net.aclrian.mpe.controller.MainController;
+import net.aclrian.mpe.controller.MainController.EnumPane;
 import net.aclrian.mpe.start.VersionIDHandler;
 import net.aclrian.mpe.start.VersionIDHandler.EnumHandling;
 import net.aclrian.mpe.utils.DateienVerwalter;
@@ -38,6 +40,8 @@ public class Main extends Application {
 		stage.setTitle("MessdienerplanErsteller");
 		stage.setResizable(false);
 		stage.show();
+		((MainController)loader.getController()).changePane(EnumPane.start);
+		getLogger().info("Startbildschirm geladen");
 	}
 
 	public static void main(String[] args) {

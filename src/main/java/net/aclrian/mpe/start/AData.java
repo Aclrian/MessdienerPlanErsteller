@@ -21,7 +21,6 @@ public class AData {
 	
 	
 	
-	public static final Sonstiges sonstiges = new Sonstiges();
 	/**
 	 * Hier werden alle Messdiener aus {@link AData#savepath} gespeichert!
 	 */
@@ -79,56 +78,14 @@ public class AData {
 				}
 	}*/
 
-	public void  generateMessdaten(Window window) {
+	/*public void  generateMessdaten(Window window) {
 		mediarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		for (Messdiener messdiener : mediarray) {
 			messdiener.setnewMessdatenDaten(DateienVerwalter.dv.getSavepath(), year, pf, mediarray);
 		}
-	}
-	public ArrayList<Messe> optimieren(Calendar cal, StandartMesse sm, Date end, ArrayList<Messe> mes)
-			throws Exception {
-		if (cal.getTime().before(end) && !(sm instanceof Sonstiges)) {
-			SimpleDateFormat wochendagformat = new SimpleDateFormat("EEE");
-			String tag = wochendagformat.format(cal.getTime());
-			if (tag.startsWith(sm.getWochentag())) {
-				Date d = cal.getTime();
-				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-				SimpleDateFormat dfuhr = new SimpleDateFormat("dd-MM-yyyy-HH:mm");
-				try {
-					Date frting = dfuhr
-							.parse(df.format(d) + "-" + sm.getBeginn_stundealsString() + ":" + sm.getBeginn_minute());
-					Messe m = new Messe(frting, sm, pf.getStandardMessen());
-					mes.add(m);
-				} catch (Exception e) {
-					new Erroropener(e);
-					e.printStackTrace();
-				}
-				cal.add(Calendar.DATE, 7);
-				mes = optimieren(cal, sm, end, mes);
-			} else {
-				cal.add(Calendar.DATE, 1);
-				mes = optimieren(cal, sm, end, mes);
-			}
-		}
-		return mes;
-	}
-
-	public ArrayList<Messe> generireDefaultMessen(Date anfang, Date ende) throws Exception {
-		ArrayList<Messe> rtn = new ArrayList<Messe>();
-		Calendar start = Calendar.getInstance();
-		for (StandartMesse sm : pf.getStandardMessen()) {
-			if (!(sm instanceof Sonstiges)) {
-				start.setTime(anfang);
-				ArrayList<Messe> m = optimieren(start, sm, ende, new ArrayList<Messe>());
-				rtn.addAll(m);
-			}
-		}
-		rtn.sort(Messe.compForMessen);
-		Log.getLogger().info("DefaultMessen generiert");
-		return rtn;
-	}
-
+	}*/
+	
 	public ArrayList<Messdiener> getLeiter(ArrayList<Messdiener> param) {
 		ArrayList<Messdiener> rtn = new ArrayList<Messdiener>();
 		for (Messdiener messdiener : param) {
