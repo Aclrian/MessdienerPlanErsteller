@@ -4,10 +4,10 @@ import com.jfoenix.controls.JFXTextField;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -34,6 +34,7 @@ import net.aclrian.mpe.utils.RemoveDoppelte;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,10 +44,10 @@ import org.apache.commons.validator.routines.EmailValidator;
 
 public class MediController implements Controller {
 	public static final String eintritt_str = "Eintritt: ";
-	
-	private MainController mc;
+
 	private ArrayList<Messdiener> freund, geschwi;
 	private Messdiener moben;
+	private boolean locked = true;
 
 	private Label lf, lg;
 
@@ -68,10 +69,9 @@ public class MediController implements Controller {
 	@FXML
 	private SplitMenuButton button;
 	@FXML
-	private MenuItem cancel, loeschen, neu;
+	private MenuItem cancel, save_new;
 
-	public MediController(MainController mc) {
-		this.mc = mc;
+	public MediController() {
 	}
 
 	public void initialize() {
@@ -82,9 +82,26 @@ public class MediController implements Controller {
 	}
 
 	@Override
-	public void afterstartup() {
+	public void afterstartup(Window window, MainController mc) {
+		cancel.setOnAction(e -> {
+			locked = false;
+			mc.changePane(EnumPane.selectMedi);
+		});
+		save_new.setOnAction(e -> {
+			if (getMedi(window)) {
+				locked = false;
+				mc.changePane((Messdiener) null);
+			}
+		});
+		button.setOnAction(e -> {
+			if (getMedi(window)) {
+				locked = false;
+				mc.changePane(EnumPane.selectMedi);
+			}
+		});
+		// Email valid
 		email.focusedProperty().addListener((arg0, oldValue, newValue) -> {
-			if (!newValue) { // when focus lost
+			if (!newValue) {
 				email.setText(EmailValidator.getInstance().isValid(email.getText()) ? email.getText() : "");
 			}
 		});
@@ -180,7 +197,7 @@ public class MediController implements Controller {
 
 	@Override
 	public boolean isLocked() {
-		return true;
+		return locked;
 	}
 
 	public void setMedi(Messdiener messdiener) {
@@ -191,80 +208,85 @@ public class MediController implements Controller {
 		eintritt.setValue(messdiener.getEintritt());
 		updateFreunde(messdiener);
 		updateGeschwister(messdiener);
-		ArrayList<KannWelcheMesse> k = (ArrayList<KannWelcheMesse>) messdiener.getDienverhalten().getKannWelcheMessen()
-				.clone();
-		for (KannWelcheMesse kwm : ol) {
-			for (KannWelcheMesse kw : k) {
-				if (kwm.getMesse().toString().equalsIgnoreCase(kw.getMesse().toString())
-						&& (kwm.isKanndann() != kw.isKanndann())) {
-					kwm.setKanndann(!kwm.isKanndann());
+		Object o = messdiener.getDienverhalten().getKannWelcheMessen().clone();
+		if (o instanceof ArrayList<?>) {
+			for (KannWelcheMesse kwm : ol) {
+				for (Object k : ((ArrayList<?>) o)) {
+					if (k instanceof KannWelcheMesse) {
+						KannWelcheMesse kw = (KannWelcheMesse) k;
+						if (kwm.getMesse().toString().equalsIgnoreCase(kw.getMesse().toString())
+								&& (kwm.isKanndann() != kw.isKanndann())) {
+							kwm.setKanndann(!kwm.isKanndann());
+						}
+					}
 				}
 			}
-			moben = messdiener;
 		}
+		moben = messdiener;
 		// ol.addAll(kwm);
 		// ol.sort(KannWelcheMesse.sort);
 		getLogger().info("Messdiener wurde geladen");
 	}
 
-	public void getMedi(Window window, MainController mc) {
+	public boolean getMedi(Window window) {
 		try {
-		if (!name.getText().equals("") && !vorname.getText().equals("")) {
-			// ME
-			Messdiener m = new Messdiener(null);
-			if (moben != null) {
-				m.setFile(moben.getFile());
-			}
-			m.setzeAllesNeu(vorname.getText(), name.getText(), (int) eintritt.getValue(), leiter.isSelected(),
-					Messverhalten.convert(ol), email.getText());
-			if (moben != null) {
-				boolean b = moben.getNachnname().equals(m.getNachnname());
-				boolean bo = moben.getVorname().equals(m.getVorname());
-				if (b == false || bo == false) {
-					m.getFile().delete();
-				}
-			}
-			m.setFreunde(getArrayString(freund, Messdiener.freundelenght));
-			m.setGeschwister(getArrayString(geschwi, Messdiener.geschwilenght));
-			ArrayList<Messdiener> bearbeitete = new ArrayList<Messdiener>();
-			for (Messdiener messdiener : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
-				bearbeitete.addAll(alteloeschen(m, messdiener.getFreunde()));
-				bearbeitete.addAll(alteloeschen(m, messdiener.getGeschwister()));
+			if (!name.getText().equals("") && !vorname.getText().equals("")) {
+				// ME
+				Messdiener m = new Messdiener(null);
 				if (moben != null) {
-					bearbeitete.addAll(alteloeschen(moben, messdiener.getFreunde()));
-					bearbeitete.addAll(alteloeschen(moben, messdiener.getGeschwister()));
+					m.setFile(moben.getFile());
 				}
-			}
-			for (int i = 0; i < geschwi.size(); i++) {
-				Messdiener medi = geschwi.get(i);
-				addBekanntschaft(medi, m, true);
-				bearbeitete.add(medi);
-			}
-			for (int i = 0; i < freund.size(); i++) {
-				Messdiener medi = freund.get(i);
-				addBekanntschaft(medi, m, false);
-			}
-			// speichern
-			RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<Messdiener>();
-			rd.removeDuplicatedEntries(bearbeitete);
-			try {
-				for (Messdiener messdiener : bearbeitete) {
-					WriteFile wf = new WriteFile(messdiener);
+				m.setzeAllesNeu(vorname.getText(), name.getText(), (int) eintritt.getValue(), leiter.isSelected(),
+						Messverhalten.convert(ol), email.getText());
+				if (moben != null) {
+					boolean b = moben.getNachnname().equals(m.getNachnname());
+					boolean bo = moben.getVorname().equals(m.getVorname());
+					if (b == false || bo == false) {
+						m.getFile().delete();
+					}
+				}
+				m.setFreunde(getArrayString(freund, Messdiener.freundelenght));
+				m.setGeschwister(getArrayString(geschwi, Messdiener.geschwilenght));
+				ArrayList<Messdiener> bearbeitete = new ArrayList<Messdiener>();
+				for (Messdiener messdiener : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
+					bearbeitete.addAll(alteloeschen(m, messdiener.getFreunde()));
+					bearbeitete.addAll(alteloeschen(m, messdiener.getGeschwister()));
+					if (moben != null) {
+						bearbeitete.addAll(alteloeschen(moben, messdiener.getFreunde()));
+						bearbeitete.addAll(alteloeschen(moben, messdiener.getGeschwister()));
+					}
+				}
+				for (int i = 0; i < geschwi.size(); i++) {
+					Messdiener medi = geschwi.get(i);
+					addBekanntschaft(medi, m, true);
+					bearbeitete.add(medi);
+				}
+				for (int i = 0; i < freund.size(); i++) {
+					Messdiener medi = freund.get(i);
+					addBekanntschaft(medi, m, false);
+				}
+				// speichern
+				RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<Messdiener>();
+				rd.removeDuplicatedEntries(bearbeitete);
+				try {
+					for (Messdiener messdiener : bearbeitete) {
+						WriteFile wf = new WriteFile(messdiener);
+						wf.toXML(window);
+					}
+					WriteFile wf = new WriteFile(m);
 					wf.toXML(window);
+					getLogger().info("Messdiener " + m.makeId() + " wurde gespeichert!");
+				} catch (IOException e) {
+					Dialogs.error(e, "Konnte den Messdiener '" + m + "' nicht speichern");
 				}
-				WriteFile wf = new WriteFile(m);
-				wf.toXML(window);
-				getLogger().info("Messdiener " + m.makeId() + " wurde gespeichert!");
-			} catch (IOException e) {
-				Dialogs.error(e, "Konnte den Messdiener '" + m+ "' nicht speichern");
+				return true;
+			} else {
+				Dialogs.warn("Bitte einen Namen eintragen!");
 			}
-			mc.changePane(EnumPane.selectMedi);
-		} else {
-			Dialogs.warn("Bitte einen Namen eintragen!");
-		}
-		}catch (NotValidException e) {
+		} catch (NotValidException e) {
 			Dialogs.warn("Bitte eine richtige E-Mail oder nichts angeben!");
 		}
+		return false;
 	}
 
 	private void addBekanntschaft(Messdiener medi, Messdiener woben, boolean isGeschwister) {
@@ -308,6 +330,44 @@ public class MediController implements Controller {
 			}
 		}
 		return s;
+	}
+
+	private static void alteloeschen(Messdiener m, String[] array, ArrayList<Messdiener> ueberarbeitete) {
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].equals(m.toString())) {
+				array[i] = "";
+				ueberarbeitete.add(m);
+			}
+		}
+	}
+
+	public static boolean remove(Window window, Messdiener m) {
+		if (Dialogs.frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
+				"Löschen")) {
+			// moben.getFile().
+			File file = m.getFile();
+			file.delete();
+			ArrayList<Messdiener> ueberarbeitete = new ArrayList<Messdiener>();
+			for (Messdiener messdiener : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
+				alteloeschen(m, messdiener.getFreunde(), ueberarbeitete);
+				alteloeschen(m, messdiener.getGeschwister(), ueberarbeitete);
+			}
+			for (Messdiener medi : ueberarbeitete) {
+				if (medi.toString().equals(m.toString())) {
+					continue;
+				}
+				WriteFile wf = new WriteFile(medi);
+				try {
+					wf.toXML(window);
+					return true;
+				} catch (IOException e) {
+					Dialogs.error(e, "Konnte bei dem Bekannten '" + medi
+							+ "' von dem zulöschenden Messdiener diesen nicht löschen.");
+					return false;
+				}
+			}
+		}
+		return false;
 	}
 
 	private static ArrayList<Messdiener> alteloeschen(Messdiener m, String[] array) {
@@ -375,34 +435,5 @@ public class MediController implements Controller {
 			}
 		}
 		updateGeschwister(al);
-	}
-
-	// TODO get Scene from or without MenuItem
-
-	@FXML
-	public void save(ActionEvent e) {
-		getMedi(button.getScene().getWindow(), mc);
-		getLogger().info("");
-	}
-
-	@FXML
-	public void cancel(ActionEvent e) {
-		getLogger().info("cencel");
-		Object o = cancel.getParentPopup().getScene();
-		getLogger().info("");
-	}
-
-	@FXML
-	public void neu(ActionEvent e) {
-		getLogger().info("new");
-		Object o = cancel.getParentPopup().getScene();
-		getLogger().info("");
-	}
-
-	@FXML
-	public void remove(ActionEvent e) {
-		getLogger().info("rm");
-		Object o = cancel.getParentPopup().getScene();
-		getLogger().info("");
 	}
 }

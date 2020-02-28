@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.start.AData;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 
@@ -50,9 +51,9 @@ public class Messe {
 	/*
 	 * 
 	 */
-	public Messe(Date d, StandartMesse sm, ArrayList<StandartMesse> stme) {
+	public Messe(Date d, StandartMesse sm) {
 		boolean isdrin = false;
-		for (StandartMesse stm : stme) {
+		for (StandartMesse stm : DateienVerwalter.dv.getPfarrei().getStandardMessen()) {
 			if (sm instanceof Sonstiges) {
 				continue;
 			}

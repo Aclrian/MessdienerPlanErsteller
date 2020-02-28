@@ -59,7 +59,6 @@ import net.aclrian.mpe.panels.StandartMesseListePanel;
 import net.aclrian.mpe.panels.Start;
 import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.utils.Erroropener;
-import net.aclrian.mpe.utils.Utilities;
 
 public class WEinFrame extends JFrame {
 
@@ -165,46 +164,46 @@ public class WEinFrame extends JFrame {
 		minusmedi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (listmedi.getSelectedIndex() > -1) {
-					remove(getMedi(), ap.getAda().getMediarray());
-					Messdiener m = dfmedi.remove(listmedi.getSelectedIndex());
-					String s = "Soll der Messdiener: '" + m.makeId() + "' auch als Datei gel" + References.oe
-							+ "scht werden?\nDieser Vorgang kann nicht r" + References.ue + "ckg" + References.ae
-							+ "ngig gemacht werden";
-					JOptionPane op = new JOptionPane(s, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
-
-					JFrame f = new JFrame();
-					farbe(op);
-					JDialog dialog = op.createDialog(f, "Auch als Datei l" + References.oe + "schen?");
-					farbe(dialog);
-					dialog.setVisible(true);
-					try {
-						int selectedValue = (int) op.getValue();
-						if (selectedValue == 0) {
-							System.out.println("ds");
-							File file = m.getFile();
-							file.delete();
-							ArrayList<Messdiener> ueberarbeitete = new ArrayList<Messdiener>();
-							for (Messdiener messdiener : ap.getAda().getMediarray()) {
-								MediAnzeigen.alteloeschen(m, messdiener.getFreunde(), ueberarbeitete);
-								MediAnzeigen.alteloeschen(m, messdiener.getGeschwister(), ueberarbeitete);
-							}
-							for (Messdiener medi : ueberarbeitete) {
-								if (medi.toString().equals(m.toString())) {
-									continue;
-								}
-								WriteFile wf = new WriteFile(medi, ap.getAda().getUtil().getSavepath());
-								try {
-									wf.toXML(ap);
-								} catch (IOException e) {
-									new Erroropener(new Exception("Konnte die Datei nicht speichern"));
-									e.printStackTrace();
-								}
-							}
-						}
-					} catch (NullPointerException e) {
-					}
-				}
+//				if (listmedi.getSelectedIndex() > -1) {
+//					remove(getMedi(), ap.getAda().getMediarray());
+//					Messdiener m = dfmedi.remove(listmedi.getSelectedIndex());
+//					String s = "Soll der Messdiener: '" + m.makeId() + "' auch als Datei gel" + References.oe
+//							+ "scht werden?\nDieser Vorgang kann nicht r" + References.ue + "ckg" + References.ae
+//							+ "ngig gemacht werden";
+//					JOptionPane op = new JOptionPane(s, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
+//
+//					JFrame f = new JFrame();
+//					farbe(op);
+//					JDialog dialog = op.createDialog(f, "Auch als Datei l" + References.oe + "schen?");
+//					farbe(dialog);
+//					dialog.setVisible(true);
+//					try {
+//						int selectedValue = (int) op.getValue();
+//						if (selectedValue == 0) {
+//							System.out.println("ds");
+//							File file = m.getFile();
+//							file.delete();
+//							ArrayList<Messdiener> ueberarbeitete = new ArrayList<Messdiener>();
+//							for (Messdiener messdiener : ap.getAda().getMediarray()) {
+//								MediAnzeigen.alteloeschen(m, messdiener.getFreunde(), ueberarbeitete);
+//								MediAnzeigen.alteloeschen(m, messdiener.getGeschwister(), ueberarbeitete);
+//							}
+//							for (Messdiener medi : ueberarbeitete) {
+//								if (medi.toString().equals(m.toString())) {
+//									continue;
+//								}
+//								WriteFile wf = new WriteFile(medi, ap.getAda().getUtil().getSavepath());
+//								try {
+//									wf.toXML(ap);
+//								} catch (IOException e) {
+//									new Erroropener(new Exception("Konnte die Datei nicht speichern"));
+//									e.printStackTrace();
+//								}
+//							}
+//						}
+//					} catch (NullPointerException e) {
+//					}
+//				}
 			}
 		});
 		medipanel.add(minusmedi);
@@ -215,7 +214,7 @@ public class WEinFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (listmedi.getSelectedIndex() > -1) {
-					changeAP(EnumActivePanel.Medi, false);
+					/*changeAP(EnumActivePanel.Medi, false);
 					if (activepanel instanceof MediAnzeigen) {
 						Messdiener m = getMedi();
 						if (m != null) {
@@ -223,7 +222,7 @@ public class WEinFrame extends JFrame {
 							dfmedi.remove(listmedi.getSelectedIndex());
 							ap.getAda().getMediarray().remove(m);
 						}
-					}
+					}*/
 				}
 			}
 		});

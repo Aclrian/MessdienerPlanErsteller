@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
+
+import com.jfoenix.controls.JFXDatePicker;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class Dialogs {
@@ -82,12 +87,12 @@ public class Dialogs {
 		Optional<ButtonType> res = a.showAndWait();
 		return res.get() == ButtonType.OK;
 	}
-	
+
 	public static boolean frage(String string, String cancel, String ok) {
 		Alert a = new Alert(AlertType.CONFIRMATION);
 		a.setHeaderText(string);
-		((Button)a.getDialogPane().lookupButton(ButtonType.CANCEL)).setText(cancel);
-		((Button)a.getDialogPane().lookupButton(ButtonType.OK)).setText(ok);
+		((Button) a.getDialogPane().lookupButton(ButtonType.CANCEL)).setText(cancel);
+		((Button) a.getDialogPane().lookupButton(ButtonType.OK)).setText(ok);
 		Optional<ButtonType> res = a.showAndWait();
 		return res.get() == ButtonType.OK;
 	}
@@ -109,18 +114,18 @@ public class Dialogs {
 		return result.get();
 	}
 
-	public static<I> ArrayList<I> select(ArrayList<I> dataAmBestenSortiert, ArrayList<I> selected, String string) {
+	public static <I> ArrayList<I> select(ArrayList<I> dataAmBestenSortiert, ArrayList<I> selected, String string) {
 		Alert a = new Alert(AlertType.INFORMATION);
 		a.setHeaderText(string);
 		ListView<CheckBox> lw = new ListView<CheckBox>();
 		ArrayList<I> rtn = new ArrayList<I>();
 		for (int i = 0; i < dataAmBestenSortiert.size(); i++) {
-			boolean b=false;
+			boolean b = false;
 			I e = dataAmBestenSortiert.get(i);
 			for (int j = 0; j < selected.size(); j++) {
 				if (selected.get(j).toString().equalsIgnoreCase(e.toString())) {
 					rtn.add(e);
-					b=true;
+					b = true;
 					break;
 				}
 			}
@@ -144,19 +149,20 @@ public class Dialogs {
 		a.showAndWait();
 		return rtn;
 	}
-	
-	public static<I> ArrayList<I> selectS(ArrayList<I> dataAmBestenSortiert, ArrayList<String> selected, String string) {
+
+	public static <I> ArrayList<I> selectS(ArrayList<I> dataAmBestenSortiert, ArrayList<String> selected,
+			String string) {
 		Alert a = new Alert(AlertType.INFORMATION);
 		a.setHeaderText(string);
 		ListView<CheckBox> lw = new ListView<CheckBox>();
 		ArrayList<I> rtn = new ArrayList<I>();
 		for (int i = 0; i < dataAmBestenSortiert.size(); i++) {
-			boolean b=false;
+			boolean b = false;
 			I e = dataAmBestenSortiert.get(i);
 			for (int j = 0; j < selected.size(); j++) {
 				if (selected.get(j).equalsIgnoreCase(e.toString())) {
 					rtn.add(e);
-					b=true;
+					b = true;
 					break;
 				}
 			}
@@ -176,8 +182,47 @@ public class Dialogs {
 			});
 			lw.getItems().add(ch);
 		}
+		a.getDialogPane().setExpanded(true);
 		a.getDialogPane().setExpandableContent(lw);
 		a.showAndWait();
 		return rtn;
+	}
+
+	public static ArrayList<Date> getDates(String string, String dl, String dz) {
+		Alert a = new Alert(AlertType.INFORMATION);
+		a.setHeaderText(string);
+		JFXDatePicker d1 = new JFXDatePicker();
+		d1.setPromptText(dl);
+		JFXDatePicker d2 = new JFXDatePicker();
+		d2.setPromptText(dz);
+		ChangeListener<Object> e = new ChangeListener<Object>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Object> arg0, Object arg1, Object arg2) {
+				if (d1.getValue() != null && d2.getValue() != null) {
+					if (!Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
+							.after(Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()))) {
+						a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
+						return;
+					}
+				}
+				a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+			}
+		};
+		d1.valueProperty().addListener(e);
+		d1.focusedProperty().addListener(e);
+		d2.valueProperty().addListener(e);
+		d2.focusedProperty().addListener(e);
+		a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+		a.getDialogPane().setExpanded(true);
+		a.getDialogPane().setExpandableContent(new HBox(d1, d2));
+		Optional<ButtonType> o = a.showAndWait();
+		if (o.get().equals(ButtonType.OK)){
+			ArrayList<Date> rtn = new ArrayList<Date>();
+			rtn.add(0, Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			rtn.add(1, Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			return rtn;	
+		}
+		return null;
 	}
 }
