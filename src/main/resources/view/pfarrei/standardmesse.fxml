@@ -41,17 +41,17 @@
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </GridPane.margin>
       </JFXTreeTableView>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Neu" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Neu" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" onAction="#neu">
          <GridPane.margin>
             <Insets bottom="20.0" />
          </GridPane.margin>
       </Button>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Löschen" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.columnSpan="3" GridPane.rowIndex="6">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Löschen" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.columnSpan="3" GridPane.rowIndex="6" onAction="#löschen">
          <GridPane.margin>
             <Insets bottom="20.0" />
          </GridPane.margin>
       </Button>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Weiter" textAlignment="CENTER" GridPane.columnIndex="12" GridPane.columnSpan="3" GridPane.rowIndex="6">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Weiter" textAlignment="CENTER" GridPane.columnIndex="12" GridPane.columnSpan="3" GridPane.rowIndex="6" onAction="#weiter">
          <GridPane.margin>
             <Insets bottom="20.0" />
          </GridPane.margin>
