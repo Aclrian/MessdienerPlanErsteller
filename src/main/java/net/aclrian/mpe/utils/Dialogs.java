@@ -11,20 +11,30 @@ import java.util.Date;
 import java.util.Optional;
 
 import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTextField;
 
+import javafx.application.HostServices;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DialogEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import net.aclrian.fx.ASlider;
+import net.aclrian.mpe.messe.StandartMesse;
 
 public class Dialogs {
 
@@ -72,6 +82,13 @@ public class Dialogs {
 		a.showAndWait();
 	}
 
+	/**Use java.awt
+	 * 
+	 * @param open
+	 * @param string
+	 * @throws IOException
+	 */
+	@Deprecated
 	public static void open(URI open, String string) throws IOException {
 		Alert a = new Alert(AlertType.CONFIRMATION);
 		a.setHeaderText(string);
@@ -217,11 +234,104 @@ public class Dialogs {
 		a.getDialogPane().setExpanded(true);
 		a.getDialogPane().setExpandableContent(new HBox(d1, d2));
 		Optional<ButtonType> o = a.showAndWait();
-		if (o.get().equals(ButtonType.OK)){
+		if (o.get().equals(ButtonType.OK)) {
 			ArrayList<Date> rtn = new ArrayList<Date>();
 			rtn.add(0, Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 			rtn.add(1, Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-			return rtn;	
+			return rtn;
+		}
+		return null;
+	}
+
+//String wochentag, int beginn_h, String beginn_min, String ort, int anz_messdiener, String typ
+	public static StandartMesse standartmesse() {
+		Alert a = new Alert(AlertType.INFORMATION);
+		a.setHeaderText("Neue Standartmesse erstellen:");
+		JFXTextField ort = new JFXTextField();
+		ort.setPromptText("Ort:");
+		JFXTextField typ = new JFXTextField();
+		typ.setPromptText("Typ:");
+		ComboBox<String> wochentag = new ComboBox<String>(
+				FXCollections.observableArrayList("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"));
+		wochentag.setPromptText("Wochentag:");
+		Slider stunde = new Slider();
+		stunde.setMin(0);
+		stunde.setMax(24);
+		stunde.setBlockIncrement(1);
+
+		Slider minute = new Slider();
+		minute.setMin(0);
+		minute.setMax(59);
+
+		minute.setBlockIncrement(1);
+
+		Slider anz = new Slider();
+		anz.setMin(0);
+		anz.setMax(40);
+		anz.setBlockIncrement(1);
+		ChangeListener<Object> e = new ChangeListener<Object>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Object> arg0, Object arg1, Object arg2) {
+				try {
+					System.out.println(ort.getText());
+					System.out.println(typ.getText());
+					System.out.println(wochentag.getValue());
+					if (!ort.getText().equalsIgnoreCase("") && !typ.getText().equalsIgnoreCase("")
+							&& !wochentag.getValue().isBlank()) {
+						a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
+						return;
+					} else {
+						a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+					}
+				} catch (NullPointerException e2) {
+					a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+				}
+			}
+		};
+		typ.textProperty().addListener(e);
+		typ.focusedProperty().addListener(e);
+		ort.textProperty().addListener(e);
+		ort.focusedProperty().addListener(e);
+		wochentag.valueProperty().addListener(e);
+		wochentag.focusedProperty().addListener(e);
+
+		a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+		a.getDialogPane().setExpanded(true);
+		VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz);
+		v.setSpacing(20);
+		a.getDialogPane().setExpandableContent(v);
+		a.setOnShown(new EventHandler<DialogEvent>() {
+
+			@Override
+			public void handle(DialogEvent arg0) {
+
+				ASlider.makeASlider("Stunde: ", stunde);
+				ASlider.makeASlider(minute, d -> {
+					int i = (int) d;
+					String as;
+					if (i < 10) {
+						as = "0" + String.valueOf(i);
+					} else
+						as = String.valueOf(i);
+					as = "Minute: " + as;
+					return as;
+				});
+				ASlider.makeASlider("Anzahl: ", anz).setTooltip(new Tooltip("Anzahl der Messdiener"));
+
+				stunde.setValue(10);
+				minute.setValue(1);
+				minute.setValue(0);
+				anz.setValue(6);
+			}
+		});
+		Optional<ButtonType> o = a.showAndWait();
+		if (o.get().equals(ButtonType.OK)) {
+			String min = String.valueOf((int) minute.getValue());
+			if (((int) minute.getValue()) < 10)
+				min = "0" + min;
+			return new StandartMesse(wochentag.getValue(), (int) stunde.getValue(), min, ort.getText(),
+					(int) anz.getValue(), typ.getText());
 		}
 		return null;
 	}

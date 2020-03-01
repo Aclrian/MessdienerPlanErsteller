@@ -43,4 +43,44 @@ public class ASlider {
 		p.getChildren().add(l);
 		return l;
 	}
+
+	public static Label makeASlider(Slider s, IFormatter i) {
+		s.setOnScroll(new EventHandler<ScrollEvent>() {
+
+			@Override
+			public void handle(ScrollEvent e) {
+				double delta = s.getOrientation().equals(Orientation.HORIZONTAL) ? e.getDeltaY() : e.getDeltaX();
+				if (delta < 0) {
+					double i = s.getValue() - 1;
+					if (i > s.getMax())
+						i = s.getMax();
+					if (i < s.getMin())
+						i = s.getMin();
+					s.setValue(i);
+				}
+				if (delta > 0) {
+					double i = s.getValue() + 1;
+					if (i > s.getMax())
+						i = s.getMax();
+					if (i < s.getMin())
+						i = s.getMin();
+					s.setValue(i);
+				}
+			}
+		});
+		s.applyCss();// Entfernt Error
+		Pane p = (Pane) s.lookup(".thumb");
+		Label l = new Label();
+		s.valueProperty().addListener((observableValue, number, t1) -> {
+			String as = i.getString(s.getValue());
+			l.setText(as);
+		});
+
+		p.getChildren().add(l);
+		return l;
+	}
+
+	public static interface IFormatter {
+		String getString(double d);
+	}
 }

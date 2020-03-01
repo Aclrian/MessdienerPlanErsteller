@@ -29,7 +29,22 @@ public class Main extends Application {
 		getLogger().info("MpE: Version: " + VersionID);
 		getLogger().info("MpE-fx is starting");
 		versioncheck();
+		try {
 		DateienVerwalter.re_start(stage);
+		} catch(NullPointerException e) {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("/view/pfarrei/standardmesse.fxml"));
+			loader.setController(new PfarreiController());
+			Parent root = loader.load();
+			Scene scene = new Scene(root);
+			stage.setScene(scene);
+
+			stage.setTitle("MessdienerplanErsteller");
+			stage.setResizable(false);
+			stage.show();
+			getLogger().info("Startbildschirm geladen");
+			return;
+		}
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));
 
