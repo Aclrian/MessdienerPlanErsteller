@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -40,13 +40,21 @@
     <RowConstraints minHeight="10.0" percentHeight="14.2857143" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <JFXTextField alignment="CENTER" promptText="Name der Pfarrei" GridPane.columnIndex="4" GridPane.columnSpan="8" GridPane.valignment="CENTER" />
+      <TableView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="7" GridPane.columnSpan="8" GridPane.rowIndex="2" GridPane.rowSpan="5">
+        <columns>
+          <TableColumn prefWidth="75.0" text="C1" />
+          <TableColumn prefWidth="75.0" text="C2" />
+        </columns>
+         <GridPane.margin>
+            <Insets bottom="20.0" />
+         </GridPane.margin>
+      </TableView>
       <Slider blockIncrement="1.0" majorTickUnit="5.0" max="10.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" value="3.0" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="3" />
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Zurück" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#zurück" text="Zurück" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="CENTER">
          <GridPane.margin>
             <Insets bottom="10.0" top="10.0" />
          </GridPane.margin></Button>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Weiter" GridPane.columnIndex="13" GridPane.columnSpan="2">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Weiter" GridPane.columnIndex="12" GridPane.columnSpan="3">
          <GridPane.margin>
             <Insets bottom="10.0" top="10.0" />
          </GridPane.margin></Button>
@@ -57,11 +65,6 @@
       </Label>
       <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Messdiener" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
       <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Leiter" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-      <JFXTreeTableView GridPane.columnIndex="7" GridPane.columnSpan="8" GridPane.rowIndex="2" GridPane.rowSpan="5">
-         <GridPane.margin>
-            <Insets bottom="20.0" />
-         </GridPane.margin>
-      </JFXTreeTableView>
       <Slider blockIncrement="1.0" majorTickUnit="5.0" max="10.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" value="3.0" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="2" />
       <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Maximale Anzahl:" GridPane.columnIndex="7" GridPane.columnSpan="3" GridPane.rowIndex="1">
          <font>
