@@ -212,6 +212,7 @@ public class DateienVerwalter {
 						setSavepath(line);
 					} else {
 						Log.getLogger().info("Der Speicherort '" + f + "' existiert nicht!");
+						savepath.delete();
 						getSpeicherort(window);
 					}
 					break;

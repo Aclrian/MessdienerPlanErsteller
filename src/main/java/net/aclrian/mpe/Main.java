@@ -32,17 +32,7 @@ public class Main extends Application {
 		try {
 		DateienVerwalter.re_start(stage);
 		} catch(NullPointerException e) {
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource("/view/pfarrei/standardmesse.fxml"));
-			loader.setController(new PfarreiController());
-			Parent root = loader.load();
-			Scene scene = new Scene(root);
-			stage.setScene(scene);
-
-			stage.setTitle("MessdienerplanErsteller");
-			stage.setResizable(false);
-			stage.show();
-			getLogger().info("Startbildschirm geladen");
+			PfarreiController.start(stage);
 			return;
 		}
 		FXMLLoader loader = new FXMLLoader();

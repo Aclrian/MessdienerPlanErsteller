@@ -40,7 +40,7 @@ public class AData {
 			ap.pfarreiaendern(pf);
 			return;
 		}
-		pf.getStandardMessen().add(sonstiges);
+		pf.getStandardMessen().add(new Sonstiges());
 		mediarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList(DateienVerwalter.dv.getSavepath(), pf.getStandardMessen());
 		mediarray.sort(Messdiener.compForMedis);
 		Log.getLogger().info("Es wurden " + mediarray.size() + " gefunden!");
@@ -142,11 +142,11 @@ public class AData {
 			return;
 		}
 		pf.getStandardMessen().clear();
-		pf.getStandardMessen().add(sonstiges);
+		pf.getStandardMessen().add(new Sonstiges());
 		boolean hatsonstiges = false;
 		mediarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 		if (!hatsonstiges) {
-			pf.getStandardMessen().add(sonstiges);
+			pf.getStandardMessen().add(new Sonstiges());
 		}
 		System.out.println(pf.getStandardMessen());
 		System.out.println(DateienVerwalter.dv.getPfarrei());

@@ -8,12 +8,12 @@ import java.net.URI;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 
-import javafx.application.HostServices;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -41,6 +41,14 @@ public class Dialogs {
 	public static void info(String string) {
 		Log.getLogger().info(string);
 		Alert a = new Alert(AlertType.INFORMATION);
+		a.setHeaderText(string);
+		a.showAndWait();
+	}
+	
+	public static void info(String header, String string) {
+		Log.getLogger().info(string);
+		Alert a = new Alert(AlertType.INFORMATION);
+		a.setTitle(header);
 		a.setHeaderText(string);
 		a.showAndWait();
 	}
@@ -274,9 +282,6 @@ public class Dialogs {
 			@Override
 			public void changed(ObservableValue<? extends Object> arg0, Object arg1, Object arg2) {
 				try {
-					System.out.println(ort.getText());
-					System.out.println(typ.getText());
-					System.out.println(wochentag.getValue());
 					if (!ort.getText().equalsIgnoreCase("") && !typ.getText().equalsIgnoreCase("")
 							&& !wochentag.getValue().isBlank()) {
 						a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
@@ -326,6 +331,7 @@ public class Dialogs {
 			}
 		});
 		Optional<ButtonType> o = a.showAndWait();
+		try {
 		if (o.get().equals(ButtonType.OK)) {
 			String min = String.valueOf((int) minute.getValue());
 			if (((int) minute.getValue()) < 10)
@@ -333,6 +339,7 @@ public class Dialogs {
 			return new StandartMesse(wochentag.getValue(), (int) stunde.getValue(), min, ort.getText(),
 					(int) anz.getValue(), typ.getText());
 		}
+		}catch (NoSuchElementException e1) {}
 		return null;
 	}
 }

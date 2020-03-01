@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -36,25 +37,31 @@
     <RowConstraints minHeight="10.0" percentHeight="14.2857143" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <JFXTreeTableView GridPane.columnSpan="16" GridPane.rowSpan="6" GridPane.valignment="CENTER">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#neu" text="Neu" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="3">
          <GridPane.margin>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </GridPane.margin>
-      </JFXTreeTableView>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Neu" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" onAction="#neu">
-         <GridPane.margin>
-            <Insets bottom="20.0" />
+            <Insets bottom="10.0" top="10.0" />
          </GridPane.margin>
       </Button>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Löschen" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.columnSpan="3" GridPane.rowIndex="6" onAction="#löschen">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#löschen" text="Löschen" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.columnSpan="3">
          <GridPane.margin>
-            <Insets bottom="20.0" />
+            <Insets bottom="10.0" top="10.0" />
          </GridPane.margin>
       </Button>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Weiter" textAlignment="CENTER" GridPane.columnIndex="12" GridPane.columnSpan="3" GridPane.rowIndex="6" onAction="#weiter">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#weiter" text="Weiter" textAlignment="CENTER" GridPane.columnIndex="12" GridPane.columnSpan="3">
          <GridPane.margin>
-            <Insets bottom="20.0" />
+            <Insets bottom="10.0" top="10.0" />
          </GridPane.margin>
       </Button>
+      <TableView fx:id="table" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="16" GridPane.rowIndex="1" GridPane.rowSpan="6">
+        <columns>
+          <TableColumn fx:id="time" editable="false" maxWidth="1.7976931348623157E308" prefWidth="150.0" text="Zeit" />
+            <TableColumn fx:id="ort" editable="false" prefWidth="135.0" text="Ort" />
+            <TableColumn fx:id="typ" editable="false" prefWidth="135.0" text="Typ" />
+            <TableColumn fx:id="anz" editable="false" prefWidth="90.0" text="Anzahl" />
+        </columns>
+         <GridPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" />
+         </GridPane.margin>
+      </TableView>
    </children>
 </GridPane>
