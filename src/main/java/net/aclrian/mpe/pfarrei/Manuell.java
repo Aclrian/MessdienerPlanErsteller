@@ -33,6 +33,8 @@ public class Manuell {
 	private Pfarrei pf;
 
 	public Manuell(ArrayList<Handling> hand, ArrayList<Messdiener> medis, Pfarrei pf) {
+		// TODO need to be included
+		need to be included
 		this.hand = hand;
 		this.medis = medis;
 		this.pf = pf;
@@ -53,11 +55,11 @@ public class Manuell {
 				}
 			}
 		}
-		WriteFile_Pfarrei.writeFile(pf, DateienVerwalter.dv.getSavepath(window));
+		WriteFile_Pfarrei.writeFile(pf, window);
 		for (Messdiener m : medis) {
-			WriteFile wf = new WriteFile(m, DateienVerwalter.dv.getSavepath(window));
+			WriteFile wf = new WriteFile(m);
 			try {
-				wf.toXML();
+				wf.toXML(window);
 			} catch (IOException e) {
 				Dialogs.error(e, "Es ist ein Fehler aufgetreten");
 			}

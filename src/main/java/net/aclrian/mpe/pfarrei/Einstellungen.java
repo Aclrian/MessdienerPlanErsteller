@@ -1,6 +1,9 @@
 package net.aclrian.mpe.pfarrei;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import net.aclrian.mpe.pfarrei.Setting.Attribut;
 import net.aclrian.mpe.utils.Log;
@@ -12,25 +15,9 @@ public class Einstellungen {
 	public Einstellungen() {
 		settings[0] = new Setting(Attribut.max, 0, 0);
 		settings[1] = new Setting(Attribut.max, 1, 0);
-		settings[2] = new Setting(Attribut.year, 0, 0);
-		settings[3] = new Setting(Attribut.year, 1, 0);
-		settings[4] = new Setting(Attribut.year, 2, 0);
-		settings[5] = new Setting(Attribut.year, 3, 0);
-		settings[6] = new Setting(Attribut.year, 4, 0);
-		settings[7] = new Setting(Attribut.year, 5, 0);
-		settings[8] = new Setting(Attribut.year, 6, 0);
-		settings[9] = new Setting(Attribut.year, 7, 0);
-		settings[10] = new Setting(Attribut.year, 8, 0);
-		settings[11] = new Setting(Attribut.year, 9, 0);
-		settings[12] = new Setting(Attribut.year, 10, 0);
-		settings[13] = new Setting(Attribut.year, 11, 0);
-		settings[14] = new Setting(Attribut.year, 12, 0);
-		settings[15] = new Setting(Attribut.year, 13, 0);
-		settings[16] = new Setting(Attribut.year, 14, 0);
-		settings[17] = new Setting(Attribut.year, 15, 0);
-		settings[18] = new Setting(Attribut.year, 16, 0);
-		settings[19] = new Setting(Attribut.year, 17, 0);
-		settings[20] = new Setting(Attribut.year, 18, 0);
+		for (int i = 2; i < settings.length; i++) {
+			settings[i] = new Setting(Attribut.year, i-2, 0);
+		}
 	}
 
 	public void editiereYear(int eintrittabstandzumaktjahr, int anz_max_dienen) {
@@ -61,6 +48,16 @@ public class Einstellungen {
 			int currentyear = Calendar.getInstance().get(Calendar.YEAR);
 			rtn[i - 2][0] = currentyear-(i - 2);
 			rtn[i - 2][1] = s.getAnz_dienen();
+		}
+		return rtn;
+	}
+	
+	public List<Setting> getSettings() {
+		List<Setting> rtn = new ArrayList<Setting>();
+		for (Setting setting : settings) {
+			if (setting.getA() != Attribut.max) {
+				rtn.add(setting);
+			}
 		}
 		return rtn;
 	}

@@ -1,5 +1,7 @@
 package net.aclrian.mpe.pfarrei;
 
+import net.aclrian.mpe.messdiener.Messdaten;
+
 public class Setting {
 
 	public enum Attribut{
@@ -21,6 +23,10 @@ public class Setting {
 	
 	public int getId() {
 		return id;
+	}
+	
+	public Integer getJahr() {
+		return Messdaten.getMaxYear()-id;
 	}
 	
 	public int getAnz_dienen() {
