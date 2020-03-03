@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import net.aclrian.mpe.controller.MainController;
 import net.aclrian.mpe.controller.MainController.EnumPane;
@@ -17,40 +18,77 @@ import net.aclrian.mpe.start.VersionIDHandler;
 import net.aclrian.mpe.start.VersionIDHandler.EnumHandling;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.DateienVerwalter.NoSuchPfarrei;
 
 public class Main extends Application {
 	/**
 	 * Das ist die Versionsnummer. Das b zeigt eine Beta-Version an.
 	 */
 	public static final String VersionID = "b699";
-//TODO Medi speichern
+
 	@Override
 	public void start(Stage stage) throws Exception {
-		getLogger().info("MpE: Version: " + VersionID);
-		getLogger().info("MpE-fx is starting");
-		versioncheck();
-		try {
-		DateienVerwalter.re_start(stage);
-		} catch(NullPointerException e) {
-			PfarreiController.start(stage);
-			return;
-		}
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));
-
-		Parent root = loader.load();
-		Scene scene = new Scene(root);
-		stage.setScene(scene);
-
-		stage.setTitle("MessdienerplanErsteller");
-		stage.setResizable(false);
-		stage.show();
-		((MainController)loader.getController()).changePane(EnumPane.start);
-		getLogger().info("Startbildschirm geladen");
+		//Object o = getParameters();
+		main(stage);
+		
 	}
 
+	public void main(Stage stage) {
+		try {
+			getLogger().info("MpE: Version: " + VersionID);
+			getLogger().info("MpE-fx is starting");
+			stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
+			versioncheck();
+			try {
+			DateienVerwalter.re_start(stage);
+			} catch (NoSuchPfarrei e) {
+				Runnable r = new Runnable() {
+					
+					@Override
+					public void run() {
+						FXMLLoader loader = new FXMLLoader();
+						loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));
+
+						Parent root;
+						try {
+							root = loader.load();
+						
+						Scene scene = new Scene(root);
+						stage.setScene(scene);
+
+						stage.setTitle("MessdienerplanErsteller");
+						stage.setResizable(false);
+						stage.show();
+						((MainController)loader.getController()).changePane(EnumPane.start);
+						getLogger().info("Startbildschirm geladen");
+						} catch (IOException e) {
+							Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");
+						}
+					}
+				};
+				PfarreiController.start(stage, e.getSavepath(), r);
+				return;
+			}
+			
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));
+
+			Parent root = loader.load();
+			Scene scene = new Scene(root);
+			stage.setScene(scene);
+
+			stage.setTitle("MessdienerplanErsteller");
+			stage.setResizable(false);
+			stage.show();
+			((MainController)loader.getController()).changePane(EnumPane.start);
+			getLogger().info("Startbildschirm geladen");
+		} catch (Exception e) {
+			Dialogs.error(e, "Es ist ein unerwarteter Fehler aufgetreten:");
+		}
+	}
+	
 	public static void main(String[] args) {
-		launch(args);
+		Application.launch(Main.class, args);
 		
 		// TODO csv Converter
 		/*} else if (args[0].startsWith("csv")) {

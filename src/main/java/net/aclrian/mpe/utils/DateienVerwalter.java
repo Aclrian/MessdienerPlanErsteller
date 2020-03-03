@@ -39,7 +39,7 @@ public class DateienVerwalter {
 	
 	public static DateienVerwalter dv;
 	
-	public static void re_start(Window window) {
+	public static void re_start(Window window) throws NoSuchPfarrei {
 		if (ersterStart) {
 			dv = new DateienVerwalter(window);
 		} else {
@@ -49,11 +49,11 @@ public class DateienVerwalter {
 		
 	}
 	
-	private DateienVerwalter(Window window) {
+	private DateienVerwalter(Window window) throws NoSuchPfarrei {
 		this.getSpeicherort(window);
 		File f = getPfarreFile();
 		if(f == null) {
-			//TODO start WriteFile_Pfarrei or similar
+			throw new NoSuchPfarrei(savepath);
 		}
 		pf = ReadFile_Pfarrei.getPfarrei(f.getAbsolutePath());
 	}
@@ -249,5 +249,15 @@ public class DateienVerwalter {
 		File f = new File(homedir);
 		f.delete();
 		getSpeicherort(window);
+	}
+	
+	public static class NoSuchPfarrei extends Exception{
+		private final String savepath;
+		public NoSuchPfarrei(String savepath) {
+			this.savepath=savepath;
+		}
+		public String getSavepath() {
+			return savepath;
+		}
 	}
 }

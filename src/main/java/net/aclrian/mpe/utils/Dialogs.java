@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
+import com.sun.tools.javac.Main;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,7 +21,9 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -33,14 +36,18 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.messe.StandartMesse;
 
 public class Dialogs {
-
+	public static class Icon{}
+	private static Icon i = new Icon();
 	public static void info(String string) {
 		Log.getLogger().info(string);
 		Alert a = new Alert(AlertType.INFORMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
 		a.showAndWait();
 	}
@@ -48,6 +55,8 @@ public class Dialogs {
 	public static void info(String header, String string) {
 		Log.getLogger().info(string);
 		Alert a = new Alert(AlertType.INFORMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setTitle(header);
 		a.setHeaderText(string);
 		a.showAndWait();
@@ -56,6 +65,8 @@ public class Dialogs {
 	public static void warn(String string) {
 		Log.getLogger().warning(string);
 		Alert a = new Alert(AlertType.WARNING);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
 		a.showAndWait();
 	}
@@ -63,6 +74,8 @@ public class Dialogs {
 	public static void error(String string) {
 		Log.getLogger().severe(string);
 		Alert a = new Alert(AlertType.ERROR);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
 		a.showAndWait();
 	}
@@ -76,6 +89,8 @@ public class Dialogs {
 			Log.getLogger().severe("no cause");
 		}
 		Alert a = new Alert(AlertType.ERROR);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
 
 		StringWriter sw = new StringWriter();
@@ -90,24 +105,53 @@ public class Dialogs {
 		a.showAndWait();
 	}
 
-	/**Use java.awt
+	/**
 	 * 
 	 * @param open
 	 * @param string
 	 * @throws IOException
 	 */
-	@Deprecated
 	public static void open(URI open, String string) throws IOException {
 		Alert a = new Alert(AlertType.CONFIRMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
 		Optional<ButtonType> res = a.showAndWait();
 		if (res.get() == ButtonType.OK) {
 			Desktop.getDesktop().browse(open);
 		}
 	}
+	public static void open(URI open, String string, String ok, String close) throws IOException {
+		ButtonType od = new ButtonType(ok, ButtonBar.ButtonData.OK_DONE);
+		ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
+		Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
+		a.setHeaderText(string);
+		Optional<ButtonType> res = a.showAndWait();
+		if (res.get() == od) {
+			Desktop.getDesktop().browse(open);
+		}
+	}
+	
+	public static void open(URI open, String titel, String string, String ok, String close) throws IOException {
+		ButtonType od = new ButtonType(ok, ButtonBar.ButtonData.OK_DONE);
+		ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
+		Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
+		a.setHeaderText(string);
+		a.setTitle(titel);
+		Optional<ButtonType> res = a.showAndWait();
+		if (res.get() == od) {
+			Desktop.getDesktop().browse(open);
+		}
+	}
 
 	public static boolean frage(String string) {
 		Alert a = new Alert(AlertType.CONFIRMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
 		Optional<ButtonType> res = a.showAndWait();
 		return res.get() == ButtonType.OK;
@@ -115,6 +159,8 @@ public class Dialogs {
 
 	public static boolean frage(String string, String cancel, String ok) {
 		Alert a = new Alert(AlertType.CONFIRMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
 		((Button) a.getDialogPane().lookupButton(ButtonType.CANCEL)).setText(cancel);
 		((Button) a.getDialogPane().lookupButton(ButtonType.OK)).setText(ok);
@@ -129,6 +175,8 @@ public class Dialogs {
 
 	public static String text(String string, String kurz) {
 		TextInputDialog dialog = new TextInputDialog();
+		Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		dialog.setTitle("Eingabe");
 		dialog.setHeaderText(string);
 		dialog.setContentText(kurz + ":");
@@ -141,6 +189,8 @@ public class Dialogs {
 
 	public static <I> ArrayList<I> select(ArrayList<I> dataAmBestenSortiert, ArrayList<I> selected, String string) {
 		Alert a = new Alert(AlertType.INFORMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
 		ListView<CheckBox> lw = new ListView<CheckBox>();
 		ArrayList<I> rtn = new ArrayList<I>();
@@ -178,6 +228,8 @@ public class Dialogs {
 	public static <I> ArrayList<I> selectS(ArrayList<I> dataAmBestenSortiert, ArrayList<String> selected,
 			String string) {
 		Alert a = new Alert(AlertType.INFORMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
 		ListView<CheckBox> lw = new ListView<CheckBox>();
 		ArrayList<I> rtn = new ArrayList<I>();
@@ -215,6 +267,8 @@ public class Dialogs {
 
 	public static ArrayList<Date> getDates(String string, String dl, String dz) {
 		Alert a = new Alert(AlertType.INFORMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
 		JFXDatePicker d1 = new JFXDatePicker();
 		d1.setPromptText(dl);
@@ -251,9 +305,10 @@ public class Dialogs {
 		return null;
 	}
 
-//String wochentag, int beginn_h, String beginn_min, String ort, int anz_messdiener, String typ
 	public static StandartMesse standartmesse() {
 		Alert a = new Alert(AlertType.INFORMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText("Neue Standartmesse erstellen:");
 		JFXTextField ort = new JFXTextField();
 		ort.setPromptText("Ort:");

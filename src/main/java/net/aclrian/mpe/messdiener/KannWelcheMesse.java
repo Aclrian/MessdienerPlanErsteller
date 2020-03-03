@@ -52,14 +52,6 @@ public class KannWelcheMesse {
 		return messe.toString() + ":" + kanndann;
 	}
 
-	public static ArrayList<KannWelcheMesse> get(ArrayList<StandartMesse> sm) {
-		ArrayList<KannWelcheMesse> rtn = new ArrayList<KannWelcheMesse>();
-		for (StandartMesse standartMesse : sm) {
-			rtn.add(new KannWelcheMesse(standartMesse, false));
-		}
-		return rtn;
-	}
-
 	public String getString() {
 		return messe.tokurzerBenutzerfreundlichenString();
 	}

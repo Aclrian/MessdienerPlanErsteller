@@ -27,7 +27,6 @@ import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.Messdiener.NotValidException;
 import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.RemoveDoppelte;
@@ -158,8 +157,8 @@ public class MediController implements Controller {
 		});
 		kann.setCellFactory(tc -> new CheckBoxTableCell<>());
 		kann.setEditable(true);
-		ArrayList<StandartMesse> sm = DateienVerwalter.dv.getPfarrei().getStandardMessen();
-		ol = FXCollections.observableArrayList(KannWelcheMesse.get(sm));
+		Messverhalten mv = new Messverhalten();
+		ol = FXCollections.observableArrayList(mv.getKannWelcheMessen());
 		ol.sort(KannWelcheMesse.sort);
 		stdm.setReorderable(false);
 		kann.setReorderable(false);
@@ -201,6 +200,7 @@ public class MediController implements Controller {
 	}
 
 	public void setMedi(Messdiener messdiener) {
+		if(messdiener == null)return;
 		name.setText(messdiener.getNachnname());
 		vorname.setText(messdiener.getVorname());
 		email.setText(messdiener.getEmail());
