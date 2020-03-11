@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.function.UnaryOperator;
 
 import com.jfoenix.controls.JFXTextField;
 
@@ -13,6 +14,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,8 +23,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.aclrian.fx.ASlider;
@@ -34,12 +40,12 @@ import net.aclrian.mpe.pfarrei.WriteFile_Pfarrei;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 
-public class PfarreiController{
+public class PfarreiController {
 	private final String savepath;
 	private ObservableList<StandartMesse> ol = FXCollections.emptyObservableList();
 	private Stage stage;
 	private boolean weiter = false;
-	private Runnable main;
+	private Main main;
 	// ---------------------------------------
 	private ObservableList<Setting> settings;
 
@@ -59,7 +65,7 @@ public class PfarreiController{
 	@FXML
 	private Slider leiter, medi;
 
-	public PfarreiController(Stage stage, String savepath, Runnable main) {
+	public PfarreiController(Stage stage, String savepath, Main main) {
 		this.savepath = savepath;
 		this.stage = stage;
 		this.main = main;
@@ -93,6 +99,17 @@ public class PfarreiController{
 			t2.setItems(settings);
 			t2.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 			t2.autosize();
+			t2.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+				@Override
+				public void handle(MouseEvent e) {
+					if(e.getClickCount() == 2 && e.getButton().equals(MouseButton.PRIMARY)) {
+						int i = t2.getSelectionModel().getSelectedIndex();
+						Setting s = settings.get(i);
+						settings.set(i,Dialogs.chance(s));
+					}
+				}
+			});
 		} else {
 			time.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getZeit()));
 			time.setStyle("-fx-alignment: CENTER;");
@@ -156,24 +173,30 @@ public class PfarreiController{
 					"NO PANIK: https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Was-wird-unter-'Anzahl'-verstanden%3F is dead! Long live GITHUB!");
 		}
 	}
-	
+
 	@FXML
 	public void save(ActionEvent e) {
-		if(name.getText().equalsIgnoreCase("")) {
+		if (name.getText().equalsIgnoreCase("")) {
 			Dialogs.error("Bitte gebe einen Namen ein.");
 			return;
 		}
 		Einstellungen einst = new Einstellungen();
-		einst.editMaxDienen(false, (int)medi.getValue());
-		einst.editMaxDienen(true, (int)leiter.getValue());
-		for (int i = 0; i < Einstellungen.lenght-2; i++) {
+		einst.editMaxDienen(false, (int) medi.getValue());
+		einst.editMaxDienen(true, (int) leiter.getValue());
+		for (int i = 0; i < Einstellungen.lenght - 2; i++) {
 			einst.editiereYear(settings.get(i).getId(), settings.get(i).getAnz_dienen());
 		}
 		ArrayList<StandartMesse> sm = new ArrayList<StandartMesse>(ol);
-		Pfarrei pf = new Pfarrei(einst, sm, name.getText(),hochamt.isSelected());
-		WriteFile_Pfarrei.writeFile(pf, ((Button)e.getSource()).getParent().getScene().getWindow(), savepath);
-		Dialogs.info("Das Programm muss nun neu gestartet werden.");
-		System.exit(0);
+		Pfarrei pf = new Pfarrei(einst, sm, name.getText(), hochamt.isSelected());
+		Window s = ((Button) e.getSource()).getParent().getScene().getWindow();
+		WriteFile_Pfarrei.writeFile(pf, s, savepath);
+		try {
+			((Stage) s).close();
+			main.main(new Stage());
+		} catch (Exception ex) {
+			Dialogs.info("Das Programm muss nun neu gestartet werden.");
+			System.exit(0);
+		}
 	}
 
 	public void weiter() {
@@ -216,9 +239,9 @@ public class PfarreiController{
 		}
 	}
 
-	public static void start(Stage stage, String savepath, Runnable r) {
+	public static void start(Stage stage, String savepath, Main main) {
 		FXMLLoader loader = new FXMLLoader();
-		PfarreiController cont = new PfarreiController(stage,savepath,r);
+		PfarreiController cont = new PfarreiController(stage, savepath, main);
 		loader.setLocation(cont.getClass().getResource("/view/pfarrei/standardmesse.fxml"));
 		loader.setController(cont);
 		Parent root;

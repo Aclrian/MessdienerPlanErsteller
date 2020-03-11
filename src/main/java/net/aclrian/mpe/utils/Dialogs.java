@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
-import com.sun.tools.javac.Main;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -39,10 +38,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.messe.StandartMesse;
+import net.aclrian.mpe.pfarrei.Setting;
+import net.aclrian.mpe.start.References;
 
 public class Dialogs {
-	public static class Icon{}
+	public static class Icon {
+	}
+
 	private static Icon i = new Icon();
+
 	public static void info(String string) {
 		Log.getLogger().info(string);
 		Alert a = new Alert(AlertType.INFORMATION);
@@ -51,7 +55,7 @@ public class Dialogs {
 		a.setHeaderText(string);
 		a.showAndWait();
 	}
-	
+
 	public static void info(String header, String string) {
 		Log.getLogger().info(string);
 		Alert a = new Alert(AlertType.INFORMATION);
@@ -121,6 +125,7 @@ public class Dialogs {
 			Desktop.getDesktop().browse(open);
 		}
 	}
+
 	public static void open(URI open, String string, String ok, String close) throws IOException {
 		ButtonType od = new ButtonType(ok, ButtonBar.ButtonData.OK_DONE);
 		ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -133,7 +138,7 @@ public class Dialogs {
 			Desktop.getDesktop().browse(open);
 		}
 	}
-	
+
 	public static void open(URI open, String titel, String string, String ok, String close) throws IOException {
 		ButtonType od = new ButtonType(ok, ButtonBar.ButtonData.OK_DONE);
 		ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -171,20 +176,6 @@ public class Dialogs {
 	public static void fatal(String string) {
 		error(string);
 		System.exit(-1);
-	}
-
-	public static String text(String string, String kurz) {
-		TextInputDialog dialog = new TextInputDialog();
-		Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		dialog.setTitle("Eingabe");
-		dialog.setHeaderText(string);
-		dialog.setContentText(kurz + ":");
-		Optional<String> result = dialog.showAndWait();
-		if (result.isEmpty()) {
-			return "";
-		}
-		return result.get();
 	}
 
 	public static <I> ArrayList<I> select(ArrayList<I> dataAmBestenSortiert, ArrayList<I> selected, String string) {
@@ -325,7 +316,6 @@ public class Dialogs {
 		Slider minute = new Slider();
 		minute.setMin(0);
 		minute.setMax(59);
-
 		minute.setBlockIncrement(1);
 
 		Slider anz = new Slider();
@@ -387,14 +377,53 @@ public class Dialogs {
 		});
 		Optional<ButtonType> o = a.showAndWait();
 		try {
-		if (o.get().equals(ButtonType.OK)) {
-			String min = String.valueOf((int) minute.getValue());
-			if (((int) minute.getValue()) < 10)
-				min = "0" + min;
-			return new StandartMesse(wochentag.getValue(), (int) stunde.getValue(), min, ort.getText(),
-					(int) anz.getValue(), typ.getText());
+			if (o.get().equals(ButtonType.OK)) {
+				String min = String.valueOf((int) minute.getValue());
+				if (((int) minute.getValue()) < 10)
+					min = "0" + min;
+				return new StandartMesse(wochentag.getValue(), (int) stunde.getValue(), min, ort.getText(),
+						(int) anz.getValue(), typ.getText());
+			}
+		} catch (NoSuchElementException e1) {
 		}
-		}catch (NoSuchElementException e1) {}
 		return null;
+	}
+
+	public static String text(String string, String kurz) {
+		TextInputDialog dialog = new TextInputDialog();
+		Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
+		dialog.setTitle("Eingabe");
+		dialog.setHeaderText(string);
+		dialog.setContentText(kurz + ":");
+		Optional<String> result = dialog.showAndWait();
+		if (result.isEmpty()) {
+			return "";
+		}
+		return result.get();
+	}
+
+	public static Setting chance(Setting s) {
+		TextInputDialog dialog = new TextInputDialog();
+		Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
+		dialog.setTitle("Eingabe");
+		dialog.setHeaderText("Anzahl für den " + s.getJahr() + "er Jahrgang " + References.ae + "ndern");
+		dialog.setContentText("neue Anzahl: ");
+		Optional<String> result = dialog.showAndWait();
+		if (result.isEmpty()) {
+			return s;
+		}
+		try {
+			int anz = Integer.parseInt(result.get());
+			if (anz < 0 || anz > 32) {
+				Dialogs.warn("Bitte eine Zahl zwischen 0 und 31 eingeben.");
+				return Dialogs.chance(s);
+			}
+			return new Setting(s.getA(), s.getId(), anz);
+		} catch (Exception e) {
+			Dialogs.warn(result.get()+" ist keine gültige Ganzzahl");
+			return s;
+		}
 	}
 }

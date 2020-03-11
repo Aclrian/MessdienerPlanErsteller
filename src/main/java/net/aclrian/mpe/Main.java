@@ -30,7 +30,6 @@ public class Main extends Application {
 	public void start(Stage stage) throws Exception {
 		//Object o = getParameters();
 		main(stage);
-		
 	}
 
 	public void main(Stage stage) {
@@ -42,31 +41,7 @@ public class Main extends Application {
 			try {
 			DateienVerwalter.re_start(stage);
 			} catch (NoSuchPfarrei e) {
-				Runnable r = new Runnable() {
-					
-					@Override
-					public void run() {
-						FXMLLoader loader = new FXMLLoader();
-						loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));
-
-						Parent root;
-						try {
-							root = loader.load();
-						
-						Scene scene = new Scene(root);
-						stage.setScene(scene);
-
-						stage.setTitle("MessdienerplanErsteller");
-						stage.setResizable(false);
-						stage.show();
-						((MainController)loader.getController()).changePane(EnumPane.start);
-						getLogger().info("Startbildschirm geladen");
-						} catch (IOException e) {
-							Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");
-						}
-					}
-				};
-				PfarreiController.start(stage, e.getSavepath(), r);
+				PfarreiController.start(stage, e.getSavepath(), this);
 				return;
 			}
 			
