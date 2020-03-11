@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -60,20 +61,35 @@
          <GridPane.margin>
             <Insets bottom="10.0" top="10.0" />
          </GridPane.margin></Button>
-      <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Maximale Anzahl:" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+      <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Maximale Anzahl:" GridPane.columnSpan="7" GridPane.rowIndex="1">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <GridPane.margin>
+            <Insets left="20.0" />
+         </GridPane.margin>
       </Label>
-      <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Messdiener" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-      <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Leiter" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+      <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Messdiener" GridPane.columnSpan="3" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets left="20.0" />
+         </GridPane.margin></Label>
+      <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Leiter" GridPane.columnSpan="3" GridPane.rowIndex="3">
+         <GridPane.margin>
+            <Insets left="20.0" />
+         </GridPane.margin></Label>
       <Slider fx:id="medi" blockIncrement="1.0" majorTickUnit="5.0" max="10.0" minorTickCount="1" value="4.0" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="2" />
-      <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Anzahl nach Eintrittsjahr:" GridPane.columnIndex="7" GridPane.columnSpan="4" GridPane.rowIndex="1">
+      <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Anzahl nach Eintrittsjahr:" GridPane.columnIndex="7" GridPane.columnSpan="7" GridPane.rowIndex="1">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <tooltip>
+            <Tooltip text="Doppelklick auf die Zeile kann die Anzahl ändern" />
+         </tooltip>
       </Label>
       <JFXTextField fx:id="name" alignment="CENTER" promptText="Name" GridPane.columnIndex="5" GridPane.columnSpan="6" />
-      <CheckBox fx:id="hochamt" mnemonicParsing="false" text="Bei Einteilen erhöhen Hochämter&#10;die monatliche Anzahl" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.rowIndex="4" GridPane.rowSpan="2" />
+      <CheckBox fx:id="hochamt" mnemonicParsing="false" text="Bei Einteilen erhöhen Hochämter&#10;die monatliche Anzahl" wrapText="true" GridPane.columnSpan="6" GridPane.rowIndex="4" GridPane.rowSpan="2">
+         <GridPane.margin>
+            <Insets left="20.0" />
+         </GridPane.margin></CheckBox>
    </children>
 </GridPane>
