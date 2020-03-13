@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXDatePicker?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTimePicker?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.text.Font?>
 
-<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.aclrian.mpe.controller.MediController">
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.aclrian.mpe.controller.MesseController">
   <columnConstraints>
       <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
       <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
@@ -41,21 +49,65 @@
       <RowConstraints percentHeight="14.28" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-     <CheckBox fx:id="leiter" maxHeight="1.7976931348623157E308" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="Hochamt" GridPane.columnIndex="12" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+     <CheckBox fx:id="hochamt" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Hochamt" GridPane.columnSpan="4" GridPane.rowIndex="3">
+         <GridPane.margin>
+            <Insets left="20.0" />
+         </GridPane.margin></CheckBox>
       <Label text="Messe anzeigen &amp; bearbeiten" GridPane.columnSpan="16" GridPane.halignment="CENTER">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <SplitMenuButton fx:id="button" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" text="Speichern" GridPane.columnIndex="12" GridPane.columnSpan="4" GridPane.rowIndex="1">
+      <SplitMenuButton fx:id="button" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Speichern" GridPane.columnIndex="12" GridPane.columnSpan="4" GridPane.rowIndex="1">
         <items>
           <MenuItem fx:id="save_new" mnemonicParsing="false" text="Speichern &amp; Neu" />
           <MenuItem fx:id="cancel" mnemonicParsing="false" text="Abbrechen" />
         </items>
       </SplitMenuButton>
-      <JFXTextField fx:id="name" focusColor="#009688" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Titel" GridPane.columnIndex="2" GridPane.columnSpan="6" GridPane.rowIndex="1" />
-      <JFXTextField fx:id="ort" focusColor="#009688" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Ort" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="2" />
-      <Slider fx:id="eintritt" maxHeight="1.7976931348623157E308" GridPane.columnIndex="8" GridPane.columnSpan="4" GridPane.rowIndex="2" />
-      <CheckBox mnemonicParsing="false" text="bearbeite Standartmesse" wrapText="true" GridPane.columnIndex="8" GridPane.columnSpan="4" GridPane.rowIndex="1" />
+      <JFXTextField fx:id="titel" focusColor="#009688" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Titel" GridPane.columnSpan="7" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets left="20.0" right="20.0" />
+         </GridPane.margin></JFXTextField>
+      <JFXTextField fx:id="ort" focusColor="#009688" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Ort" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="1" />
+      <Slider fx:id="slider" maxHeight="1.7976931348623157E308" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="2" />
+      <CheckBox maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="bearbeite Standartmesse" wrapText="true" GridPane.columnIndex="3" GridPane.columnSpan="4" GridPane.rowIndex="3">
+         <GridPane.margin>
+            <Insets left="20.0" />
+         </GridPane.margin></CheckBox>
+      <JFXDatePicker GridPane.columnSpan="4" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets left="20.0" />
+         </GridPane.margin>
+      </JFXDatePicker>
+      <JFXTimePicker GridPane.columnIndex="4" GridPane.columnSpan="3" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets right="20.0" />
+         </GridPane.margin>
+      </JFXTimePicker>
+      <ChoiceBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="3" />
+      <BorderPane GridPane.columnSpan="16" GridPane.rowIndex="4" GridPane.rowSpan="4">
+         <GridPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </GridPane.margin>
+         <top>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Messdiener vorzeitig einteilen" BorderPane.alignment="CENTER" />
+         </top>
+         <center>
+            <ScrollPane fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER">
+               <content>
+                  <TilePane alignment="CENTER" hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefColumns="3" vgap="10.0">
+                     <children>
+                        <CheckBox maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="1" />
+                     </children>
+                  </TilePane>
+               </content>
+            </ScrollPane>
+         </center>
+      </BorderPane>
+      <TitledPane visible="false" GridPane.columnSpan="16" GridPane.rowIndex="4" GridPane.rowSpan="4">
+         <GridPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </GridPane.margin>
+      </TitledPane>
    </children>
 </GridPane>

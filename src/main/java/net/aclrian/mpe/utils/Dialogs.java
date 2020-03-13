@@ -285,7 +285,9 @@ public class Dialogs {
 		d2.focusedProperty().addListener(e);
 		a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
 		a.getDialogPane().setExpanded(true);
-		a.getDialogPane().setExpandableContent(new HBox(d1, d2));
+		HBox hb = new HBox(d1, d2);
+		hb.setSpacing(40d);
+		a.getDialogPane().setExpandableContent(hb);
 		Optional<ButtonType> o = a.showAndWait();
 		if (o.get().equals(ButtonType.OK)) {
 			ArrayList<Date> rtn = new ArrayList<Date>();
