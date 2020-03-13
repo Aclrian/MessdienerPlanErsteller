@@ -217,26 +217,12 @@ public class Messe {
 		SimpleDateFormat dfeee = new SimpleDateFormat("dd.MM.");
 		SimpleDateFormat dftime = new SimpleDateFormat("HH:mm");
 		String rtn = "";
-		if (titel == null) {
-			if (!getWochentag().equals("")) {
-				rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + titel + " "
+		if (!titel.equals("")) {
+			rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + titel + " "
 						+ kirche;
-			} else {
-				if (!getWochentag().equals("")) {
-					rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + titel + " "
-							+ kirche;
-				}
-			}
 		} else {
-			if (!getWochentag().equals("")) {
-				rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + typ + " "
+			rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + typ + " "
 						+ kirche;
-			} else {
-				if (!getWochentag().equals("")) {
-					rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + typ + " "
-							+ kirche;
-				}
-			}
 		}
 		return rtn;
 	}
@@ -390,7 +376,6 @@ public class Messe {
 
 	public void setTitle(String titel) {
 		this.titel = titel;
-
 	}
 
 	public String getTitle() {

@@ -99,7 +99,7 @@ public class MainController {
 		Parent p;
 		try {
 			p = fl.load();
-			fl.setController(new MesseController())
+			//fl.setController(new MesseController());
 			AnchorPane.setBottomAnchor(p, 0d);
 			AnchorPane.setRightAnchor(p, 0d);
 			AnchorPane.setLeftAnchor(p, 0d);
