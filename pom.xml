@@ -6,7 +6,35 @@
 	<artifactId>messdienerplan-ersteller</artifactId>
 	<version>b699</version>
 
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+</properties>
+
 	<dependencies>
+	<!-- JavaFx -->
+	 <dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-controls</artifactId>
+    <version>11.0.2</version>
+  </dependency>
+  <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>11.0.2</version>
+        </dependency>
+        <dependency>
+  <groupId>org.openjfx</groupId>
+  <artifactId>javafx-base</artifactId>
+  <version>11.0.2</version>
+</dependency>
+<dependency>
+  <groupId>org.openjfx</groupId>
+  <artifactId>javafx-graphics</artifactId>
+  <version>11.0.2</version>
+</dependency>
 		<!--Zum Lesen der Version von Github https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
@@ -38,6 +66,88 @@
 	<build>
 		<plugins>
 			<plugin>
+		        <groupId>org.openjfx</groupId>
+		        <artifactId>javafx-maven-plugin</artifactId>
+		        <version>0.0.4</version>
+		        <configuration>
+		        <options>
+                        <option>--add-opens</option>
+                        <option>javafx.graphics/javafx.css=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.base/com.sun.javafx.binding=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.base/com.sun.javafx.event=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED</option>
+               </options>
+		            <mainClass>net.aclrian.mpe.Main</mainClass>
+					<commandlineArgs>-exe</commandlineArgs>
+		        </configuration>
+
+				<executions>
+				<execution>
+					<!-- Default configuration for running -->
+					<id>default-cli</id>
+					<configuration>
+						<commandlineArgs>-exe</commandlineArgs>
+						<mainClass>net.aclrian.mpe.Main</mainClass>
+						<options>
+							<option>--add-opens</option>
+							<option>javafx.graphics/javafx.css=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.base/com.sun.javafx.binding=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.base/com.sun.javafx.event=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED</option>
+						</options>
+					</configuration>
+				</execution>
+				<execution>
+					<!-- Configuration for debugging -->
+					<id>debug</id>
+					<configuration>
+						<options>
+						<!-- <option>-Xrunjdwp:transport=dt_socket,address=*8000,server=y,suspend=y</option>-->
+
+						</options>
+						<commandlineArgs>-exe</commandlineArgs>
+						<mainClass>net.aclrian.mpe.Main</mainClass>
+						<options>
+							<option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</option>
+							<option>--add-opens</option>
+							<option>javafx.graphics/javafx.css=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.base/com.sun.javafx.binding=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.base/com.sun.javafx.event=ALL-UNNAMED</option>
+							<option>--add-opens</option>
+							<option>javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED</option>
+						</options>
+					</configuration>
+				</execution>
+			</executions>
+
+	    	</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
@@ -46,10 +156,10 @@
 					<target>11</target>
 				</configuration>
 			</plugin>
-		</plugins>
+</plugins>
 		<resources>
 			<resource>
-				<directory>src/main/java/resources</directory>
+				<directory>src/main/resources</directory>
 			</resource>
 		</resources>
 	</build>

@@ -14,7 +14,6 @@ import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-import net.aclrian.mpe.utils.Utilities;
 
 public class AbmeldenTable extends ATable {
 
@@ -28,9 +27,9 @@ public class AbmeldenTable extends ATable {
 		// Data
 		ArrayList<String> sarry = new ArrayList<>();
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-		for (Messe messe : ap.getAda().getMesenarray()) {
+		/*for (Messe messe : ap.getAda().getMesenarray()) {
 			sarry.add(df.format(messe.getDate()));
-		}
+		}*/
 		RemoveDoppelte<String> rd = new RemoveDoppelte<>();
 		rd.removeDuplicatedEntries(sarry);
 		sarry.sort(new Comparator<String>() {
@@ -51,7 +50,7 @@ public class AbmeldenTable extends ATable {
 		sarry.add(0, "Messdiener");
 		String[] s = new String[sarry.size()];
 		sarry.toArray(s);
-		abdtm.setDataVector(ap.getAbmeldenTableVector(s, df), s);
+		//abdtm.setDataVector(ap.getAbmeldenTableVector(s, df), s);
 
 		// Table
 		for (int i = 1; i < this.getColumnCount(); i++) {
@@ -75,7 +74,7 @@ public class AbmeldenTable extends ATable {
 	public void speichern(AProgress ap, boolean kanndann) {
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 		for (int i = 0; i < abdtm.getRowCount(); i++) {
-			Messdiener m = ap.getMessdienerFromString((String) abdtm.getValueAt(i, 0), ap.getMediarraymitMessdaten());
+			Messdiener m = null;//ap.getMessdienerFromString((String) abdtm.getValueAt(i, 0), ap.getMediarraymitMessdaten());
 			for (int j = 1; j < abdtm.getColumnCount(); j++) {
 				boolean b = (boolean) abdtm.getValueAt(i, j);
 				if (b != kanndann) {
@@ -87,7 +86,7 @@ public class AbmeldenTable extends ATable {
 				}
 			}
 		}
-		Utilities.logging(this.getClass(), "speichern", "Abmeldungen wurden verarbeitet.");
+		//Utilities.logging(this.getClass(), "speichern", "Abmeldungen wurden verarbeitet.");
 	}
 
 	public static class AbDTM extends DefaultTableModel {

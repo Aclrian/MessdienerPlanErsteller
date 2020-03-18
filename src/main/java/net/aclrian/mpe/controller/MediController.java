@@ -89,7 +89,7 @@ public class MediController implements Controller {
 		save_new.setOnAction(e -> {
 			if (getMedi(window)) {
 				locked = false;
-				mc.changePane((Messdiener) null);
+				mc.changePaneMesse(null);
 			}
 		});
 		button.setOnAction(e -> {

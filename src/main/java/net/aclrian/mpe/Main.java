@@ -17,8 +17,8 @@ import net.aclrian.mpe.controller.MainController.EnumPane;
 import net.aclrian.mpe.start.VersionIDHandler;
 import net.aclrian.mpe.start.VersionIDHandler.EnumHandling;
 import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.DateienVerwalter.NoSuchPfarrei;
+import net.aclrian.mpe.utils.Dialogs;
 
 public class Main extends Application {
 	/**
@@ -26,25 +26,38 @@ public class Main extends Application {
 	 */
 	public static final String VersionID = "b699";
 
-	@Override
-	public void start(Stage stage) throws Exception {
-		//Object o = getParameters();
-		main(stage);
+	public static void main(String[] args) {
+		Application.launch(Main.class, args);
+
+		// TODO csv Converter
+		/*
+		 * } else if (args[0].startsWith("csv")) { JFileChooser fc = new JFileChooser();
+		 * fc.setFileSelectionMode(JFileChooser.FILES_ONLY); fc.setFileFilter(new
+		 * FileFilter() {
+		 * 
+		 * @Override public String getDescription() { return "Beschreibung"; }
+		 * 
+		 * @Override public boolean accept(File f) { return
+		 * f.getName().endsWith(".csv"); } }); fc.setDialogTitle("W" + References.ae +
+		 * "hle CSV-Datei"); fc.setApproveButtonText("Ausw" + References.ae + "hlen"); }
+		 */
+
 	}
 
 	public void main(Stage stage) {
 		try {
 			getLogger().info("MpE: Version: " + VersionID);
 			getLogger().info("MpE-fx is starting");
+			Object o = getParameters();
 			stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
 			versioncheck();
 			try {
-			DateienVerwalter.re_start(stage);
+				DateienVerwalter.re_start(stage);
 			} catch (NoSuchPfarrei e) {
 				PfarreiController.start(stage, e.getSavepath(), this);
 				return;
 			}
-			
+
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));
 
@@ -55,36 +68,17 @@ public class Main extends Application {
 			stage.setTitle("MessdienerplanErsteller");
 			stage.setResizable(false);
 			stage.show();
-			((MainController)loader.getController()).changePane(EnumPane.start);
+			((MainController) loader.getController()).changePane(EnumPane.start);
 			getLogger().info("Startbildschirm geladen");
 		} catch (Exception e) {
 			Dialogs.error(e, "Es ist ein unerwarteter Fehler aufgetreten:");
 		}
 	}
-	
-	public static void main(String[] args) {
-		Application.launch(Main.class, args);
-		
-		// TODO csv Converter
-		/*} else if (args[0].startsWith("csv")) {
-			JFileChooser fc = new JFileChooser();
-			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			fc.setFileFilter(new FileFilter() {
 
-				@Override
-				public String getDescription() {
-					return "Beschreibung";
-				}
-
-				@Override
-				public boolean accept(File f) {
-					return f.getName().endsWith(".csv");
-				}
-			});
-			fc.setDialogTitle("W" + References.ae + "hle CSV-Datei");
-			fc.setApproveButtonText("Ausw" + References.ae + "hlen");
-		}*/
-	
+	@Override
+	public void start(Stage stage) throws Exception {
+		// Object o = getParameters();
+		main(stage);
 	}
 
 	private void versioncheck() {

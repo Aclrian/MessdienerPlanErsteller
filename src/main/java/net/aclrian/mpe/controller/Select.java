@@ -55,7 +55,6 @@ public class Select implements Controller {
 
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
 		// p.getChildrenUnmodifiable().add(list);
 		list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 	}
@@ -65,9 +64,7 @@ public class Select implements Controller {
 		switch (sel) {
 		case Messdiener:
 			text.setText("Messdiener anzeigen & bearbeiten");
-			list.getItems().removeIf(t -> {
-				return true;
-			});
+			list.getItems().removeIf(t -> true);
 			ArrayList<Messdiener> data = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 			data.sort(Messdiener.compForMedis);
 			for (int i = 0; i < data.size(); i++) {
@@ -77,19 +74,15 @@ public class Select implements Controller {
 				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 					if (mouseEvent.getClickCount() == 2) {
 						int i = list.getSelectionModel().getSelectedIndex();
-						mc.changePane(data.get(i));
+						mc.changePaneMessdiener(data.get(i));
 					}
 				}
 			});
-			remove.setOnAction(new EventHandler<ActionEvent>() {
-
-				@Override
-				public void handle(ActionEvent arg0) {
-					int i = list.getSelectionModel().getSelectedIndex();
-					if ((list.getSelectionModel().getSelectedItem().getText().equalsIgnoreCase(data.get(i).toString()))
-							&& MediController.remove(window, data.get(i))) {
-						afterstartup(window,mc);
-					}
+			remove.setOnAction(arg0 -> {
+				int i = list.getSelectionModel().getSelectedIndex();
+				if ((list.getSelectionModel().getSelectedItem().getText().equalsIgnoreCase(data.get(i).toString()))
+						&& MediController.remove(window, data.get(i))) {
+					afterstartup(window,mc);
 				}
 			});
 			neu.setOnAction(e -> neu());
@@ -99,34 +92,28 @@ public class Select implements Controller {
 			ArrayList<Messe> datam = mc.getMessen();
 			Button generieren = new Button();
 			generieren.setText("Messen generieren");
-			generieren.setOnAction(new EventHandler<ActionEvent>() {
-
-				@Override
-				public void handle(ActionEvent arg0) {
-					ArrayList<Date> daten = Dialogs.getDates("Für welchen Zeitraum sollen Messen generiert werden?",
-							"Von:", "Bis:");
-					if (daten != null) {
-						try {
-							datam.addAll(Select.generireDefaultMessen(daten.get(0), daten.get(1)));
-							datam.sort(Messe.compForMessen);
-							ArrayList<Label> l = new ArrayList<Label>();
-							for (Messe m : datam) {
-								l.add(new Label(m.getID().replaceAll("\t", "\t\t")));
-							}
-							list.getItems().removeIf(p->{return true;});
-							list.setItems(FXCollections.observableArrayList(l));
-						} catch (Exception e) {
-							Dialogs.error(e, "Konnte die Messen nicht generieren.");
+			generieren.setOnAction(arg0 -> {
+				ArrayList<Date> daten = Dialogs.getDates("Für welchen Zeitraum sollen Messen generiert werden?",
+						"Von:", "Bis:");
+				if (daten != null) {
+					try {
+						datam.addAll(Select.generireDefaultMessen(daten.get(0), daten.get(1)));
+						datam.sort(Messe.compForMessen);
+						ArrayList<Label> l = new ArrayList<>();
+						for (Messe m : datam) {
+							l.add(new Label(m.getID().replaceAll("\t", "\t\t")));
 						}
+						list.getItems().removeIf(p->{return true;});
+						list.setItems(FXCollections.observableArrayList(l));
+					} catch (Exception e) {
+						Dialogs.error(e, "Konnte die Messen nicht generieren.");
 					}
 				}
 			});
 			pane.getChildren().add(generieren);
 			
 			text.setText("Messen anzeigen & bearbeiten");
-			list.getItems().removeIf(t -> {
-				return true;
-			});
+			list.getItems().removeIf(t -> true);
 			datam.sort(Messe.compForMessen);
 			for (int i = 0; i < datam.size(); i++) {
 				list.getItems().add(new Label(datam.get(i).getID().replaceAll("\t", "\t\t")));
@@ -135,18 +122,14 @@ public class Select implements Controller {
 				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 					if (mouseEvent.getClickCount() == 2) {
 						int i = list.getSelectionModel().getSelectedIndex();
-						mc.changePane(datam.get(i));
+						mc.changePaneMesse(datam.get(i));
 					}
 				}
 			});
-			remove.setOnAction(new EventHandler<ActionEvent>() {
-
-				@Override
-				public void handle(ActionEvent arg0) {
-					if (mc.getMessen().removeIf(
-							m -> list.getSelectionModel().getSelectedItem().getText().replaceAll("\t\t", "\t").equalsIgnoreCase(m.toString()))) {
-						afterstartup(window,mc);
-					}
+			remove.setOnAction(arg0 -> {
+				if (mc.getMessen().removeIf(
+						m -> list.getSelectionModel().getSelectedItem().getText().replaceAll("\t\t", "\t").equalsIgnoreCase(m.toString()))) {
+					afterstartup(window, mc);
 				}
 			});
 			break;
@@ -155,7 +138,8 @@ public class Select implements Controller {
 
 	public void neu() {
 		if (sel == Selecter.Messdiener)
-			mc.changePane((Messdiener) null);
+			mc.changePaneMessdiener(null);
+		else if(sel == Selecter.Messe) mc.changePaneMesse(null);
 	}
 
 	public void remove() {
@@ -167,6 +151,8 @@ public class Select implements Controller {
 					break;
 				}
 			}
+		} else if(sel == Selecter.Messe){
+
 		}
 	}
 

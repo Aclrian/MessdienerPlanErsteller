@@ -1,45 +1,25 @@
 package net.aclrian.mpe.panels;
 
-import java.awt.Desktop;
-import java.awt.Font;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.text.html.HTMLEditorKit;
 
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.start.WEinFrame;
 import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
-import net.aclrian.mpe.utils.Converter;
 import net.aclrian.mpe.utils.Erroropener;
-import net.aclrian.mpe.utils.RemoveDoppelte;
-import net.aclrian.mpe.utils.Utilities;
 
 enum EnumAction {
 	EinfachEinteilen(), TypeBeachten();
@@ -62,7 +42,7 @@ public class Finish extends APanel {
 
 	public Finish(int defaultButtonwidth, int defaultButtonheight, boolean ferienplan, AProgress ap) {
 		super(defaultButtonwidth, defaultButtonheight, false, "Messdienerplan anzeigen", ap);
-		HTMLEditorKit editorkit = new HTMLEditorKit();
+		/*HTMLEditorKit editorkit = new HTMLEditorKit();
 		editorPane.setEditorKit(editorkit);
 		sPMessen.setViewportView(editorPane);
 		sPMessen.setColumnHeaderView(labelmesse);
@@ -163,11 +143,11 @@ public class Finish extends APanel {
 		// Ende
 		graphics();
 		setVisible(true);
-		Toolkit.getDefaultToolkit().beep();
+		Toolkit.getDefaultToolkit().beep();*/
 	}
 
 	public void zurueck(boolean loeschen, EnumActivePanel eap ,AProgress ap) {
-		if (loeschen) {
+		/*if (loeschen) {
 			for (Messdiener medi : ap.getMediarraymitMessdaten()) {
 				medi.getMessdatenDaten().nullen();
 			}
@@ -176,11 +156,11 @@ public class Finish extends APanel {
 			}
 		}
 		setVisible(false);
-		ap.getWAlleMessen().changeAP(eap, true);
+		ap.getWAlleMessen().changeAP(eap, true);*/
 	}
 
 	private void open(boolean isword) {
-		Converter con;
+		/*Converter con;
 		try {
 			con = new Converter(this);
 			File f = (isword) ? con.getDocx() : con.toPDF();
@@ -189,11 +169,11 @@ public class Finish extends APanel {
 		} catch (IOException e) {
 			new Erroropener(e);
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	public void neuerAlgorythmus(AProgress ap) {
-		hauptarray.sort(Messdiener.einteilen);
+		/*hauptarray.sort(Messdiener.einteilen);
 		// Dap und zvmzwm fruehzeitg erkennen und beheben
 		for (StandartMesse sm : ap.getAda().getPfarrei().getStandardMessen()) {
 			int anz_real = 0;
@@ -278,11 +258,11 @@ public class Finish extends APanel {
 				this.einteilen(me, EnumAction.TypeBeachten, ap);
 			}
 			Utilities.logging(this.getClass(), "neuerAlorythmus", "Messe fertig: " + me.getID());
-		}
+		}*/
 	}
 
 	private void einteilen(Messe m, EnumAction act, AProgress ap) {
-		switch (act) {
+	/*	switch (act) {
 		case EinfachEinteilen:
 			ArrayList<Messdiener> medis;
 			boolean zwang = false;
@@ -327,11 +307,11 @@ public class Finish extends APanel {
 			break;
 		default:
 			break;
-		}
+		}*/
 	}
 
 	public void einteilen(Messe m, Messdiener medi, boolean zwang, AProgress ap) {
-		boolean d = false;
+		/*boolean d = false;
 		if (m.istFertig()) {
 			return;
 		} else if (zwang) {
@@ -361,17 +341,17 @@ public class Finish extends APanel {
 					}
 				}
 			}
-		}
+		}*/
 	}
 
 	public ArrayList<Messdiener> beheben(Messe m, AData ada) {
 		ArrayList<Messdiener> rtn = get(m.getStandardMesse(), m.getDate(), ada);
-		if (rtn.size() < m.getnochbenoetigte()) {
+		if (rtn.size() < m.getNochBenoetigte()) {
 			ArrayList<Messdiener> prov = new ArrayList<Messdiener>();
 			hauptarray.sort(Messdiener.einteilen);
 			int i = rtn.size();
 			for (Messdiener messdiener : hauptarray) {
-				if (messdiener.getMessdatenDaten().kanndann(m.getDate(), false) && i < m.getnochbenoetigte()) {
+				if (messdiener.getMessdatenDaten().kanndann(m.getDate(), false) && i < m.getNochBenoetigte()) {
 					prov.add(messdiener);
 					i++;
 				}
@@ -383,7 +363,7 @@ public class Finish extends APanel {
 			}
 			rtn.addAll(prov);
 			// Wenn wirklich keiner mehr kann
-			if (rtn.size() < m.getnochbenoetigte()) {
+			if (rtn.size() < m.getNochBenoetigte()) {
 				hauptarray.sort(Messdiener.einteilen);
 				Einstellungen e = ada.getPfarrei().getSettings();
 				for (Messdiener messdiener : hauptarray) {
@@ -392,7 +372,7 @@ public class Finish extends APanel {
 						id++;
 					}
 					int ii = e.getDaten(id).getAnz_dienen();
-					if (ii != 0 && i < m.getnochbenoetigte()) {
+					if (ii != 0 && i < m.getNochBenoetigte()) {
 						new Erroropener(new Exception("<html><body>Bei der Messe: " + m.getID()
 								+ "<br></br>herrscht GRO" + References.GROssenSZ
 								+ "E Messdiener-Knappheit</br><br>Daher wird wohl" + messdiener.makeId()
@@ -411,7 +391,7 @@ public class Finish extends APanel {
 
 	public ArrayList<Messdiener> get(StandartMesse sm, Messe m, AData ada) {
 		ArrayList<Messdiener> al = new ArrayList<Messdiener>();
-		for (Messdiener medi : hauptarray) {
+		/*for (Messdiener medi : hauptarray) {
 			int id = 0;
 			if (medi.isIstLeiter()) {
 				id++;
@@ -423,12 +403,12 @@ public class Finish extends APanel {
 			}
 		}
 		Collections.shuffle(al);
-		al.sort(Messdiener.einteilen);
+		al.sort(Messdiener.einteilen);*/
 		return al;
 	}
 
 	public ArrayList<Messdiener> get(StandartMesse sm, Date d, AData ada) {
-		ArrayList<Messdiener> al = new ArrayList<Messdiener>();
+		/*ArrayList<Messdiener> al = new ArrayList<Messdiener>();
 		ArrayList<Messdiener> al2 = new ArrayList<Messdiener>();
 		for (Messdiener medi : hauptarray) {
 			int id = 0;
@@ -451,19 +431,20 @@ public class Finish extends APanel {
 		 * for (int i = 0; i < al.size(); i++) {
 		 * System.out.println(al.get(i).getMessdatenDaten().getAnz_messen() + "/" +
 		 * al.get(i).getMessdatenDaten().getMax_messen()); }
-		 */
+		 * /
 		/*
 		 * al2.sort(Messdiener.einteilen); for (int i = 0; i < al2.size(); i++) {
 		 * System.out.println(al2.get(i).getMessdatenDaten().getAnz_messen() + "/" +
 		 * al2.get(i).getMessdatenDaten().getMax_messen()); }
-		 */
+		 * DAS HIER DRUNTER GEHÖRT REIN; ABER DIE DREI  KOMMENTAR BLÖCKE NICHT/
 		al.addAll(al2);
 		/*
 		 * for (int i = 0; i < al.size(); i++) {
 		 * System.out.println(al.get(i).getMessdatenDaten().getAnz_messen() + "/" +
 		 * al.get(i).getMessdatenDaten().getMax_messen()); }
-		 */
-		return al;
+		 * /
+		return al;*/
+		return new ArrayList<Messdiener>();
 	}
 
 	public String getText() {

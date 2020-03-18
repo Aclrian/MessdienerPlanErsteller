@@ -8,7 +8,6 @@ import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.start.References;
-import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 
@@ -16,6 +15,34 @@ public class Manuell {
 	public enum EnumWorking {
 		ueberarbeitet, neu
 
+	}
+
+	public static class Handling {
+
+		private StandartMesse sm;
+		private EnumWorking ew;
+		private StandartMesse alt;
+
+		public Handling(StandartMesse sm, EnumWorking ew, StandartMesse alt) {
+			this.sm = sm;
+			this.ew = ew;
+			if (ew == EnumWorking.ueberarbeitet) {
+				this.alt = alt;
+			}
+
+		}
+
+		public StandartMesse getAlt() {
+			return alt;
+		}
+
+		public EnumWorking getEw() {
+			return ew;
+		}
+
+		public StandartMesse getNeu() {
+			return sm;
+		}
 	}
 
 	public static String sm = "St. Martinus";
@@ -30,11 +57,12 @@ public class Manuell {
 	public static StandartMesse Son_abend = new StandartMesse("So", 18, "00", sm, 6, hlm);
 	private ArrayList<Handling> hand;
 	private ArrayList<Messdiener> medis;
+
 	private Pfarrei pf;
 
 	public Manuell(ArrayList<Handling> hand, ArrayList<Messdiener> medis, Pfarrei pf) {
 		// TODO need to be included
-		need to be included
+
 		this.hand = hand;
 		this.medis = medis;
 		this.pf = pf;
@@ -63,34 +91,6 @@ public class Manuell {
 			} catch (IOException e) {
 				Dialogs.error(e, "Es ist ein Fehler aufgetreten");
 			}
-		}
-	}
-
-	public static class Handling {
-
-		private StandartMesse sm;
-		private EnumWorking ew;
-		private StandartMesse alt;
-
-		public Handling(StandartMesse sm, EnumWorking ew, StandartMesse alt) {
-			this.sm = sm;
-			this.ew = ew;
-			if (ew == EnumWorking.ueberarbeitet) {
-				this.alt = alt;
-			}
-
-		}
-
-		public StandartMesse getNeu() {
-			return sm;
-		}
-
-		public EnumWorking getEw() {
-			return ew;
-		}
-
-		public StandartMesse getAlt() {
-			return alt;
 		}
 	}
 

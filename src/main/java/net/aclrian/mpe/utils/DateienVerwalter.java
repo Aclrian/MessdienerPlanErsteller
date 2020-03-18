@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
+import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.ReadFile;
 import net.aclrian.mpe.pfarrei.Pfarrei;
@@ -152,6 +153,9 @@ public class DateienVerwalter {
 			if (m != null) {
 				medis.add(m);
 			}
+		}
+		for (Messdiener medi :medis) {
+			medi.setnewMessdatenDaten(medis);
 		}
 		return medis;
 	}

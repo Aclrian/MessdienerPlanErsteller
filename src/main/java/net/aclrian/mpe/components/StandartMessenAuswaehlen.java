@@ -23,7 +23,7 @@ public class StandartMessenAuswaehlen extends JList<ACheckBox> {
     public StandartMessenAuswaehlen(ArrayList<StandartMesse> stdm) {
 	this.setModel(dlm);
 	for (int i1 = 0; i1 < stdm.size(); i1++) {
-	    if (new Sonstiges().isSonstiges(stdm.get(i1))) {
+	    if (stdm.get(i1) instanceof Sonstiges) {
 		continue;
 	    }
 	    cbli.add(new ACheckBox(stdm.get(i1).toBenutzerfreundlichenString()));
@@ -46,19 +46,20 @@ public class StandartMessenAuswaehlen extends JList<ACheckBox> {
     }
 
     public Messverhalten getMessverhalten(AData ada) {
-	Messverhalten mv = new Messverhalten(ada);
+	/*Messverhalten mv = new Messverhalten(ada);
 	for (int i = 0; i < cbli.size(); i++) {
 	    StandartMesse sm = stdm.get(i);
 	    mv.editiereBestimmteMesse(ada, sm, cbli.get(i).isSelected());
 	}
-	return mv;
+	return mv;*/
+    	return null;
     }
 
     public void setMessverhalten(Messverhalten mv, AData ada) {
 	dlm.removeAllElements();
 	for (int i = 0; i < cbli.size(); i++) {
 	    StandartMesse sm = stdm.get(i);
-	    boolean b = mv.getBestimmtes(sm, ada);
+	    boolean b = false;// mv.getBestimmtes(sm, ada);
 	    cbli.get(i).setSelected(b);
 	   dlm.addElement(cbli.get(i));
 	}

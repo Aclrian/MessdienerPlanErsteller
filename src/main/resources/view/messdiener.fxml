@@ -72,7 +72,7 @@
             </TableView>
          </children>
       </GridPane>
-      <SplitMenuButton fx:id="button" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" text="Speichern" GridPane.columnIndex="12" GridPane.columnSpan="4" GridPane.rowIndex="1">
+      <SplitMenuButton fx:id="button" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Speichern" GridPane.columnIndex="12" GridPane.columnSpan="4" GridPane.rowIndex="1">
         <items>
           <MenuItem fx:id="save_new" mnemonicParsing="false" text="Speichern &amp; Neu" />
           <MenuItem fx:id="cancel" mnemonicParsing="false" text="Abbrechen" />
