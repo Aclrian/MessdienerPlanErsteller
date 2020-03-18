@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.function.UnaryOperator;
 
 import com.jfoenix.controls.JFXTextField;
 
@@ -14,7 +13,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,12 +21,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.aclrian.fx.ASlider;
@@ -41,27 +36,53 @@ import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 
 public class PfarreiController {
+	public static void start(Stage stage, String savepath, Main main) {
+		FXMLLoader loader = new FXMLLoader();
+		PfarreiController cont = new PfarreiController(stage, savepath, main);
+		loader.setLocation(cont.getClass().getResource("/view/pfarrei/standardmesse.fxml"));
+		loader.setController(cont);
+		Parent root;
+		try {
+			root = loader.load();
+			Scene scene = new Scene(root);
+			stage.setScene(scene);
+			stage.setTitle("MessdienerplanErsteller");
+			stage.setResizable(false);
+			stage.show();
+			cont.afterstartup(stage);
+			Dialogs.info("Willkommen beim MessdienerplanErsteller!", "Als Erstes werden eine Daten benötigt:"
+					+ System.lineSeparator()
+					+ "Zunächst werden Standardmessen erstellt. Das sind die Messen, die sich wöchentlich wiederholen."
+					+ System.lineSeparator()
+					+ "Danach folgen Einstellungen, wie oft Messdiener eingeteilt werden sollen.");
+			getLogger().info("neue Pfarrei erstellen...");
+		} catch (IOException e) {
+			Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");
+		}
+	}
+
 	private final String savepath;
 	private ObservableList<StandartMesse> ol = FXCollections.emptyObservableList();
 	private Stage stage;
 	private boolean weiter = false;
 	private Main main;
+
 	// ---------------------------------------
 	private ObservableList<Setting> settings;
-
 	@FXML
-	private TableView<StandartMesse> table = new TableView<StandartMesse>();
+	private TableView<StandartMesse> table = new TableView<>();
 	@FXML
 	private TableColumn<StandartMesse, String> time, ort, typ, anz;
 	// ----------------------------------------------------------------------
 	@FXML
-	private TableView<Setting> t2 = new TableView<Setting>();
+	private TableView<Setting> t2 = new TableView<>();
 	@FXML
 	private TableColumn<Setting, Integer> eintritt, anzahl;
 	@FXML
 	private JFXTextField name;
 	@FXML
 	private CheckBox hochamt;
+
 	@FXML
 	private Slider leiter, medi;
 
@@ -69,11 +90,6 @@ public class PfarreiController {
 		this.savepath = savepath;
 		this.stage = stage;
 		this.main = main;
-	}
-
-	public void initialize() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void afterstartup(Window window) {
@@ -99,15 +115,11 @@ public class PfarreiController {
 			t2.setItems(settings);
 			t2.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 			t2.autosize();
-			t2.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-				@Override
-				public void handle(MouseEvent e) {
-					if(e.getClickCount() == 2 && e.getButton().equals(MouseButton.PRIMARY)) {
-						int i = t2.getSelectionModel().getSelectedIndex();
-						Setting s = settings.get(i);
-						settings.set(i,Dialogs.chance(s));
-					}
+			t2.setOnMouseClicked(e -> {
+				if (e.getClickCount() == 2 && e.getButton().equals(MouseButton.PRIMARY)) {
+					int i = t2.getSelectionModel().getSelectedIndex();
+					Setting s = settings.get(i);
+					settings.set(i, Dialogs.chance(s));
 				}
 			});
 		} else {
@@ -123,6 +135,17 @@ public class PfarreiController {
 		}
 	}
 
+	public void initialize() {
+	}
+
+	@FXML
+	public void löschen(ActionEvent e) {
+		StandartMesse a = table.getSelectionModel().getSelectedItem();
+		ol.removeIf(sm -> {
+			return sm.toString().equalsIgnoreCase(a.toString());
+		});
+	}
+
 	@FXML
 	public void neu(ActionEvent e) {
 		StandartMesse sm = Dialogs.standartmesse();
@@ -136,11 +159,48 @@ public class PfarreiController {
 	}
 
 	@FXML
-	public void löschen(ActionEvent e) {
-		StandartMesse a = table.getSelectionModel().getSelectedItem();
-		ol.removeIf(sm -> {
-			return sm.toString().equalsIgnoreCase(a.toString());
-		});
+	public void save(ActionEvent e) {
+		if (name.getText().equalsIgnoreCase("")) {
+			Dialogs.error("Bitte gebe einen Namen ein.");
+			return;
+		}
+		Einstellungen einst = new Einstellungen();
+		einst.editMaxDienen(false, (int) medi.getValue());
+		einst.editMaxDienen(true, (int) leiter.getValue());
+		for (int i = 0; i < Einstellungen.lenght - 2; i++) {
+			einst.editiereYear(settings.get(i).getId(), settings.get(i).getAnz_dienen());
+		}
+		ArrayList<StandartMesse> sm = new ArrayList<>(ol);
+		Pfarrei pf = new Pfarrei(einst, sm, name.getText(), hochamt.isSelected());
+		Window s = ((Button) e.getSource()).getParent().getScene().getWindow();
+		WriteFile_Pfarrei.writeFile(pf, s, savepath);
+		try {
+			((Stage) s).close();
+			main.main(new Stage());
+		} catch (Exception ex) {
+			Dialogs.info("Das Programm muss nun neu gestartet werden.");
+			System.exit(0);
+		}
+	}
+
+	public void weiter() {
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("/view/pfarrei/anzahl.fxml"));
+		loader.setController(this);
+		weiter = true;
+		Parent root;
+		try {
+			root = loader.load();
+			Scene scene = new Scene(root);
+			stage.setScene(scene);
+			stage.setTitle("MessdienerplanErsteller");
+			stage.setResizable(false);
+			stage.show();
+			afterstartup(stage);
+			getLogger().info("neue Pfarrei erstellen...weiter");
+		} catch (IOException e) {
+			Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");
+		}
 	}
 
 	@FXML
@@ -174,51 +234,6 @@ public class PfarreiController {
 		}
 	}
 
-	@FXML
-	public void save(ActionEvent e) {
-		if (name.getText().equalsIgnoreCase("")) {
-			Dialogs.error("Bitte gebe einen Namen ein.");
-			return;
-		}
-		Einstellungen einst = new Einstellungen();
-		einst.editMaxDienen(false, (int) medi.getValue());
-		einst.editMaxDienen(true, (int) leiter.getValue());
-		for (int i = 0; i < Einstellungen.lenght - 2; i++) {
-			einst.editiereYear(settings.get(i).getId(), settings.get(i).getAnz_dienen());
-		}
-		ArrayList<StandartMesse> sm = new ArrayList<StandartMesse>(ol);
-		Pfarrei pf = new Pfarrei(einst, sm, name.getText(), hochamt.isSelected());
-		Window s = ((Button) e.getSource()).getParent().getScene().getWindow();
-		WriteFile_Pfarrei.writeFile(pf, s, savepath);
-		try {
-			((Stage) s).close();
-			main.main(new Stage());
-		} catch (Exception ex) {
-			Dialogs.info("Das Programm muss nun neu gestartet werden.");
-			System.exit(0);
-		}
-	}
-
-	public void weiter() {
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("/view/pfarrei/anzahl.fxml"));
-		loader.setController(this);
-		weiter = true;
-		Parent root;
-		try {
-			root = loader.load();
-			Scene scene = new Scene(root);
-			stage.setScene(scene);
-			stage.setTitle("MessdienerplanErsteller");
-			stage.setResizable(false);
-			stage.show();
-			afterstartup(stage);
-			getLogger().info("neue Pfarrei erstellen...weiter");
-		} catch (IOException e) {
-			Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");
-		}
-	}
-
 	public void zurück() {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("/view/pfarrei/standardmesse.fxml"));
@@ -234,31 +249,6 @@ public class PfarreiController {
 			stage.show();
 			afterstartup(stage);
 			getLogger().info("neue Pfarrei erstellen...zurück");
-		} catch (IOException e) {
-			Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");
-		}
-	}
-
-	public static void start(Stage stage, String savepath, Main main) {
-		FXMLLoader loader = new FXMLLoader();
-		PfarreiController cont = new PfarreiController(stage, savepath, main);
-		loader.setLocation(cont.getClass().getResource("/view/pfarrei/standardmesse.fxml"));
-		loader.setController(cont);
-		Parent root;
-		try {
-			root = loader.load();
-			Scene scene = new Scene(root);
-			stage.setScene(scene);
-			stage.setTitle("MessdienerplanErsteller");
-			stage.setResizable(false);
-			stage.show();
-			cont.afterstartup(stage);
-			Dialogs.info("Willkommen beim MessdienerplanErsteller!", "Als Erstes werden eine Daten benötigt:"
-					+ System.lineSeparator()
-					+ "Zunächst werden Standardmessen erstellt. Das sind die Messen, die sich wöchentlich wiederholen."
-					+ System.lineSeparator()
-					+ "Danach folgen Einstellungen, wie oft Messdiener eingeteilt werden sollen.");
-			getLogger().info("neue Pfarrei erstellen...");
 		} catch (IOException e) {
 			Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");
 		}

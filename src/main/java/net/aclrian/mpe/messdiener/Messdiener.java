@@ -1,6 +1,7 @@
 package net.aclrian.mpe.messdiener;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Comparator;
 
 import org.apache.commons.validator.routines.EmailValidator;
@@ -267,8 +268,8 @@ public class Messdiener {
 		this.daten = daten;
 	}
 
-	public void setnewMessdatenDaten(int aktdatum) {
-		this.daten = new Messdaten(this);
+	public void setnewMessdatenDaten(ArrayList<Messdiener> medis) {
+		this.daten = new Messdaten(this, medis);
 	}
 
 	public File getFile() {

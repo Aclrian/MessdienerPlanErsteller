@@ -43,12 +43,12 @@ public class AbmeldenPanel extends APanel {
 		add(umsetzen);
 		umsetzen.addActionListener(e->abtable.andersrum());
 		getBtnSpeichern().setText("Plan erstellen");
-		getBtnAbbrechen().addActionListener(e -> ap.getWAlleMessen().changeAP(EnumActivePanel.Start, true));
+		//getBtnAbbrechen().addActionListener(e -> ap.getWAlleMessen().changeAP(EnumActivePanel.Start, true));
 		getBtnSpeichern().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				abtable.speichern(ap, einteilen.isSelected());
-				ap.getWAlleMessen().changeAP(EnumActivePanel.Finish, true);
+			//	ap.getWAlleMessen().changeAP(EnumActivePanel.Finish, true);
 			}
 		});
 	}

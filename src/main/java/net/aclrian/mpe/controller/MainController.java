@@ -68,7 +68,7 @@ public class MainController {
 		messe_pic.fitHeightProperty().bind(Bindings.min(200, b));
 	}
 
-	public void changePane(Messdiener messdiener) {
+	public void changePaneMessdiener(Messdiener messdiener) {
 		this.ep = EnumPane.messdiener;
 		apane.getChildren().removeIf(p -> true);
 		URL u = getClass().getResource(ep.getLocation());
@@ -90,8 +90,8 @@ public class MainController {
 			Dialogs.error(e, "Auf " + ep.getLocation() + " konnte nicht zugegriffen werden!");
 		}
 	}
-	
-	public void changePane(Messe messe) {
+
+	public void changePaneMesse(Messe messe) {
 		this.ep = EnumPane.messe;
 		apane.getChildren().removeIf(p -> true);
 		URL u = getClass().getResource(ep.getLocation());
@@ -99,7 +99,6 @@ public class MainController {
 		Parent p;
 		try {
 			p = fl.load();
-			//fl.setController(new MesseController());
 			AnchorPane.setBottomAnchor(p, 0d);
 			AnchorPane.setRightAnchor(p, 0d);
 			AnchorPane.setLeftAnchor(p, 0d);
@@ -109,6 +108,7 @@ public class MainController {
 			control.afterstartup(p.getScene().getWindow(), this);
 			if (control instanceof MesseController) {
 				((MesseController) control).setMesse(messe);
+				messen.remove(messe);
 			}
 		} catch (IOException e) {
 			Dialogs.error(e, "Auf " + ep.getLocation() + " konnte nicht zugegriffen werden!");

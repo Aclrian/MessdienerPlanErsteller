@@ -18,7 +18,7 @@ public class MessverhaltenTable extends ATable {
 	}
 
 	public void setMessverhalten(Messverhalten mv, AData ada) {
-		dtm.setDataVector(mv.getData(ada), columnames);
+		//dtm.setDataVector(mv.getData(ada), columnames);
 		getColumnModel().getColumn(0).setPreferredWidth(200);
 		this.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new ACheckBox()));
 		this.getColumnModel().getColumn(1).getCellEditor().addCellEditorListener(new ACellEditorListener());
@@ -26,7 +26,7 @@ public class MessverhaltenTable extends ATable {
 	}
 
 	public Messverhalten getMessdaten(AData ada) {
-		Messverhalten mv = new Messverhalten(ada);
+		/*Messverhalten mv = new Messverhalten(ada);
 		for (int i = 0; i < dtm.getRowCount(); i++) {
 			String s = (String) dtm.getValueAt(i, 0);
 			boolean kann = (Boolean) dtm.getValueAt(i, 1);
@@ -36,8 +36,8 @@ public class MessverhaltenTable extends ATable {
 					continue;
 				}
 			}
-		}
-		return mv;
+		}*/
+		return null;//mv;
 	}
 
 	private class ADTM extends DefaultTableModel {

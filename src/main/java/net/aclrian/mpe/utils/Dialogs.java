@@ -18,28 +18,19 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DialogEvent;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import net.aclrian.fx.ASlider;
+import net.aclrian.mpe.components.ACheckBox;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Setting;
 import net.aclrian.mpe.start.References;
+
+import javax.swing.*;
 
 public class Dialogs {
 	public static class Icon {
@@ -178,6 +169,31 @@ public class Dialogs {
 		System.exit(-1);
 	}
 
+	public static <I> I singleSelect(ArrayList<I> list, String s) {
+		Alert a = new Alert(AlertType.INFORMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
+		a.setHeaderText(s);
+		VBox v = new VBox();
+		v.setSpacing(5d);
+		ArrayList<I> rtn = new ArrayList<I>();
+		I sel = null;
+		ToggleGroup g = new ToggleGroup();
+		for (int i = 0; i < list.size(); i++) {
+			I ele = list.get(i);
+			ARadioButton b = new ARadioButton(list.get(i));
+			b.setToggleGroup(g);
+			v.getChildren().add(b);
+		}
+		a.getDialogPane().setExpandableContent(v);
+		a.getDialogPane().setExpanded(true);
+		a.showAndWait();
+		if (g.getSelectedToggle() instanceof ARadioButton){
+			return ((ARadioButton<I>)g.getSelectedToggle()).getI();
+		}
+		return null;
+	}
+
 	public static <I> ArrayList<I> select(ArrayList<I> dataAmBestenSortiert, ArrayList<I> selected, String string) {
 		Alert a = new Alert(AlertType.INFORMATION);
 		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
@@ -195,18 +211,14 @@ public class Dialogs {
 					break;
 				}
 			}
-
-			CheckBox ch = new CheckBox(e.toString());
+			String s = e instanceof StandartMesse ? ((StandartMesse) e).tolangerBenutzerfreundlichenString() :  e.toString();
+			CheckBox ch = new CheckBox(s);
 			ch.setSelected(b);
-			ch.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-				@Override
-				public void changed(ObservableValue<? extends Boolean> arg0, Boolean old, Boolean neu) {
-					if (neu && !old) {
-						rtn.add(e);
-					} else if (!neu && old) {
-						rtn.remove(e);
-					}
+			ch.selectedProperty().addListener((arg0, old, neu) -> {
+				if (neu && !old) {
+					rtn.add(e);
+				} else if (!neu && old) {
+					rtn.remove(e);
 				}
 			});
 			lw.getItems().add(ch);
@@ -234,18 +246,14 @@ public class Dialogs {
 					break;
 				}
 			}
-
-			CheckBox ch = new CheckBox(e.toString());
+			String s = e instanceof StandartMesse ? ((StandartMesse) e).tolangerBenutzerfreundlichenString() :  e.toString();
+			CheckBox ch = new CheckBox(s);
 			ch.setSelected(b);
-			ch.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-				@Override
-				public void changed(ObservableValue<? extends Boolean> arg0, Boolean old, Boolean neu) {
-					if (neu && !old) {
-						rtn.add(e);
-					} else if (!neu && old) {
-						rtn.remove(e);
-					}
+			ch.selectedProperty().addListener((arg0, old, neu) -> {
+				if (neu && !old) {
+					rtn.add(e);
+				} else if (!neu && old) {
+					rtn.remove(e);
 				}
 			});
 			lw.getItems().add(ch);
@@ -286,15 +294,17 @@ public class Dialogs {
 		a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
 		a.getDialogPane().setExpanded(true);
 		HBox hb = new HBox(d1, d2);
-		hb.setSpacing(40d);
+		hb.setSpacing(20d);
 		a.getDialogPane().setExpandableContent(hb);
 		Optional<ButtonType> o = a.showAndWait();
-		if (o.get().equals(ButtonType.OK)) {
-			ArrayList<Date> rtn = new ArrayList<Date>();
-			rtn.add(0, Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-			rtn.add(1, Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-			return rtn;
-		}
+		try {
+			if (o.get().equals(ButtonType.OK)) {
+				ArrayList<Date> rtn = new ArrayList<Date>();
+				rtn.add(0, Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+				rtn.add(1, Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+				return rtn;
+			}
+		}catch (NoSuchElementException e1){}
 		return null;
 	}
 
@@ -426,6 +436,18 @@ public class Dialogs {
 		} catch (Exception e) {
 			Dialogs.warn(result.get()+" ist keine gültige Ganzzahl");
 			return s;
+		}
+	}
+
+	private static class ARadioButton<I> extends RadioButton {
+		private I i;
+		public ARadioButton(I i) {
+			super(i instanceof StandartMesse ? ((StandartMesse) i).tolangerBenutzerfreundlichenString() : i.toString());
+			this.i = i;
+		}
+
+		public I getI() {
+			return i;
 		}
 	}
 }

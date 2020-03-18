@@ -8,9 +8,6 @@ import java.util.Locale;
 
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.start.AData;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
 
 /**
  * Klasse von Messen
@@ -24,78 +21,36 @@ public class Messe {
 		return getID();
 	}
 
-	public static final Comparator<Messe> compForMessen = new Comparator<Messe>() {
-
-		@Override
-		public int compare(Messe o1, Messe o2) {
-			return o1.getDate().compareTo(o2.getDate());
-		}
-	};
-	private String Wochentag;
+	public static final Comparator<Messe> compForMessen = Comparator.comparing(Messe::getDate);
 	private boolean hochamt;
 	private int anz_messdiener;
 	private Date date;
 	private String kirche;
 	private SimpleDateFormat df = new SimpleDateFormat("EEE", Locale.GERMAN);
-	private StandartMesse em = new Sonstiges();
+	private StandartMesse em;
 	private String typ;
 	private ArrayList<Messdiener> medis = new ArrayList<Messdiener>();
 	private ArrayList<Messdiener> leiter = new ArrayList<Messdiener>();
-	private String titel = "";
 
-	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, String titel) {
-			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ);
-			this.titel = titel;
-	}
-
-	/*
-	 * 
-	 */
 	public Messe(Date d, StandartMesse sm) {
-		boolean isdrin = false;
-		for (StandartMesse stm : DateienVerwalter.dv.getPfarrei().getStandardMessen()) {
-			if (sm instanceof Sonstiges) {
-				continue;
-			}
-			if (sm.toString().equals(stm.toString())) {
-				isdrin = true;
-				break;
-			}
-		}
-		if (isdrin) {
-			this.em = sm;
-			bearbeiten(false, sm.getAnz_messdiener(), d, sm.getOrt(), sm.getTyp());
-		} else {
-			Log.getLogger().info("da ging was schief");
-		}
+			this(false, sm.getAnz_messdiener(), d, sm.getOrt(), sm.getTyp(), sm);
 	}
 
-	/**
-	 *
-	 * @param anfang_stunde
-	 * @param anfang_minute
-	 * @param hochamt
-	 * @param anz_messdiener
-	 * @param anz_leiter     unbeachteet lassen, wenn -1
-	 * @param date
-	 * @param kirche
-	 * @param type
-	 */
 	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ) {
+		this(hochamt, anz_medis, datummituhrzeit, ort, typ, new Sonstiges());
+	}
+
+	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, StandartMesse sm) {
 			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ);
+			em = sm;
 	}
 
 	public String ausgeben() {
 		String rtn = "";
 		SimpleDateFormat df = new SimpleDateFormat("EE dd.MM. kk:mm", Locale.GERMAN);
 		rtn = df.format(getDate()) + " Uhr";
-		if (!titel.equals("")) {
-			rtn += " " + titel;
-		} else {
-			rtn += " " + typ;
-		}
+		rtn += " " + typ;
 		rtn += ", " + kirche;
-		// ------------------------------------
 		rtn += "\n";
 		for (int i = 0; i < medis.size(); i++) {
 			Messdiener m = medis.get(i);
@@ -123,11 +78,7 @@ public class Messe {
 		ArrayList<String> Lrtn = new ArrayList<String>();
 		SimpleDateFormat df = new SimpleDateFormat("EE dd.MM kk:mm", Locale.GERMAN);
 		String rtn = df.format(getDate()) + " Uhr";
-		if (!titel.equals("")) {
-			rtn += " " + titel;
-		} else {
-			rtn += " " + typ;
-		}
+		rtn += " " + typ;
 		rtn += ", " + kirche;
 		// ------------------------------------
 		Lrtn.add(rtn);
@@ -156,24 +107,12 @@ public class Messe {
 		return Lrtn;
 	}
 
-	/**
-	 * Hiermit kann man die Messe bearbeiten
-	 *
-	 * @param anfang_stunde
-	 * @param anfang_minute
-	 * @param hochamt
-	 * @param anz_messdiener
-	 * @param date
-	 * @param kirche
-	 * @param type
-	 */
 	public void bearbeiten(boolean hochamt, int anz_messdiener, Date date, String kirche, String type) {
-		this.Wochentag = df.format(date);
 		this.hochamt = hochamt;
 		this.kirche = kirche;
 		this.typ = type;
 		this.date = date;
-		setAnz_messdiener(anz_messdiener);
+		this.anz_messdiener = anz_messdiener;
 	}
 
 	public void einteilen(Messdiener medi) {
@@ -214,17 +153,9 @@ public class Messe {
 	}
 
 	public String getID() {
-		SimpleDateFormat dfeee = new SimpleDateFormat("dd.MM.");
+		SimpleDateFormat dfeee = new SimpleDateFormat("dd.MM.YYYY");
 		SimpleDateFormat dftime = new SimpleDateFormat("HH:mm");
-		String rtn = "";
-		if (!titel.equals("")) {
-			rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + titel + " "
-						+ kirche;
-		} else {
-			rtn = getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + typ + " "
-						+ kirche;
-		}
-		return rtn;
+		return getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + typ + " " + kirche;
 	}
 
 	public String getIDHTML() {
@@ -233,12 +164,8 @@ public class Messe {
 		StringBuffer rtn = new StringBuffer("<html>");
 		rtn.append("<font>");
 		if (!getWochentag().equals("")) {
-			rtn.append("<b>" + getWochentag() + " " + dfeee.format(date) + "&emsp;" + dftime.format(date) + " Uhr ");
-			if (titel.equals("")) {
-				rtn.append(typ + " " + kirche);
-			} else {
-				rtn.append(getTitle() + " " + kirche);
-			}
+			rtn.append("<b>" + df.format(getDate()) + " " + dfeee.format(date) + "&emsp;" + dftime.format(date) + " Uhr ");
+			rtn.append(typ + " " + kirche);
 			rtn.append("</b></font></html>");
 		}
 		return rtn.toString();
@@ -253,7 +180,7 @@ public class Messe {
 	}
 
 	public String getWochentag() {
-		return Wochentag;
+		return df.format(getDate());
 	}
 
 	public String htmlAusgeben() {
@@ -306,7 +233,7 @@ public class Messe {
 		leiter = new ArrayList<>();
 	}
 
-	public void LeiterEinteilen(Messdiener leiter) {
+	public void leiterEinteilen(Messdiener leiter) {
 		if (leiter.isIstLeiter()) {
 			if (leiter.getMessdatenDaten().kann(getDate(), false)) {
 				this.leiter.add(leiter);
@@ -314,47 +241,9 @@ public class Messe {
 		}
 	}
 
-	private void setAnz_messdiener(int anz_messdiener) {
-			this.anz_messdiener = anz_messdiener;
-	}
-
-	public void setDate(Date date) {
-		setWochentag(df.format(date));
-		if (df.format(date).equals(getWochentag())) {
-			this.date = date;
-		}
-	}
-
-	public void setHochamt(boolean istHochamt) {
-		hochamt = istHochamt;
-	}
-
-	public void setKirche(String kirche) {
-		this.kirche = kirche;
-	}
-
-	public void setMesseTyp(String etyp) {
-		this.typ = etyp;
-	}
-
-	/**
-	 * Wird in date mit Uebergeben
-	 *
-	 * @return
-	 */
-	private void setWochentag(String wochentag) {
-		if ((wochentag.startsWith("Mo")) || (wochentag.startsWith("Di")) || (wochentag.startsWith("Mi"))
-				|| (wochentag.startsWith("Do")) || (wochentag.startsWith("Fr")) || (wochentag.startsWith("Sa"))
-				|| (wochentag.startsWith("So"))) {
-			Wochentag = wochentag;
-		} else {
-			Dialogs.warn("Wochentag: " + wochentag + " existiert nicht!");
-		}
-	}
-
-	public void vorzeitigEiteilen(Messdiener medi, AData ada) {
-		if (medi.getMessdatenDaten().kannvorzeitg(date, medi.isIstLeiter(), ada)) {
-			medi.getMessdatenDaten().einteilenVorzeitig(getDate(), isHochamt(), medi, ada);
+	public void vorzeitigEiteilen(Messdiener medi) {
+		if (medi.getMessdatenDaten().kannvorzeitg(date)) {
+			medi.getMessdatenDaten().einteilenVorzeitig(date,hochamt);
 			if (medi.isIstLeiter()) {
 				leiter.add(medi);
 			} else {
@@ -364,34 +253,14 @@ public class Messe {
 		}
 	}
 
-	public int getnochbenoetigte() {
-		int haben = leiter.size() + medis.size();
+	public int getNochBenoetigte() {
+		int haben = getHatSchon();
 		int soll = anz_messdiener;
 		return soll - haben;
 	}
 
-	public int getHatSchon() {
+	private int getHatSchon() {
 		return leiter.size() + medis.size();
 	}
 
-	public void setTitle(String titel) {
-		this.titel = titel;
-	}
-
-	public String getTitle() {
-		return titel;
-	}
-
-	public void setStandartMesse(StandartMesse sm, AData ada) {
-		boolean isdrin = false;
-		for (StandartMesse stm : ada.getSMoheSonstiges()) {
-			if (sm.toString().equals(stm.toString())) {
-				isdrin = true;
-				break;
-			}
-		}
-		if (isdrin) {
-			em = sm;
-		}
-	}
 }

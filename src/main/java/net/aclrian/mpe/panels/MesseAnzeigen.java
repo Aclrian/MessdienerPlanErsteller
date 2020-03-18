@@ -28,7 +28,6 @@ import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame;
 import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
 import net.aclrian.mpe.utils.Erroropener;
-import net.aclrian.mpe.utils.Utilities;
 
 public class MesseAnzeigen extends APanel {
 
@@ -118,7 +117,7 @@ public class MesseAnzeigen extends APanel {
 		});
 
 		spinnerAnzahlMedis.setModel(slmAnzahl);
-		String[] orte = new String[ap.getAda().getPfarrei().getOrte().size()];
+		/*String[] orte = new String[ap.getAda().getPfarrei().getOrte().size()];
 		for (int i = 0; i < orte.length; i++) {
 			orte[i] = ap.getAda().getPfarrei().getOrte().get(i);
 		}
@@ -170,6 +169,7 @@ public class MesseAnzeigen extends APanel {
 				ap.getWAlleMessen().changeAP(EnumActivePanel.Start, true);
 			}
 		});
+		*/
 	}
 
 	protected boolean alleSindLeiter() {
@@ -187,7 +187,7 @@ public class MesseAnzeigen extends APanel {
 	protected void speichern(AProgress ap) {
 		if (!btnSetzeManuell.getText().equals("Einteilen")) {
 			Messe m;
-			if (title == null) {
+			/*if (title == null) {
 				m = new Messe(chbxHochamt.isSelected(), ((int) spinnerAnzahlMedis.getModel().getValue()),
 						((Date) spinnerDatum.getModel().getValue()), ((String) spinnerKirche.getModel().getValue()),
 						((String) spinnerTyp.getModel().getValue()), ap.getAda());
@@ -203,7 +203,7 @@ public class MesseAnzeigen extends APanel {
 			ap.getAda().getVoreingeteilte().put(m, eingeteilte);
 			Utilities.logging(this.getClass(), "speichern", m.getID() + " wurde erstellt.");
 			ap.getWAlleMessen().addMesse(m);
-			ap.getWAlleMessen().changeAP(EnumActivePanel.Start, true);
+			ap.getWAlleMessen().changeAP(EnumActivePanel.Start, true);*/
 		} else {
 			new Erroropener(new Exception("Erst Messdiener fertig vorzeitig einteilen und auf 'Einteilen' klicken."));
 		}
@@ -212,18 +212,18 @@ public class MesseAnzeigen extends APanel {
 	public void setMesse(Messe m, AProgress ap) {
 		setArt(Art.bearbeiten);
 		this.moben = m;
-		title = m.getTitle();
+		//title = m.getTitle();
 		chbxHochamt.setSelected(m.isHochamt());
 		slmAnzahl.setValue(m.getAnz_messdiener());
 		snmTypen.setValue(m.getMesseTyp());
 		snmKirche.setValue(m.getKirche());
 		sdmDatum.setValue(m.getDate());
-		eingeteilte = ap.getAda().getVoreingeteilte().get(m);
+	/*	eingeteilte = ap.getAda().getVoreingeteilte().get(m);
 		if (eingeteilte == null) {
 			eingeteilte = new ArrayList<>();
 		}
 		ap.getAda().getVoreingeteilte().remove(m);
-	}
+	*/}
 
 	@Override
 	public void graphics() {

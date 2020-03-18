@@ -34,7 +34,7 @@ public class StandartMesse {
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm");
 		Date d = null;
 		try {
-			d = df.parse(String.valueOf(beginn_stunde) + ":" + beginn_minute);
+			d = df.parse(beginn_stunde + ":" + beginn_minute);
 		} catch (ParseException e) {
 			new Erroropener(new Exception(
 					"Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen."));
@@ -48,7 +48,8 @@ public class StandartMesse {
 		try {
 			rtn = dall.parse(datum + ":" + uhrzeit);
 		} catch (Exception e) {
-			new Erroropener(e);
+			new Erroropener(new Exception(
+					"Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen."));
 			e.printStackTrace();
 		}
 		return rtn;
@@ -75,20 +76,14 @@ public class StandartMesse {
 		return typ;
 	}
 
-	public String[] getStrings() {
-		String[] rtn = { Wochentag, ort, String.valueOf(beginn_stunde), beginn_minute, typ,
-				String.valueOf(anz_messdiener) };
-		return rtn;
-	}
-
 	public String getString() {
 		return tokurzerBenutzerfreundlichenString();
 	}
 
 	@Override
 	public String toString() {
-		return Wochentag + "_" + String.valueOf(beginn_stunde) + ":" + beginn_minute + "-" + ort + " " + typ + " "
-				+ String.valueOf(anz_messdiener);
+		return Wochentag + "_" + beginn_stunde + ":" + beginn_minute + "-" + ort + " " + typ + " "
+				+ anz_messdiener;
 	}
 
 	public String tokurzerBenutzerfreundlichenString() {
@@ -101,8 +96,8 @@ public class StandartMesse {
 	}
 
 	public String toReduziertenString() {
-		String rtn = Wochentag + "-" + String.valueOf(beginn_stunde) + "-" + beginn_minute + "" + // ort+ "-" + typ +
-				"-" + String.valueOf(anz_messdiener);
+		String rtn = Wochentag + "-" + beginn_stunde + "-" + beginn_minute + "" + // ort+ "-" + typ +
+				"-" + anz_messdiener;
 		rtn.replace(':', '-');
 		rtn.replace(' ', '-');
 		rtn.replaceAll(":", "a");
