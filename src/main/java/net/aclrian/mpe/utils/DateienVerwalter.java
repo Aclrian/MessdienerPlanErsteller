@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javafx.stage.DirectoryChooser;
@@ -76,12 +77,9 @@ public class DateienVerwalter {
 		pf = ReadFile_Pfarrei.getPfarrei(f.getAbsolutePath());
 	}
 
-	private File getPfarreFile() {
+	private ArrayList<File> getPfarreiFiles(){
 		ArrayList<File> files = new ArrayList<File>();
 		File f = new File(savepath);
-		if (f.listFiles().length == 0) {
-			return null;
-		}
 		for (File file : f.listFiles()) {
 			String s = file.toString();
 			if (s.endsWith(pfarredateiendung)) {
@@ -89,6 +87,11 @@ public class DateienVerwalter {
 			}
 
 		}
+		return files;
+	}
+
+	private File getPfarreFile() {
+		ArrayList<File> files = getPfarreiFiles();
 		if (files.size() != 1) {
 			if (files.size() > 1) {
 				Dialogs.warn("Es darf nur eine Datei mit der Endung: '" + pfarredateiendung+ "' in dem Ordner: " + savepath + " vorhanden sein.");
@@ -99,6 +102,19 @@ public class DateienVerwalter {
 		} else {
 			return files.get(0);
 		}
+	}
+
+
+	public void removeoldPfarrei(File neuePfarrei) {
+		ArrayList<File> files = getPfarreiFiles();
+		ArrayList<File> todel = new ArrayList<>();
+		boolean candel = false;
+		for (File f: files) {
+				if (!f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())){
+					todel.add(f);
+				}else candel=true;
+		}
+		if (candel) todel.forEach(f->f.delete());
 	}
 
 	/**
@@ -254,8 +270,8 @@ public class DateienVerwalter {
 		f.delete();
 		getSpeicherort(window);
 	}
-	
-	public static class NoSuchPfarrei extends Exception{
+
+    public static class NoSuchPfarrei extends Exception{
 		private final String savepath;
 		public NoSuchPfarrei(String savepath) {
 			this.savepath=savepath;

@@ -3,6 +3,7 @@ package net.aclrian.mpe.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
@@ -13,6 +14,9 @@ import javafx.scene.Parent;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import net.aclrian.mpe.Main;
+import net.aclrian.mpe.PfarreiController;
 import net.aclrian.mpe.controller.Select.Selecter;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
@@ -22,7 +26,9 @@ import net.aclrian.mpe.utils.Dialogs;
 import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class MainController {
+	private Stage stage;
 	private ArrayList<Messe> messen = new ArrayList<>();
+	private Main m;
 
 	@FXML
 	private ImageView gen_pic, medi_pic, messe_pic;
@@ -36,8 +42,9 @@ public class MainController {
 	private Controller control;
 	// private AData adata = new AData();
 
-	public MainController() {
-		;
+	public MainController(Main m,Stage s) {
+		this.m = m;
+		this.stage = s;
 	}
 
 	private EnumPane ep;
@@ -168,7 +175,7 @@ public class MainController {
 	}
 
 	public void pfarrei_aendern(ActionEvent actionEvent) {
-		// TODO
+		PfarreiController.start(new Stage(), m, stage);
 	}
 
 	public void speicherort(ActionEvent actionEvent) {

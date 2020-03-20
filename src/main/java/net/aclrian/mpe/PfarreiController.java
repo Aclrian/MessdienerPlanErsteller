@@ -23,7 +23,9 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.aclrian.fx.ASlider;
@@ -32,10 +34,12 @@ import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.pfarrei.Setting;
 import net.aclrian.mpe.pfarrei.WriteFile_Pfarrei;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 
 public class PfarreiController {
+
 	public static void start(Stage stage, String savepath, Main main) {
 		FXMLLoader loader = new FXMLLoader();
 		PfarreiController cont = new PfarreiController(stage, savepath, main);
@@ -61,7 +65,36 @@ public class PfarreiController {
 		}
 	}
 
-	private final String savepath;
+	public static void start(Stage stage, Main m, Stage old) {
+		FXMLLoader loader = new FXMLLoader();
+		PfarreiController cont = new PfarreiController(stage);
+		loader.setLocation(cont.getClass().getResource("/view/pfarrei/standardmesse.fxml"));
+		loader.setController(cont);
+		Parent root;
+		try {
+			root = loader.load();
+			Scene scene = new Scene(root);
+			stage.setScene(scene);
+			stage.setTitle("MessdienerplanErsteller");
+			stage.setResizable(false);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.show();
+			cont.afterstartup(stage);
+			Dialogs.info("Willkommen beim MessdienerplanErsteller!", "Als Erstes werden eine Daten benötigt:"
+					+ System.lineSeparator()
+					+ "Zunächst werden Standardmessen erstellt. Das sind die Messen, die sich wöchentlich wiederholen."
+					+ System.lineSeparator()
+					+ "Danach folgen Einstellungen, wie oft Messdiener eingeteilt werden sollen.");
+			getLogger().info("neue Pfarrei erstellen...");
+		} catch (IOException e) {
+			Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");
+		}
+	}
+
+	private String nameS = null;
+	private int mediI, leiterI;
+	private boolean hochamtB;
+	private String savepath;
 	private ObservableList<StandartMesse> ol = FXCollections.emptyObservableList();
 	private Stage stage;
 	private boolean weiter = false;
@@ -82,14 +115,28 @@ public class PfarreiController {
 	private JFXTextField name;
 	@FXML
 	private CheckBox hochamt;
-
 	@FXML
 	private Slider leiter, medi;
+
+	public PfarreiController(Stage stage) {
+		this.stage = stage;
+		this.main = main;
+		Pfarrei pf = DateienVerwalter.dv.getPfarrei();
+		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
+		ol = FXCollections.observableArrayList(pf.getStandardMessen());
+		ol.sort(StandartMesse.comfuerSMs);
+		settings = FXCollections.observableArrayList(pf.getSettings().getSettings());
+		nameS = pf.getName();
+		mediI = pf.getSettings().getDaten(0).getAnz_dienen();
+		leiterI = pf.getSettings().getDaten(1).getAnz_dienen();
+		hochamtB = pf.zaehlenHochaemterMit();
+	}
 
 	public PfarreiController(Stage stage, String savepath, Main main) {
 		this.savepath = savepath;
 		this.stage = stage;
 		this.main = main;
+		afterstartup(stage);
 	}
 
 	public void afterstartup(Window window) {
@@ -106,11 +153,11 @@ public class PfarreiController {
 				Einstellungen e = new Einstellungen();
 				settings = FXCollections.observableArrayList(e.getSettings());
 			}
-			eintritt.setCellValueFactory(new PropertyValueFactory<Setting, Integer>("Jahr"));
+			eintritt.setCellValueFactory(new PropertyValueFactory<>("Jahr"));
 			// cellData -> {new
 			// SimpleIntegerProperty(Messdaten.getMaxYear()-cellData.getValue().getId());});
 			eintritt.setStyle("-fx-alignment: CENTER;");
-			anzahl.setCellValueFactory(new PropertyValueFactory<Setting, Integer>("Anz_dienen"));
+			anzahl.setCellValueFactory(new PropertyValueFactory<>("Anz_dienen"));
 			anzahl.setStyle("-fx-alignment: CENTER;");
 			t2.setItems(settings);
 			t2.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -132,6 +179,17 @@ public class PfarreiController {
 			anz.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMessdienerAnzahl()));
 			anz.setStyle("-fx-alignment: CENTER;");
 			table.setItems(ol);
+			table.setOnMouseClicked(e -> {
+				if (e.getClickCount() == 2 && e.getButton().equals(MouseButton.PRIMARY)) {
+					int i = table.getSelectionModel().getSelectedIndex();
+					StandartMesse standartMesse = Dialogs.standartmesse(ol.get(i));
+					if(standartMesse!=null){
+						ol.remove(i);
+						ol.add(standartMesse);
+						ol.sort(StandartMesse.comfuerSMs);
+					}
+				}
+			});
 		}
 	}
 
@@ -141,14 +199,12 @@ public class PfarreiController {
 	@FXML
 	public void löschen(ActionEvent e) {
 		StandartMesse a = table.getSelectionModel().getSelectedItem();
-		ol.removeIf(sm -> {
-			return sm.toString().equalsIgnoreCase(a.toString());
-		});
+		ol.removeIf(sm -> sm.toString().equalsIgnoreCase(a.toString()));
 	}
 
 	@FXML
 	public void neu(ActionEvent e) {
-		StandartMesse sm = Dialogs.standartmesse();
+		StandartMesse sm = Dialogs.standartmesse(null);
 		Log.getLogger().info("");
 		if (ol.isEmpty()) {
 			ol = FXCollections.observableArrayList(sm);
@@ -173,6 +229,7 @@ public class PfarreiController {
 		ArrayList<StandartMesse> sm = new ArrayList<>(ol);
 		Pfarrei pf = new Pfarrei(einst, sm, name.getText(), hochamt.isSelected());
 		Window s = ((Button) e.getSource()).getParent().getScene().getWindow();
+		if(nameS!=null)WriteFile_Pfarrei.writeFile(pf, s);
 		WriteFile_Pfarrei.writeFile(pf, s, savepath);
 		try {
 			((Stage) s).close();
@@ -181,8 +238,146 @@ public class PfarreiController {
 			Dialogs.info("Das Programm muss nun neu gestartet werden.");
 			System.exit(0);
 		}
-	}
+	}/*javax.xml.transform.TransformerException: java.io.FileNotFoundException: C:\Users\adria\git\MessdienerPlanErsteller\null\Messdiener_Kaarstdsf.xml.pfarrei (Das System kann den angegebenen Pfad nicht finden)
+	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.getOutputHandler(TransformerImpl.java:540)
+	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.transform(TransformerImpl.java:354)
+	at net.aclrian.mpe.pfarrei.WriteFile_Pfarrei.writeFile(WriteFile_Pfarrei.java:147)
+	at net.aclrian.mpe.PfarreiController.save(PfarreiController.java:233)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.sun.javafx.reflect.Trampoline.invoke(MethodUtil.java:76)
+	at jdk.internal.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at javafx.base/com.sun.javafx.reflect.MethodUtil.invoke(MethodUtil.java:273)
+	at javafx.fxml/com.sun.javafx.fxml.MethodHelper.invoke(MethodHelper.java:83)
+	at javafx.fxml/javafx.fxml.FXMLLoader$MethodHandler.invoke(FXMLLoader.java:1782)
+	at javafx.fxml/javafx.fxml.FXMLLoader$ControllerMethodEventHandler.handle(FXMLLoader.java:1670)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:238)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Node.fireEvent(Node.java:8879)
+	at javafx.controls/javafx.scene.control.Button.fire(Button.java:200)
+	at javafx.controls/com.sun.javafx.scene.control.behavior.ButtonBehavior.mouseReleased(ButtonBehavior.java:206)
+	at javafx.controls/com.sun.javafx.scene.control.inputmap.InputMap.handle(InputMap.java:274)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:218)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:238)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3851)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.access$1200(Scene.java:3579)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1849)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2588)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:397)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:295)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:434)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:390)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:433)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:556)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:942)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:174)
+	at java.base/java.lang.Thread.run(Thread.java:834)
+	Caused by: java.io.FileNotFoundException: C:\Users\adria\git\MessdienerPlanErsteller\null\Messdiener_Kaarstdsf.xml.pfarrei (Das System kann den angegebenen Pfad nicht finden)
+	at java.base/java.io.FileOutputStream.open0(Native Method)
+	at java.base/java.io.FileOutputStream.open(FileOutputStream.java:298)
+	at java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:237)
+	at java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:126)
+	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.getOutputHandler(TransformerImpl.java:513)
+			... 61 more
+---------
+	java.io.FileNotFoundException: C:\Users\adria\git\MessdienerPlanErsteller\null\Messdiener_Kaarstdsf.xml.pfarrei (Das System kann den angegebenen Pfad nicht finden)
+	at java.base/java.io.FileOutputStream.open0(Native Method)
+	at java.base/java.io.FileOutputStream.open(FileOutputStream.java:298)
+	at java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:237)
+	at java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:126)
+	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.getOutputHandler(TransformerImpl.java:513)
+	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.transform(TransformerImpl.java:354)
+	at net.aclrian.mpe.pfarrei.WriteFile_Pfarrei.writeFile(WriteFile_Pfarrei.java:147)
+	at net.aclrian.mpe.PfarreiController.save(PfarreiController.java:233)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.sun.javafx.reflect.Trampoline.invoke(MethodUtil.java:76)
+	at jdk.internal.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at javafx.base/com.sun.javafx.reflect.MethodUtil.invoke(MethodUtil.java:273)
+	at javafx.fxml/com.sun.javafx.fxml.MethodHelper.invoke(MethodHelper.java:83)
+	at javafx.fxml/javafx.fxml.FXMLLoader$MethodHandler.invoke(FXMLLoader.java:1782)
+	at javafx.fxml/javafx.fxml.FXMLLoader$ControllerMethodEventHandler.handle(FXMLLoader.java:1670)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:238)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Node.fireEvent(Node.java:8879)
+	at javafx.controls/javafx.scene.control.Button.fire(Button.java:200)
+	at javafx.controls/com.sun.javafx.scene.control.behavior.ButtonBehavior.mouseReleased(ButtonBehavior.java:206)
+	at javafx.controls/com.sun.javafx.scene.control.inputmap.InputMap.handle(InputMap.java:274)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:218)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:238)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3851)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.access$1200(Scene.java:3579)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1849)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2588)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:397)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:295)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:434)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:390)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:433)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:556)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:942)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:174)
+	at java.base/java.lang.Thread.run(Thread.java:834)
 
+*/
 	public void weiter() {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("/view/pfarrei/anzahl.fxml"));
@@ -198,6 +393,12 @@ public class PfarreiController {
 			stage.show();
 			afterstartup(stage);
 			getLogger().info("neue Pfarrei erstellen...weiter");
+			if(nameS!=null) {
+				name.setText(nameS);
+				medi.setValue(mediI);
+				leiter.setValue(leiterI);
+				hochamt.setSelected(hochamtB);
+			}
 		} catch (IOException e) {
 			Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");
 		}
@@ -235,6 +436,12 @@ public class PfarreiController {
 	}
 
 	public void zurück() {
+		if(nameS!=null){
+			nameS = name.getText();
+			mediI = (int)medi.getValue();
+			leiterI = (int)leiter.getValue();
+			hochamtB = hochamt.isSelected();
+		}
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("/view/pfarrei/standardmesse.fxml"));
 		loader.setController(this);

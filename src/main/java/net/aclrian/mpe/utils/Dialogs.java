@@ -308,7 +308,7 @@ public class Dialogs {
 		return null;
 	}
 
-	public static StandartMesse standartmesse() {
+	public static StandartMesse standartmesse(StandartMesse sm) {
 		Alert a = new Alert(AlertType.INFORMATION);
 		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
@@ -334,21 +334,16 @@ public class Dialogs {
 		anz.setMin(0);
 		anz.setMax(40);
 		anz.setBlockIncrement(1);
-		ChangeListener<Object> e = new ChangeListener<Object>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Object> arg0, Object arg1, Object arg2) {
-				try {
-					if (!ort.getText().equalsIgnoreCase("") && !typ.getText().equalsIgnoreCase("")
-							&& !wochentag.getValue().isBlank()) {
-						a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
-						return;
-					} else {
-						a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-					}
-				} catch (NullPointerException e2) {
+		ChangeListener<Object> e = (arg0, arg1, arg2) -> {
+			try {
+				if (!ort.getText().equalsIgnoreCase("") && !typ.getText().equalsIgnoreCase("")
+						&& !wochentag.getValue().isBlank()) {
+					a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
+				} else {
 					a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
 				}
+			} catch (NullPointerException e2) {
+				a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
 			}
 		};
 		typ.textProperty().addListener(e);
@@ -363,28 +358,33 @@ public class Dialogs {
 		VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz);
 		v.setSpacing(20);
 		a.getDialogPane().setExpandableContent(v);
-		a.setOnShown(new EventHandler<DialogEvent>() {
+		a.setOnShown(arg0 -> {
 
-			@Override
-			public void handle(DialogEvent arg0) {
-
-				ASlider.makeASlider("Stunde: ", stunde);
-				ASlider.makeASlider(minute, d -> {
-					int i = (int) d;
-					String as;
-					if (i < 10) {
-						as = "0" + String.valueOf(i);
-					} else
-						as = String.valueOf(i);
-					as = "Minute: " + as;
-					return as;
-				});
-				ASlider.makeASlider("Anzahl: ", anz).setTooltip(new Tooltip("Anzahl der Messdiener"));
-
+			ASlider.makeASlider("Stunde: ", stunde);
+			ASlider.makeASlider(minute, d -> {
+				int i = (int) d;
+				String as;
+				if (i < 10) {
+					as = "0" + i;
+				} else
+					as = String.valueOf(i);
+				as = "Minute: " + as;
+				return as;
+			});
+			ASlider.makeASlider("Anzahl: ", anz).setTooltip(new Tooltip("Anzahl der Messdiener"));
+			if(sm!=null){
+				ort.setText(sm.getOrt());
+				typ.setText(sm.getTyp());
+				wochentag.setValue(sm.getWochentag());
+				stunde.setValue(sm.getBeginn_stunde());
+				minute.setValue(1);
+				minute.setValue(sm.getBeginn_minuteInt());
+				anz.setValue(sm.getAnz_messdiener());
+			} else {
 				stunde.setValue(10);
 				minute.setValue(1);
 				minute.setValue(0);
-				anz.setValue(6);
+				anz.setValue(5);
 			}
 		});
 		Optional<ButtonType> o = a.showAndWait();

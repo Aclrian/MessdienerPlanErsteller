@@ -4,8 +4,6 @@ import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 
 import com.jfoenix.controls.JFXTimePicker;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Window;
@@ -22,7 +20,6 @@ import net.aclrian.mpe.utils.Dialogs;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class MesseController implements Controller {
@@ -53,9 +50,6 @@ public class MesseController implements Controller {
 
 	@FXML
 	private MenuItem save_new, cancel;
-
-	@FXML
-	private Button editSmesse;
 
 	@FXML
 	private ATilePane list;

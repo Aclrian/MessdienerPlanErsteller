@@ -142,9 +142,10 @@ public class WriteFile_Pfarrei {
 			datei = datei.replaceAll(" ", "_");
 			Log.getLogger()
 					.info("Pfarrei wird gespeichert in :" + savepath + File.separator + datei + DateienVerwalter.pfarredateiendung);
-			StreamResult streamResult = new StreamResult(
-					new File(savepath + File.separator + datei + DateienVerwalter.pfarredateiendung));
+			File f = new File(savepath + File.separator + datei + DateienVerwalter.pfarredateiendung);
+			StreamResult streamResult = new StreamResult(f);
 			transformer.transform(domSource, streamResult);
+			DateienVerwalter.dv.removeoldPfarrei(f);
 			Log.getLogger().info("Pfarrei: " + pf.getName() + "wurde erfolgreich gespeichert!");
 		} catch (ParserConfigurationException pce) {
 			Dialogs.error(pce, "Fehler bei Speichern der Pfarrei:");
