@@ -9,27 +9,23 @@ import javafx.scene.layout.Pane;
 
 public class ASlider {
 	public static Label makeASlider(String value, Slider s) {
-		s.setOnScroll(new EventHandler<ScrollEvent>() {
-
-			@Override
-			public void handle(ScrollEvent e) {
-				double delta = s.getOrientation().equals(Orientation.HORIZONTAL) ? e.getDeltaY() : e.getDeltaX();
-				if (delta < 0) {
-					double i = s.getValue() - 1;
-					if (i > s.getMax())
-						i = s.getMax();
-					if (i < s.getMin())
-						i = s.getMin();
-					s.setValue(i);
-				}
-				if (delta > 0) {
-					double i = s.getValue() + 1;
-					if (i > s.getMax())
-						i = s.getMax();
-					if (i < s.getMin())
-						i = s.getMin();
-					s.setValue(i);
-				}
+		s.setOnScroll(e -> {
+			double delta = s.getOrientation().equals(Orientation.HORIZONTAL) ? e.getDeltaY() : e.getDeltaX();
+			if (delta < 0) {
+				double i = s.getValue() - 1;
+				if (i > s.getMax())
+					i = s.getMax();
+				if (i < s.getMin())
+					i = s.getMin();
+				s.setValue(i);
+			}
+			if (delta > 0) {
+				double i = s.getValue() + 1;
+				if (i > s.getMax())
+					i = s.getMax();
+				if (i < s.getMin())
+					i = s.getMin();
+				s.setValue(i);
 			}
 		});
 		s.applyCss();// Entfernt Error
@@ -45,27 +41,23 @@ public class ASlider {
 	}
 
 	public static Label makeASlider(Slider s, IFormatter i) {
-		s.setOnScroll(new EventHandler<ScrollEvent>() {
-
-			@Override
-			public void handle(ScrollEvent e) {
-				double delta = s.getOrientation().equals(Orientation.HORIZONTAL) ? e.getDeltaY() : e.getDeltaX();
-				if (delta < 0) {
-					double i = s.getValue() - 1;
-					if (i > s.getMax())
-						i = s.getMax();
-					if (i < s.getMin())
-						i = s.getMin();
-					s.setValue(i);
-				}
-				if (delta > 0) {
-					double i = s.getValue() + 1;
-					if (i > s.getMax())
-						i = s.getMax();
-					if (i < s.getMin())
-						i = s.getMin();
-					s.setValue(i);
-				}
+		s.setOnScroll(e -> {
+			double delta = s.getOrientation().equals(Orientation.HORIZONTAL) ? e.getDeltaY() : e.getDeltaX();
+			if (delta < 0) {
+				double i1 = s.getValue() - 1;
+				if (i1 > s.getMax())
+					i1 = s.getMax();
+				if (i1 < s.getMin())
+					i1 = s.getMin();
+				s.setValue(i1);
+			}
+			if (delta > 0) {
+				double i1 = s.getValue() + 1;
+				if (i1 > s.getMax())
+					i1 = s.getMax();
+				if (i1 < s.getMin())
+					i1 = s.getMin();
+				s.setValue(i1);
 			}
 		});
 		s.applyCss();// Entfernt Error

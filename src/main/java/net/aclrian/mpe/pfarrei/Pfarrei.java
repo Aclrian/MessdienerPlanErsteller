@@ -23,9 +23,7 @@ public class Pfarrei {
 
 	public String getName() {
 		return name;
-	}
-
-	public Einstellungen getSettings() {
+	}public Einstellungen getSettings() {
 		return settings;
 	}
 

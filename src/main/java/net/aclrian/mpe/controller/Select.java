@@ -78,7 +78,7 @@ public class Select implements Controller {
 					}
 				}
 			});
-			remove.setOnAction(arg0 -> {
+				remove.setOnAction(arg0 -> {
 				int i = list.getSelectionModel().getSelectedIndex();
 				if ((list.getSelectionModel().getSelectedItem().getText().equalsIgnoreCase(data.get(i).toString()))
 						&& MediController.remove(window, data.get(i))) {

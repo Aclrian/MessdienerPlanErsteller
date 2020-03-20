@@ -60,6 +60,8 @@ public class StandartMesse {
 		return beginn_minute;
 	}
 
+	public int getBeginn_minuteInt(){return Integer.parseInt(beginn_minute);}
+
 	public String getOrt() {
 		return ort;
 	}
@@ -82,11 +84,13 @@ public class StandartMesse {
 
 	@Override
 	public String toString() {
-		return Wochentag + "_" + beginn_stunde + ":" + beginn_minute + "-" + ort + " " + typ + " "
+		String s = beginn_stunde<10? "0"+beginn_stunde:beginn_stunde+"";
+		return Wochentag + "_" + s + ":" + beginn_minute + "-" + ort + " " + typ + " "
 				+ anz_messdiener;
 	}
 
 	public String tokurzerBenutzerfreundlichenString() {
+
 		return Wochentag + ". " + beginn_stunde + ":" + beginn_minute + ": " + ort + " " + typ + " (" + anz_messdiener
 				+ ")";
 	}
