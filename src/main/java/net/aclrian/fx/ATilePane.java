@@ -45,7 +45,6 @@ public class ATilePane extends TilePane {
 		} catch (Exception e) {
 			// For SceneBuilder
 		}
-
 	}
 
 	public ATilePane(ArrayList<Messdiener> selected) {
@@ -73,7 +72,7 @@ public class ATilePane extends TilePane {
 			for (Node n : getChildrenUnmodifiable()) {
 				if (n instanceof ACheckBox) {
 					for (Messdiener messdiener : eingeteilte) {
-						if (messdiener.toString().equalsIgnoreCase(((ACheckBox) n).getMessdiener().toString())) {
+						if (messdiener.toString().equals(((ACheckBox) n).getMessdiener().toString())) {
 							((CheckBox) n).setSelected(true);
 						}
 					}

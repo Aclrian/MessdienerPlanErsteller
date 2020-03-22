@@ -93,13 +93,7 @@ public class WriteFile {
 				if (messe instanceof Sonstiges) {
 					continue;
 				}
-				boolean kwm;
-				try {
-					kwm = dv.getBestimmtes(messe);
-				} catch (NotFoundException e) {
-					Log.getLogger().info("Konnte die StandartMesse: " + messe + " nicht finden.");
-					kwm = false;
-				}
+				boolean kwm = dv.getBestimmtes(messe);
 				String s = messe.toReduziertenString();
 				Element kwmesse = document.createElement(s);
 				kwmesse.appendChild(document.createTextNode(String.valueOf(kwm)));

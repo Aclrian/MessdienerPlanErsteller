@@ -2,7 +2,9 @@ package net.aclrian.mpe.messdiener;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Objects;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
@@ -30,7 +32,6 @@ public class Messdiener {
 	private String Nachname = "";
 	private String Email = "";
 	private String[] Freunde = new String[freundelenght];
-
 	private String[] Geschwister = new String[geschwilenght];
 	private Messverhalten dienverhalten;
 	private int Eintritt = 2000;
@@ -278,9 +279,33 @@ public class Messdiener {
 
 	public void setFile(File file) {
 		this.file = file;
-
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Messdiener that = (Messdiener) o;
+		return /*Eintritt == that.Eintritt &&
+				istLeiter == that.istLeiter &&
+				Objects.equals(Vorname, that.Vorname) &&
+				Objects.equals(Nachname, that.Nachname) &&
+				Objects.equals(Email, that.Email) &&
+				Arrays.equals(Freunde, that.Freunde) &&
+				Arrays.equals(Geschwister, that.Geschwister) &&
+				Objects.equals(dienverhalten, that.dienverhalten) &&
+				Objects.equals(daten, that.daten) &&*/
+				Objects.equals(file, that.file);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(Vorname, Nachname, Email, dienverhalten, Eintritt, istLeiter, daten, file);
+		result = 31 * result + Arrays.hashCode(Freunde);
+		result = 31 * result + Arrays.hashCode(Geschwister);
+		return result;
+	}
+
 	public class NotValidException extends Exception{
 		public NotValidException() {
 			super("Keine gültige E-Mail Addresse");

@@ -140,6 +140,7 @@ public class WriteFile_Pfarrei {
 			DOMSource domSource = new DOMSource(doc);
 			String datei = pf.getName();
 			datei = datei.replaceAll(" ", "_");
+			savepath = savepath==null ? DateienVerwalter.dv.getSavepath(window) : savepath;
 			Log.getLogger()
 					.info("Pfarrei wird gespeichert in :" + savepath + File.separator + datei + DateienVerwalter.pfarredateiendung);
 			File f = new File(savepath + File.separator + datei + DateienVerwalter.pfarredateiendung);

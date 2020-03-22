@@ -41,7 +41,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Ansicht">
           <items>
-            <MenuItem mnemonicParsing="false" text="Hauptbildschirm">
+            <MenuItem mnemonicParsing="false" onAction="#hauptbildschirm" text="Hauptbildschirm">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F2" control="UP" meta="UP" shift="UP" shortcut="ANY" />
                      </accelerator></MenuItem>
@@ -49,11 +49,11 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F3" control="UP" meta="UP" shift="UP" shortcut="ANY" />
                      </accelerator></MenuItem>
-            <MenuItem mnemonicParsing="false" text="Messen">
+            <MenuItem mnemonicParsing="false" onAction="#messe" text="Messen">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F4" control="UP" meta="UP" shift="UP" shortcut="ANY" />
                      </accelerator></MenuItem>
-            <MenuItem mnemonicParsing="false" text="Standardmessen">
+            <MenuItem mnemonicParsing="false" onAction="#smesse" text="Standardmessen">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="ANY" />
                      </accelerator></MenuItem>
