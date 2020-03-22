@@ -214,7 +214,7 @@ public class MediController implements Controller {
 				for (Object k : ((ArrayList<?>) o)) {
 					if (k instanceof KannWelcheMesse) {
 						KannWelcheMesse kw = (KannWelcheMesse) k;
-						if (kwm.getMesse().toString().equalsIgnoreCase(kw.getMesse().toString())
+						if (kwm.getMesse().toString().equals(kw.getMesse().toString())
 								&& (kwm.isKanndann() != kw.isKanndann())) {
 							kwm.setKanndann(!kwm.isKanndann());
 						}
@@ -386,11 +386,11 @@ public class MediController implements Controller {
 		ArrayList<Messdiener> alle = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 		ArrayList<Messdiener> al = new ArrayList<Messdiener>();
 		loop: for (int i = 0; i < arrayList.size(); i++) {
-			if (arrayList.get(i).equalsIgnoreCase("")) {
+			if (arrayList.get(i).equals("")) {
 				continue;
 			}
 			for (int j = 0; j < alle.size(); j++) {
-				if (arrayList.get(i).equalsIgnoreCase(alle.get(j).toString())) {
+				if (arrayList.get(i).equals(alle.get(j).toString())) {
 					al.add(alle.get(j));
 					continue loop;
 				}
@@ -414,11 +414,11 @@ public class MediController implements Controller {
 		ArrayList<Messdiener> alle = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 		ArrayList<Messdiener> al = new ArrayList<Messdiener>();
 		loop: for (int i = 0; i < arrayList.size(); i++) {
-			if (arrayList.get(i).equalsIgnoreCase("")) {
+			if (arrayList.get(i).equals("")) {
 				continue;
 			}
 			for (int j = 0; j < alle.size(); j++) {
-				if (arrayList.get(i).equalsIgnoreCase(alle.get(j).toString())) {
+				if (arrayList.get(i).equals(alle.get(j).toString())) {
 					al.add(alle.get(j));
 					continue loop;
 				}

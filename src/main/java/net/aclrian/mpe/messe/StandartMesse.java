@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.Date;
 
 import net.aclrian.mpe.start.References;
-import net.aclrian.mpe.utils.Erroropener;
+import net.aclrian.mpe.utils.Dialogs;
 
 public class StandartMesse {
 	private int beginn_stunde;
@@ -36,9 +36,7 @@ public class StandartMesse {
 		try {
 			d = df.parse(beginn_stunde + ":" + beginn_minute);
 		} catch (ParseException e) {
-			new Erroropener(new Exception(
-					"Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen."));
-			e.printStackTrace();
+			Dialogs.error(e,"Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen.");
 		}
 		SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat dall = new SimpleDateFormat("yyyy-MM-dd:HH:mm");
@@ -48,9 +46,7 @@ public class StandartMesse {
 		try {
 			rtn = dall.parse(datum + ":" + uhrzeit);
 		} catch (Exception e) {
-			new Erroropener(new Exception(
-					"Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen."));
-			e.printStackTrace();
+			Dialogs.error(e,"Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen.");
 		}
 		return rtn;
 

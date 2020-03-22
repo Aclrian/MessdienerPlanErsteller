@@ -70,7 +70,7 @@ public class ReadFile {
 									Eintritt = Messdaten.getMaxYear();
 								}
 								boolean istLeiter = Boolean
-										.valueOf(eElement.getElementsByTagName("Leiter").item(0).getTextContent());
+										.parseBoolean(eElement.getElementsByTagName("Leiter").item(0).getTextContent());
 								// Messverhalten
 								Messverhalten dienverhalten = new Messverhalten();
 								for (StandartMesse sm : DateienVerwalter.dv.getPfarrei().getStandardMessen()) {
@@ -78,8 +78,11 @@ public class ReadFile {
 										continue;
 									}
 									String sname = sm.toReduziertenString();
-									String value = eElement.getElementsByTagName(sname).item(0).getTextContent();
-									boolean kann = value.equals("true");
+									boolean kann = false;
+									try {
+										String value = eElement.getElementsByTagName(sname).item(0).getTextContent();
+										kann = value.equals("true");
+									} catch (Exception e){/*Node not found.*/}
 									dienverhalten.editiereBestimmteMesse(sm, kann);
 								}
 								String[] freunde = new String[5];

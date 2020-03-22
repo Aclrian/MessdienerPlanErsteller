@@ -205,7 +205,7 @@ public class Dialogs {
 			boolean b = false;
 			I e = dataAmBestenSortiert.get(i);
 			for (int j = 0; j < selected.size(); j++) {
-				if (selected.get(j).toString().equalsIgnoreCase(e.toString())) {
+				if (selected.get(j).toString().equals(e.toString())) {
 					rtn.add(e);
 					b = true;
 					break;
@@ -240,7 +240,7 @@ public class Dialogs {
 			boolean b = false;
 			I e = dataAmBestenSortiert.get(i);
 			for (int j = 0; j < selected.size(); j++) {
-				if (selected.get(j).equalsIgnoreCase(e.toString())) {
+				if (selected.get(j).equals(e.toString())) {
 					rtn.add(e);
 					b = true;
 					break;
@@ -336,7 +336,7 @@ public class Dialogs {
 		anz.setBlockIncrement(1);
 		ChangeListener<Object> e = (arg0, arg1, arg2) -> {
 			try {
-				if (!ort.getText().equalsIgnoreCase("") && !typ.getText().equalsIgnoreCase("")
+				if (!ort.getText().equals("") && !typ.getText().equals("")
 						&& !wochentag.getValue().isBlank()) {
 					a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
 				} else {

@@ -80,7 +80,7 @@ public class Select implements Controller {
 			});
 				remove.setOnAction(arg0 -> {
 				int i = list.getSelectionModel().getSelectedIndex();
-				if ((list.getSelectionModel().getSelectedItem().getText().equalsIgnoreCase(data.get(i).toString()))
+				if ((list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString()))
 						&& MediController.remove(window, data.get(i))) {
 					afterstartup(window,mc);
 				}
@@ -128,7 +128,7 @@ public class Select implements Controller {
 			});
 			remove.setOnAction(arg0 -> {
 				if (mc.getMessen().removeIf(
-						m -> list.getSelectionModel().getSelectedItem().getText().replaceAll("\t\t", "\t").equalsIgnoreCase(m.toString()))) {
+						m -> list.getSelectionModel().getSelectedItem().getText().replaceAll("\t\t", "\t").equals(m.toString()))) {
 					afterstartup(window, mc);
 				}
 			});
@@ -146,7 +146,7 @@ public class Select implements Controller {
 		if (sel == Selecter.Messdiener) {
 			String s = list.getSelectionModel().getSelectedItem().getText();
 			for (Messdiener medi : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
-				if (medi.toString().equalsIgnoreCase(s)) {
+				if (medi.toString().equals(s)) {
 					MediController.remove(p.getScene().getWindow(), medi);
 					break;
 				}

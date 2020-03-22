@@ -188,8 +188,18 @@ public class DateienVerwalter {
 	}
 
 	public void erneuereSavepath(Window window) {
-		this.savepath = "";
-		getSpeicherort(window);
+		String homedir = System.getProperty("user.home");
+		homedir = homedir + textdatei;
+		File f = new File(homedir);
+		if(f.delete()) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			savepath="";
+			getSpeicherort(window);
+		} else Dialogs.warn("Konnte die Datei " + homedir + " nicht "+References.ae+"ndern.");
 	}
 
 	private void getSpeicherort(Window window) {
@@ -215,6 +225,7 @@ public class DateienVerwalter {
 					bufferedWriter.close();
 				} else {
 					//TODO funktioniert das ?
+					savepath="";
 					Dialogs.warn("Es wird ein Speicherort benötigt, um dort Messdiener zu speichern.\nBitte einen Speicherort eingeben!");
 					getSpeicherort(window);
 				}
@@ -236,6 +247,10 @@ public class DateienVerwalter {
 						getSpeicherort(window);
 					}
 					break;
+				}
+				if(savepath==null || savepath.equals("")){
+					f.delete();
+					getSavepath(window);
 				}
 				bufferedReader.close();
 			} catch (IOException e) {

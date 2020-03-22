@@ -40,8 +40,7 @@ public class Messverhalten {
 	 * @param messe
 	 * @param kann
 	 */
-	public void editiereBestimmteMesse(StandartMesse messe, boolean kann)
-			throws NotFoundException {
+	public void editiereBestimmteMesse(StandartMesse messe, boolean kann) {
 		if (messe instanceof Sonstiges|| getBestimmtes(messe) == kann) {
 			return;
 		}
@@ -55,7 +54,7 @@ public class Messverhalten {
 				return;
 			}
 		}
-		messen.add(new KannWelcheMesse(messe, kann));
+		Log.getLogger().warning("Standartmesse nicht gefunden:"+messe);
 	}
 
 	public void ueberschreibeStandartMesse(StandartMesse alt, StandartMesse neu) {
@@ -72,7 +71,7 @@ public class Messverhalten {
 	 * @return ob der Messdiener zu der standart Messe kann
 	 * @throws NotFoundException
 	 */
-	public boolean getBestimmtes(StandartMesse messe) throws NotFoundException {
+	public boolean getBestimmtes(StandartMesse messe) {
 		if (messe instanceof Sonstiges) {
 			return true;
 		}
@@ -82,7 +81,7 @@ public class Messverhalten {
 				return kwm.isKanndann();
 			}
 		}
-		throw new NotFoundException(messe);
+		return true;
 	}
 
 	public void update(ArrayList<StandartMesse> asm) {
