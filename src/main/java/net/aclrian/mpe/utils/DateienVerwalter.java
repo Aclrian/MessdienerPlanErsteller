@@ -224,7 +224,6 @@ public class DateienVerwalter {
 					setSavepath(s);
 					bufferedWriter.close();
 				} else {
-					//TODO funktioniert das ?
 					savepath="";
 					Dialogs.warn("Es wird ein Speicherort benötigt, um dort Messdiener zu speichern.\nBitte einen Speicherort eingeben!");
 					getSpeicherort(window);
