@@ -65,7 +65,7 @@ public class MainController {
 		}
 	}
 
-	public void initialize() {
+	/*public void initialize() {
 		NumberBinding b = Bindings.min(Bindings.divide(gen_pane.heightProperty(), 1.5d),
 				Bindings.divide(gen_pane.widthProperty(), 1.5d));
 		gen_pic.fitWidthProperty().bind(Bindings.min(200, b));
@@ -74,7 +74,7 @@ public class MainController {
 		medi_pic.fitHeightProperty().bind(Bindings.min(200, b));
 		messe_pic.fitWidthProperty().bind(Bindings.min(200, b));
 		messe_pic.fitHeightProperty().bind(Bindings.min(200, b));
-	}
+	}*/
 
 	public void changePaneMessdiener(Messdiener messdiener) {
 		this.ep = EnumPane.messdiener;
@@ -170,6 +170,10 @@ public class MainController {
 					control = new Select(apane, Selecter.Messe, this);
 					fl.setController(control);
 				}
+				if(ep == EnumPane.plan){
+					control = new FinishController(messen);//TODO ferienplan
+					fl.setController(control);
+				}
 				p = fl.load();
 				AnchorPane.setBottomAnchor(p, 0d);
 				AnchorPane.setRightAnchor(p, 0d);
@@ -200,8 +204,10 @@ public class MainController {
 
 	@FXML
 	public void generieren(ActionEvent actionEvent) {
-		if (DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList().size() > 0 || messen.size() > 0) {
-			// TODO
+		if (DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList().size() > 0 && messen.size() > 0) {
+			changePane(EnumPane.plan);
+		} else{
+			Dialogs.warn("Bitte erst Messen und Messdiener eingeben.");
 		}
 	}
 
@@ -209,6 +215,7 @@ public class MainController {
 	public void pfarrei_aendern(ActionEvent actionEvent) {
 		if(ep!=EnumPane.start){
 			Dialogs.info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
+			return;
 		}
 		messen = new ArrayList<>();
 		PfarreiController.start(new Stage(), m, stage);
@@ -216,11 +223,13 @@ public class MainController {
 
 	@FXML
 	public void speicherort(ActionEvent actionEvent) {
-		if (control instanceof StartController){
+		if(ep!=EnumPane.start){
+			Dialogs.info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
+			return;
+		}
 			DateienVerwalter.dv.erneuereSavepath(stage);
 			((Stage)grid.getParent().getScene().getWindow()).close();
 			m.main(new Stage());
-		}
 	}
 
 	@FXML

@@ -263,14 +263,14 @@ public class Messdaten {
 		ausgeteilt = new ArrayList<Date>();
 	}
 
-	public void addtomaxanz(int medishinzufuegen, AData ada, boolean isLeiter) {
+	public void addtomaxanz(int medishinzufuegen, boolean isLeiter) {
 		max_messen += medishinzufuegen;
 		int id = 0;
 		if (isLeiter) {
 			id++;
 		}
-		if (max_messen > ada.getPfarrei().getSettings().getDaten(id).getAnz_dienen()) {
-			max_messen = ada.getPfarrei().getSettings().getDaten(id).getAnz_dienen();
+		if (max_messen > DateienVerwalter.dv.getPfarrei().getSettings().getDaten(id).getAnz_dienen()) {
+			max_messen = DateienVerwalter.dv.getPfarrei().getSettings().getDaten(id).getAnz_dienen();
 		}
 	}
 

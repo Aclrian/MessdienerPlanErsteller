@@ -13,10 +13,6 @@ public class StartController implements Controller{
     @FXML
     private Label version_label, name;
 
-    public void setPfarrei(){
-
-    }
-
     public void initialize(){
         //mi.setText(Main.version);
     	name.setText(DateienVerwalter.dv.getPfarrei().getName());

@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.References;
-
+@Deprecated
 public class Start extends APanel {
 
 	private static final long serialVersionUID = 7258230476105946056L;
@@ -26,7 +26,7 @@ public class Start extends APanel {
 			"<html><body>Standardmesse f" + References.ue + "r <br>jeden Medi anzeigen</body></html>");
 	private JEditorPane ep;
 	private URI uri;
-
+	@Deprecated
 	public Start(int dfbtnwidht, int dfbtnheigth, AProgress ap) {
 		super(dfbtnwidht, dfbtnheigth, false, "Willkommen beim MessdienerplanErsteller", ap);
 		/*

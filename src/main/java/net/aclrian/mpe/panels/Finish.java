@@ -21,10 +21,6 @@ import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
 import net.aclrian.mpe.utils.Erroropener;
 
-enum EnumAction {
-	EinfachEinteilen(), TypeBeachten();
-}
-
 public class Finish extends APanel {
 	private static final long serialVersionUID = 1100706202326699632L;
 	private JEditorPane editorPane = new JEditorPane("text/html", "");
@@ -261,7 +257,7 @@ public class Finish extends APanel {
 		}*/
 	}
 
-	private void einteilen(Messe m, EnumAction act, AProgress ap) {
+	private void einteilen(Messe m,/* EnumAction act,*/ AProgress ap) {
 	/*	switch (act) {
 		case EinfachEinteilen:
 			ArrayList<Messdiener> medis;

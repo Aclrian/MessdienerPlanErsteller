@@ -28,7 +28,7 @@ import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame;
 import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
 import net.aclrian.mpe.utils.Erroropener;
-
+@Deprecated
 public class MesseAnzeigen extends APanel {
 
 	private static final long serialVersionUID = -2230487108865122325L;
@@ -57,6 +57,7 @@ public class MesseAnzeigen extends APanel {
 	private JLabel lblscrollpane = new JLabel("Messdiener vorzeitig einteilen:");
 	private Messe moben;
 
+	@Deprecated
 	public MesseAnzeigen(int defaultButtonwidth, int defaultButtonheight, AProgress ap) {
 		super(defaultButtonwidth, defaultButtonheight, true, "Messe anzeigen", ap);
 		sdmDatum = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
