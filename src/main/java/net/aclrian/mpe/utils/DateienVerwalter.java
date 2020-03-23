@@ -33,6 +33,8 @@ public class DateienVerwalter {
 	 */
 	private String savepath;
 	private Pfarrei pf;
+	private ArrayList<Messdiener> medis;
+
 	private static boolean ersterStart = true;
 
 	public static final String pfarredateiendung = ".xml.pfarrei";
@@ -161,17 +163,19 @@ public class DateienVerwalter {
 		if (pf == null) {
 			reloadPfarrei();
 		}
-		ArrayList<File> files = getAlleMessdienerFiles(savepath);
-		ArrayList<Messdiener> medis = new ArrayList<Messdiener>();
-		for (File file : files) {
-			ReadFile rf = new ReadFile();
-			Messdiener m = rf.getMessdiener(file.getAbsolutePath());
-			if (m != null) {
-				medis.add(m);
+		if (medis == null) {
+			ArrayList<File> files = getAlleMessdienerFiles(savepath);
+			ArrayList<Messdiener> medis = new ArrayList<Messdiener>();
+			for (File file : files) {
+				ReadFile rf = new ReadFile();
+				Messdiener m = rf.getMessdiener(file.getAbsolutePath());
+				if (m != null) {
+					medis.add(m);
+				}
 			}
-		}
-		for (Messdiener medi :medis) {
-			medi.setnewMessdatenDaten(medis);
+			for (Messdiener medi : medis) {
+				medi.setnewMessdatenDaten(medis);
+			}
 		}
 		return medis;
 	}

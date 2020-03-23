@@ -11,11 +11,11 @@ import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.References;
-
+@Deprecated
 public class StandartMesseListePanel extends APanel {
 
 	private static final long serialVersionUID = -4151999826909159522L;
-
+	@Deprecated
 	public static StandartMesse getStandartmesse(AProgress ap) {
 		/*
 		 * ArrayList<String> slist = new ArrayList<>(); ArrayList<StandartMesse> smm =

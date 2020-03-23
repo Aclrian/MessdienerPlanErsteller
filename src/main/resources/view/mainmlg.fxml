@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -51,10 +52,13 @@
          </font>
       </Label>
       <Label fx:id="version_label" maxWidth="1.7976931348623157E308" GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="8" />
-      <ImageView fitHeight="400.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="6" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.rowSpan="2" GridPane.valignment="CENTER">
+      <ImageView fitHeight="400.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="6" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.rowSpan="2" GridPane.valignment="CENTER">
          <image>
             <Image url="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png" />
          </image>
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
       </ImageView>
    </children>
 </GridPane>
