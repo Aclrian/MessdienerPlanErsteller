@@ -15,7 +15,6 @@ import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Einstellungen;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
@@ -32,7 +31,7 @@ public class Finish extends APanel {
 	private JLabel labelmedis = new JLabel("Nicht eingeteilte Messdiener:");
 	private JButton topdf = new JButton("Zum Pdf-Dokument");
 	private JButton todocx = new JButton("Zum Word-Dokument");
-	private JButton toback = new JButton("Zur" + References.ue + "ck");
+	private JButton toback = new JButton("Zurück");
 	private ArrayList<Messdiener> hauptarray;
 	private ArrayList<Messe> messen;
 
@@ -355,7 +354,7 @@ public class Finish extends APanel {
 			for (Messdiener messdiener : prov) {
 				new Erroropener(new Exception("<html><body>Bei der Messe: " + m.getID()
 						+ "<br></br>herrscht Messdiener-Knappheit</br><br>Daher wird wohl" + messdiener.makeId()
-						+ "einspringen m" + References.ue + "ssen, weil er generell kann.</br></body></html>"));
+						+ "einspringen müssen, weil er generell kann.</br></body></html>"));
 			}
 			rtn.addAll(prov);
 			// Wenn wirklich keiner mehr kann
@@ -370,9 +369,8 @@ public class Finish extends APanel {
 					int ii = e.getDaten(id).getAnz_dienen();
 					if (ii != 0 && i < m.getNochBenoetigte()) {
 						new Erroropener(new Exception("<html><body>Bei der Messe: " + m.getID()
-								+ "<br></br>herrscht GRO" + References.GROssenSZ
-								+ "E Messdiener-Knappheit</br><br>Daher wird wohl" + messdiener.makeId()
-								+ "einspringen m" + References.ue + "ssen.</br></body></html>"));
+								+ "<br></br>herrscht GROẞE Messdiener-Knappheit</br><br>Daher wird wohl" + messdiener.makeId()
+								+ "einspringen müssen.</br></body></html>"));
 						rtn.add(messdiener);
 					}
 				}

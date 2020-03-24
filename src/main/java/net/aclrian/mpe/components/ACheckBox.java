@@ -1,11 +1,8 @@
 package net.aclrian.mpe.components;
 
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import net.aclrian.mpe.start.References;
 
 public class ACheckBox extends JCheckBox{
 
@@ -21,15 +18,15 @@ public class ACheckBox extends JCheckBox{
 
 	public ACheckBox() {
 		super();
-		setIcon(new ImageIcon(References.class.getResource("unselect.png")));
+		//setIcon(new ImageIcon(References.class.getResource("unselect.png")));
 		addChangeListener(new ChangeListener() {
 			
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if(isSelected()){
-					setIcon(new ImageIcon(References.class.getResource("select.png")));
+				//	setIcon(new ImageIcon(References.class.getResource("select.png")));
 				} else{
-					setIcon(new ImageIcon(References.class.getResource("unselect.png")));
+				//	setIcon(new ImageIcon(References.class.getResource("unselect.png")));
 				}
 				
 			}

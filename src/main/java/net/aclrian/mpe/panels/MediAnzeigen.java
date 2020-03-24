@@ -23,7 +23,6 @@ import net.aclrian.mpe.components.MessverhaltenTable;
 import net.aclrian.mpe.messdiener.Messdiener;
 //import net.aclrian.mpe.messdiener.WriteFile;
 //import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AProgress;
 //import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
 import net.aclrian.mpe.utils.Erroropener;
@@ -41,10 +40,10 @@ public class MediAnzeigen extends APanel {
 	private JLabel lblGeschwister = new JLabel("Geschwister");
 	private JScrollPane freundscroll = new JScrollPane();
 	private JLabel lblFreunde = new JLabel("Freunde");
-	private JButton zuFreunde = new JButton(References.pfeilrechts);
-	private JButton vonFreunde = new JButton(References.pfeillinks);
-	private JButton zuGeschw = new JButton(References.pfeilrechts);
-	private JButton vonGeschw = new JButton(References.pfeillinks);
+	private JButton zuFreunde = new JButton("pfeilrechts");
+	private JButton vonFreunde = new JButton("pfeillinks");
+	private JButton zuGeschw = new JButton("pfeilrechts");
+	private JButton vonGeschw = new JButton("pfeillinks");
 	private MessverhaltenTable atable = new MessverhaltenTable();
 	private JScrollPane scrol = new JScrollPane();
 	private DefaultListModel<Messdiener> dlmfr = new DefaultListModel<Messdiener>();
@@ -137,12 +136,12 @@ public class MediAnzeigen extends APanel {
 						freunde.add(m);
 						dlmfr.addElement(m);*/
 					} catch (NullPointerException e2) {
-						new Erroropener(new Exception("erst einen Messdiener ausw" + References.ae + "hlen"));
+						new Erroropener(new Exception("erst einen Messdiener auswählen"));
 					}
 					update();
 				} else {
 					new Erroropener(
-							new Exception("Es k�nnen nur maximal " + Messdiener.freundelenght + " Messdiener eingetragen werden."));
+							new Exception("Es können nur maximal " + Messdiener.freundelenght + " Messdiener eingetragen werden."));
 				}
 				update();
 			}

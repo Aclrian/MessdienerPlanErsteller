@@ -10,9 +10,7 @@ import javax.swing.JScrollPane;
 
 import net.aclrian.mpe.components.ARadioButton;
 import net.aclrian.mpe.components.AbmeldenTable;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
 
 public class AbmeldenPanel extends APanel {
 
@@ -26,7 +24,7 @@ public class AbmeldenPanel extends APanel {
 	private JLabel label = new JLabel("Was soll der Hacken bedeuten:");
 	private ARadioButton austeilen = new ARadioButton("kann nicht");
 	private ARadioButton einteilen = new ARadioButton("kann dann");
-	private JButton umsetzen = new JButton("Alle Eintr"+References.ae+"ge "+References.ae+"ndern");
+	private JButton umsetzen = new JButton("Alle Einträge ändern");
 
 	public AbmeldenPanel(int defaultButtonwidth, int defaultButtonheight, AProgress ap) {
 		super(defaultButtonwidth, defaultButtonheight, true, "Ferienplan erstellen: Messdiener ab-/anmelden", ap);

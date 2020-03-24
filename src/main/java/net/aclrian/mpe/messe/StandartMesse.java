@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.utils.Dialogs;
 
 public class StandartMesse {
@@ -36,7 +35,7 @@ public class StandartMesse {
 		try {
 			d = df.parse(beginn_stunde + ":" + beginn_minute);
 		} catch (ParseException e) {
-			Dialogs.error(e,"Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen.");
+			Dialogs.error(e,"Es konnte kein Datum erstellt werden. Bitte die Eingaben überprüfen.");
 		}
 		SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat dall = new SimpleDateFormat("yyyy-MM-dd:HH:mm");
@@ -46,7 +45,7 @@ public class StandartMesse {
 		try {
 			rtn = dall.parse(datum + ":" + uhrzeit);
 		} catch (Exception e) {
-			Dialogs.error(e,"Es konnte kein Datum erstellt werden. Bitte die Eingaben überpr" + References.ue + "fen.");
+			Dialogs.error(e,"Es konnte kein Datum erstellt werden. Bitte die Eingaben überprüfen.");
 		}
 		return rtn;
 

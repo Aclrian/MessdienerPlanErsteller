@@ -5,7 +5,7 @@
 	<groupId>net.aclrian.messdiener</groupId>
 	<artifactId>messdienerplan-ersteller</artifactId>
 	<version>b699</version>
-
+<!-- Remember the fat jar comment-->
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -15,12 +15,12 @@
 
 	<dependencies>
 	<!-- JavaFx -->
-	 <dependency>
-    <groupId>org.openjfx</groupId>
-    <artifactId>javafx-controls</artifactId>
-    <version>11.0.2</version>
-  </dependency>
-  <dependency>
+	 	<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>11.0.2</version>
+  		</dependency>
+  		<dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>11.0.2</version>
@@ -31,10 +31,23 @@
 			  <version>11.0.2</version>
 		</dependency>
 		<dependency>
-			  <groupId>org.openjfx</groupId>
-			  <artifactId>javafx-graphics</artifactId>
-			  <version>11.0.2</version>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>11.0.2</version>
+		<!--FAT_JAR ONLY	<classifier>win</classifier>-->
 		</dependency>
+	<!--	<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>11.0.2</version>
+			<classifier>linux</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>11.0.2</version>
+			<classifier>mac</classifier>
+		</dependency>-->
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-web</artifactId>
@@ -60,86 +73,104 @@
 			<version>9.0.9</version>
 		</dependency>
 		<dependency>
-		<!-- for email verification -->
-    <groupId>commons-validator</groupId>
-    <artifactId>commons-validator</artifactId>
-    <version>1.4.1</version>
-</dependency>
+			<!-- for email verification -->
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>html2pdf</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+		<!--<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext7-core</artifactId>
+			<version>7.1.10</version>
+			<type>pom</type>
+		</dependency>-->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<!--word-->
+		<!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-ImportXHTML -->
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j-ImportXHTML</artifactId>
+			<version>8.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
+			<version>8.0.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.0-b170201.1204</version>
+		</dependency>-->
 
+		<!-- https://mvnrepository.com/artifact/javax.activation/activation -->
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.0-b170127.1453</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>com.zenjava</groupId>
-				<artifactId>javafx-maven-plugin</artifactId>
-				<version>8.8.3</version>
-				<configuration>
-					<mainClass>your.package.with.Launcher</mainClass>
-				</configuration>
-			</plugin>
 			<plugin>
 		        <groupId>org.openjfx</groupId>
 		        <artifactId>javafx-maven-plugin</artifactId>
 		        <version>0.0.4</version>
 		        <configuration>
 		        <options>
-                        <option>--add-opens</option>
-                        <option>javafx.graphics/javafx.css=ALL-UNNAMED</option>
-                        <option>--add-opens</option>
-                        <option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
-                        <option>--add-opens</option>
-                        <option>javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED</option>
-                        <option>--add-opens</option>
-                        <option>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</option>
-                        <option>--add-opens</option>
-                        <option>javafx.base/com.sun.javafx.binding=ALL-UNNAMED</option>
-                        <option>--add-opens</option>
-                        <option>javafx.base/com.sun.javafx.event=ALL-UNNAMED</option>
-                        <option>--add-opens</option>
-                        <option>javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED</option>
+					<option>--add-opens</option>
+					<option>javafx.graphics/javafx.css=ALL-UNNAMED</option>
+					<option>--add-opens</option>
+					<option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
+					<option>--add-opens</option>
+					<option>javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED</option>
+					<option>--add-opens</option>
+					<option>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</option>
+					<option>--add-opens</option>
+					<option>javafx.base/com.sun.javafx.binding=ALL-UNNAMED</option>
+					<option>--add-opens</option>
+					<option>javafx.base/com.sun.javafx.event=ALL-UNNAMED</option>
+					<option>--add-opens</option>
+					<option>javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED</option>
                </options>
 		            <mainClass>net.aclrian.mpe.Main</mainClass>
 					<commandlineArgs>-exe</commandlineArgs>
+					<includePathExceptionsInClasspath>true</includePathExceptionsInClasspath>
 		        </configuration>
-
 				<executions>
-				<execution>
-					<!-- Default configuration for running -->
+					<execution>
 					<id>default-cli</id>
 					<configuration>
 						<commandlineArgs>-exe</commandlineArgs>
-						<mainClass>net.aclrian.mpe.Main</mainClass>
-						<options>
-							<option>--add-opens</option>
-							<option>javafx.graphics/javafx.css=ALL-UNNAMED</option>
-							<option>--add-opens</option>
-							<option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
-							<option>--add-opens</option>
-							<option>javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED</option>
-							<option>--add-opens</option>
-							<option>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</option>
-							<option>--add-opens</option>
-							<option>javafx.base/com.sun.javafx.binding=ALL-UNNAMED</option>
-							<option>--add-opens</option>
-							<option>javafx.base/com.sun.javafx.event=ALL-UNNAMED</option>
-							<option>--add-opens</option>
-							<option>javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED</option>
-						</options>
 					</configuration>
 				</execution>
 				<execution>
-					<!-- Configuration for debugging -->
 					<id>debug</id>
 					<configuration>
 						<options>
-						<!-- <option>-Xrunjdwp:transport=dt_socket,address=*8000,server=y,suspend=y</option>-->
-
-						</options>
-						<commandlineArgs>-exe</commandlineArgs>
-						<mainClass>net.aclrian.mpe.Main</mainClass>
-						<options>
-							<option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</option>
 							<option>--add-opens</option>
 							<option>javafx.graphics/javafx.css=ALL-UNNAMED</option>
 							<option>--add-opens</option>
@@ -154,22 +185,29 @@
 							<option>javafx.base/com.sun.javafx.event=ALL-UNNAMED</option>
 							<option>--add-opens</option>
 							<option>javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED</option>
-						</options>
+							<option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</option>
+							</options>
 					</configuration>
 				</execution>
 			</executions>
-
-	    	</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<source>11</source>
-					<target>11</target>
-				</configuration>
 			</plugin>
-</plugins>
+			        <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+						<version>3.2.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>net.aclrian.mpe.Main</mainClass>
+            </manifest>
+              <manifestEntries>
+                    <Class-Path>.</Class-Path>
+                </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+            </plugins>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

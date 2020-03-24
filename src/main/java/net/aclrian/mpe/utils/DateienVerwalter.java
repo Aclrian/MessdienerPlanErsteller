@@ -7,17 +7,14 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
-import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.ReadFile;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.pfarrei.ReadFile_Pfarrei;
-import net.aclrian.mpe.start.References;
 
 /**
  * Sonstige Klasse, die viel mit Ordnerverwaltung und Sortieren zu tun hat.
@@ -126,7 +123,7 @@ public class DateienVerwalter {
 	 */
 	private String waehleOrdner(Window window) throws NullPointerException {
 		DirectoryChooser f = new DirectoryChooser();
-		String s = "Ordner w" + References.ae + "hlen, in dem alles gespeichert werden soll:";
+		String s = "Ordner wählen, in dem alles gespeichert werden soll:";
 		f.setTitle(s);
 		File file = f.showDialog(window);
 		return file == null ? null : file.getPath();
@@ -165,7 +162,7 @@ public class DateienVerwalter {
 		}
 		if (medis == null) {
 			ArrayList<File> files = getAlleMessdienerFiles(savepath);
-			ArrayList<Messdiener> medis = new ArrayList<Messdiener>();
+			medis = new ArrayList<>();
 			for (File file : files) {
 				ReadFile rf = new ReadFile();
 				Messdiener m = rf.getMessdiener(file.getAbsolutePath());
@@ -203,7 +200,7 @@ public class DateienVerwalter {
 			}
 			savepath="";
 			getSpeicherort(window);
-		} else Dialogs.warn("Konnte die Datei " + homedir + " nicht "+References.ae+"ndern.");
+		} else Dialogs.warn("Konnte die Datei " + homedir + " nicht ändern.");
 	}
 
 	private void getSpeicherort(Window window) {

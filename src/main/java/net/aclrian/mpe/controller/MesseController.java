@@ -13,7 +13,6 @@ import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 
@@ -130,7 +129,7 @@ public class MesseController implements Controller {
 
 	@FXML
 	private void standardmesseBearbeiten(){
-		StandartMesse s = Dialogs.singleSelect(DateienVerwalter.dv.getPfarrei().getStandardMessen(),"Standartmesse "+ References.ae +"ndern:");
+		StandartMesse s = Dialogs.singleSelect(DateienVerwalter.dv.getPfarrei().getStandardMessen(),"Standartmesse ändern:");
 		if (s!=null) {
 			smesse.setText(s.tolangerBenutzerfreundlichenString());
 			this.s = s;

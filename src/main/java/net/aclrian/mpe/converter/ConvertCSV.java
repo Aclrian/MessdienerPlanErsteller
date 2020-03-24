@@ -29,7 +29,7 @@ public class ConvertCSV {
 	 */
 
 	public ConvertCSV(File f, ArrayList<Integer> sortierung, Window window) throws IOException {
-		Log.getLogger().warning("Das Unter-Programm unterstützt die Vorlieben von Messdienern nicht!\n-Also wann sie dienen können");
+		Log.getLogger().warn("Das Unter-Programm unterstützt die Vorlieben von Messdienern nicht!\n-Also wann sie dienen können");
 		if (f.exists() && f.getName().endsWith(".csv")) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f),"UTF-8"));
 			String line = "";

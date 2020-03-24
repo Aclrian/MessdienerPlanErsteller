@@ -3,10 +3,7 @@ package net.aclrian.mpe.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.NumberBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +18,6 @@ import net.aclrian.mpe.controller.Select.Selecter;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 
@@ -249,7 +245,7 @@ public class MainController {
 
 	@FXML
 	public void smesse(ActionEvent actionEvent) {
-		StandartMesse sm = Dialogs.singleSelect(DateienVerwalter.dv.getPfarrei().getStandardMessen(),"Bitte Standartmesse ausw"+ References.ae+"hlen:");
+		StandartMesse sm = Dialogs.singleSelect(DateienVerwalter.dv.getPfarrei().getStandardMessen(),"Bitte Standartmesse auswählen:");
 		if (sm != null){
 			changePane(sm);
 		}

@@ -7,7 +7,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 
 import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.start.References;
+
 @Deprecated
 public class Start extends APanel {
 
@@ -18,12 +18,12 @@ public class Start extends APanel {
 	private JLabel unterueberschrift = new JLabel();
 	private JLabel pfarreilabel = new JLabel();
 	private JButton speicherortaendern = new JButton(
-			"<html><body>Speicherort " + References.ae + "ndern</body></html>");
+			"<html><body>Speicherort ändern</body></html>");
 	private JButton plangenerieren = new JButton("<html><body><h2>Plan generieren</h2></body></html>");
-	private JButton pfaendern = new JButton("<html><body>Pfarrei " + References.ae + "ndern</body></html>");
+	private JButton pfaendern = new JButton("<html><body>Pfarrei ändern</body></html>");
 	private JButton ferienplan = new JButton("Ferienplan erstellen");
 	private JButton smanzeigen = new JButton(
-			"<html><body>Standardmesse f" + References.ue + "r <br>jeden Medi anzeigen</body></html>");
+			"<html><body>Standardmesse für <br>jeden Medi anzeigen</body></html>");
 	private JEditorPane ep;
 	private URI uri;
 	@Deprecated

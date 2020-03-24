@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import net.aclrian.mpe.messdiener.KannWelcheMesse;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Log;
 
@@ -54,7 +53,7 @@ public class Messverhalten {
 				return;
 			}
 		}
-		Log.getLogger().warning("Standartmesse nicht gefunden:"+messe);
+		Log.getLogger().warn("Standartmesse nicht gefunden:"+messe);
 	}
 
 	public void ueberschreibeStandartMesse(StandartMesse alt, StandartMesse neu) {
@@ -95,7 +94,7 @@ public class Messverhalten {
 			}
 		}
 		if (istAnders(asm)) {
-			Log.getLogger().info("Standartmessen habe sich ge"+References.ae+"ndert");
+			Log.getLogger().info("Standartmessen habe sich geändert");
 			ArrayList<KannWelcheMesse> bleiben = new ArrayList<KannWelcheMesse>();
 			for (StandartMesse sm : asm) {
 				boolean b = false;

@@ -239,7 +239,7 @@ public class PfarreiController {
 				((Stage) s).close();
 				return;
 			} catch (DateienVerwalter.NoSuchPfarrei e1) {
-				Log.getLogger().severe(e1.getMessage());
+				Log.getLogger().error(e1.getMessage());
 			}
 		}
 		try {
@@ -302,7 +302,7 @@ public class PfarreiController {
 					+ "Die 'Anzahl nach Eintrittsjahr' gibt, an wie häufig Messdiener des jeweiligen Jahrgangs generell eingeteilt werden."
 					+ System.lineSeparator()
 					+ "Dabei ist zu beachten, dass jedes Jahr ein Messdiener in die nächst-höhere Gruppe kommt.");
-			Log.getLogger().warning(
+			Log.getLogger().warn(
 					"NO PANIK: https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Was-wird-unter-'Anzahl'-verstanden%3F is dead! Long live GITHUB!");
 		}
 	}
