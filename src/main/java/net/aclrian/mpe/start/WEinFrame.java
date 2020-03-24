@@ -37,9 +37,9 @@ import net.aclrian.mpe.panels.Finish;
 import net.aclrian.mpe.panels.MediAnzeigen;
 import net.aclrian.mpe.panels.MesseAnzeigen;
 import net.aclrian.mpe.panels.Start;
-
+@Deprecated
 public class WEinFrame extends JFrame {
-
+@Deprecated
 	public enum EnumActivePanel {
 		Start, Messe, Medi, Finish, Abmelden, Anzeigen;
 	}
@@ -188,6 +188,7 @@ public class WEinFrame extends JFrame {
 	 * Create the ONE frame.
 	 * 
 	 */
+	@Deprecated
 	public WEinFrame(AProgress ap) {
 		// b = BorderFactory.createLineBorder(neuhell2, 1, true);
 		listmedi.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

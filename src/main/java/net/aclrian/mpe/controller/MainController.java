@@ -13,7 +13,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import net.aclrian.mpe.Main;
-import net.aclrian.mpe.PfarreiController;
 import net.aclrian.mpe.controller.Select.Selecter;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
