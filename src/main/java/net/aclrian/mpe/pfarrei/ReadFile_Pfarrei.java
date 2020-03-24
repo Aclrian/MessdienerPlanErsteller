@@ -11,9 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javafx.stage.Window;
 import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Erroropener;
 import net.aclrian.mpe.utils.Log;
@@ -89,7 +87,7 @@ public class ReadFile_Pfarrei {
 									if (i < Einstellungen.lenght && i > -1) {
 										einst.editiereYear(i, anz);
 									} else
-										Log.getLogger().info("id ist zu gro" + References.ss + "!");
+										Log.getLogger().info("id ist zu groß!");
 								} else if (eE.hasAttribute("Lleiter")) {
 									String id = eE.getAttribute("Lleiter");
 									int i = Integer.parseInt(id);

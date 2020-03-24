@@ -93,7 +93,7 @@ public class Main extends Application {
 					Dialogs.open(new URI(VersionIDHandler.alternativedownloadurl),
 							eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
 				} catch (IOException | URISyntaxException e1) {
-					getLogger().warning("Die Download-Url konnte nicht aufgelöst werden.");
+					getLogger().warn("Die Download-Url konnte nicht aufgelöst werden.");
 				}
 			}
 		}

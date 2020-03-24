@@ -2,12 +2,10 @@ package net.aclrian.mpe.panels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -23,10 +21,7 @@ import net.aclrian.mpe.components.ACheckBox;
 import net.aclrian.mpe.components.AList;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.start.WEinFrame;
-import net.aclrian.mpe.start.WEinFrame.EnumActivePanel;
 import net.aclrian.mpe.utils.Erroropener;
 @Deprecated
 public class MesseAnzeigen extends APanel {
@@ -43,7 +38,7 @@ public class MesseAnzeigen extends APanel {
 	private JSpinner spinnerKirche = new JSpinner();
 	private JSpinner spinnerTyp = new JSpinner();
 	private JButton btnSetzeManuell = new JButton("manuell einteilen");
-	private JButton btntitle = new JButton("Titel " + References.ae + "ndern");
+	private JButton btntitle = new JButton("Titel ändern");
 	private SpinnerNumberModel slmAnzahl = new SpinnerNumberModel(6, 0, 50, 1);
 	private SpinnerListModel snmKirche;
 	private SpinnerListModel snmTypen;
@@ -52,7 +47,7 @@ public class MesseAnzeigen extends APanel {
 	private ACheckBox chbxnurleiter = new ACheckBox("nur Leiter");
 	private SpinnerDateModel sdmDatum;
 	private AList<Messdiener> alist;
-	private ArrayList<Messdiener> eingeteilte = new ArrayList<Messdiener>();
+	private ArrayList<Messdiener> eingeteilte = new ArrayList<>();
 	private JScrollPane scrollpane = new JScrollPane();
 	private JLabel lblscrollpane = new JLabel("Messdiener vorzeitig einteilen:");
 	private Messe moben;
@@ -83,7 +78,7 @@ public class MesseAnzeigen extends APanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (btntitle.getText().equals("Titel " + References.ae + "ndern")) {
+				if (btntitle.getText().equals("Titel ändern")) {
 					tftitel.setVisible(true);
 					if (tftitel.getText().equals("")) {
 						if (title.equals("")) {
@@ -96,7 +91,7 @@ public class MesseAnzeigen extends APanel {
 				} else {
 					title = tftitel.getText();
 					tftitel.setVisible(false);
-					btntitle.setText("Titel " + References.ae + "ndern");
+					btntitle.setText("Titel ändern");
 				}
 
 			}
@@ -109,9 +104,9 @@ public class MesseAnzeigen extends APanel {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if (chbxHochamt.isSelected()) {
-					chbxHochamt.setIcon(new ImageIcon(References.class.getResource("title.png")));
+				//	chbxHochamt.setIcon(new ImageIcon(References.class.getResource("title.png")));
 				} else {
-					chbxHochamt.setIcon(new ImageIcon(References.getIcon()));
+					chbxHochamt.setIcon(null);
 				}
 
 			}

@@ -1,5 +1,5 @@
 package net.aclrian.mpe.start;
-
+@Deprecated
 public class AProgress {
 
 	/*

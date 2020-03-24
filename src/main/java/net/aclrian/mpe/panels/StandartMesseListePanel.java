@@ -10,7 +10,7 @@ import net.aclrian.mpe.components.AList;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.start.References;
+
 @Deprecated
 public class StandartMesseListePanel extends APanel {
 
@@ -43,7 +43,7 @@ public class StandartMesseListePanel extends APanel {
 	}
 
 	private JScrollPane pane = new JScrollPane();
-	private JLabel label = new JLabel("Ausw" + References.ae + "hlen");
+	private JLabel label = new JLabel("Auswählen");
 
 	private AList<Messdiener> alist;
 

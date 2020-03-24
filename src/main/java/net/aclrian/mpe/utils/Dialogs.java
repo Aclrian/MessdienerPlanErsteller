@@ -17,7 +17,6 @@ import com.jfoenix.controls.JFXTextField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
@@ -25,12 +24,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import net.aclrian.fx.ASlider;
-import net.aclrian.mpe.components.ACheckBox;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Setting;
-import net.aclrian.mpe.start.References;
-
-import javax.swing.*;
 
 public class Dialogs {
 	public static class Icon {
@@ -58,7 +53,7 @@ public class Dialogs {
 	}
 
 	public static void warn(String string) {
-		Log.getLogger().warning(string);
+		Log.getLogger().warn(string);
 		Alert a = new Alert(AlertType.WARNING);
 		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
@@ -67,7 +62,7 @@ public class Dialogs {
 	}
 
 	public static void error(String string) {
-		Log.getLogger().severe(string);
+		Log.getLogger().error(string);
 		Alert a = new Alert(AlertType.ERROR);
 		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
@@ -76,12 +71,12 @@ public class Dialogs {
 	}
 
 	public static void error(Exception e, String string) {
-		Log.getLogger().severe(string);
-		Log.getLogger().severe(e.getMessage());
+		Log.getLogger().error(string);
+		Log.getLogger().error(e.getMessage());
 		try {
-			Log.getLogger().severe(e.getCause().toString());
+			Log.getLogger().error(e.getCause().toString());
 		} catch (NullPointerException e1) {
-			Log.getLogger().severe("no cause");
+			Log.getLogger().error("no cause");
 		}
 		Alert a = new Alert(AlertType.ERROR);
 		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
@@ -420,7 +415,7 @@ public class Dialogs {
 		Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		dialog.setTitle("Eingabe");
-		dialog.setHeaderText("Anzahl für den " + s.getJahr() + "er Jahrgang " + References.ae + "ndern");
+		dialog.setHeaderText("Anzahl für den " + s.getJahr() + "er Jahrgang ändern");
 		dialog.setContentText("neue Anzahl: ");
 		Optional<String> result = dialog.showAndWait();
 		if (result.isEmpty()) {

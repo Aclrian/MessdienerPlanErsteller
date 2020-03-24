@@ -13,7 +13,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import net.aclrian.mpe.Main;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.utils.Log;
 
 public class VersionIDHandler {
@@ -100,7 +99,7 @@ public class VersionIDHandler {
 	
 	public static enum EnumHandling {
 		isTheLatest("Es wurde keine neuere Version gefunden"), isOld("Es wurde eine neuere Version gefunden"),
-		isTooNew("Neuereste Version"), error("Bei der Versions"+References.ue+"berpr"+References.ue+"fung kam es zu einem Fehler"),
+		isTooNew("Neuereste Version"), error("Bei der Versionsüberprüfung kam es zu einem Fehler"),
 		betaRequest("Neue Beta-Version gefunden");
 		private String message;
 		EnumHandling(String message) {

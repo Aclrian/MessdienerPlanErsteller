@@ -166,7 +166,7 @@ public class WEinFrame extends JFrame {
 	private JPanel messepanel = new JPanel();
 	private JLabel lblBis = new JLabel("bis:");
 	private JLabel lblVon = new JLabel("von:");
-	private JButton messestandarterzeugen = new JButton(References.pfeilrunter);
+	private JButton messestandarterzeugen = new JButton("pfeilrunter");
 	private DefaultListModel<Messe> dfmesse = new DefaultListModel<>();
 	private JList<Messe> listmesse = new JList<>(dfmesse);
 	private DefaultListModel<Messdiener> dfmedi = new DefaultListModel<>();
@@ -199,7 +199,7 @@ public class WEinFrame extends JFrame {
 		JSpinner.DateEditor pinnerDatum = new JSpinner.DateEditor(jdcanfang, "dd.MM.yyyy");
 		jdcanfang.setEditor(pinnerDatum);
 		this.ap = ap;
-		setIconImage(References.getIcon());
+		setIconImage(null);
 		setTitle("Messdienerplanersteller");
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -281,8 +281,8 @@ public class WEinFrame extends JFrame {
 		});
 		medipanel.add(minusmedi);
 		medipanel.add(augemedi);
-		augemedi.setIcon(new ImageIcon(References.class.getResource("auge_new2.png")));
-		augemedi.setDisabledIcon(new ImageIcon(References.class.getResource("auge_disabl.png")));
+	//	augemedi.setIcon(new ImageIcon(References.class.getResource("auge_new2.png")));
+	//	augemedi.setDisabledIcon(new ImageIcon(References.class.getResource("auge_disabl.png")));
 		augemedi.addActionListener(arg0 -> {
 			if (listmedi.getSelectedIndex() > -1) {
 				/*

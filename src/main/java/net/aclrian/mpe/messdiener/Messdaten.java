@@ -1,14 +1,11 @@
 package net.aclrian.mpe.messdiener;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import net.aclrian.mpe.pfarrei.Einstellungen;
-import net.aclrian.mpe.start.AData;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Erroropener;
 import net.aclrian.mpe.utils.Log;
@@ -316,7 +313,7 @@ public class Messdaten {
 				return messdiener;
 			}
 		}
-		throw new CouldnotFindMedi("Konnte f" + References.ue + "r " + akt.makeId() + " : " + geschwi + " nicht finden",
+		throw new CouldnotFindMedi("Konnte für " + akt.makeId() + " : " + geschwi + " nicht finden",
 				akt, geschwi);
 	}
 

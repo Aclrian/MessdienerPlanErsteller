@@ -7,7 +7,6 @@ import javafx.stage.Window;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.start.References;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 
@@ -76,8 +75,7 @@ public class Manuell {
 				}
 			}
 			if (handling.getEw() == EnumWorking.neu) {
-				Log.getLogger().info("Um in einer neuen Standartmesse Messdiener hinzu zu f" + References.ue
-						+ "gen, bitte den Messdiener ausw" + References.ae + "hlen.");
+				Log.getLogger().info("Um in einer neuen Standartmesse Messdiener hinzu zu fügen, bitte den Messdiener auswählen.");
 				for (Messdiener m : medis) {
 					m.getDienverhalten().fuegeneueMesseHinzu(handling.getNeu());
 				}

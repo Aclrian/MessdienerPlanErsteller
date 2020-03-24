@@ -27,7 +27,7 @@ import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
 import net.aclrian.mpe.panels.Finish;
 import net.aclrian.mpe.start.AData;
 import net.aclrian.mpe.start.AProgress;
-
+@Deprecated
 public class Converter {
 
 	private File htmlFile;
@@ -36,7 +36,7 @@ public class Converter {
 	private File docx;
 	private File pfd;
 	static boolean saveFO;
-
+	@Deprecated
 	public Converter(Finish finish) throws IOException {
 		//FontFactory.registerDirectories();
 		html = finish.getText();

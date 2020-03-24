@@ -12,7 +12,7 @@ import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Log;
-
+@Deprecated
 public class AData {
 
 	/**
@@ -22,7 +22,7 @@ public class AData {
 	private ArrayList<Messe> messenarray = new ArrayList<>();
 	private Pfarrei pf;
 	private HashMap<Messe, ArrayList<Messdiener>> voreingeteilte = new HashMap<>();
-
+	@Deprecated
 	public AData() {
 		/*
 		 * try { pf = DateienVerwalter.dv.getPfarrei(); } catch (NullPointerException e)

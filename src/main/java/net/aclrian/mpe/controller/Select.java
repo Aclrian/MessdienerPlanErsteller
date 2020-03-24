@@ -61,6 +61,7 @@ public class Select implements Controller {
 
 	@Override
 	public void afterstartup(Window window, MainController mc) {
+		neu.setOnAction(e -> neu());
 		switch (sel) {
 		case Messdiener:
 			text.setText("Messdiener anzeigen & bearbeiten");
@@ -74,18 +75,20 @@ public class Select implements Controller {
 				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 					if (mouseEvent.getClickCount() == 2) {
 						int i = list.getSelectionModel().getSelectedIndex();
+						if(i>0 && i<data.size())
 						mc.changePaneMessdiener(data.get(i));
 					}
 				}
 			});
+			bearbeiten.setOnAction(e->{int i = list.getSelectionModel().getSelectedIndex();
+				if(i>0 && i<data.size()) mc.changePaneMessdiener(data.get(i));});
 				remove.setOnAction(arg0 -> {
 				int i = list.getSelectionModel().getSelectedIndex();
-				if ((list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString()))
+				if (i>0 && (list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString()))
 						&& MediController.remove(window, data.get(i))) {
 					afterstartup(window,mc);
 				}
 			});
-			neu.setOnAction(e -> neu());
 			break;
 
 		case Messe:
@@ -113,26 +116,32 @@ public class Select implements Controller {
 			pane.getChildren().add(generieren);
 			
 			text.setText("Messen anzeigen & bearbeiten");
-			list.getItems().removeIf(t -> true);
-			datam.sort(Messe.compForMessen);
-			for (int i = 0; i < datam.size(); i++) {
-				list.getItems().add(new Label(datam.get(i).getID().replaceAll("\t", "\t\t")));
-			}
+			updateMesse(mc.getMessen());
 			list.setOnMouseClicked(mouseEvent -> {
 				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 					if (mouseEvent.getClickCount() == 2) {
 						int i = list.getSelectionModel().getSelectedIndex();
-						mc.changePaneMesse(datam.get(i));
+						if(i>0 && i<datam.size()) mc.changePaneMesse(datam.get(i));
 					}
 				}
 			});
+			bearbeiten.setOnAction(e->{int i = list.getSelectionModel().getSelectedIndex();
+				if(i>0 && i<datam.size()) mc.changePaneMesse(datam.get(i));});
 			remove.setOnAction(arg0 -> {
-				if (mc.getMessen().removeIf(
-						m -> list.getSelectionModel().getSelectedItem().getText().replaceAll("\t\t", "\t").equals(m.toString()))) {
-					afterstartup(window, mc);
+				int i = list.getSelectionModel().getSelectedIndex();
+				if (i>0 && (list.getSelectionModel().getSelectedItem().getText().replaceAll("\t\t", "\t").equals(datam.get(i).toString()))) {
+					updateMesse(mc.getMessen());
 				}
 			});
 			break;
+		}
+	}
+
+	private void updateMesse(ArrayList<Messe> datam) {
+		list.getItems().removeIf(t -> true);
+		datam.sort(Messe.compForMessen);
+		for (int i = 0; i < datam.size(); i++) {
+			list.getItems().add(new Label(datam.get(i).getID().replaceAll("\t", "\t\t")));
 		}
 	}
 
@@ -142,7 +151,7 @@ public class Select implements Controller {
 		else if(sel == Selecter.Messe) mc.changePaneMesse(null);
 	}
 
-	public void remove() {
+	/*public void remove() {
 		if (sel == Selecter.Messdiener) {
 			String s = list.getSelectionModel().getSelectedItem().getText();
 			for (Messdiener medi : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
@@ -154,7 +163,7 @@ public class Select implements Controller {
 		} else if(sel == Selecter.Messe){
 
 		}
-	}
+	}*/
 
 	@Override
 	public boolean isLocked() {
