@@ -24,10 +24,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import net.aclrian.fx.ASlider;
+import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Setting;
 
 public class Dialogs {
+
 	public static class Icon {
 	}
 
@@ -75,14 +77,17 @@ public class Dialogs {
 		Log.getLogger().error(e.getMessage());
 		try {
 			Log.getLogger().error(e.getCause().toString());
-		} catch (NullPointerException e1) {
-			Log.getLogger().error("no cause");
-		}
+		} catch (NullPointerException e1) {}
 		Alert a = new Alert(AlertType.ERROR);
 		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
-
+		if(e.getLocalizedMessage()!= null && !e.getLocalizedMessage().equals("")) {
+			a.setHeaderText(string+"\n"+e.getLocalizedMessage());
+		} else if(e.getMessage()!= null && !e.getMessage().equals("")){
+			a.setHeaderText(string+"\n"+e.getMessage());
+		} else {
+			a.setHeaderText(string);
+		}
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
@@ -108,19 +113,6 @@ public class Dialogs {
 		a.setHeaderText(string);
 		Optional<ButtonType> res = a.showAndWait();
 		if (res.get() == ButtonType.OK) {
-			Desktop.getDesktop().browse(open);
-		}
-	}
-
-	public static void open(URI open, String string, String ok, String close) throws IOException {
-		ButtonType od = new ButtonType(ok, ButtonBar.ButtonData.OK_DONE);
-		ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
-		Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
-		Optional<ButtonType> res = a.showAndWait();
-		if (res.get() == od) {
 			Desktop.getDesktop().browse(open);
 		}
 	}
@@ -159,24 +151,36 @@ public class Dialogs {
 		return res.get() == ButtonType.OK;
 	}
 
+	public static Boolean yesNoCancel(String yes, String no, String cancel, String string){
+		ButtonType od = new ButtonType(yes, ButtonBar.ButtonData.YES);
+		ButtonType cc = new ButtonType(cancel, ButtonBar.ButtonData.CANCEL_CLOSE);
+		ButtonType c = new ButtonType(no, ButtonBar.ButtonData.NO);
+		Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc, c);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
+		a.setHeaderText(string);
+		//((Button) a.getDialogPane().lookupButton(ButtonType.CANCEL)).setText(cancel);
+		//((Button) a.getDialogPane().lookupButton(ButtonType.OK)).setText(ok);
+		Optional<ButtonType> res = a.showAndWait();
+		if(res.get()==cc) return null;
+		return res.get() == od;
+	}
+
 	public static void fatal(String string) {
 		error(string);
 		System.exit(-1);
 	}
 
-	public static <I> I singleSelect(ArrayList<I> list, String s) {
+	public static <I> Object singleSelect(ArrayList<? extends I> list, String s) {
 		Alert a = new Alert(AlertType.INFORMATION);
 		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(s);
 		VBox v = new VBox();
 		v.setSpacing(5d);
-		ArrayList<I> rtn = new ArrayList<I>();
-		I sel = null;
 		ToggleGroup g = new ToggleGroup();
-		for (int i = 0; i < list.size(); i++) {
-			I ele = list.get(i);
-			ARadioButton b = new ARadioButton(list.get(i));
+		for (Object value : list) {
+			ARadioButton<?> b = new ARadioButton<>(value);
 			b.setToggleGroup(g);
 			v.getChildren().add(b);
 		}
@@ -184,7 +188,8 @@ public class Dialogs {
 		a.getDialogPane().setExpanded(true);
 		a.showAndWait();
 		if (g.getSelectedToggle() instanceof ARadioButton){
-			return ((ARadioButton<I>)g.getSelectedToggle()).getI();
+			Object o = ((ARadioButton<?>) g.getSelectedToggle()).getI();
+			return o;
 		}
 		return null;
 	}
@@ -219,6 +224,7 @@ public class Dialogs {
 			lw.getItems().add(ch);
 		}
 		a.getDialogPane().setExpandableContent(lw);
+		a.getDialogPane().setExpanded(true);
 		a.showAndWait();
 		return rtn;
 	}
@@ -291,6 +297,7 @@ public class Dialogs {
 		HBox hb = new HBox(d1, d2);
 		hb.setSpacing(20d);
 		a.getDialogPane().setExpandableContent(hb);
+		a.getDialogPane().setExpanded(true);
 		Optional<ButtonType> o = a.showAndWait();
 		try {
 			if (o.get().equals(ButtonType.OK)) {
@@ -353,6 +360,7 @@ public class Dialogs {
 		VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz);
 		v.setSpacing(20);
 		a.getDialogPane().setExpandableContent(v);
+		a.getDialogPane().setExpanded(true);
 		a.setOnShown(arg0 -> {
 
 			ASlider.makeASlider("Stunde: ", stunde);
@@ -444,5 +452,16 @@ public class Dialogs {
 		public I getI() {
 			return i;
 		}
+	}
+
+	public static void show(ArrayList<?> list, String string) {
+		Alert a = new Alert(AlertType.INFORMATION);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
+		a.setHeaderText(string);
+		ListView<?> lv = new ListView<>(FXCollections.observableArrayList(list));
+		a.getDialogPane().setExpandableContent(lv);
+		a.getDialogPane().setExpanded(true);
+		a.showAndWait();
 	}
 }

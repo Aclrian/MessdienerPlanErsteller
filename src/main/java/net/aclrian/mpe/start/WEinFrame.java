@@ -15,7 +15,6 @@ import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,10 +32,7 @@ import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.panels.APanel;
 import net.aclrian.mpe.panels.AbmeldenPanel;
-import net.aclrian.mpe.panels.Finish;
-import net.aclrian.mpe.panels.MediAnzeigen;
-import net.aclrian.mpe.panels.MesseAnzeigen;
-import net.aclrian.mpe.panels.Start;
+
 @Deprecated
 public class WEinFrame extends JFrame {
 @Deprecated
@@ -236,7 +232,7 @@ public class WEinFrame extends JFrame {
 
 		contentPane.add(medipanel);
 		medipanel.setLayout(null);
-		plusmedi.addActionListener(e -> changeAP(EnumActivePanel.Medi, true));
+		//plusmedi.addActionListener(e -> changeAP(EnumActivePanel.Medi, true));
 		medipanel.add(plusmedi);
 		minusmedi.addActionListener(arg0 -> {
 //				if (listmedi.getSelectedIndex() > -1) {
@@ -367,7 +363,7 @@ public class WEinFrame extends JFrame {
 		 */
 	}
 
-	public void changeAP(EnumActivePanel eap, boolean withupdate) {
+	/*public void changeAP(EnumActivePanel eap, boolean withupdate) {
 		boolean ferienplan = false;
 		try {
 			if (activepanel instanceof AbmeldenPanel) {
@@ -425,8 +421,8 @@ public class WEinFrame extends JFrame {
 		graphics();
 		/*
 		 * if (withupdate) { update(ap.getAda()); }
-		 */
-	}
+		 * /
+	}*/
 
 	public void changeAP(StandartMesse sm) {
 		/*

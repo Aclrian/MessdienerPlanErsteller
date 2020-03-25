@@ -28,7 +28,7 @@ public class ConvertCSV {
 	 * 
 	 */
 
-	public ConvertCSV(File f, ArrayList<Integer> sortierung, Window window) throws IOException {
+	public ConvertCSV(File f, ArrayList<Integer> sortierung) throws IOException {
 		Log.getLogger().warn("Das Unter-Programm unterstützt die Vorlieben von Messdienern nicht!\n-Also wann sie dienen können");
 		if (f.exists() && f.getName().endsWith(".csv")) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f),"UTF-8"));
@@ -103,7 +103,7 @@ public class ConvertCSV {
 						break;
 					}
 				}
-				Messdiener m = new Messdiener(new File(DateienVerwalter.dv.getSavepath(window)+File.separator+nachname+", "+vorname+".xml"));
+				Messdiener m = new Messdiener(new File(DateienVerwalter.dv.getSavepath()+File.separator+nachname+", "+vorname+".xml"));
 				m.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, new Messverhalten());
 				try {
 				m.setEmail(email);
@@ -111,7 +111,7 @@ public class ConvertCSV {
 					Log.getLogger().info(email + " von " + m.makeId() + " ist nicht gültig");
 					m.setEmailEmpty();
 				}
-				m.makeXML(window);
+				m.makeXML();
 			}
 			br.close();
 		}

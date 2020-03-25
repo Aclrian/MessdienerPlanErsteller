@@ -31,7 +31,7 @@ public class DateienVerwalter {
 	private String savepath;
 	private Pfarrei pf;
 	private ArrayList<Messdiener> medis;
-
+	private Window window;
 	private static boolean ersterStart = true;
 
 	public static final String pfarredateiendung = ".xml.pfarrei";
@@ -44,13 +44,14 @@ public class DateienVerwalter {
 		if (ersterStart) {
 			dv = new DateienVerwalter(window);
 		} else {
-			dv.getSavepath(window);
+			dv.getSavepath();
 			dv.reloadPfarrei();
 		}
 		
 	}
 	
 	private DateienVerwalter(Window window) throws NoSuchPfarrei {
+		this.window = window;
 		this.getSpeicherort(window);
 		File f = getPfarreFile();
 		if(f == null) {
@@ -121,7 +122,7 @@ public class DateienVerwalter {
 	 * @return Ausgewaehlten Ordnerpfad
 	 * @throws NullPointerException
 	 */
-	private String waehleOrdner(Window window) throws NullPointerException {
+	private String waehleOrdner() throws NullPointerException {
 		DirectoryChooser f = new DirectoryChooser();
 		String s = "Ordner wählen, in dem alles gespeichert werden soll:";
 		f.setTitle(s);
@@ -171,15 +172,15 @@ public class DateienVerwalter {
 				}
 			}
 			for (Messdiener medi : medis) {
-				medi.setnewMessdatenDaten(medis);
+				medi.setnewMessdatenDaten();
 			}
 		}
 		return medis;
 	}
 
-	public String getSavepath(Window window) {
+	public String getSavepath() {
 		if (savepath == null || savepath.equals("")) {
-			savepath = waehleOrdner(window);
+			savepath = waehleOrdner();
 		}
 		return savepath;
 	}
@@ -188,7 +189,7 @@ public class DateienVerwalter {
 		this.savepath = savepath;
 	}
 
-	public void erneuereSavepath(Window window) {
+	public void erneuereSavepath() {
 		String homedir = System.getProperty("user.home");
 		homedir = homedir + textdatei;
 		File f = new File(homedir);
@@ -211,7 +212,7 @@ public class DateienVerwalter {
 		if (!f.exists()) {
 			String s;
 			if (savepath == null || savepath.equals("")) {
-				s = this.waehleOrdner(window);
+				s = this.waehleOrdner();
 			} else {
 				s = savepath;
 			}
@@ -234,7 +235,7 @@ public class DateienVerwalter {
 			}
 		} else {
 			try {
-				String line = null;
+				String line;
 				InputStreamReader fileReader = new InputStreamReader(new FileInputStream(homedir),"UTF-8");
 				BufferedReader bufferedReader = new BufferedReader(fileReader);
 				while ((line = bufferedReader.readLine()) != null) {
@@ -250,14 +251,14 @@ public class DateienVerwalter {
 				}
 				if(savepath==null || savepath.equals("")){
 					f.delete();
-					getSavepath(window);
+					getSavepath();
 				}
 				bufferedReader.close();
 			} catch (IOException e) {
 				Dialogs.error(e, "Die Datei '" + homedir+ "' konnte nicht gelesen werden.");
 			}
 			if(savepath == null) {
-				savepath = waehleOrdner(window);
+				savepath = waehleOrdner();
 				try {
 					f.createNewFile();
 					FileWriter fileWriter = new FileWriter(homedir);
@@ -286,7 +287,11 @@ public class DateienVerwalter {
 		getSpeicherort(window);
 	}
 
-    public static class NoSuchPfarrei extends Exception{
+	public void reloadMessdiener() {
+		medis = null;
+	}
+
+	public static class NoSuchPfarrei extends Exception{
 		private final String savepath;
 		public NoSuchPfarrei(String savepath) {
 			this.savepath=savepath;

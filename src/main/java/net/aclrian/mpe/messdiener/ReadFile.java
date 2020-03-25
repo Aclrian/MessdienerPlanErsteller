@@ -176,7 +176,7 @@ public class ReadFile {
 	private void fixEmail(Messdiener me, String mail, String vname, String nname, int Eintritt, boolean istLeiter, Messverhalten dienverhalten) {
 		if(Dialogs.frage("Die E-Mail-Addresse '" + mail +"' von "+ me.makeId() + " ist ungültig und wird gelöscht.\nSoll eine neue eingegeben werden?")) {
 			String s = Dialogs.text("Neue E-Mail-Adresse von " + me.makeId() + " eingeben:\nWenn keine vorhanden ist, soll das Feld leer bleiben.", "E-Mail:");
-			if(s == null)me.setEmailEmpty();
+			if(!s.equals(""))me.setEmailEmpty();
 			try {
 				me.setEmail(s);
 			} catch (NotValidException e) {

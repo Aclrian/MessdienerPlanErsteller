@@ -145,10 +145,10 @@ public class Messdiener {
 		} catch (NotValidException e) {
 			e.printStackTrace();
 		}
-		for (int i = 0; i < Freunde.length; i++) {
+		for (int i = 0; i < freundelenght; i++) {
 			Freunde[i] = "";
 		}
-		for (int i = 0; i < Geschwister.length; i++) {
+		for (int i = 0; i < geschwilenght; i++) {
 			Geschwister[i] = "";
 		}
 	}
@@ -216,10 +216,10 @@ public class Messdiener {
 	 * 
 	 * @param pfad
 	 */
-	public void makeXML(Window window) {
+	public void makeXML() {
 		WriteFile wf = new WriteFile(this);
 		try {
-			wf.toXML(window);
+			wf.toXML();
 		} catch (Exception e) {
 			Dialogs.error(e, "Der Messdiener '"+makeId()+"' konnte nicht gespeichert werden.");
 		}
@@ -269,8 +269,8 @@ public class Messdiener {
 		this.daten = daten;
 	}
 
-	public void setnewMessdatenDaten(ArrayList<Messdiener> medis) {
-		this.daten = new Messdaten(this, medis);
+	public void setnewMessdatenDaten() {
+		this.daten = new Messdaten(this);
 	}
 
 	public File getFile() {

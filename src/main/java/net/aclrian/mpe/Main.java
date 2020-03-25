@@ -2,6 +2,7 @@ package net.aclrian.mpe;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,16 +17,14 @@ import net.aclrian.mpe.controller.MainController;
 import net.aclrian.mpe.controller.MainController.EnumPane;
 import net.aclrian.mpe.controller.PfarreiController;
 import net.aclrian.mpe.utils.VersionIDHandler;
-import net.aclrian.mpe.utils.VersionIDHandler.EnumHandling;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.DateienVerwalter.NoSuchPfarrei;
 import net.aclrian.mpe.utils.Dialogs;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 public class Main extends Application {
-	/**
-	 * Das ist die Versionsnummer. Das b zeigt eine Beta-Version an.
-	 */
-	public static final String VersionID = "b699";
+	public static String VersionID;
 
 	public static void main(String[] args) {
 		Application.launch(Main.class, args);
@@ -47,11 +46,14 @@ public class Main extends Application {
 
 	public void main(Stage stage) {
 		try {
+			MavenXpp3Reader reader = new MavenXpp3Reader();
+			Model model = reader.read(new FileReader("pom.xml"));
+			VersionID = model.getVersion();
+			Object o = getParameters();
 			getLogger().info("MpE: Version: " + VersionID);
 			getLogger().info("MpE-fx is starting");
-			Object o = getParameters();
 			stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
-			versioncheck();
+			VersionIDHandler.versioncheck(false);
 			try {
 				DateienVerwalter.re_start(stage);
 			} catch (NoSuchPfarrei e) {
@@ -77,27 +79,8 @@ public class Main extends Application {
 	}
 
 	@Override
-	public void start(Stage stage) throws Exception {
+	public void start(Stage stage) {
 		// Object o = getParameters();
 		main(stage);
-	}
-
-	private void versioncheck() {
-		VersionIDHandler vh = new VersionIDHandler();
-		EnumHandling eh = vh.rankingVersionID();
-		if (eh == EnumHandling.betaRequest | eh == EnumHandling.isOld) {
-			try {
-				Dialogs.open(new URI(VersionIDHandler.urlwithtag + vh.getInternettid()),
-						eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
-			} catch (IOException | URISyntaxException e) {
-				try {
-					Dialogs.open(new URI(VersionIDHandler.alternativedownloadurl),
-							eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
-				} catch (IOException | URISyntaxException e1) {
-					getLogger().warn("Die Download-Url konnte nicht aufgelöst werden.");
-				}
-			}
-		}
-		getLogger().info(eh.getMessage());
 	}
 }

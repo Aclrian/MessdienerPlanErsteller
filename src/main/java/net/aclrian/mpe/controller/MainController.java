@@ -1,8 +1,11 @@
 package net.aclrian.mpe.controller;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +22,8 @@ import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.VersionIDHandler;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
 
@@ -27,10 +32,6 @@ public class MainController {
 	private ArrayList<Messe> messen = new ArrayList<>();
 	private Main m;
 
-	@FXML
-	private ImageView gen_pic, medi_pic, messe_pic;
-	@FXML
-	private GridPane gen_pane, medi_pane, messe_pane;
 	@FXML
 	private GridPane grid;
 	@FXML
@@ -41,9 +42,15 @@ public class MainController {
 	public MainController(Main m,Stage s) {
 		this.m = m;
 		this.stage = s;
+		s.setOnCloseRequest(e-> getLogger().info("Beenden"));
 	}
 
 	private EnumPane ep;
+
+	public void setMesse(FinishController finishController, EnumPane pane) {
+		messen = finishController.getMessen();
+		changePane(pane);
+	}
 
 	public enum EnumPane {
 		messdiener("/view/messdiener.fxml"), messe("/view/messe.fxml"), start("/view/mainmlg.fxml"), plan("/view/Aplan.fxml"),
@@ -150,6 +157,7 @@ public class MainController {
 		if (this.ep == ep) {
 			return;
 		} else if (control == null || !control.isLocked()) {
+			EnumPane old = this.ep;
 			this.ep = ep;
 			apane.getChildren().removeIf(p -> true);
 
@@ -166,7 +174,7 @@ public class MainController {
 					fl.setController(control);
 				}
 				if(ep == EnumPane.plan){
-					control = new FinishController(messen);//TODO ferienplan
+					control = new FinishController(old,messen);//TODO ferienplan
 					fl.setController(control);
 				}
 				p = fl.load();
@@ -222,7 +230,7 @@ public class MainController {
 			Dialogs.info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
 			return;
 		}
-			DateienVerwalter.dv.erneuereSavepath(stage);
+			DateienVerwalter.dv.erneuereSavepath();
 			((Stage)grid.getParent().getScene().getWindow()).close();
 			m.main(new Stage());
 	}
@@ -244,9 +252,52 @@ public class MainController {
 
 	@FXML
 	public void smesse(ActionEvent actionEvent) {
-		StandartMesse sm = Dialogs.singleSelect(DateienVerwalter.dv.getPfarrei().getStandardMessen(),"Bitte Standartmesse auswählen:");
+		StandartMesse sm = (StandartMesse) Dialogs.singleSelect(DateienVerwalter.dv.getPfarrei().getStandardMessen(),"Bitte Standartmesse auswählen:");
 		if (sm != null){
 			changePane(sm);
+		}
+	}
+
+	@FXML
+	public void info(ActionEvent actionEvent) {
+		InfoController ic = null;
+		try {
+			ic = new InfoController(stage);
+		} catch (IOException e) {
+			Dialogs.error(e, "Auf " + ep.getLocation() + " konnte nicht zugegriffen werden!");
+		}
+		ic.start();
+	}
+
+	@FXML
+	public void log(ActionEvent event) {
+		try {
+			Desktop.getDesktop().open(Log.getLogFile());
+		} catch (IOException e) {
+			Dialogs.error(e,"Konnte das Protokoll nicht öffnen:");
+		}
+	}
+
+	@FXML
+	public void savepath(ActionEvent event) {
+		try {
+			Desktop.getDesktop().open(new File(DateienVerwalter.dv.getSavepath()));
+		} catch (IOException e) {
+			Dialogs.error(e,"Konnte den Ordner nicht öffnen:");
+		}
+	}
+
+	@FXML
+	public void version(ActionEvent event) {
+		VersionIDHandler.versioncheck(true);
+	}
+
+	@FXML
+	public void workingdir(ActionEvent event) {
+		try {
+			Desktop.getDesktop().open(Log.getWorkingDir());
+		} catch (IOException e) {
+			Dialogs.error(e,"Konnte den Ordner nicht öffnen:");
 		}
 	}
 

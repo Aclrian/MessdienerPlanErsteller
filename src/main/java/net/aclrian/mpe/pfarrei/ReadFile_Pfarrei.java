@@ -2,10 +2,12 @@ package net.aclrian.mpe.pfarrei;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import net.aclrian.mpe.utils.Dialogs;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -13,7 +15,6 @@ import org.w3c.dom.NodeList;
 
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Erroropener;
 import net.aclrian.mpe.utils.Log;
 
 public class ReadFile_Pfarrei {
@@ -36,8 +37,7 @@ public class ReadFile_Pfarrei {
 					try {
 						doc = dBuilder.parse(fXmlFile);
 					} catch (org.xml.sax.SAXParseException e) {
-
-						new Erroropener(e);
+						Dialogs.error(e, "Konnte die Pfarrei nicht lesen.");
 						doc = null;
 					}
 					if (doc != null) {
@@ -106,17 +106,15 @@ public class ReadFile_Pfarrei {
 				} else {
 					return pf;
 				}
-				String[] s2 = pfadMitDateiundmitEndung.split("\\" + File.separator);
+				String[] s2 = pfadMitDateiundmitEndung.split(Pattern.quote(File.separator));
 				name = s2[s2.length - 1];
 				name = name.substring(0, name.length() - DateienVerwalter.pfarredateiendung.length());
 				name = name.replaceAll("_", " ");
 				pf = new Pfarrei(einst, sm, name, hochaemter);
 			}
 		} catch (Exception e) {
-			new Erroropener(e);
-			e.printStackTrace();
+			Dialogs.error(e, "Fehler beim Lesen der Pfarrei.");
 		}
-
 		return pf;
 	}
 }

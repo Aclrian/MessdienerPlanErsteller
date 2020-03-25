@@ -10,8 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
 import net.aclrian.mpe.start.AProgress;
-import net.aclrian.mpe.start.WEinFrame;
-
+@Deprecated
 public class APanel extends JPanel {
 
 	private static final long serialVersionUID = -175407300858987490L;
@@ -22,14 +21,14 @@ public class APanel extends JPanel {
 	protected Art art;
 	private TitledBorder border;
 	public final static Font f = new Font("SansSerif", 0, 30);
-
+	@Deprecated
 	public APanel(int defaultButtonwidth, int defaultButtonheight, boolean showCancelAndSave, String title,
 			AProgress ap) {
 		setLayout(null);
 		art = Art.neu;
 		//Border b2 = BorderFactory.createLineBorder(WEinFrame.neuhell1);
-		border = BorderFactory.createTitledBorder(WEinFrame.b, "<html><body><h1>" + title + "</h1></body></html>",
-				TitledBorder.CENTER, TitledBorder.TOP, f, WEinFrame.neuhell1);
+		//border = BorderFactory.createTitledBorder(WEinFrame.b, "<html><body><h1>" + title + "</h1></body></html>",
+		//		TitledBorder.CENTER, TitledBorder.TOP, f, WEinFrame.neuhell1);
 		// border.setTitleJustification(TitledBorder.CENTER);
 		// border.setTitleColor(WEinFrame.neuhell2);
 		// border.setTitleFont(f);
