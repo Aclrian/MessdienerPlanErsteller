@@ -1,15 +1,16 @@
 package net.aclrian.mpe.messdiener;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
+import javafx.stage.Window;
+import net.aclrian.mpe.controller.MediController;
 import net.aclrian.mpe.pfarrei.Einstellungen;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Erroropener;
-import net.aclrian.mpe.utils.Log;
-import net.aclrian.mpe.utils.RemoveDoppelte;
+import net.aclrian.mpe.utils.*;
 
 public class Messdaten {
 
@@ -23,10 +24,10 @@ public class Messdaten {
 	private ArrayList<Date> pause = new ArrayList<>();
 	RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
 
-	public Messdaten(Messdiener m, ArrayList<Messdiener> medis) {
+	public Messdaten(Messdiener m) {
 		geschwister = new ArrayList<>();
 		freunde = new ArrayList<>();
-		update(m,medis);
+		update(m);
 		max_messen = berecheMax(m.getEintritt(), getMaxYear(), m.isIstLeiter(),
 				DateienVerwalter.dv.getPfarrei().getSettings());
 		anz_messen = 0;
@@ -69,7 +70,6 @@ public class Messdaten {
 	}
 
 	public void einteilen(Date date, boolean hochamt) {
-		try {
 			if (kann(date, false)) {
 				eingeteilt.add(date);
 				pause.add(gettheNextDay(date));
@@ -80,14 +80,10 @@ public class Messdaten {
 					anz_messen--;
 				}
 			}
-		} catch (Exception e) {
-			new Erroropener(e);
-			e.printStackTrace();
-		}
 	}
 
+
 	public void einteilenVorzeitig(Date date, boolean hochamt) {
-		try {
 			if (kannvorzeitg(date)) {
 				eingeteilt.add(date);
 				insgesamtEingeteilt++;
@@ -96,10 +92,6 @@ public class Messdaten {
 					anz_messen++;
 				}
 			}
-		} catch (Exception e) {
-			new Erroropener(e);
-			e.printStackTrace();
-		}
 	}
 
 	public void nullen() {
@@ -109,32 +101,8 @@ public class Messdaten {
 		pause = new ArrayList<>();
 	}
 
-	public int getAnz_messen() {
-		return anz_messen;
-	}
-
-	public ArrayList<Date> getDateVonMessen() {
-		return eingeteilt;
-	}
-
-	public ArrayList<Messdiener> getFreunde() {
-		return freunde;
-	}
-
-	public ArrayList<Messdiener> getGeschwister() {
-		return geschwister;
-	}
-
-	public ArrayList<Messdiener> getAnvertraute() {
-		ArrayList<Messdiener> rtn = geschwister;
-		rtn.addAll(freunde);
-		rtn.sort(Messdiener.einteilen);
-		rd.removeDuplicatedEntries(rtn);
-		return rtn;
-	}
-
 	public ArrayList<Messdiener> getAnvertraute(ArrayList<Messdiener> medis) {
-		ArrayList<Messdiener> rtn = new ArrayList<Messdiener>();
+		ArrayList<Messdiener> rtn = new ArrayList<>();
 		rd.removeDuplicatedEntries(geschwister);
 		rd.removeDuplicatedEntries(freunde);
 
@@ -158,8 +126,7 @@ public class Messdaten {
 	}
 
 	public double getMax_messen() {
-		double rtn = (max_messen == 0) ? 0.001 : max_messen;
-		return rtn;
+		return (max_messen == 0) ? 0.001 : max_messen;
 	}
 
 	public int getMax_messenInt() {
@@ -167,17 +134,13 @@ public class Messdaten {
 	}
 
 	public boolean kannvorzeitg(Date date) {
-		return contains(date, ausgeteilt) ? false : true;
+		return !contains(date, ausgeteilt);
 	}
 
 	public boolean kann(Date date, boolean zwang) {
 		boolean eins = kanndann(date, zwang);
 		boolean zwei = kannnoch();
-		if (eins == zwei == true) {
-			return eins;
-		} else {
-			return false;
-		}
+		return eins  && zwei;
 	}
 
 	public boolean kanndann(Date date, boolean zwang) {
@@ -195,9 +158,7 @@ public class Messdaten {
 			return false;
 		}
 		if (!zwang) {
-			if (contains(date, pause)) {
-				return false;
-			}
+			return !contains(date, pause);
 		}
 		return true;
 	}
@@ -257,7 +218,7 @@ public class Messdaten {
 	}
 
 	public void loescheAbwesendeDaten() {
-		ausgeteilt = new ArrayList<Date>();
+		ausgeteilt = new ArrayList<>();
 	}
 
 	public void addtomaxanz(int medishinzufuegen, boolean isLeiter) {
@@ -271,43 +232,54 @@ public class Messdaten {
 		}
 	}
 
-	public int getkannnochAnz() {
-		return max_messen - anz_messen;
-	}
-
 	public double getSortierenDouble() {
-		double rtn = getAnz_messen() / getMax_messen();
-		return rtn;
+		return anz_messen / getMax_messen();
 	}
 
 	public int getInsgesamtEingeteilt() {
 		return insgesamtEingeteilt;
 	}
 
-	public void update(Messdiener m, ArrayList<Messdiener> medis) {
-		update(m.getGeschwister(), m, medis);
-		update(m.getFreunde(), m, medis);
+	public void update(Messdiener m) {
+		update(false, m.getGeschwister(), m);
+		update(true, m.getFreunde(), m);
 	}
 
-	private void update(String[] s, Messdiener m, ArrayList<Messdiener> medis) {
-		for (int i = 0; i < s.length; i++) {
-			Messdiener medi = null;
-			if (!s[i].equals("") && !s[i].equals("LEER") && !s[i].equals("Vorname, Nachname")) {
+	private void update(boolean isfreund, String[] s, Messdiener m) {
+		for (String value : s) {
+			Messdiener medi;
+			if (!value.equals("") && !value.equals("LEER") && !value.equals("Vorname, Nachname")) {
 				try {
-					medi = sucheMessdiener(s[i], m, medis);
+					medi = sucheMessdiener(value, m, DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList());
 					if (medi != null) {
 						this.geschwister.add(medi);
 						rd.removeDuplicatedEntries(this.geschwister);
 					}
-				} catch (Exception e) {
-					new Erroropener(e);
-					Log.getLogger().info(e.getMessage());
+				} catch (CouldnotFindMedi e) {
+					boolean beheben = Dialogs.frage(e.getMessage(),
+							"ignorieren", "beheben");
+					if (beheben) {
+						ArrayList<String> list = new ArrayList<>(Arrays.asList(s));
+						list.remove(value);
+						String[] gew = MediController.getArrayString(list, isfreund?Messdiener.freundelenght:Messdiener.geschwilenght);
+						if(isfreund) m.setFreunde(gew);
+						else m.setGeschwister(gew);
+						WriteFile wf = new WriteFile(m);
+						try {
+							wf.toXML();
+						} catch (IOException ex) {
+							Dialogs.error(ex, "Konnte es nicht beheben.");
+						}
+						DateienVerwalter.dv.reloadMessdiener();
+						update(isfreund, gew, m);
+						return;
+					}
 				}
 			}
 		}
 	}
 
-	public Messdiener sucheMessdiener(String geschwi, Messdiener akt, ArrayList<Messdiener> medis) throws Exception {
+	public Messdiener sucheMessdiener(String geschwi, Messdiener akt, ArrayList<Messdiener> medis) throws CouldnotFindMedi {
 		for (Messdiener messdiener : medis) {
 			if (messdiener.makeId().equals(geschwi)) {
 				return messdiener;
@@ -317,7 +289,7 @@ public class Messdaten {
 				akt, geschwi);
 	}
 
-	public class CouldnotFindMedi extends Exception {
+	public static class CouldnotFindMedi extends Exception {
 		private Messdiener me;
 		private String falscherEintrag;
 

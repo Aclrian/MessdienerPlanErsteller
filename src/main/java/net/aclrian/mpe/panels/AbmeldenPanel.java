@@ -1,5 +1,5 @@
 package net.aclrian.mpe.panels;
-
+/*
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -10,24 +10,19 @@ import javax.swing.JScrollPane;
 
 import net.aclrian.mpe.components.ARadioButton;
 import net.aclrian.mpe.components.AbmeldenTable;
-import net.aclrian.mpe.start.AProgress;
+import net.aclrian.mpe.start.AProgress;*/
 
-public class AbmeldenPanel extends APanel {
+public class AbmeldenPanel {//extends APanel {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5484960620506799921L;
-
-	private AbmeldenTable abtable;
+/*	private AbmeldenTable abtable;
 	private JScrollPane scrollpane = new JScrollPane();
 	private JLabel label = new JLabel("Was soll der Hacken bedeuten:");
 	private ARadioButton austeilen = new ARadioButton("kann nicht");
 	private ARadioButton einteilen = new ARadioButton("kann dann");
 	private JButton umsetzen = new JButton("Alle Einträge ändern");
-
-	public AbmeldenPanel(int defaultButtonwidth, int defaultButtonheight, AProgress ap) {
-		super(defaultButtonwidth, defaultButtonheight, true, "Ferienplan erstellen: Messdiener ab-/anmelden", ap);
+*/
+	public AbmeldenPanel(int defaultButtonwidth, int defaultButtonheight){}//, AProgress ap) {
+	/*	super(defaultButtonwidth, defaultButtonheight, true, "Ferienplan erstellen: Messdiener ab-/anmelden", ap);
 		abtable = new AbmeldenTable(ap);
 		scrollpane.setViewportView(abtable);
 		austeilen.setSelected(true);
@@ -49,9 +44,9 @@ public class AbmeldenPanel extends APanel {
 			//	ap.getWAlleMessen().changeAP(EnumActivePanel.Finish, true);
 			}
 		});
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void graphics() {
 		int width = this.getBounds().width;
 		int heigth = this.getBounds().height;
@@ -74,6 +69,6 @@ public class AbmeldenPanel extends APanel {
 	
 		umsetzen.setBounds((int) (4 * abstandweit + this.getDfbtnwidth() + drei),
 		heigth - 3 * abstandhoch - this.getDfbtnheight() + stdhoehe, (int) (drei*0.5), stdhoehe);
-	}
+	}*/
 
 }

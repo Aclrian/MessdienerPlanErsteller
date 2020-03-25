@@ -46,13 +46,17 @@ public class Log {
 			Layout layout = new PatternLayout("[%d{yyyy-MM-dd HH:MM:ss}] [%-5p] [%l]: %m%n");
 			/*ConsoleAppender consoleAppender = new ConsoleAppender( layout );
 			LOGGER.addAppender( consoleAppender );*/
-			FileAppender fileAppender = new FileAppender( layout, getWorkingDir().getAbsolutePath() + File.separator + "MpE" + ".log", true );
+			FileAppender fileAppender = new FileAppender( layout, getLogFile().getAbsolutePath(), true );
 			LOGGER.addAppender( fileAppender );
 			LOGGER.setLevel( Level.ALL );
 			LOGGER.info("-------------------------------");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static File getLogFile() {
+		return new File(getWorkingDir().getAbsolutePath() + File.separator + "MpE" + ".log");
 	}
 
 	public static File getWorkingDir(){

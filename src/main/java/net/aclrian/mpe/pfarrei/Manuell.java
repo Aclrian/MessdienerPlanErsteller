@@ -85,7 +85,7 @@ public class Manuell {
 		for (Messdiener m : medis) {
 			WriteFile wf = new WriteFile(m);
 			try {
-				wf.toXML(window);
+				wf.toXML();
 			} catch (IOException e) {
 				Dialogs.error(e, "Es ist ein Fehler aufgetreten");
 			}

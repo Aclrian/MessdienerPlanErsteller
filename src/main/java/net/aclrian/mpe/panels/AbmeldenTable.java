@@ -1,4 +1,4 @@
-package net.aclrian.mpe.components;
+package net.aclrian.mpe.panels;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,7 +15,7 @@ import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.start.AProgress;
 import net.aclrian.mpe.utils.RemoveDoppelte;
 
-public class AbmeldenTable extends ATable {
+public class AbmeldenTable extends JTable {
 
 	private static final long serialVersionUID = -1056881678315222840L;
 
@@ -53,11 +53,11 @@ public class AbmeldenTable extends ATable {
 		//abdtm.setDataVector(ap.getAbmeldenTableVector(s, df), s);
 
 		// Table
-		for (int i = 1; i < this.getColumnCount(); i++) {
+		/*for (int i = 1; i < this.getColumnCount(); i++) {
 			this.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(new ACheckBox()));
 			this.getColumnModel().getColumn(i).getCellEditor().addCellEditorListener(new ACellEditorListener());
 			this.getColumnModel().getColumn(i).setCellRenderer(new ACheckBoxRenderer());
-		}
+		}*/
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 	}

@@ -164,9 +164,9 @@ public class Messe {
 		StringBuffer rtn = new StringBuffer("<html>");
 		rtn.append("<font>");
 		if (!getWochentag().equals("")) {
-			rtn.append("<b>" + df.format(getDate()) + " " + dfeee.format(date) + "&emsp;" + dftime.format(date) + " Uhr ");
+			rtn.append("<p><b>" + df.format(getDate()) + " " + dfeee.format(date) + "&emsp;" + dftime.format(date) + " Uhr ");
 			rtn.append(typ + " " + kirche);
-			rtn.append("</b></font></html>");
+			rtn.append("</p></b></font></html>");
 		}
 		return rtn.toString();
 	}
@@ -186,18 +186,18 @@ public class Messe {
 	public String htmlAusgeben() {
 		String rtn = getIDHTML();
 		rtn = rtn.substring(0, rtn.length() - 7);
-		rtn += "<br></br>";
 		medis.sort(Messdiener.compForMedis);
 		leiter.sort(Messdiener.compForMedis);
 		ArrayList<Messdiener> out = medis;
 		out.addAll(leiter);
+		rtn += "<p>";
 		for (int i = 0; i < out.size(); i++) {
 			rtn += out.get(i).getVorname() + " " + out.get(i).getNachnname() + ", ";
 		}
 		if (rtn.endsWith(", ")) {
 			rtn = rtn.substring(0, rtn.length() - 2);
 		}
-		rtn += "<br></br>";
+		rtn += "</p>";
 		rtn += "</html>";
 		return rtn;
 	}

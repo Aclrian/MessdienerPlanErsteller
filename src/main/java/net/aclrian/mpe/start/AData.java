@@ -71,7 +71,7 @@ public class AData {
 	}
 
 	public void erneuern(Window window, String savepath) {
-		savepath = DateienVerwalter.dv.getSavepath(window);
+		savepath = DateienVerwalter.dv.getSavepath();
 		/*
 		 * DateienVerwalter.re_start(window); try { pf =
 		 * DateienVerwalter.dv.getPfarrei(); if (pf == null) { ap.getPfarreiNeu(); } }

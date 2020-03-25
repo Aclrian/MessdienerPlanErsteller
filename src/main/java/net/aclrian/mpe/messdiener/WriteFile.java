@@ -38,7 +38,6 @@ public class WriteFile {
 	/**
 	 * 
 	 * @param ps   der Messdiener, der gespeichert werden soll
-	 * @param path der Pfad, bei dem der Messdienergespeichter werden soll
 	 */
 	public WriteFile(Messdiener ps) {
 		this.me = ps;
@@ -46,11 +45,10 @@ public class WriteFile {
 
 	/**
 	 * speichert den Messdiener
-	 * @param window 
 	 * 
 	 * @throws IOException wirft IOException bei bspw. zu wenig Rechten
 	 */
-	public boolean toXML(Window window) throws IOException {
+	public boolean toXML() throws IOException {
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty("indent", "yes");
@@ -74,19 +72,19 @@ public class WriteFile {
 			xml.appendChild(body);
 
 			Element vName = document.createElement("Vorname");
-			vName.appendChild(document.createTextNode(this.me.getVorname()));
+			vName.appendChild(document.createTextNode(me.getVorname()));
 			body.appendChild(vName);
 
 			Element nname = document.createElement("Nachname");
-			nname.appendChild(document.createTextNode(this.me.getNachnname()));
+			nname.appendChild(document.createTextNode(me.getNachnname()));
 			body.appendChild(nname);
 			
 			Element mail = document.createElement("Email");
-			mail.appendChild(document.createTextNode(this.me.getEmail()));
+			mail.appendChild(document.createTextNode(me.getEmail()));
 			body.appendChild(mail);
 
 			Element mv = document.createElement("Messverhalten");
-			Messverhalten dv = this.me.getDienverhalten();
+			Messverhalten dv = me.getDienverhalten();
 
 			for (int i = 0; i < DateienVerwalter.dv.getPfarrei().getStandardMessen().size(); i++) {
 				StandartMesse messe = DateienVerwalter.dv.getPfarrei().getStandardMessen().get(i);
@@ -115,7 +113,7 @@ public class WriteFile {
 			Element anvertraute = document.createElement("Anvertraute");
 			Element f1 = document.createElement("F1");
 			try {
-				if (f[0].equals("") || f[0] == null) {
+				if (f[0].equals("")) {
 					f1.appendChild(document.createTextNode("LEER"));
 				} else {
 					f1.appendChild(document.createTextNode(f[0]));
@@ -129,7 +127,7 @@ public class WriteFile {
 
 			Element f2 = document.createElement("F2");
 			try {
-				if (f[1].equals("") || f[1] == null) {
+				if (f[1].equals("")) {
 					f2.appendChild(document.createTextNode("LEER"));
 				} else {
 					f2.appendChild(document.createTextNode(f[1]));
@@ -141,7 +139,7 @@ public class WriteFile {
 			anvertraute.appendChild(f2);
 			Element f3 = document.createElement("F3");
 			try {
-				if (f[2].equals("") || f[2] == null) {
+				if (f[2].equals("")) {
 					f3.appendChild(document.createTextNode("LEER"));
 				} else {
 					f3.appendChild(document.createTextNode(f[2]));
@@ -154,7 +152,7 @@ public class WriteFile {
 
 			Element f4 = document.createElement("F4");
 			try {
-				if (f[3].equals("") || f[3] == null) {
+				if (f[3].equals("")) {
 					f4.appendChild(document.createTextNode("LEER"));
 				} else {
 					f4.appendChild(document.createTextNode(f[3]));
@@ -166,7 +164,7 @@ public class WriteFile {
 			anvertraute.appendChild(f4);
 			Element f5 = document.createElement("F5");
 			try {
-				if (f[4].equals("") || f[4] == null) {
+				if (f[4].equals("")) {
 					f5.appendChild(document.createTextNode("LEER"));
 				} else {
 					f5.appendChild(document.createTextNode(f[4]));
@@ -180,7 +178,7 @@ public class WriteFile {
 			// Geschwister
 			Element g1 = document.createElement("g1");
 			try {
-				if (g[0].equals("") || g[0] == null) {
+				if (g[0].equals("")) {
 					g1.appendChild(document.createTextNode("LEER"));
 				} else {
 					g1.appendChild(document.createTextNode(g[0]));
@@ -192,7 +190,7 @@ public class WriteFile {
 			anvertraute.appendChild(g1);
 			Element g2 = document.createElement("g2");
 			try {
-				if (g[1].equals("") || g[1] == null) {
+				if (g[1].equals("")) {
 					g2.appendChild(document.createTextNode("LEER"));
 				} else {
 					g2.appendChild(document.createTextNode(g[1]));
@@ -204,7 +202,7 @@ public class WriteFile {
 			anvertraute.appendChild(g2);
 			Element g3 = document.createElement("g3");
 			try {
-				if (g[2].equals("") || g[2] == null) {
+				if (g[2].equals("")) {
 					g3.appendChild(document.createTextNode("LEER"));
 				} else {
 					g3.appendChild(document.createTextNode(g[2]));
@@ -218,7 +216,7 @@ public class WriteFile {
 			body.appendChild(anvertraute);
 
 			DOMSource domSource = new DOMSource(document);
-			String path = DateienVerwalter.dv.getSavepath(window);
+			String path = DateienVerwalter.dv.getSavepath();
 			String datei = this.me.getNachnname() + ", " + this.me.getVorname();
 
 			File file = new File(path, datei + ".xml");

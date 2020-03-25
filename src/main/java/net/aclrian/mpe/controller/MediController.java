@@ -87,13 +87,13 @@ public class MediController implements Controller {
 			mc.changePane(EnumPane.selectMedi);
 		});
 		save_new.setOnAction(e -> {
-			if (getMedi(window)) {
+			if (getMedi()) {
 				locked = false;
 				mc.changePaneMesse(null);
 			}
 		});
 		button.setOnAction(e -> {
-			if (getMedi(window)) {
+			if (getMedi()) {
 				locked = false;
 				mc.changePane(EnumPane.selectMedi);
 			}
@@ -132,6 +132,7 @@ public class MediController implements Controller {
 
 			@Override
 			public void handle(Event arg0) {
+				Object o = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList().clone();
 				ArrayList<Messdiener> g = Dialogs.select(DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList(), geschwi,
 						"Geschwister auswählen:");
 				if (g.size() >= Messdiener.geschwilenght) {
@@ -228,7 +229,7 @@ public class MediController implements Controller {
 		getLogger().info("Messdiener wurde geladen");
 	}
 
-	public boolean getMedi(Window window) {
+	public boolean getMedi() {
 		try {
 			if (!name.getText().equals("") && !vorname.getText().equals("")) {
 				// ME
@@ -241,7 +242,7 @@ public class MediController implements Controller {
 				if (moben != null) {
 					boolean b = moben.getNachnname().equals(m.getNachnname());
 					boolean bo = moben.getVorname().equals(m.getVorname());
-					if (b == false || bo == false) {
+					if (!b || !bo) {
 						m.getFile().delete();
 					}
 				}
@@ -271,10 +272,10 @@ public class MediController implements Controller {
 				try {
 					for (Messdiener messdiener : bearbeitete) {
 						WriteFile wf = new WriteFile(messdiener);
-						wf.toXML(window);
+						wf.toXML();
 					}
 					WriteFile wf = new WriteFile(m);
-					wf.toXML(window);
+					wf.toXML();
 					getLogger().info("Messdiener " + m.makeId() + " wurde gespeichert!");
 				} catch (IOException e) {
 					Dialogs.error(e, "Konnte den Messdiener '" + m + "' nicht speichern");
@@ -292,7 +293,7 @@ public class MediController implements Controller {
 	private void addBekanntschaft(Messdiener medi, Messdiener woben, boolean isGeschwister) {
 		if (!isGeschwister) {// Freunde
 			// fuer medi
-			ArrayList<String> leins = new ArrayList<String>((List<String>) Arrays.asList(medi.getFreunde()));
+			ArrayList<String> leins = new ArrayList<>(Arrays.asList(medi.getFreunde()));
 			leins.add(woben.toString());
 			leins.removeIf(t -> t.equals(""));
 			String[] s = new String[5];
@@ -320,13 +321,13 @@ public class MediController implements Controller {
 		}
 	}
 
-	private String[] getArrayString(ArrayList<Messdiener> freunde2, int begr) {
+	public static String[] getArrayString(ArrayList<?> freunde2, int begr) {
 		String[] s = new String[begr];
 		for (int i = 0; i < s.length; i++) {
 			try {
 				s[i] = freunde2.get(i).toString();
 			} catch (IndexOutOfBoundsException | NullPointerException e) {
-				s[i] = new String("");
+				s[i] = "";
 			}
 		}
 		return s;
@@ -347,7 +348,7 @@ public class MediController implements Controller {
 			// moben.getFile().
 			File file = m.getFile();
 			file.delete();
-			ArrayList<Messdiener> ueberarbeitete = new ArrayList<Messdiener>();
+			ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
 			for (Messdiener messdiener : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
 				alteloeschen(m, messdiener.getFreunde(), ueberarbeitete);
 				alteloeschen(m, messdiener.getGeschwister(), ueberarbeitete);
@@ -358,7 +359,7 @@ public class MediController implements Controller {
 				}
 				WriteFile wf = new WriteFile(medi);
 				try {
-					wf.toXML(window);
+					wf.toXML();
 					return true;
 				} catch (IOException e) {
 					Dialogs.error(e, "Konnte bei dem Bekannten '" + medi
@@ -371,7 +372,7 @@ public class MediController implements Controller {
 	}
 
 	private static ArrayList<Messdiener> alteloeschen(Messdiener m, String[] array) {
-		ArrayList<Messdiener> ueberarbeitete = new ArrayList<Messdiener>();
+		ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
 		for (int i = 0; i < array.length; i++) {
 			if (array[i].equals(m.toString())) {
 				array[i] = "";
@@ -410,9 +411,9 @@ public class MediController implements Controller {
 	}
 
 	private void updateGeschwister(Messdiener medi) {
-		ArrayList<String> arrayList = new ArrayList<String>(Arrays.asList(medi.getGeschwister()));
+		ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(medi.getGeschwister()));
 		ArrayList<Messdiener> alle = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
-		ArrayList<Messdiener> al = new ArrayList<Messdiener>();
+		ArrayList<Messdiener> al = new ArrayList<>();
 		loop: for (int i = 0; i < arrayList.size(); i++) {
 			if (arrayList.get(i).equals("")) {
 				continue;

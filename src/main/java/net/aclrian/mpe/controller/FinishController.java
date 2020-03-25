@@ -3,8 +3,11 @@ package net.aclrian.mpe.controller;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
@@ -25,6 +28,7 @@ import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -36,16 +40,18 @@ public class FinishController implements Controller {
 	private enum EnumAction {
 		EinfachEinteilen, TypeBeachten
 	}
-
+	private boolean locked = true;
+	private MainController.EnumPane pane;
 	private ArrayList<Messe> messen;
-	private ArrayList<Messdiener> hauptarray;
 	private String titel;
+	private ArrayList<Messdiener> hauptarray, nichteingeteileList;
 	@FXML
 	private HTMLEditor editor;
 	@FXML
 	private Button mail,nichteingeteilte,zurück;
 
-	public FinishController(ArrayList<Messe> messen) {
+	public FinishController(MainController.EnumPane old, ArrayList<Messe> messen) {
+		this.pane = old;
 		this.hauptarray = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 		this.messen = messen;
 		neuerAlgorythmus();
@@ -59,19 +65,19 @@ public class FinishController implements Controller {
 				Date ende = messen.get(messen.size() - 1).getDate();
 				SimpleDateFormat df = new SimpleDateFormat("dd. MMMM", Locale.GERMAN);
 				titel = "Messdienerplan vom " + df.format(start) + " bis " + df.format(ende);
-				s.append("<h1>" + titel + "</h1>");
+				s.append("<h1>").append(titel).append("</h1>");
 			}
-			s.append("<br>" + m1 + "</br>");
+			s.append("<p>").append(m1).append("</p>");
 		}
 		s.append("</html>");
 		fertig = s.toString();
-		ArrayList<Messdiener> nichteingeteile = new ArrayList<>();
+		nichteingeteileList = new ArrayList<>();
 		for (Messdiener medi : hauptarray) {
 			if (medi.getMessdatenDaten().getInsgesamtEingeteilt() == 0) {
-				nichteingeteile.add(medi);
+				nichteingeteileList.add(medi);
 			}
 		}
-		nichteingeteile.sort(Messdiener.compForMedis);
+		nichteingeteileList.sort(Messdiener.compForMedis);
 	}
 
 	@Override
@@ -81,12 +87,14 @@ public class FinishController implements Controller {
 
 	@Override
 	public void afterstartup(Window window, MainController mc) {
+		nichteingeteilte.setOnAction(event -> nichteingeteilte());
 		editor.setHtmlText(fertig);
+		zurück.setOnAction(p->this.zurueck(mc));
 	}
 
 	@Override
 	public boolean isLocked() {
-		return true;
+		return locked;
 	}
 
 	public void back() {
@@ -128,28 +136,35 @@ public class FinishController implements Controller {
 		}*/
 	}
 
-	public void zurueck(boolean loeschen, MainController.EnumPane eap, MainController mc) {
-		if (loeschen) {
-			for (Messdiener medi : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
-				medi.getMessdatenDaten().nullen();
-			}
-			for (Messe m : mc.getMessen()) {
+	public void zurueck(MainController mc) {
+		Boolean löschen = Dialogs.yesNoCancel("Ja", "Nein", "Hier bleiben", "Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?");
+		if (löschen == null) return;
+		if (löschen) {
+			DateienVerwalter.dv.reloadMessdiener();
+			for (Messe m : messen) {
 				m.nullen();
 			}
 		}
-		mc.changePane(MainController.EnumPane.start);
+		locked = false;
+		mc.setMesse(this, pane);
+	}
+
+	public ArrayList<Messe> getMessen(){
+		return messen;
+	}
+
+	public void nichteingeteilte(){
+		Dialogs.show(nichteingeteileList, "Nicht eingeteilte Messdiener");
 	}
 
 	@FXML
 	public void toPDF(ActionEvent actionEvent) {
-		BasicConfigurator.configure();
-		// pdfHTML specific code
 		ConverterProperties converterProperties = new ConverterProperties();
 		converterProperties.setCharset("UTF-8");
 		try {
 			File out = new File(Log.getWorkingDir().getAbsolutePath() + File.separator + titel + ".pdf");
 			out.delete();
-			HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().getBytes(StandardCharsets.UTF_8)),
+			HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replaceAll("<p></p>","<br>").getBytes(StandardCharsets.UTF_8)),
 					new FileOutputStream(out), converterProperties);
 			Desktop.getDesktop().open(out);
 		} catch (IOException e) {
@@ -160,7 +175,9 @@ public class FinishController implements Controller {
 	@FXML
 	public void toWORD(ActionEvent actionEvent) {
 		try{
-			String input = editor.getHtmlText().replaceAll("<br>","<br></br>");
+			String input = editor.getHtmlText();
+			input = input.replaceAll("</br>","");
+			input = input.replaceAll("<br>","<br></br>");
 			System.out.println(input);
 			RFonts rfonts = Context.getWmlObjectFactory().createRFonts();
 			rfonts.setAscii("Century Gothic");
@@ -283,7 +300,7 @@ public class FinishController implements Controller {
 			// }
 			Log.getLogger().info(medis.size() + " für " + m.getNochBenoetigte());
 			if (m.getNochBenoetigte() > medis.size()) {
-				Dialogs.error("Die Messe " + m.getID().replaceAll("\t","   ") + "hat zu wenige Messdiener");
+				Dialogs.error("Die Messe " + m.getID().replaceAll("\t","   ") + " hat zu wenige Messdiener. Noch " + m.getNochBenoetigte() + " werden benötigt. Es gibt aber nur "+ (medis.size()-1));
 			}
 			for (Messdiener medi : medis) {
 				einteilen(m, medi, zwang);

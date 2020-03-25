@@ -61,7 +61,12 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Hilfe">
             <items>
-                <MenuItem mnemonicParsing="false" text="Über MpE" />
+                <MenuItem mnemonicParsing="false" onAction="#info" text="Über MpE" />
+                  <MenuItem mnemonicParsing="false" onAction="#version" text="Versionsüberprüfung" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#savepath" text="Messdienerordner öffnen" />
+                  <MenuItem mnemonicParsing="false" onAction="#workingdir" text="Programmordner öffnen" />
+                  <MenuItem mnemonicParsing="false" onAction="#log" text="Protokoll öffnen" />
             </items>
         </Menu>
       </menus>

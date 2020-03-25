@@ -129,7 +129,7 @@ public class MesseController implements Controller {
 
 	@FXML
 	private void standardmesseBearbeiten(){
-		StandartMesse s = Dialogs.singleSelect(DateienVerwalter.dv.getPfarrei().getStandardMessen(),"Standartmesse ändern:");
+		StandartMesse s = (StandartMesse) Dialogs.singleSelect(DateienVerwalter.dv.getPfarrei().getStandardMessen(),"Standartmesse ändern:");
 		if (s!=null) {
 			smesse.setText(s.tolangerBenutzerfreundlichenString());
 			this.s = s;
