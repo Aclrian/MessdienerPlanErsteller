@@ -60,12 +60,13 @@ public class Main extends Application {
 				PfarreiController.start(stage, e.getSavepath(), this);
 				return;
 			}
-
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));
 			loader.setController(new MainController(this,stage));
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
+			//scene.getRoot().setStyle("-fx-base:white");
+			//scene.getStylesheets().add("/css/darkmode.css");
 			stage.setScene(scene);
 
 			stage.setTitle("MessdienerplanErsteller");

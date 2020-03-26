@@ -54,7 +54,7 @@ public class MainController {
 
 	public enum EnumPane {
 		messdiener("/view/messdiener.fxml"), messe("/view/messe.fxml"), start("/view/mainmlg.fxml"), plan("/view/Aplan.fxml"),
-		ferien(""), stdmesse("/view/smesse.fxml"), selectMedi("/view/select.fxml"), selectMesse("/view/select.fxml");
+		ferien("/view/fplan.fxml"), stdmesse("/view/smesse.fxml"), selectMedi("/view/select.fxml"), selectMesse("/view/select.fxml");
 
 		private String location;
 
@@ -168,13 +168,11 @@ public class MainController {
 				if (ep == EnumPane.selectMedi) {
 					control = new Select(apane, Selecter.Messdiener, this);
 					fl.setController(control);
-				}
-				if (ep == EnumPane.selectMesse) {
+				}else if (ep == EnumPane.selectMesse) {
 					control = new Select(apane, Selecter.Messe, this);
 					fl.setController(control);
-				}
-				if(ep == EnumPane.plan){
-					control = new FinishController(old,messen);//TODO ferienplan
+				} else if(ep == EnumPane.plan){
+					control = new FinishController(old,messen);
 					fl.setController(control);
 				}
 				p = fl.load();
@@ -237,7 +235,11 @@ public class MainController {
 
 	@FXML
 	public void ferienplan(ActionEvent actionEvent) {
-		// TODO
+		if (DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList().size() > 0 && messen.size() > 0) {
+			changePane(EnumPane.ferien);
+		} else {
+			Dialogs.warn("Bitte erst Messen und Messdiener eingeben.");
+		}
 	}
 
 	@FXML
