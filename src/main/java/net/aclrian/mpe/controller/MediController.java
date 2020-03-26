@@ -398,7 +398,7 @@ public class MediController implements Controller {
 			}
 			boolean beheben = Dialogs.frage(
 					"Konnte den Messdiener '" + arrayList.get(i) + "' als Freund von '" + medi + "' nicht finden!",
-					"ignorieren", "beheben");
+					"Ignorieren", "Beheben");
 			if (beheben) {
 				arrayList.remove(i);
 				String[] freunde = arrayList.toArray(new String[arrayList.size()]);
