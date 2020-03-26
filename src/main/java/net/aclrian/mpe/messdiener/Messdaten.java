@@ -1,6 +1,7 @@
 package net.aclrian.mpe.messdiener;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,10 @@ public class Messdaten {
 
 	public void austeilen(Date d) {
 		ausgeteilt.add(d);
+	}
+
+	public void ausausteilen(Date d){
+		ausgeteilt.remove(d);
 	}
 
 	public int berecheMax(int eintritt, int aktdatum, boolean leiter, Einstellungen einst) {

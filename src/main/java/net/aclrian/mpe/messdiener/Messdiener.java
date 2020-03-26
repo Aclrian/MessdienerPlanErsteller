@@ -38,13 +38,7 @@ public class Messdiener {
 	private boolean istLeiter = false;
 	private Messdaten daten;
 	private File file;
-	public final static Comparator<Messdiener> compForMedis = new Comparator<Messdiener>() {
-
-		@Override
-		public int compare(Messdiener o1, Messdiener o2) {
-			return o1.makeId().compareToIgnoreCase(o2.makeId());
-		}
-	};
+	public final static Comparator<Messdiener> compForMedis = (o1, o2) -> o1.makeId().compareToIgnoreCase(o2.makeId());
 	public static final Comparator<? super Messdiener> einteilen = new Comparator<Messdiener>() {
 		@Override
 		public int compare(Messdiener o1, Messdiener o2) {
@@ -92,7 +86,7 @@ public class Messdiener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param vname         Vorname
 	 * @param nname         Nachname
 	 * @param Eintritt      Jahr des Einfuehrung Ist davon abhaengig, wie oft der
@@ -102,7 +96,7 @@ public class Messdiener {
 	 * @param dienverhalten Wann kann er zu welchen Standart Messen (bspw. Sontag
 	 *                      Morgen oder Dienstag Abend) dienen
 	 * @param email			eine gültige Email-Addresse
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void setzeAllesNeu(String vname, String nname, int Eintritt, boolean istLeiter,
 			Messverhalten dienverhalten, String email) throws NotValidException {
@@ -113,9 +107,9 @@ public class Messdiener {
 		setDienverhalten(dienverhalten);
 		setEmail(email);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param vname         Vorname
 	 * @param nname         Nachname
 	 * @param Eintritt      Jahr des Einfuehrung Ist davon abhaengig, wie oft der
@@ -124,7 +118,7 @@ public class Messdiener {
 	 *                      eingeteilt werden soll
 	 * @param dienverhalten Wann kann er zu welchen Standart Messen (bspw. Sontag
 	 *                      Morgen oder Dienstag Abend) dienen
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void setzeAllesNeuUndMailLeer(String vname, String nname, int Eintritt, boolean istLeiter,
 			Messverhalten dienverhalten) {
@@ -166,9 +160,9 @@ public class Messdiener {
 	 * Dies erreicht man mit der Methode .makeID() Mit diesen Freunden wird dem
 	 * Messdiener eingeteilt. <br>
 	 * Man kann nur 5 Freunde haben.</br>
-	 * 
+	 *
 	 * @param freunde
-	 * 
+	 *
 	 */
 	public void setFreunde(String[] freunde) {
 		this.Freunde = freunde;
@@ -180,9 +174,9 @@ public class Messdiener {
 	 * Mit diesen Geschwistern wird der Messdiener oft eingeteilt.</br>
 	 * <br>
 	 * Man kann nur drei Geschwister haben.</br>
-	 * 
+	 *
 	 * @param geschwister
-	 * 
+	 *
 	 */
 	public void setGeschwister(String[] geschwister) {
 		this.Geschwister = geschwister;
@@ -195,11 +189,11 @@ public class Messdiener {
 	public void setIstLeiter(boolean istLeiter) {
 		this.istLeiter = istLeiter;
 	}
-	
+
 	public String getEmail() {
 		return Email;
 	}
-	
+
 	public void setEmail(String email) throws NotValidException {
 		if(email.contentEquals("") || EmailValidator.getInstance().isValid(email)) {
 			Email = email;
@@ -213,8 +207,7 @@ public class Messdiener {
 
 	/**
 	 * Mit dieser Methode wird der Messdiener als .xml Datei lokal gespeichert
-	 * 
-	 * @param pfad
+	 *
 	 */
 	public void makeXML() {
 		WriteFile wf = new WriteFile(this);
