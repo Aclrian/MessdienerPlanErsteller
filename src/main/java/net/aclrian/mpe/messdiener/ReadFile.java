@@ -27,7 +27,7 @@ import net.aclrian.mpe.utils.Log;
 public class ReadFile {
 	/**
 	 * 
-	 * @param pfadMitDateiundmitEndung
+	 * @param pfadMitDateiundmitEndung die Datei
 	 * @return den ausgelesenen Messdiener
 	 */
 	public Messdiener getMessdiener(String pfadMitDateiundmitEndung) {

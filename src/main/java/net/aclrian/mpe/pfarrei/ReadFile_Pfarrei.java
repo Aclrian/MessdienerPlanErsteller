@@ -22,11 +22,10 @@ public class ReadFile_Pfarrei {
 
 	public static Pfarrei getPfarrei(String pfadMitDateiundmitEndung) {
 		Pfarrei pf = null;
-		String name = "";
+		String name;
 		boolean hochaemter = false;
-		ArrayList<StandartMesse> sm = new ArrayList<StandartMesse>();
+		ArrayList<StandartMesse> sm = new ArrayList<>();
 		Einstellungen einst = new Einstellungen();
-		boolean update = false;
 		try {
 			File fXmlFile = new File(pfadMitDateiundmitEndung);
 			if (!fXmlFile.isDirectory()) {
@@ -44,9 +43,6 @@ public class ReadFile_Pfarrei {
 					if (doc != null) {
 
 						doc.getDocumentElement().normalize();
-						NodeList Lort = doc.getElementsByTagName("ort");
-						NodeList Ltyp = doc.getElementsByTagName("typ");
-						update = (Lort.getLength() > 0) || (Ltyp.getLength() > 0);
 						// Standartmessen
 						NodeList nL = doc.getElementsByTagName("std_messe");
 						for (int j = 0; j < nL.getLength(); j++) {

@@ -12,7 +12,7 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 
 public class ATilePane extends TilePane {
 
-	private class ACheckBox extends CheckBox {
+	private static class ACheckBox extends CheckBox {
 		private Messdiener messdiener;
 
 		public ACheckBox(Messdiener m) {
@@ -25,8 +25,6 @@ public class ATilePane extends TilePane {
 		}
 	}
 
-	private ArrayList<Messdiener> medis;
-
 	public ATilePane() {
 		setAlignment(Pos.CENTER);
 		setOrientation(Orientation.VERTICAL);
@@ -34,7 +32,7 @@ public class ATilePane extends TilePane {
 		setMaxWidth(Double.MAX_VALUE);
 		setVgap(5d);
 		try {
-			medis = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
+			ArrayList<Messdiener> medis = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 			medis.sort(Messdiener.compForMedis);
 			for (Messdiener messdiener : medis) {
 				ACheckBox cb = new ACheckBox(messdiener);
@@ -47,18 +45,6 @@ public class ATilePane extends TilePane {
 		}
 	}
 
-	public ATilePane(ArrayList<Messdiener> selected) {
-		setAlignment(Pos.CENTER);
-		setOrientation(Orientation.VERTICAL);
-		medis = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
-		medis.sort(Messdiener.compForMedis);
-		for (Messdiener messdiener : medis) {
-			ACheckBox cb = new ACheckBox(messdiener);
-			getChildren().add(cb);
-		}
-		setSelected(selected);
-	}
-
 	public ArrayList<Messdiener> getSelected() {
 		ArrayList<Messdiener> rtn = new ArrayList<>();
 		for (Node n : getChildrenUnmodifiable()) {
@@ -68,10 +54,10 @@ public class ATilePane extends TilePane {
 		return rtn;
 	}
 
-	public void setSelected(ArrayList<Messdiener> eingeteilte) {
+	public void setSelected(ArrayList<Messdiener> selected) {
 			for (Node n : getChildrenUnmodifiable()) {
 				if (n instanceof ACheckBox) {
-					for (Messdiener messdiener : eingeteilte) {
+					for (Messdiener messdiener : selected) {
 						if (messdiener.toString().equals(((ACheckBox) n).getMessdiener().toString())) {
 							((CheckBox) n).setSelected(true);
 						}

@@ -2,58 +2,48 @@ package net.aclrian.mpe.controller;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Window;
-import javafx.util.Callback;
-import net.aclrian.fx.CheckBoxCell;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-import org.docx4j.org.apache.xpath.operations.Bool;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 public class FerienplanController implements Controller {
-	private ArrayList<Messdiener> medis;
-	private ArrayList<Datenträger> data;
 	private ArrayList<String> dates = new ArrayList<>();
-	private ArrayList<TableColumn<Datenträger, Boolean>> cols;
 	@FXML
-	private TableColumn<Datenträger, String> name;
+	private TableColumn<Datentraeger, String> name;
 	@FXML
-	private TableView<Datenträger> table;
+	private TableView<Datentraeger> table;
 
 	@FXML
-	private Button zurück, leeren, hilfe, fertig;
+	private Button zurueck, leeren, hilfe, fertig;
 
 	@Override
 	public void initialize() {
 
 	}
 
-	private class Datenträger{
-		private class Datum{
-			private String d;
+	private static class Datentraeger {
+		private static class Datum{
 			private SimpleBooleanProperty b;
-			public Datum(String d, boolean b){
+			public Datum(boolean b){
 				this.b = new SimpleBooleanProperty(b);
-				this.d = d;
 			}
 
 			public void setB(boolean b) {
@@ -71,23 +61,20 @@ public class FerienplanController implements Controller {
 		}
 		private HashMap<String, Datum> hm = new HashMap<>();
 		private Messdiener m;
-		public Datenträger(SimpleDateFormat df, ArrayList<String> dates, Messdiener messdiener){
+		public Datentraeger(SimpleDateFormat df, ArrayList<String> dates, Messdiener messdiener){
 			m = messdiener;
 			for (String d : dates) {
-				Datum datum = new Datum(d,messdiener.getMessdatenDaten().ausgeteilt(d));
-				datum.getProperty().addListener(new ChangeListener<Boolean>() {
-					@Override
-					public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-						if(oldValue!=newValue){
-							try {
-								if (newValue) {
-									messdiener.getMessdatenDaten().austeilen(df.parse(d));
-								} else {
-									messdiener.getMessdatenDaten().ausausteilen(df.parse(d));
-								}
-							} catch (ParseException e){
-								Dialogs.error(e,"Konnte das Datum nicht bekommen.");
+				Datum datum = new Datum(messdiener.getMessdatenDaten().ausgeteilt(d));
+				datum.getProperty().addListener((observable, oldValue, newValue) -> {
+					if(oldValue!=newValue){
+						try {
+							if (newValue) {
+								messdiener.getMessdatenDaten().austeilen(df.parse(d));
+							} else {
+								messdiener.getMessdatenDaten().ausausteilen(df.parse(d));
 							}
+						} catch (ParseException e){
+							Dialogs.error(e,"Konnte das Datum nicht bekommen.");
 						}
 					}
 				});
@@ -105,10 +92,9 @@ public class FerienplanController implements Controller {
 	}
 	@Override
 	public void afterstartup(Window window, MainController mc) {
-		medis = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
+		ArrayList<Messdiener> medis = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-		ArrayList<Datenträger> daten = new ArrayList<>();
-		//messen = mc.getMessen();
+		ArrayList<Datentraeger> daten = new ArrayList<>();
 		for (Messe messe : mc.getMessen()) {
 			dates.add(df.format(messe.getDate()));
 		}
@@ -124,29 +110,18 @@ public class FerienplanController implements Controller {
 				return o1.compareTo(o2);
 			}
 		});
-		TableColumn<Datenträger, String> column = new TableColumn<>();
+		TableColumn<Datentraeger, String> column = new TableColumn<>();
 		column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMessdiener()));
 		column.setText("Messdiener");
 		column.setPrefWidth(100);
 		table.getColumns().add(column);
-		/*TableColumn<Datenträger, Datenträger.Datum> co = new TableColumn<>();
-		co.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().get(param.getTableColumn().getText())));
-		co.setText("Daten");
-		co.setPrefWidth(100);
-		*///table.getColumns().add(column);
 		table.getSelectionModel().setCellSelectionEnabled(true);
 		table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 		table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		for (String date : dates){
-			TableColumn<Datenträger, Boolean> col = new TableColumn<>();
+			TableColumn<Datentraeger, Boolean> col = new TableColumn<>();
 			col.setCellValueFactory(param -> param.getValue().get(date).getProperty());
-			col.setCellFactory(new Callback<TableColumn<Datenträger, Boolean>, TableCell<Datenträger, Boolean>>() {
-				@Override
-				public TableCell<Datenträger, Boolean> call(TableColumn<Datenträger, Boolean> param) {
-					CheckBoxTableCell<Datenträger, Boolean> cc = new CheckBoxTableCell<>();////CheckBoxTableCell<>();
-					return cc;
-				}
-			});
+			col.setCellFactory(param -> new CheckBoxTableCell<>());
 			col.setEditable(true);
 			col.setPrefWidth(100);
 			col.setText(date);
@@ -155,31 +130,24 @@ public class FerienplanController implements Controller {
 		table.setEditable(true);
 		column.setEditable(false);
 		for (Messdiener m: medis) {
-			daten.add(new Datenträger(df,dates,m));
+			daten.add(new Datentraeger(df, dates, m));
 		}
 		table.setItems(FXCollections.observableArrayList(daten));
-		fertig.setOnAction(event -> {
-			ObservableList<Datenträger> d = table.getItems();
-			mc.changePane(MainController.EnumPane.plan);
-		}
-		);
-		table.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				if(event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.SPACE){
-					int i = table.getFocusModel().getFocusedCell().getColumn();
-					if(i!=0){
-						int row = table.getFocusModel().getFocusedCell().getRow();
-						String s = dates.get(i-1);
-						table.getItems().get(row).get(s).setB(!table.getItems().get(row).get(s).isB());
-						table.refresh();
-						table.getFocusModel().focusLeftCell();
-						table.getFocusModel().focusRightCell();
-					}
+		fertig.setOnAction(event ->	mc.changePane(MainController.EnumPane.plan));
+		table.setOnKeyPressed(event -> {
+			if(event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.SPACE){
+				int i = table.getFocusModel().getFocusedCell().getColumn();
+				if(i!=0){
+					int row = table.getFocusModel().getFocusedCell().getRow();
+					String s = dates.get(i-1);
+					table.getItems().get(row).get(s).setB(!table.getItems().get(row).get(s).isB());
+					table.refresh();
+					table.getFocusModel().focusLeftCell();
+					table.getFocusModel().focusRightCell();
 				}
 			}
 		});
-		zurück.setOnAction(e->mc.changePane(MainController.EnumPane.start));
+		zurueck.setOnAction(e->mc.changePane(MainController.EnumPane.start));
 		leeren.setOnAction(e->{
 			for(String d : dates)
 			table.getItems().forEach(dt-> dt.get(d).getProperty().set(false));

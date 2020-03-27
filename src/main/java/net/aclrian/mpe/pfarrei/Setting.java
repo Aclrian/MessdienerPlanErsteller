@@ -6,7 +6,7 @@ public class Setting {
 
 	public enum Attribut{
 		year,
-		max;
+		max
 	}
 	private Attribut a;
 	private int id;
@@ -32,6 +32,7 @@ public class Setting {
 	public int getAnz_dienen() {
 		return anz_dienen;
 	}
+
 	@Override
 	public String toString() {
 		return a.name() + " " + id + " " + anz_dienen;

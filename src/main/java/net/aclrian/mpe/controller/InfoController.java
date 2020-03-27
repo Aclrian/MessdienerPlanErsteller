@@ -6,15 +6,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import net.aclrian.mpe.Main;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
@@ -22,12 +21,9 @@ import org.apache.commons.io.IOUtils;
 
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -59,7 +55,7 @@ public class InfoController {
 		@FXML
 		private TitledPane pane;
 
-		public InfoController(Stage partent) throws IOException {
+		public InfoController(Stage parent) throws IOException {
 			s = new Stage();
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("/view/AInfo.fxml"));
@@ -68,7 +64,7 @@ public class InfoController {
 			Scene scene = new Scene(root);
 			s.setScene(scene);
 			s.initModality(Modality.APPLICATION_MODAL);
-			s.initOwner(partent);
+			s.initOwner(parent);
 			s.setOnShown(e->afterstartup());
 			s.setTitle("MessdienerplanErsteller - Info");
 			s.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));

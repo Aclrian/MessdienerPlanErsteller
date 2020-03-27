@@ -1,14 +1,12 @@
 package net.aclrian.mpe.messdiener;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
-import javafx.stage.Window;
 import net.aclrian.mpe.controller.MediController;
 import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.utils.*;
@@ -89,7 +87,7 @@ public class Messdaten {
 	}
 
 
-	public void einteilenVorzeitig(Date date, boolean hochamt) {
+	public boolean einteilenVorzeitig(Date date, boolean hochamt) {
 			if (kannvorzeitg(date)) {
 				eingeteilt.add(date);
 				insgesamtEingeteilt++;
@@ -97,7 +95,9 @@ public class Messdaten {
 					pause.add(gettheNextDay(date));
 					anz_messen++;
 				}
+				return true;
 			}
+			return false;
 	}
 
 	public void nullen() {
@@ -112,22 +112,22 @@ public class Messdaten {
 		rd.removeDuplicatedEntries(geschwister);
 		rd.removeDuplicatedEntries(freunde);
 
-		for (int i = 0; i < geschwister.size(); i++) {
-			for (int j = 0; j < medis.size(); j++) {
-				if (geschwister.get(i).makeId().equals(medis.get(j).makeId())) {
-					rtn.add(medis.get(j));
-				}
-			}
-		}
-		for (int i = 0; i < freunde.size(); i++) {
-			for (int j = 0; j < medis.size(); j++) {
-				if (freunde.get(i).makeId().equals(medis.get(j).makeId())) {
-					rtn.add(medis.get(j));
-				}
-			}
-		}
+		rtn.addAll(setTeilAnvertraute(medis, geschwister));
+		rtn.addAll(setTeilAnvertraute(medis, freunde));
 
 		rd.removeDuplicatedEntries(rtn);
+		return rtn;
+	}
+
+	private ArrayList<Messdiener> setTeilAnvertraute(ArrayList<Messdiener> medis, ArrayList<Messdiener> freunde) {
+		ArrayList<Messdiener> rtn = new ArrayList<>();
+		for (Messdiener messdiener : freunde) {
+			for (Messdiener medi : medis) {
+				if (messdiener.makeId().equals(medi.makeId())) {
+					rtn.add(medi);
+				}
+			}
+		}
 		return rtn;
 	}
 
@@ -196,17 +196,6 @@ public class Messdaten {
 		anz_messen = 0;
 	}
 
-	public void einteilenZwang(Date date, boolean hochamt) {
-		if (!contains(date, ausgeteilt)) {
-			eingeteilt.add(date);
-			anz_messen++;
-			insgesamtEingeteilt++;
-			if (hochamt) {
-				anz_messen--;
-			}
-		}
-	}
-
 	private Date gettheNextDay(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -221,19 +210,9 @@ public class Messdaten {
 		return cal.getTime();
 	}
 
+	@SuppressWarnings("unused")
 	public void loescheAbwesendeDaten() {
 		ausgeteilt = new ArrayList<>();
-	}
-
-	public void addtomaxanz(int medishinzufuegen, boolean isLeiter) {
-		max_messen += medishinzufuegen;
-		int id = 0;
-		if (isLeiter) {
-			id++;
-		}
-		if (max_messen > DateienVerwalter.dv.getPfarrei().getSettings().getDaten(id).getAnz_dienen()) {
-			max_messen = DateienVerwalter.dv.getPfarrei().getSettings().getDaten(id).getAnz_dienen();
-		}
 	}
 
 	public double getSortierenDouble() {
@@ -289,26 +268,12 @@ public class Messdaten {
 				return messdiener;
 			}
 		}
-		throw new CouldnotFindMedi("Konnte für " + akt.makeId() + " : " + geschwi + " nicht finden",
-				akt, geschwi);
+		throw new CouldnotFindMedi("Konnte für " + akt.makeId() + " : " + geschwi + " nicht finden");
 	}
 
 	public static class CouldnotFindMedi extends Exception {
-		private Messdiener me;
-		private String falscherEintrag;
-
-		public CouldnotFindMedi(String message, Messdiener me, String falscherEintrag) {
+		public CouldnotFindMedi(String message) {
 			super(message);
-			this.me = me;
-			this.falscherEintrag = falscherEintrag;
-		}
-
-		public Messdiener getMessdiener() {
-			return me;
-		}
-
-		public String getFalscherEintrag() {
-			return falscherEintrag;
 		}
 	}
 }

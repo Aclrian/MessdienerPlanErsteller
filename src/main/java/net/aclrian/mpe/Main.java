@@ -3,9 +3,6 @@ package net.aclrian.mpe;
 import static net.aclrian.mpe.utils.Log.getLogger;
 
 import java.io.FileReader;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

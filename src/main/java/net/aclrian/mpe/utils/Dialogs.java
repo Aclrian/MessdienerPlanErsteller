@@ -363,7 +363,7 @@ public class Dialogs {
 		a.getDialogPane().setExpanded(true);
 		a.setOnShown(arg0 -> {
 
-			ASlider.makeASlider("Stunde: ", stunde);
+			ASlider.makeASlider("Stunde: ", stunde,null);
 			ASlider.makeASlider(minute, d -> {
 				int i = (int) d;
 				String as;
@@ -374,7 +374,7 @@ public class Dialogs {
 				as = "Minute: " + as;
 				return as;
 			});
-			ASlider.makeASlider("Anzahl: ", anz).setTooltip(new Tooltip("Anzahl der Messdiener"));
+			ASlider.makeASlider("Anzahl: ", anz, new Tooltip("Anzahl der Messdiener"));
 			if(sm!=null){
 				ort.setText(sm.getOrt());
 				typ.setText(sm.getTyp());

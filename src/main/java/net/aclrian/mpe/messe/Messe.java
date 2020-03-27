@@ -28,8 +28,8 @@ public class Messe {
 	private SimpleDateFormat df = new SimpleDateFormat("EEE", Locale.GERMAN);
 	private StandartMesse em;
 	private String typ;
-	private ArrayList<Messdiener> medis = new ArrayList<Messdiener>();
-	private ArrayList<Messdiener> leiter = new ArrayList<Messdiener>();
+	private ArrayList<Messdiener> medis = new ArrayList<>();
+	private ArrayList<Messdiener> leiter = new ArrayList<>();
 
 	public Messe(Date d, StandartMesse sm) {
 			this(false, sm.getAnz_messdiener(), d, sm.getOrt(), sm.getTyp(), sm);
@@ -42,68 +42,6 @@ public class Messe {
 	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, StandartMesse sm) {
 			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ);
 			em = sm;
-	}
-
-	public String ausgeben() {
-		String rtn = "";
-		SimpleDateFormat df = new SimpleDateFormat("EE dd.MM. kk:mm", Locale.GERMAN);
-		rtn = df.format(getDate()) + " Uhr";
-		rtn += " " + typ;
-		rtn += ", " + kirche;
-		rtn += "\n";
-		for (int i = 0; i < medis.size(); i++) {
-			Messdiener m = medis.get(i);
-			if (i == 0) {
-				rtn += m.getVorname() + " " + m.getNachnname();
-			} else {
-				rtn += ", " + m.getVorname() + " " + m.getNachnname();
-			}
-		}
-		if (leiter.size() > 0) {
-			for (int i = 0; i < leiter.size(); i++) {
-				Messdiener m = leiter.get(i);
-				if (i == 0) {
-					rtn += m.getVorname() + " " + m.getNachnname();
-				} else {
-					rtn += ", " + m.getVorname() + " " + m.getNachnname();
-				}
-			}
-		}
-		rtn += "\n";
-		return rtn;
-	}
-
-	public ArrayList<String> ausgebenAlsArray() {
-		ArrayList<String> Lrtn = new ArrayList<String>();
-		SimpleDateFormat df = new SimpleDateFormat("EE dd.MM kk:mm", Locale.GERMAN);
-		String rtn = df.format(getDate()) + " Uhr";
-		rtn += " " + typ;
-		rtn += ", " + kirche;
-		// ------------------------------------
-		Lrtn.add(rtn);
-		rtn = "";
-		for (int i = 0; i < medis.size(); i++) {
-			Messdiener m = medis.get(i);
-			if (i == 0) {
-				rtn += m.getVorname() + " " + m.getNachnname();
-			} else {
-				rtn += ", " + m.getVorname() + " " + m.getNachnname();
-			}
-		}
-		Lrtn.add(rtn);
-		rtn = "";
-		if (leiter.size() > 0) {
-			for (int i = 0; i < leiter.size(); i++) {
-				Messdiener m = leiter.get(i);
-				if (i == 0) {
-					rtn += m.getVorname() + " " + m.getNachnname();
-				} else {
-					rtn += ", " + m.getVorname() + " " + m.getNachnname();
-				}
-			}
-		}
-		Lrtn.add(rtn);
-		return Lrtn;
 	}
 
 	public void bearbeiten(boolean hochamt, int anz_messdiener, Date date, String kirche, String type) {
@@ -160,11 +98,11 @@ public class Messe {
 	public String getIDHTML() {
 		SimpleDateFormat dfeee = new SimpleDateFormat("dd.MM.");
 		SimpleDateFormat dftime = new SimpleDateFormat("HH:mm");
-		StringBuffer rtn = new StringBuffer("<html>");
+		StringBuilder rtn = new StringBuilder("<html>");
 		rtn.append("<font>");
 		if (!getWochentag().equals("")) {
-			rtn.append("<p><b>" + df.format(getDate()) + " " + dfeee.format(date) + "&emsp;" + dftime.format(date) + " Uhr ");
-			rtn.append(typ + " " + kirche);
+			rtn.append("<p><b>").append(df.format(getDate())).append(" ").append(dfeee.format(date)).append("&emsp;").append(dftime.format(date)).append(" Uhr ");
+			rtn.append(typ).append(" ").append(kirche);
 			rtn.append("</p></b></font></html>");
 		}
 		return rtn.toString();
@@ -183,22 +121,22 @@ public class Messe {
 	}
 
 	public String htmlAusgeben() {
-		String rtn = getIDHTML();
-		rtn = rtn.substring(0, rtn.length() - 7);
+		StringBuilder rtn = new StringBuilder(getIDHTML());
+		rtn = new StringBuilder(rtn.substring(0, rtn.length() - 7));
 		medis.sort(Messdiener.compForMedis);
 		leiter.sort(Messdiener.compForMedis);
 		ArrayList<Messdiener> out = medis;
 		out.addAll(leiter);
-		rtn += "<p>";
-		for (int i = 0; i < out.size(); i++) {
-			rtn += out.get(i).getVorname() + " " + out.get(i).getNachnname() + ", ";
+		rtn.append("<p>");
+		for (Messdiener messdiener : out) {
+			rtn.append(messdiener.getVorname()).append(" ").append(messdiener.getNachnname()).append(", ");
 		}
-		if (rtn.endsWith(", ")) {
-			rtn = rtn.substring(0, rtn.length() - 2);
+		if (rtn.toString().endsWith(", ")) {
+			rtn = new StringBuilder(rtn.substring(0, rtn.length() - 2));
 		}
-		rtn += "</p>";
-		rtn += "</html>";
-		return rtn;
+		rtn.append("</p>");
+		rtn.append("</html>");
+		return rtn.toString();
 	}
 
 	public boolean isHochamt() {
@@ -208,23 +146,7 @@ public class Messe {
 	public boolean istFertig() {
 		int anz_leiter = leiter.size();
 		int anz_medis = medis.size();
-		for (int i = 0; i < leiter.size(); i++) {
-			String id = leiter.get(i).makeId();
-			if (id.equals("") || id.equals("LEER, LEER") || id.equals("Nachname, Vorname")) {
-				medis.remove(i);
-			}
-		}
-		for (int i = 0; i < medis.size(); i++) {
-			String id = medis.get(i).makeId();
-			if (id.equals("") || id.equals("LEER, LEER") || id.equals("Nachname, Vorname")) {
-				medis.remove(i);
-			}
-		}
-		if ((anz_medis + anz_leiter) >= anz_messdiener) {
-			return true;
-		} else {
-			return false;
-		}
+		return (anz_medis + anz_leiter) >= anz_messdiener;
 	}
 	
 	public void nullen() {
@@ -232,16 +154,17 @@ public class Messe {
 		leiter = new ArrayList<>();
 	}
 
-	public void vorzeitigEiteilen(Messdiener medi) {
-		if (medi.getMessdatenDaten().kannvorzeitg(date)) {
-			medi.getMessdatenDaten().einteilenVorzeitig(date,hochamt);
+	public boolean vorzeitigEiteilen(Messdiener medi) {
+		if(medi.getMessdatenDaten().einteilenVorzeitig(date,hochamt)){
 			if (medi.isIstLeiter()) {
 				leiter.add(medi);
 			} else {
 				medis.add(medi);
 			}
 			medis.sort(Messdiener.compForMedis);
+			return true;
 		}
+		return false;
 	}
 
 	public int getNochBenoetigte() {
