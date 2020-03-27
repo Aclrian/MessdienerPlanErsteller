@@ -70,12 +70,11 @@ public class Messdaten {
 		if (zwei < eins) {
 			eins = zwei;
 		}
-
 		return eins;
 	}
 
-	public void einteilen(Date date, boolean hochamt) {
-			if (kann(date, false)) {
+	public boolean einteilen(Date date, boolean hochamt, boolean datezwang, boolean anzzwang) {
+			if (kann(date, datezwang, anzzwang)) {
 				eingeteilt.add(date);
 				pause.add(gettheNextDay(date));
 				pause.add(getthepreviuosDay(date));
@@ -84,7 +83,9 @@ public class Messdaten {
 				if (hochamt) {
 					anz_messen--;
 				}
+				return true;
 			}
+			return false;
 	}
 
 
@@ -142,10 +143,8 @@ public class Messdaten {
 		return !contains(date, ausgeteilt);
 	}
 
-	public boolean kann(Date date, boolean zwang) {
-		boolean eins = kanndann(date, zwang);
-		boolean zwei = kannnoch();
-		return eins  && zwei;
+	public boolean kann(Date date, boolean dateZwang, boolean anzZwang) {
+		return kanndann(date, dateZwang) && ((anzZwang && !((anz_messen-max_messen) >=2)) || kannnoch());
 	}
 
 	public boolean kanndann(Date date, boolean zwang) {
@@ -154,15 +153,15 @@ public class Messdaten {
 				return true;
 			}
 		}
-		if (contains(date, eingeteilt) || contains(gettheNextDay(date), eingeteilt)
-				|| contains(getthepreviuosDay(date), eingeteilt)) {
-			return false;
-		}
 		if (contains(date, ausgeteilt) || contains(gettheNextDay(date), ausgeteilt)
 				|| contains(getthepreviuosDay(date), ausgeteilt)) {
 			return false;
 		}
 		if (!zwang) {
+			if (contains(date, eingeteilt) || contains(gettheNextDay(date), eingeteilt)
+					|| contains(getthepreviuosDay(date), eingeteilt)) {
+				return false;
+			}
 			return !contains(date, pause);
 		}
 		return true;

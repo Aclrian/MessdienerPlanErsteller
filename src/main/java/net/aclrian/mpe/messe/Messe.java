@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.start.AData;
 
 /**
  * Klasse von Messen
@@ -115,18 +114,18 @@ public class Messe {
 		this.anz_messdiener = anz_messdiener;
 	}
 
-	public void einteilen(Messdiener medi) {
-		if (medi.getMessdatenDaten().kann(getDate(), false)) {
-			medi.getMessdatenDaten().einteilen(getDate(), isHochamt());
-			medis.add(medi);
-			medis.sort(Messdiener.compForMedis);
+	public boolean einteilen(Messdiener medi, boolean zwangdate, boolean zwanganz) {
+		if(medi.getMessdatenDaten().einteilen(getDate(), isHochamt(), zwangdate, zwanganz)) {
+			if (medi.isIstLeiter()) {
+				leiter.add(medi);
+				leiter.sort(Messdiener.compForMedis);
+			} else {
+				medis.add(medi);
+				medis.sort(Messdiener.compForMedis);
+			}
+			return true;
 		}
-	}
-
-	public void einteilenZwang(Messdiener medi) {
-		medi.getMessdatenDaten().einteilenZwang(getDate(), isHochamt());
-		medis.add(medi);
-		medis.sort(Messdiener.compForMedis);
+		return false;
 	}
 
 	public int getAnz_messdiener() {
@@ -231,14 +230,6 @@ public class Messe {
 	public void nullen() {
 		medis = new ArrayList<>();
 		leiter = new ArrayList<>();
-	}
-
-	public void leiterEinteilen(Messdiener leiter) {
-		if (leiter.isIstLeiter()) {
-			if (leiter.getMessdatenDaten().kann(getDate(), false)) {
-				this.leiter.add(leiter);
-			}
-		}
 	}
 
 	public void vorzeitigEiteilen(Messdiener medi) {

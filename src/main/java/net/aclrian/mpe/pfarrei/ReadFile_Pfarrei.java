@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.utils.Dialogs;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -110,6 +111,7 @@ public class ReadFile_Pfarrei {
 				name = s2[s2.length - 1];
 				name = name.substring(0, name.length() - DateienVerwalter.pfarredateiendung.length());
 				name = name.replaceAll("_", " ");
+				sm.add(new Sonstiges());
 				pf = new Pfarrei(einst, sm, name, hochaemter);
 			}
 		} catch (Exception e) {
