@@ -14,15 +14,12 @@ public class StartController implements Controller{
     private Label version_label, name;
 
     public void initialize(){
-        //mi.setText(Main.version);
     	name.setText(DateienVerwalter.dv.getPfarrei().getName());
         version_label.setText(Main.VersionID);
     }
 
 	@Override
 	public void afterstartup(Window window, MainController mc) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

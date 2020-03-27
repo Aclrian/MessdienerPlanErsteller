@@ -1,17 +1,9 @@
 package net.aclrian.mpe.controller;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -24,6 +16,12 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.VersionIDHandler;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
 
@@ -67,32 +65,13 @@ public class MainController {
 		}
 	}
 
-	/*public void initialize() {
-		NumberBinding b = Bindings.min(Bindings.divide(gen_pane.heightProperty(), 1.5d),
-				Bindings.divide(gen_pane.widthProperty(), 1.5d));
-		gen_pic.fitWidthProperty().bind(Bindings.min(200, b));
-		gen_pic.fitHeightProperty().bind(Bindings.min(200, b));
-		medi_pic.fitWidthProperty().bind(Bindings.min(200, b));
-		medi_pic.fitHeightProperty().bind(Bindings.min(200, b));
-		messe_pic.fitWidthProperty().bind(Bindings.min(200, b));
-		messe_pic.fitHeightProperty().bind(Bindings.min(200, b));
-	}*/
-
 	public void changePaneMessdiener(Messdiener messdiener) {
 		this.ep = EnumPane.messdiener;
 		apane.getChildren().removeIf(p -> true);
 		URL u = getClass().getResource(ep.getLocation());
 		FXMLLoader fl = new FXMLLoader(u);
-		Parent p;
 		try {
-			p = fl.load();
-			AnchorPane.setBottomAnchor(p, 0d);
-			AnchorPane.setRightAnchor(p, 0d);
-			AnchorPane.setLeftAnchor(p, 0d);
-			AnchorPane.setTopAnchor(p, 0d);
-			apane.getChildren().add(p);
-			control = fl.getController();
-			control.afterstartup(p.getScene().getWindow(), this);
+			load(fl);
 			if (control instanceof MediController) {
 				((MediController) control).setMedi(messdiener);
 			}
@@ -106,16 +85,8 @@ public class MainController {
 		apane.getChildren().removeIf(p -> true);
 		URL u = getClass().getResource(ep.getLocation());
 		FXMLLoader fl = new FXMLLoader(u);
-		Parent p;
 		try {
-			p = fl.load();
-			AnchorPane.setBottomAnchor(p, 0d);
-			AnchorPane.setRightAnchor(p, 0d);
-			AnchorPane.setLeftAnchor(p, 0d);
-			AnchorPane.setTopAnchor(p, 0d);
-			apane.getChildren().add(p);
-			control = fl.getController();
-			control.afterstartup(p.getScene().getWindow(), this);
+			load(fl);
 			if (control instanceof MesseController) {
 				((MesseController) control).setMesse(messe);
 				messen.remove(messe);
@@ -126,25 +97,15 @@ public class MainController {
 	}
 
 	private void changePane(StandartMesse sm) {
-		if (this.ep == EnumPane.stdmesse) {
-			return;
-		} else if (control == null || !control.isLocked()) {
+		 if ((control == null || !control.isLocked()) && !(ep == EnumPane.stdmesse)) {
 			this.ep = EnumPane.stdmesse;
 			apane.getChildren().removeIf(p -> true);
 
 			URL u = getClass().getResource(ep.getLocation());
 			FXMLLoader fl = new FXMLLoader(u);
-			Parent p;
 			try {
 				fl.setController(new StandartmesseController(sm));
-				p = fl.load();
-				AnchorPane.setBottomAnchor(p, 0d);
-				AnchorPane.setRightAnchor(p, 0d);
-				AnchorPane.setLeftAnchor(p, 0d);
-				AnchorPane.setTopAnchor(p, 0d);
-				apane.getChildren().add(p);
-				control = fl.getController();
-				control.afterstartup(p.getScene().getWindow(), this);
+				load(fl);
 			} catch (IOException e) {
 				Dialogs.error(e, "Auf " + ep.getLocation() + " konnte nicht zugegriffen werden!");
 			}
@@ -153,36 +114,37 @@ public class MainController {
 		}
 	}
 
+	private void load(FXMLLoader fl) throws IOException {
+		Parent p;
+		p = fl.load();
+		AnchorPane.setBottomAnchor(p, 0d);
+		AnchorPane.setRightAnchor(p, 0d);
+		AnchorPane.setLeftAnchor(p, 0d);
+		AnchorPane.setTopAnchor(p, 0d);
+		apane.getChildren().add(p);
+		control = fl.getController();
+		control.afterstartup(p.getScene().getWindow(), this);
+	}
+
 	public void changePane(EnumPane ep) {
-		if (this.ep == ep) {
-			return;
-		} else if (control == null || !control.isLocked()) {
+		if ((control == null || !control.isLocked()) && !(this.ep == ep)) {
 			EnumPane old = this.ep;
 			this.ep = ep;
 			apane.getChildren().removeIf(p -> true);
-
 			URL u = getClass().getResource(ep.getLocation());
 			FXMLLoader fl = new FXMLLoader(u);
-			Parent p;
 			try {
 				if (ep == EnumPane.selectMedi) {
-					control = new Select(apane, Selecter.Messdiener, this);
+					control = new Select(Selecter.Messdiener, this);
 					fl.setController(control);
 				}else if (ep == EnumPane.selectMesse) {
-					control = new Select(apane, Selecter.Messe, this);
+					control = new Select(Selecter.Messe, this);
 					fl.setController(control);
 				} else if(ep == EnumPane.plan){
 					control = new FinishController(old,messen);
 					fl.setController(control);
 				}
-				p = fl.load();
-				AnchorPane.setBottomAnchor(p, 0d);
-				AnchorPane.setRightAnchor(p, 0d);
-				AnchorPane.setLeftAnchor(p, 0d);
-				AnchorPane.setTopAnchor(p, 0d);
-				apane.getChildren().add(p);
-				control = fl.getController();
-				control.afterstartup(p.getScene().getWindow(), this);
+				load(fl);
 			} catch (IOException e) {
 				Dialogs.error(e, "Auf " + ep.getLocation() + " konnte nicht zugegriffen werden!");
 			}
@@ -262,13 +224,12 @@ public class MainController {
 
 	@FXML
 	public void info(ActionEvent actionEvent) {
-		InfoController ic = null;
 		try {
-			ic = new InfoController(stage);
+			InfoController ic = new InfoController(stage);
+			ic.start();
 		} catch (IOException e) {
 			Dialogs.error(e, "Auf " + ep.getLocation() + " konnte nicht zugegriffen werden!");
 		}
-		ic.start();
 	}
 
 	@FXML

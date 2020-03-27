@@ -8,3 +8,4 @@ SLF4J API Module und SLF4J LOG4J-12 Binding,Protokollierung,http://www.slf4j.org
 Doc4j (ImportXHTML und JAXB-ReferenceImpl),Plan in Word-Dokument konvertieren,https://www.docx4java.org/trac/docx4j,LGPL v2.1,http://www.gnu.org/licenses/lgpl-2.1.html,
 JavaBeans Activation Framework,Konvertierung zu Word: arbeitet zwischen Dateitypen und Anwendungen,https://www.oracle.com/java/technologies/java-beans-activation.html,CDDL v1.0,https://glassfish.dev.java.net/public/CDDLv1.0.html,
 JAXB Runtime,Verarbeitung von XML-Sprachen (HTML),https://www.oracle.com/technical-resources/articles/javase/jaxb.html,CDDL oder GPL v2,http://glassfish.java.net/public/CDDL+GPL_1_1.html,
+maven-model,Auslesen der Programmversion,https://maven.apache.org/ref/3.6.3/maven-model/,Apache License Version 2.0,http://www.apache.org/licenses/LICENSE-2.0,

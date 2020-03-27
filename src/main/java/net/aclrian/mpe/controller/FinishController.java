@@ -16,6 +16,7 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
+import org.apache.log4j.Priority;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
@@ -27,6 +28,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FinishController implements Controller {
 
@@ -43,7 +46,7 @@ public class FinishController implements Controller {
 	@FXML
 	private HTMLEditor editor;
 	@FXML
-	private Button mail,nichteingeteilte,zurück;
+	private Button mail,nichteingeteilte, zurueck;
 
 	public FinishController(MainController.EnumPane old, ArrayList<Messe> messen) {
 		this.pane = old;
@@ -84,7 +87,7 @@ public class FinishController implements Controller {
 	public void afterstartup(Window window, MainController mc) {
 		nichteingeteilte.setOnAction(event -> nichteingeteilte());
 		editor.setHtmlText(fertig);
-		zurück.setOnAction(p->this.zurueck(mc));
+		zurueck.setOnAction(p->this.zurueck(mc));
 	}
 
 	@Override
@@ -93,10 +96,10 @@ public class FinishController implements Controller {
 	}
 
 	public void zurueck(MainController mc) {
-		Boolean löschen = Dialogs.yesNoCancel("Ja", "Nein", "Hier bleiben", "Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?");
-		if (löschen == null) return;
-		if (löschen) {
-			DateienVerwalter.dv.reloadMessdiener();
+		Boolean delete = Dialogs.yesNoCancel("Ja", "Nein", "Hier bleiben", "Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?");
+		if (delete == null) return;
+		if (delete) {
+			DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList().forEach(m->m.getMessdatenDaten().nullen());
 			for (Messe m : messen) {
 				m.nullen();
 			}
@@ -134,7 +137,7 @@ public class FinishController implements Controller {
 			String input = editor.getHtmlText();
 			input = input.replaceAll("</br>","");
 			input = input.replaceAll("<br>","<br></br>");
-			System.out.println(input);
+			Log.getLogger().debug(input);
 			RFonts rfonts = Context.getWmlObjectFactory().createRFonts();
 			rfonts.setAscii("Century Gothic");
 			XHTMLImporterImpl.addFontMapping("Century Gothic", rfonts);
@@ -186,7 +189,6 @@ public class FinishController implements Controller {
 		switch (act) {
 		case EinfachEinteilen:
 			ArrayList<Messdiener> medis;
-			boolean zwang = false;
 			medis = get(new Sonstiges(), m, false, false);
 			Log.getLogger().info(medis.size() + " für " + m.getNochBenoetigte());
 			for (Messdiener medi : medis) {
@@ -196,7 +198,6 @@ public class FinishController implements Controller {
 			break;
 		case TypeBeachten:
 			ArrayList<Messdiener> medis2;
-			boolean zwang2 = false;
 			medis2 = get(m.getStandardMesse(), m, false, false);
 			Log.getLogger().info(medis2.size() + " für " + m.getNochBenoetigte());
 			for (Messdiener messdiener : medis2) {
@@ -328,46 +329,5 @@ public class FinishController implements Controller {
 		Collections.shuffle(al);
 		al.sort(Messdiener.einteilen);
 		return al;
-		}
-@Deprecated
-		public ArrayList<Messdiener> get(StandartMesse sm, Date d, boolean zwangdate, boolean zwanganz) {
-		ArrayList<Messdiener> al = new ArrayList<>();
-		ArrayList<Messdiener> al2 = new ArrayList<>();
-		for (Messdiener medi : hauptarray) {
-			int id = 0;
-			if (medi.isIstLeiter()) {
-				id++;
-			}
-			int ii = DateienVerwalter.dv.getPfarrei().getSettings().getDaten(id).getAnz_dienen();
-			if (medi.getDienverhalten().getBestimmtes(sm) && ii != 0) {
-				if (medi.getMessdatenDaten().kann(d, zwangdate, zwanganz)) {
-					al.add(medi);
-				} else if (medi.getMessdatenDaten().kann(d, true,true)) {
-					al2.add(medi);
-				}
-			}
-		}
-		Collections.shuffle(al);
-		Collections.shuffle(al2);
-		al.sort(Messdiener.einteilen);
-		/*
-		 * for (int i = 0; i < al.size(); i++) {
-		 * System.out.println(al.get(i).getMessdatenDaten().getAnz_messen() + "/" +
-		 * al.get(i).getMessdatenDaten().getMax_messen()); }
-		 * /
-		/*
-		 * al2.sort(Messdiener.einteilen); for (int i = 0; i < al2.size(); i++) {
-		 * System.out.println(al2.get(i).getMessdatenDaten().getAnz_messen() + "/" +
-		 * al2.get(i).getMessdatenDaten().getMax_messen()); }
-		 * /
-		 */
-		al.addAll(al2);
-		/*
-		 * for (int i = 0; i < al.size(); i++) {
-		 * System.out.println(al.get(i).getMessdatenDaten().getAnz_messen() + "/" +
-		 * al.get(i).getMessdatenDaten().getMax_messen()); }
-		 * /
-		return al;*/
-		return new ArrayList<>();
 		}
 }

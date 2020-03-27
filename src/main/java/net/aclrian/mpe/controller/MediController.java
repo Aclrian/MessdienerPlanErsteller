@@ -74,8 +74,8 @@ public class MediController implements Controller {
 	}
 
 	public void initialize() {
-		freund = new ArrayList<Messdiener>();
-		geschwi = new ArrayList<Messdiener>();
+		freund = new ArrayList<>();
+		geschwi = new ArrayList<>();
 		eintritt.setMax(Messdaten.getMaxYear());
 		eintritt.setMin(Messdaten.getMinYear());
 	}
@@ -105,7 +105,7 @@ public class MediController implements Controller {
 			}
 		});
 		// Value in Silder
-		ASlider.makeASlider(eintritt_str, eintritt);
+		ASlider.makeASlider(eintritt_str, eintritt,null);
 		eintritt.setValue(Messdaten.getMaxYear());
 		lf = new Label("Bearbeiten");
 		lf.setStyle("-fx-font-style: italic;");
@@ -132,7 +132,6 @@ public class MediController implements Controller {
 
 			@Override
 			public void handle(Event arg0) {
-				Object o = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList().clone();
 				ArrayList<Messdiener> g = Dialogs.select(DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList(), geschwi,
 						"Geschwister auswählen:");
 				if (g.size() >= Messdiener.geschwilenght) {
@@ -146,7 +145,7 @@ public class MediController implements Controller {
 		});
 		geschwie.getItems().add(lg);
 
-		stdm.setCellValueFactory(new PropertyValueFactory<KannWelcheMesse, String>("String"));
+		stdm.setCellValueFactory(new PropertyValueFactory<>("String"));
 		kann.setCellFactory(CheckBoxTableCell.forTableColumn(kann));
 		kann.setCellValueFactory(new PropertyValueFactory<>("kanndann"));
 		kann.setCellValueFactory(celldata -> {
@@ -175,9 +174,7 @@ public class MediController implements Controller {
 
 	private void updateFreunde(ArrayList<Messdiener> freunde2) {
 		freund = freunde2;
-		freunde.getItems().removeIf(p -> {
-			return true;
-		});
+		freunde.getItems().removeIf(p -> true);
 		for (Messdiener messdiener : freund) {
 			freunde.getItems().add(new Label(messdiener.toString()));
 		}
@@ -186,9 +183,7 @@ public class MediController implements Controller {
 
 	private void updateGeschwister(ArrayList<Messdiener> geschwi2) {
 		geschwi = geschwi2;
-		geschwie.getItems().removeIf(p -> {
-			return true;
-		});
+		geschwie.getItems().removeIf(p -> true);
 		for (Messdiener messdiener : geschwi) {
 			geschwie.getItems().add(new Label(messdiener.toString()));
 		}
@@ -224,8 +219,6 @@ public class MediController implements Controller {
 			}
 		}
 		moben = messdiener;
-		// ol.addAll(kwm);
-		// ol.sort(KannWelcheMesse.sort);
 		getLogger().info("Messdiener wurde geladen");
 	}
 
@@ -248,7 +241,7 @@ public class MediController implements Controller {
 				}
 				m.setFreunde(getArrayString(freund, Messdiener.freundelenght));
 				m.setGeschwister(getArrayString(geschwi, Messdiener.geschwilenght));
-				ArrayList<Messdiener> bearbeitete = new ArrayList<Messdiener>();
+				ArrayList<Messdiener> bearbeitete = new ArrayList<>();
 				for (Messdiener messdiener : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
 					bearbeitete.addAll(alteloeschen(m, messdiener.getFreunde()));
 					bearbeitete.addAll(alteloeschen(m, messdiener.getGeschwister()));
@@ -257,17 +250,15 @@ public class MediController implements Controller {
 						bearbeitete.addAll(alteloeschen(moben, messdiener.getGeschwister()));
 					}
 				}
-				for (int i = 0; i < geschwi.size(); i++) {
-					Messdiener medi = geschwi.get(i);
+				for (Messdiener medi : geschwi) {
 					addBekanntschaft(medi, m, true);
 					bearbeitete.add(medi);
 				}
-				for (int i = 0; i < freund.size(); i++) {
-					Messdiener medi = freund.get(i);
+				for (Messdiener medi : freund) {
 					addBekanntschaft(medi, m, false);
 				}
 				// speichern
-				RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<Messdiener>();
+				RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
 				rd.removeDuplicatedEntries(bearbeitete);
 				try {
 					for (Messdiener messdiener : bearbeitete) {
@@ -291,8 +282,7 @@ public class MediController implements Controller {
 	}
 
 	private void addBekanntschaft(Messdiener medi, Messdiener woben, boolean isGeschwister) {
-		if (!isGeschwister) {// Freunde
-			// fuer medi
+		if (!isGeschwister) {
 			ArrayList<String> leins = new ArrayList<>(Arrays.asList(medi.getFreunde()));
 			leins.add(woben.toString());
 			leins.removeIf(t -> t.equals(""));
@@ -306,7 +296,7 @@ public class MediController implements Controller {
 			}
 			medi.setFreunde(s);
 		} else {
-			ArrayList<String> leins = new ArrayList<String>((List<String>) Arrays.asList(medi.getGeschwister()));
+			ArrayList<String> leins = new ArrayList<>(Arrays.asList(medi.getGeschwister()));
 			leins.add(woben.toString());
 			leins.removeIf(t -> t.equals(""));
 			String[] s = new String[5];
@@ -315,7 +305,6 @@ public class MediController implements Controller {
 				if (s[i] == null) {
 					s[i] = "";
 				}
-
 			}
 			medi.setGeschwister(s);
 		}
@@ -342,12 +331,12 @@ public class MediController implements Controller {
 		}
 	}
 
-	public static boolean remove(Window window, Messdiener m) {
+	public static boolean remove(Messdiener m) {
 		if (Dialogs.frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
 				"Löschen")) {
 			// moben.getFile().
 			File file = m.getFile();
-			file.delete();
+			if(file.exists())file.delete();
 			ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
 			for (Messdiener messdiener : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
 				alteloeschen(m, messdiener.getFreunde(), ueberarbeitete);
@@ -383,16 +372,16 @@ public class MediController implements Controller {
 	}
 
 	private void updateFreunde(Messdiener medi) {
-		ArrayList<String> arrayList = new ArrayList<String>(Arrays.asList(medi.getFreunde()));
+		ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(medi.getFreunde()));
 		ArrayList<Messdiener> alle = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
-		ArrayList<Messdiener> al = new ArrayList<Messdiener>();
+		ArrayList<Messdiener> al = new ArrayList<>();
 		loop: for (int i = 0; i < arrayList.size(); i++) {
 			if (arrayList.get(i).equals("")) {
 				continue;
 			}
-			for (int j = 0; j < alle.size(); j++) {
-				if (arrayList.get(i).equals(alle.get(j).toString())) {
-					al.add(alle.get(j));
+			for (Messdiener messdiener : alle) {
+				if (arrayList.get(i).equals(messdiener.toString())) {
+					al.add(messdiener);
 					continue loop;
 				}
 			}
@@ -418,9 +407,9 @@ public class MediController implements Controller {
 			if (arrayList.get(i).equals("")) {
 				continue;
 			}
-			for (int j = 0; j < alle.size(); j++) {
-				if (arrayList.get(i).equals(alle.get(j).toString())) {
-					al.add(alle.get(j));
+			for (Messdiener messdiener : alle) {
+				if (arrayList.get(i).equals(messdiener.toString())) {
+					al.add(messdiener);
 					continue loop;
 				}
 			}

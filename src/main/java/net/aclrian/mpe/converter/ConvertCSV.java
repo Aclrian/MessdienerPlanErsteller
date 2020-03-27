@@ -5,11 +5,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-import javafx.stage.Window;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.Messdiener.NotValidException;
 import net.aclrian.mpe.messe.Messverhalten;
@@ -31,8 +31,8 @@ public class ConvertCSV {
 	public ConvertCSV(File f, ArrayList<Integer> sortierung) throws IOException {
 		Log.getLogger().warn("Das Unter-Programm unterstützt die Vorlieben von Messdienern nicht!\n-Also wann sie dienen können");
 		if (f.exists() && f.getName().endsWith(".csv")) {
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f),"UTF-8"));
-			String line = "";
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8));
+			String line;
 			while ((line = br.readLine()) != null) {
 				String[] elemente = line.split(";");
 				String vorname = "Vorname", nachname = "Nachname", email = "";
@@ -62,7 +62,7 @@ public class ConvertCSV {
 						String vollername = elemente[j];
 						String[] array = vollername.split(" ");
 						if (array.length != 2) {
-							System.out.println(vollername + "hat nicht 2 Leerzeichen");
+							Log.getLogger().info(vollername + "hat nicht 2 Leerzeichen");
 							if (array.length < 2) {
 								vorname = array[0];
 								nachname = array[0];

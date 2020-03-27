@@ -42,7 +42,7 @@
             <Insets bottom="10.0" top="10.0" />
          </GridPane.margin>
       </Button>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#löschen" text="Löschen" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.columnSpan="3">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loeschen" text="Löschen" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.columnSpan="3">
          <GridPane.margin>
             <Insets bottom="10.0" top="10.0" />
          </GridPane.margin>

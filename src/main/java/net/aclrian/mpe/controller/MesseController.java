@@ -55,7 +55,7 @@ public class MesseController implements Controller {
 
 	@Override
 	public void afterstartup(Window window, MainController mc) {
-		ASlider.makeASlider("Messdiener: ", slider);
+		ASlider.makeASlider("Messdiener: ", slider, null);
 		slider.setValue(6d);
 		slider.setMax(30);
 		slider.setMin(1);
@@ -85,7 +85,9 @@ public class MesseController implements Controller {
 		if(datum.getValue() != null && uhr.getValue() != null && !ort.getText().equals("") && !titel.getText().equals("")){
 			Messe m = new Messe(hochamt.isSelected(), (int)slider.getValue(), getDate(), ort.getText(), titel.getText(), s);
 			for(Messdiener medi : list.getSelected()){
-				m.vorzeitigEiteilen(medi);
+				if(!m.vorzeitigEiteilen(medi)){
+					Dialogs.warn(medi.makeId() + " konnte nicht vorzeitig eingetielt werden.");
+				}
 			}
 			mc.getMessen().add(m);
 			mc.getMessen().sort(Messe.compForMessen);

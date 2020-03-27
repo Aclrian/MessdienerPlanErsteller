@@ -2,20 +2,15 @@ package net.aclrian.mpe.pfarrei;
 
 import java.io.File;
 import java.util.ArrayList;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import net.aclrian.mpe.messdiener.WriteFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
-import javafx.stage.Window;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Setting.Attribut;
@@ -25,32 +20,19 @@ import net.aclrian.mpe.utils.Log;
 
 public class WriteFile_Pfarrei {
 
-	public static void writeFile(Pfarrei pf, Window window, String savepath) {
+	public static void writeFile(Pfarrei pf, String savepath) {
 		try {
 			ArrayList<StandartMesse> Wsm = pf.getStandardMessen();
 
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			transformer.setOutputProperty("indent", "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			WriteFile.Container c = WriteFile.writeXMLFile();
+			Document doc = c.getDocument();
+			Element xml = c.getElement();
 
-			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-
-			DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-
-			Document doc = documentBuilder.newDocument();
-
-			Element xml = doc.createElement("XML");
-			doc.appendChild(xml);
-			Element security = doc.createElement("Programm-Author");
-			security.setAttribute("alle_Rechte", "bei_Author");
-			security.appendChild(doc.createTextNode("Aclrian"));
-			xml.appendChild(security);
-
-			Element employee = doc.createElement("Body");
-			xml.appendChild(employee);
+			Element body = doc.createElement("Body");
+			xml.appendChild(body);
 
 			Element standartmessen = doc.createElement("Standartmessem");
-			employee.appendChild(standartmessen);
+			body.appendChild(standartmessen);
 			for (int i = 0; i < Wsm.size(); i++) {
 				StandartMesse m = Wsm.get(i);
 				if (m instanceof Sonstiges) {
@@ -145,18 +127,15 @@ public class WriteFile_Pfarrei {
 					.info("Pfarrei wird gespeichert in :" + savepath + File.separator + datei + DateienVerwalter.pfarredateiendung);
 			File f = new File(savepath + File.separator + datei + DateienVerwalter.pfarredateiendung);
 			StreamResult streamResult = new StreamResult(f);
-			transformer.transform(domSource, streamResult);
+			c.getTransformer().transform(domSource, streamResult);
 			DateienVerwalter.dv.removeoldPfarrei(f);
 			Log.getLogger().info("Pfarrei: " + pf.getName() + "wurde erfolgreich gespeichert!");
-		} catch (ParserConfigurationException pce) {
+		} catch (ParserConfigurationException | TransformerException pce) {
 			Dialogs.error(pce, "Fehler bei Speichern der Pfarrei:");
-		} catch (TransformerException tfe) {
-			Dialogs.error(tfe, "Fehler bei Speichern der Pfarrei:");
 		}
-
 	}
 
-	public static void writeFile(Pfarrei pf, Window window) {
-		writeFile(pf, window, DateienVerwalter.dv.getSavepath());
+	public static void writeFile(Pfarrei pf) {
+		writeFile(pf, DateienVerwalter.dv.getSavepath());
 	}
 }

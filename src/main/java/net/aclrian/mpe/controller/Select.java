@@ -9,10 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -43,19 +40,16 @@ public class Select implements Controller {
 	private ListView<Label> list;
 	@FXML
 	private Button neu, bearbeiten, remove;
-	private Parent p;
 	private Selecter sel;
 	private MainController mc;
 
-	public Select(Parent p, Selecter sel, MainController mc) {
-		this.p = p;
+	public Select(Selecter sel, MainController mc) {
 		this.sel = sel;
 		this.mc = mc;
 	}
 
 	@Override
 	public void initialize() {
-		// p.getChildrenUnmodifiable().add(list);
 		list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 	}
 
@@ -68,8 +62,8 @@ public class Select implements Controller {
 			list.getItems().removeIf(t -> true);
 			ArrayList<Messdiener> data = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
 			data.sort(Messdiener.compForMedis);
-			for (int i = 0; i < data.size(); i++) {
-				list.getItems().add(new Label(data.get(i).toString()));
+			for (Messdiener datum : data) {
+				list.getItems().add(new Label(datum.toString()));
 			}
 			list.setOnMouseClicked(mouseEvent -> {
 				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
@@ -85,7 +79,7 @@ public class Select implements Controller {
 				remove.setOnAction(arg0 -> {
 				int i = list.getSelectionModel().getSelectedIndex();
 				if (i>0 && (list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString()))
-						&& MediController.remove(window, data.get(i))) {
+						&& MediController.remove(data.get(i))) {
 					afterstartup(window,mc);
 				}
 			});
@@ -106,7 +100,7 @@ public class Select implements Controller {
 						for (Messe m : datam) {
 							l.add(new Label(m.getID().replaceAll("\t", "\t\t")));
 						}
-						list.getItems().removeIf(p->{return true;});
+						list.getItems().removeIf(p-> true);
 						list.setItems(FXCollections.observableArrayList(l));
 					} catch (Exception e) {
 						Dialogs.error(e, "Konnte die Messen nicht generieren.");
@@ -140,8 +134,8 @@ public class Select implements Controller {
 	private void updateMesse(ArrayList<Messe> datam) {
 		list.getItems().removeIf(t -> true);
 		datam.sort(Messe.compForMessen);
-		for (int i = 0; i < datam.size(); i++) {
-			list.getItems().add(new Label(datam.get(i).getID().replaceAll("\t", "\t\t")));
+		for (Messe messe : datam) {
+			list.getItems().add(new Label(messe.getID().replaceAll("\t", "\t\t")));
 		}
 	}
 
@@ -151,32 +145,18 @@ public class Select implements Controller {
 		else if(sel == Selecter.Messe) mc.changePaneMesse(null);
 	}
 
-	/*public void remove() {
-		if (sel == Selecter.Messdiener) {
-			String s = list.getSelectionModel().getSelectedItem().getText();
-			for (Messdiener medi : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
-				if (medi.toString().equals(s)) {
-					MediController.remove(p.getScene().getWindow(), medi);
-					break;
-				}
-			}
-		} else if(sel == Selecter.Messe){
-
-		}
-	}*/
-
 	@Override
 	public boolean isLocked() {
 		return false;
 	}
 
-	public static ArrayList<Messe> generireDefaultMessen(Date anfang, Date ende) throws Exception {
-		ArrayList<Messe> rtn = new ArrayList<Messe>();
+	public static ArrayList<Messe> generireDefaultMessen(Date anfang, Date ende) {
+		ArrayList<Messe> rtn = new ArrayList<>();
 		Calendar start = Calendar.getInstance();
 		for (StandartMesse sm : DateienVerwalter.dv.getPfarrei().getStandardMessen()) {
 			if (!(sm instanceof Sonstiges)) {
 				start.setTime(anfang);
-				ArrayList<Messe> m = optimieren(start, sm, ende, new ArrayList<Messe>());
+				ArrayList<Messe> m = optimieren(start, sm, ende, new ArrayList<>());
 				rtn.addAll(m);
 			}
 		}
@@ -185,8 +165,7 @@ public class Select implements Controller {
 		return rtn;
 	}
 
-	public static ArrayList<Messe> optimieren(Calendar cal, StandartMesse sm, Date end, ArrayList<Messe> mes)
-			throws Exception {
+	public static ArrayList<Messe> optimieren(Calendar cal, StandartMesse sm, Date end, ArrayList<Messe> mes) {
 		if (cal.getTime().before(end) && !(sm instanceof Sonstiges)) {
 			SimpleDateFormat wochendagformat = new SimpleDateFormat("EEE");
 			String tag = wochendagformat.format(cal.getTime());
@@ -203,11 +182,10 @@ public class Select implements Controller {
 					getLogger().info("Parse Exception");
 				}
 				cal.add(Calendar.DATE, 7);
-				mes = optimieren(cal, sm, end, mes);
 			} else {
 				cal.add(Calendar.DATE, 1);
-				mes = optimieren(cal, sm, end, mes);
 			}
+			mes = optimieren(cal, sm, end, mes);
 		}
 		return mes;
 	}

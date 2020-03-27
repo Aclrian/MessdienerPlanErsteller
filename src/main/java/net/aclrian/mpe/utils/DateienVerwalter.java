@@ -7,7 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
@@ -32,7 +34,6 @@ public class DateienVerwalter {
 	private Pfarrei pf;
 	private ArrayList<Messdiener> medis;
 	private Window window;
-	private static boolean ersterStart = true;
 
 	public static final String pfarredateiendung = ".xml.pfarrei";
 	public static final String textdatei = File.separator+".messdienerOrdnerPfad.txt";
@@ -41,18 +42,12 @@ public class DateienVerwalter {
 	public static DateienVerwalter dv;
 	
 	public static void re_start(Window window) throws NoSuchPfarrei {
-		if (ersterStart) {
-			dv = new DateienVerwalter(window);
-		} else {
-			dv.getSavepath();
-			dv.reloadPfarrei();
-		}
-		
+		dv = new DateienVerwalter(window);
 	}
 	
 	private DateienVerwalter(Window window) throws NoSuchPfarrei {
 		this.window = window;
-		this.getSpeicherort(window);
+		this.getSpeicherort();
 		File f = getPfarreFile();
 		if(f == null) {
 			throw new NoSuchPfarrei(savepath);
@@ -71,16 +66,17 @@ public class DateienVerwalter {
 	private void reloadPfarrei() {
 		File f = getPfarreFile();
 		if (f == null) {
-			Dialogs.fatal("Es konnte keine ");
+			Dialogs.fatal("Es konnte keine Pfarrei gefunden werden.");
+			return;
 		}
-		Log.getLogger().info("Pfarrei gefunden in: " + f.toString());
+		Log.getLogger().info("Pfarrei gefunden in: " + f);
 		pf = ReadFile_Pfarrei.getPfarrei(f.getAbsolutePath());
 	}
 
 	private ArrayList<File> getPfarreiFiles(){
-		ArrayList<File> files = new ArrayList<File>();
+		ArrayList<File> files = new ArrayList<>();
 		File f = new File(savepath);
-		for (File file : f.listFiles()) {
+		for (File file : Objects.requireNonNull(f.listFiles())) {
 			String s = file.toString();
 			if (s.endsWith(pfarredateiendung)) {
 				files.add(file);
@@ -114,15 +110,14 @@ public class DateienVerwalter {
 					todel.add(f);
 				}else candel=true;
 		}
-		if (candel) todel.forEach(f->f.delete());
+		if (candel) todel.forEach(File::delete);
 	}
 
 	/**
 	 * 
 	 * @return Ausgewaehlten Ordnerpfad
-	 * @throws NullPointerException
 	 */
-	private String waehleOrdner() throws NullPointerException {
+	private String waehleOrdner() {
 		DirectoryChooser f = new DirectoryChooser();
 		String s = "Ordner wählen, in dem alles gespeichert werden soll:";
 		f.setTitle(s);
@@ -134,6 +129,7 @@ public class DateienVerwalter {
 		if (file == null || list == null || !file.isDirectory())
 			return null;
 		File[] fileArr = file.listFiles();
+		assert fileArr != null;
 		for (File f : fileArr) {
 			if (f.isDirectory()) {
 				getPaths(f, list);
@@ -144,11 +140,10 @@ public class DateienVerwalter {
 	}
 
 	private ArrayList<File> getAlleMessdienerFiles(String path) {// 2
-		String verzName = path;
-		Log.getLogger().info("verzName: " + verzName);
-		ArrayList<File> files = getPaths(new File(verzName), new ArrayList<File>());
+		Log.getLogger().info("verzName: " + path);
+		ArrayList<File> files = getPaths(new File(path), new ArrayList<>());
 		if (files == null) {
-			return new ArrayList<File>();
+			return new ArrayList<>();
 		}
 		return files;
 	}
@@ -200,11 +195,11 @@ public class DateienVerwalter {
 				e.printStackTrace();
 			}
 			savepath="";
-			getSpeicherort(window);
+			getSpeicherort();
 		} else Dialogs.warn("Konnte die Datei " + homedir + " nicht ändern.");
 	}
 
-	private void getSpeicherort(Window window) {
+	private void getSpeicherort() {
 		String homedir = System.getProperty("user.home");
 		homedir = homedir + textdatei;
 		Log.getLogger().info("Das Home-Verzeichniss wurde gefunden: " + homedir);
@@ -228,28 +223,25 @@ public class DateienVerwalter {
 				} else {
 					savepath="";
 					Dialogs.warn("Es wird ein Speicherort benötigt, um dort Messdiener zu speichern.\nBitte einen Speicherort eingeben!");
-					getSpeicherort(window);
+					getSpeicherort();
 				}
 			} catch (IOException e) {
 				Dialogs.error(e, "Der Speicherort konnte nicht gespeichert werden.");
 			}
 		} else {
 			try {
-				String line;
-				InputStreamReader fileReader = new InputStreamReader(new FileInputStream(homedir),"UTF-8");
+				InputStreamReader fileReader = new InputStreamReader(new FileInputStream(homedir), StandardCharsets.UTF_8);
 				BufferedReader bufferedReader = new BufferedReader(fileReader);
-				while ((line = bufferedReader.readLine()) != null) {
-					File savepath = new File(line);
-					if (savepath.exists()) {
+				String line = bufferedReader.readLine();
+				File savepath = new File(line);
+				if (savepath.exists()) {
 						setSavepath(line);
-					} else {
-						Log.getLogger().info("Der Speicherort '" + f + "' existiert nicht!");
-						savepath.delete();
-						getSpeicherort(window);
-					}
-					break;
+				} else {
+						Log.getLogger().info("Der Speicherort aus '" + f + "' ('"+line+"') existiert nicht!");
+						f.delete();
+						getSpeicherort();
 				}
-				if(savepath==null || savepath.equals("")){
+				if(this.savepath==null || this.savepath.equals("")){
 					f.delete();
 					getSavepath();
 				}
@@ -268,23 +260,15 @@ public class DateienVerwalter {
 						bufferedWriter.close();
 					} else {
 						Dialogs.warn("Es wird ein Speicherort benötigt, um dort Messdiener zu speichern.\nBitte einen Speicherort eingeben!");
-						getSpeicherort(window);
+						getSpeicherort();
 					}
 				} catch (IOException e) {
 					Log.getLogger().info("Auf den Speicherort '" + f + "' kann nicht zugegriffen werden!");
-					getSpeicherort(window);
+					getSpeicherort();
 				}
 			}
 		}
 		Log.getLogger().info("Der Speicherort liegt in: " + savepath);
-	}
-	
-	public void speicherortWechseln(Window window) {
-		String homedir = System.getProperty("user.home");
-		homedir = homedir + textdatei;
-		File f = new File(homedir);
-		f.delete();
-		getSpeicherort(window);
 	}
 
 	public void reloadMessdiener() {

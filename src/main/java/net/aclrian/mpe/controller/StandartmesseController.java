@@ -1,7 +1,5 @@
 package net.aclrian.mpe.controller;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
@@ -9,13 +7,11 @@ import javafx.stage.Window;
 import net.aclrian.fx.ATilePane;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
-import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class StandartmesseController implements Controller {
@@ -28,7 +24,6 @@ public class StandartmesseController implements Controller {
     private Button abbrechen,fertig;
     @FXML
     private Text smesse;
-
 
     public StandartmesseController(StandartMesse sm){
         this.sm = sm;

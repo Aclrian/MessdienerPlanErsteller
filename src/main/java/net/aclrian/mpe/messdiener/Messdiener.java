@@ -1,14 +1,12 @@
 package net.aclrian.mpe.messdiener;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
-import javafx.stage.Window;
 import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.utils.Dialogs;
 
@@ -39,37 +37,17 @@ public class Messdiener {
 	private Messdaten daten;
 	private File file;
 	public final static Comparator<Messdiener> compForMedis = (o1, o2) -> o1.makeId().compareToIgnoreCase(o2.makeId());
-	public static final Comparator<? super Messdiener> einteilen = new Comparator<Messdiener>() {
-		@Override
-		public int compare(Messdiener o1, Messdiener o2) {
-			double d1 = o1.getMessdatenDaten().getSortierenDouble();// anz/max 0 kommt zuerst dann 0,5 --> 1
-			double d2 = o2.getMessdatenDaten().getSortierenDouble();
-			if (d1 == d2) {
-				if (d1 == 0) {
-					int i1 = o1.getMessdatenDaten().getMax_messenInt();
-					int i2 = o2.getMessdatenDaten().getMax_messenInt();
-					if (i1 == i2) {
-						return 0;
-					}
-					if (i1 < i2) {
-						return 1;
-					}
-					if (i1 > i2) {
-						return -1;
-					}
-				}
-			}
-			if (d1 < d2) {
-				// d1 vor d2
-				return -1;
-			} else if (d1 > d2) {
-				// d2 vor d1
-				return 1;
-
-			} else {
-				return 0;
+	public static final Comparator<? super Messdiener> einteilen = (Comparator<Messdiener>) (o1, o2) -> {
+		double d1 = o1.getMessdatenDaten().getSortierenDouble();// anz/max 0 kommt zuerst dann 0,5 --> 1
+		double d2 = o2.getMessdatenDaten().getSortierenDouble();
+		if (d1 == d2) {
+			if (d1 == 0) {
+				int i1 = o1.getMessdatenDaten().getMax_messenInt();
+				int i2 = o2.getMessdatenDaten().getMax_messenInt();
+				return Integer.compare(i2, i1);
 			}
 		}
+		return Double.compare(d1, d2);
 	};
 
 	@Override
@@ -96,7 +74,7 @@ public class Messdiener {
 	 * @param dienverhalten Wann kann er zu welchen Standart Messen (bspw. Sontag
 	 *                      Morgen oder Dienstag Abend) dienen
 	 * @param email			eine gültige Email-Addresse
-	 * @throws Exception
+	 * @throws NotValidException Wenn email nicht valid ist
 	 */
 	public void setzeAllesNeu(String vname, String nname, int Eintritt, boolean istLeiter,
 			Messverhalten dienverhalten, String email) throws NotValidException {
@@ -118,7 +96,6 @@ public class Messdiener {
 	 *                      eingeteilt werden soll
 	 * @param dienverhalten Wann kann er zu welchen Standart Messen (bspw. Sontag
 	 *                      Morgen oder Dienstag Abend) dienen
-	 * @throws Exception
 	 */
 	public void setzeAllesNeuUndMailLeer(String vname, String nname, int Eintritt, boolean istLeiter,
 			Messverhalten dienverhalten) {
@@ -155,29 +132,10 @@ public class Messdiener {
 		this.Nachname = nachnname;
 	}
 
-	/**
-	 * Hier wird ein Array an IDs (Strings) der Freunde des Messdieners gespeichert.
-	 * Dies erreicht man mit der Methode .makeID() Mit diesen Freunden wird dem
-	 * Messdiener eingeteilt. <br>
-	 * Man kann nur 5 Freunde haben.</br>
-	 *
-	 * @param freunde
-	 *
-	 */
 	public void setFreunde(String[] freunde) {
 		this.Freunde = freunde;
 	}
 
-	/**
-	 * Hier wird ein Array an IDs (Strings) der Geschwister des Messdieners
-	 * gespeichert. Dies erreicht man mit der Methode .makeID()<br>
-	 * Mit diesen Geschwistern wird der Messdiener oft eingeteilt.</br>
-	 * <br>
-	 * Man kann nur drei Geschwister haben.</br>
-	 *
-	 * @param geschwister
-	 *
-	 */
 	public void setGeschwister(String[] geschwister) {
 		this.Geschwister = geschwister;
 	}
@@ -258,10 +216,6 @@ public class Messdiener {
 		return daten;
 	}
 
-	public void setMessdatenDaten(Messdaten daten) {
-		this.daten = daten;
-	}
-
 	public void setnewMessdatenDaten() {
 		this.daten = new Messdaten(this);
 	}
@@ -279,16 +233,7 @@ public class Messdiener {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Messdiener that = (Messdiener) o;
-		return /*Eintritt == that.Eintritt &&
-				istLeiter == that.istLeiter &&
-				Objects.equals(Vorname, that.Vorname) &&
-				Objects.equals(Nachname, that.Nachname) &&
-				Objects.equals(Email, that.Email) &&
-				Arrays.equals(Freunde, that.Freunde) &&
-				Arrays.equals(Geschwister, that.Geschwister) &&
-				Objects.equals(dienverhalten, that.dienverhalten) &&
-				Objects.equals(daten, that.daten) &&*/
-				Objects.equals(file, that.file);
+		return Objects.equals(file, that.file);
 	}
 
 	@Override
@@ -299,7 +244,7 @@ public class Messdiener {
 		return result;
 	}
 
-	public class NotValidException extends Exception{
+	public static class NotValidException extends Exception{
 		public NotValidException() {
 			super("Keine gültige E-Mail Addresse");
 		}

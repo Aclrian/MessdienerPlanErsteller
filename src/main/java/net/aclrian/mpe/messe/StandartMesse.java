@@ -29,28 +29,6 @@ public class StandartMesse {
 		return beginn_stunde;
 	}
 
-	public Date getDate(Date date) {
-		SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-		Date d = null;
-		try {
-			d = df.parse(beginn_stunde + ":" + beginn_minute);
-		} catch (ParseException e) {
-			Dialogs.error(e,"Es konnte kein Datum erstellt werden. Bitte die Eingaben überprüfen.");
-		}
-		SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat dall = new SimpleDateFormat("yyyy-MM-dd:HH:mm");
-		String datum = ds.format(date);
-		String uhrzeit = df.format(d);
-		Date rtn = null;
-		try {
-			rtn = dall.parse(datum + ":" + uhrzeit);
-		} catch (Exception e) {
-			Dialogs.error(e,"Es konnte kein Datum erstellt werden. Bitte die Eingaben überprüfen.");
-		}
-		return rtn;
-
-	}
-
 	public String getBeginn_minute() {
 		return beginn_minute;
 	}
@@ -85,26 +63,18 @@ public class StandartMesse {
 	}
 
 	public String tokurzerBenutzerfreundlichenString() {
-
 		return Wochentag + ". " + beginn_stunde + ":" + beginn_minute + ": " + ort + " " + typ + " (" + anz_messdiener
 				+ ")";
 	}
 
+	@SuppressWarnings("unused")
 	public String toBenutzerfreundlichenString() {
 		return typ + " jeden " + Wochentag + "., " + "um " + beginn_stunde + ":" + beginn_minute + " in " + ort;
 	}
 
 	public String toReduziertenString() {
-		String rtn = Wochentag + "-" + beginn_stunde + "-" + beginn_minute + "" + // ort+ "-" + typ +
+		return Wochentag + "-" + beginn_stunde + "-" + beginn_minute  + // ort+ "-" + typ +
 				"-" + anz_messdiener;
-		rtn.replace(':', '-');
-		rtn.replace(' ', '-');
-		rtn.replaceAll(":", "a");
-		rtn.replaceAll(" ", "a");
-		if (rtn.length() > 16) {
-			rtn.substring(0, 15);
-		}
-		return rtn;
 	}
 
 	public String getWochentags() {
@@ -151,38 +121,16 @@ public class StandartMesse {
 		return false;
 	}
 
-	public static Comparator<StandartMesse> comfuerSMs = new Comparator<StandartMesse>() {
-
-		@Override
-		public int compare(StandartMesse o1, StandartMesse o2) {
-			return o1.toString().compareToIgnoreCase(o2.toString());
-		}
-	};
+	public static Comparator<StandartMesse> comfuerSMs = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
 
 	public String getBeginn_stundealsString() {
 		String rtn = String.valueOf(this.beginn_stunde);
 		if (rtn.length() != 2) {
 			if (rtn.length() == 1) {
 				rtn = "";
-				rtn = "0" + String.valueOf(this.beginn_stunde);
+				rtn = "0" + this.beginn_stunde;
 			}
 		}
 		return rtn;
 	}
-
-	public boolean Equals(StandartMesse smold) {
-		boolean anz = anz_messdiener == smold.getAnz_messdiener();
-		boolean min = beginn_minute.equals(smold.getBeginn_minute());
-		boolean std = beginn_stunde == smold.getBeginn_stunde();
-		boolean ort = this.ort.equals(smold.getOrt());
-		boolean typ = this.typ.equals(smold.getTyp());
-		boolean tag = Wochentag.equals(smold.getWochentag());
-		if (tag == typ == ort == std == min == anz) {
-			return anz;
-		} else {
-			return false;
-		}
-	}
-
-	
 }

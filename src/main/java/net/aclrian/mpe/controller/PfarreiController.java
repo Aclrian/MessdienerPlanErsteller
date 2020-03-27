@@ -54,7 +54,7 @@ public class PfarreiController {
 			stage.setTitle("MessdienerplanErsteller");
 			stage.setResizable(false);
 			stage.show();
-			cont.afterstartup(stage);
+			cont.afterstartup();
 			Dialogs.info("Willkommen beim MessdienerplanErsteller!", "Als Erstes werden eine Daten benötigt:"
 					+ System.lineSeparator()
 					+ "Zunächst werden Standardmessen erstellt. Das sind die Messen, die sich wöchentlich wiederholen."
@@ -80,7 +80,7 @@ public class PfarreiController {
 			stage.setResizable(false);
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.show();
-			cont.afterstartup(stage);
+			cont.afterstartup();
 			Dialogs.info("Willkommen beim MessdienerplanErsteller!", "Als Erstes werden eine Daten benötigt:"
 					+ System.lineSeparator()
 					+ "Zunächst werden Standardmessen erstellt. Das sind die Messen, die sich wöchentlich wiederholen."
@@ -139,16 +139,15 @@ public class PfarreiController {
 		this.savepath = savepath;
 		this.stage = stage;
 		this.main = main;
-		//afterstartup(stage);
 	}
 
-	public void afterstartup(Window window) {
+	public void afterstartup() {
 		if (weiter) {
-			ASlider.makeASlider("", leiter);
+			ASlider.makeASlider("", leiter, null);
 			leiter.setMax(30);
 			leiter.setMin(0);
 			leiter.setValue(3);
-			ASlider.makeASlider("", medi);
+			ASlider.makeASlider("", medi, null);
 			medi.setValue(3);
 			medi.setMax(30);
 			medi.setMin(0);
@@ -196,11 +195,8 @@ public class PfarreiController {
 		}
 	}
 
-	public void initialize() {
-	}
-
 	@FXML
-	public void löschen(ActionEvent e) {
+	public void loeschen(ActionEvent e) {
 		StandartMesse a = table.getSelectionModel().getSelectedItem();
 		ol.removeIf(sm -> sm.toString().equals(a.toString()));
 	}
@@ -232,8 +228,8 @@ public class PfarreiController {
 		ArrayList<StandartMesse> sm = new ArrayList<>(ol);
 		Pfarrei pf = new Pfarrei(einst, sm, name.getText(), hochamt.isSelected());
 		Window s = ((Button) e.getSource()).getParent().getScene().getWindow();
-		if(nameS!=null)WriteFile_Pfarrei.writeFile(pf, s);
-		WriteFile_Pfarrei.writeFile(pf, s, savepath);
+		if(nameS!=null)WriteFile_Pfarrei.writeFile(pf);
+		WriteFile_Pfarrei.writeFile(pf, savepath);
 		if (old!=null){
 			try {
 				DateienVerwalter.re_start(old);
@@ -264,7 +260,7 @@ public class PfarreiController {
 			stage.setTitle("MessdienerplanErsteller");
 			stage.setResizable(false);
 			stage.show();
-			afterstartup(stage);
+			afterstartup();
 			getLogger().info("neue Pfarrei erstellen...weiter");
 			if(nameS!=null) {
 				name.setText(nameS);
@@ -308,7 +304,8 @@ public class PfarreiController {
 		}
 	}
 
-	public void zurück() {
+	@FXML
+	public void zurueck() {
 		if(nameS!=null){
 			nameS = name.getText();
 			mediI = (int)medi.getValue();
@@ -327,7 +324,7 @@ public class PfarreiController {
 			stage.setTitle("MessdienerplanErsteller");
 			stage.setResizable(false);
 			stage.show();
-			afterstartup(stage);
+			afterstartup();
 			getLogger().info("neue Pfarrei erstellen...zurück");
 		} catch (IOException e) {
 			Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");

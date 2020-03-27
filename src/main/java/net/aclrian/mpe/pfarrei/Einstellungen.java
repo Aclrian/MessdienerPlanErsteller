@@ -1,8 +1,6 @@
 package net.aclrian.mpe.pfarrei;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 import net.aclrian.mpe.pfarrei.Setting.Attribut;
@@ -40,20 +38,9 @@ public class Einstellungen {
 		}
 		settings[id] = new Setting(Attribut.max, id, anz_max_dienen);
 	}
-
-	public Integer[][] getDatafuerTabelle() {
-		Integer[][] rtn = new Integer[lenght - 2][2];
-		for (int i = 2; i < settings.length; i++) {
-			Setting s = settings[i];
-			int currentyear = Calendar.getInstance().get(Calendar.YEAR);
-			rtn[i - 2][0] = currentyear-(i - 2);
-			rtn[i - 2][1] = s.getAnz_dienen();
-		}
-		return rtn;
-	}
 	
 	public List<Setting> getSettings() {
-		List<Setting> rtn = new ArrayList<Setting>();
+		List<Setting> rtn = new ArrayList<>();
 		for (Setting setting : settings) {
 			if (setting.getA() != Attribut.max) {
 				rtn.add(setting);
@@ -61,16 +48,7 @@ public class Einstellungen {
 		}
 		return rtn;
 	}
-	
-	public static Integer[][] getEinheitsdata(int anz){
-		Integer[][] rtn = new Integer[lenght - 2][2];
-		for (int i = 0; i < (lenght-2); i++) {
-			rtn[i][0] = i;
-			rtn[i][1] = anz;
-		}
-		return rtn;
-	}
-	
+
 	public Setting getDaten(int index) {
 		if (index>20) {
 			return settings[20];
