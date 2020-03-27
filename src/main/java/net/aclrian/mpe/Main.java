@@ -65,9 +65,9 @@ public class Main extends Application {
 			loader.setController(new MainController(this,stage));
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
-			//scene.getRoot().setStyle("-fx-base:white");
-			//scene.getStylesheets().add("/css/darkmode.css");
-			stage.setScene(scene);
+		/*	scene.getRoot().setStyle("-fx-base:black");
+			scene.getStylesheets().add("/css/darkmode.css");
+		*/	stage.setScene(scene);
 
 			stage.setTitle("MessdienerplanErsteller");
 			stage.setResizable(false);
