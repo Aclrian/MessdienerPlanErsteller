@@ -279,7 +279,6 @@ public class PfarreiController {
 		try {
 			Dialogs.open(new URI(
 					"https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Was-wird-unter-'Anzahl'-verstanden%3F"),
-					"Pfarrei erstellen",
 					"Nun geht es um die Anzahl, wie oft Messdiener eingeteilt werden sollen:" + System.lineSeparator()
 							+ "Hier gibt es die maximale Anzahl, bei der zwischen Leitern und normalen Messdienern unterschieden werden kann."
 							+ System.lineSeparator()

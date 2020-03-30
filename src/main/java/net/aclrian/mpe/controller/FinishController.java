@@ -5,31 +5,33 @@ import com.itextpdf.html2pdf.HtmlConverter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.web.HTMLEditor;
 import javafx.stage.Window;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
-
-import javafx.scene.web.HTMLEditor;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-import org.apache.log4j.Priority;
+import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
 import org.docx4j.wml.RFonts;
-import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 
 import java.awt.*;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class FinishController implements Controller {
 
@@ -42,6 +44,7 @@ public class FinishController implements Controller {
 	private MainController.EnumPane pane;
 	private ArrayList<Messe> messen;
 	private String titel;
+	private File pdfgen,wordgen;
 	private ArrayList<Messdiener> hauptarray, nichteingeteileList;
 	@FXML
 	private HTMLEditor editor;
@@ -63,7 +66,7 @@ public class FinishController implements Controller {
 				Date ende = messen.get(messen.size() - 1).getDate();
 				SimpleDateFormat df = new SimpleDateFormat("dd. MMMM", Locale.GERMAN);
 				titel = "Messdienerplan vom " + df.format(start) + " bis " + df.format(ende);
-				s.append("<h1>").append(titel).append("</h1>");
+					s.append("<h1>").append(titel).append("</h1>");
 			}
 			s.append("<p>").append(m1).append("</p>");
 		}
@@ -95,7 +98,7 @@ public class FinishController implements Controller {
 		return locked;
 	}
 
-	public void zurueck(MainController mc) {
+	private void zurueck(MainController mc) {
 		Boolean delete = Dialogs.yesNoCancel("Ja", "Nein", "Hier bleiben", "Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?");
 		if (delete == null) return;
 		if (delete) {
@@ -112,8 +115,41 @@ public class FinishController implements Controller {
 		return messen;
 	}
 
-	public void nichteingeteilte(){
+	private void nichteingeteilte(){
 		Dialogs.show(nichteingeteileList, "Nicht eingeteilte Messdiener");
+	}
+
+	@FXML
+	public void toEMAIL(){
+		ArrayList<Messdiener> medis = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
+		StringBuilder sb = new StringBuilder("mailto:?");
+		ArrayList<Messdiener> noemail = new ArrayList<>();
+		for (Messdiener medi : medis) {
+			if (medi.getEmail().equals("")) {
+				noemail.add(medi);
+			} else {
+				sb.append("bcc=").append(medi.getEmail()).append("&");
+			}
+		}
+		sb.append("subject=").append(org.springframework.web.util.UriUtils.encode(titel, StandardCharsets.UTF_8));
+		StringBuilder sbb = new StringBuilder();
+		StringBuilder ssb = new StringBuilder();
+		if(pdfgen != null && pdfgen.exists()){
+			sbb.append("Als Anhang hinzufügen: ").append(pdfgen.getAbsolutePath()).append(" ?");
+		}
+		if(wordgen != null && wordgen.exists()){
+			ssb.append("Als Anhang hinzufügen: ").append(wordgen.getAbsolutePath()).append(" ?");
+		}
+		sb.append("&body=").append(org.springframework.web.util.UriUtils.encode(sbb.toString(), StandardCharsets.UTF_8)).append("%0D%0A").append(org.springframework.web.util.UriUtils.encode(ssb.toString(), StandardCharsets.UTF_8));
+		try {
+			URI uri = new URI(sb.toString());
+			Desktop.getDesktop().mail(uri);
+			Log.getLogger().info(sb.toString());
+			if(noemail.size()>0)
+				Dialogs.show(noemail, "Messdiener ohne E-Mail-Addresse:");
+		} catch (IOException | URISyntaxException | IllegalArgumentException e) {
+			Dialogs.error(e,"Konnte den mailto-Link ("+URLEncoder.encode(sb.toString(), StandardCharsets.UTF_8)+") nicht öffnen");
+		}
 	}
 
 	@FXML
@@ -125,6 +161,7 @@ public class FinishController implements Controller {
 			if(out.exists())out.delete();
 			HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replaceAll("<p></p>","<br>").getBytes(StandardCharsets.UTF_8)),
 					new FileOutputStream(out), converterProperties);
+			pdfgen = out;
 			Desktop.getDesktop().open(out);
 		} catch (IOException e) {
 			Dialogs.error(e, "Konnte den Messdienerplan nicht zu PDF konvertieren.");
@@ -152,13 +189,14 @@ public class FinishController implements Controller {
 			File out = new File(Log.getWorkingDir()+File.separator +titel+".docx");
 			if(out.exists())out.delete();
 			wordMLPackage.save(out);
+			wordgen = out;
 			Desktop.getDesktop().open(out);
 		} catch(Exception e){
 			Dialogs.error(e,"Word-Dokument konnte nicht erstellt werden.");
 		}
 	}
 
-		public void neuerAlgorythmus() {
+		private void neuerAlgorythmus() {
 		hauptarray.sort(Messdiener.einteilen);
 		// neuer Monat:
 		Calendar start = Calendar.getInstance();
@@ -243,7 +281,7 @@ public class FinishController implements Controller {
 		if(!m.istFertig())Dialogs.error("Die Messe" + m.getID().replaceAll("\t","   ")+" wird zu wenige Messdiener haben.");
 	}
 
-		public void einteilen(Messe m, Messdiener medi, boolean zwangdate, boolean zwanganz) {
+	private void einteilen(Messe m, Messdiener medi, boolean zwangdate, boolean zwanganz) {
 		boolean d;
 		if (m.istFertig()) {
 			return;
@@ -266,54 +304,9 @@ public class FinishController implements Controller {
 				}
 			}
 		}
-		}
+	}
 
-		/*public ArrayList<Messdiener> beheben(Messe m) {
-		ArrayList<Messdiener> rtn = get(m.getStandardMesse(), m.getDate());
-		if (rtn.size() < m.getNochBenoetigte()) {
-		ArrayList<Messdiener> prov = new ArrayList<>();
-		hauptarray.sort(Messdiener.einteilen);
-		int i = rtn.size();
-		for (Messdiener messdiener : hauptarray) {
-		if (messdiener.getMessdatenDaten().kanndann(m.getDate(), false) && i < m.getNochBenoetigte()) {
-		prov.add(messdiener);
-		i++;
-		}
-		}
-		for (Messdiener messdiener : prov) {
-		new Erroropener(new Exception("<html><body>Bei der Messe: " + m.getID()
-		+ "<br></br>herrscht Messdiener-Knappheit</br><br>Daher wird wohl" + messdiener.makeId()
-		+ "einspringen m" + References.ue + "ssen, weil er generell kann.</br></body></html>"));
-		}
-		rtn.addAll(prov);
-		// Wenn wirklich keiner mehr kann
-		if (rtn.size() < m.getNochBenoetigte()) {
-		hauptarray.sort(Messdiener.einteilen);
-		Einstellungen e = DateienVerwalter.dv.getPfarrei().getSettings();
-		for (Messdiener messdiener : hauptarray) {
-		int id = 0;
-		if (messdiener.isIstLeiter()) {
-		id++;
-		}
-		int ii = e.getDaten(id).getAnz_dienen();
-		if (ii != 0 && i < m.getNochBenoetigte()) {
-		new Erroropener(new Exception("<html><body>Bei der Messe: " + m.getID()
-		+ "<br></br>herrscht GRO" + References.GROssenSZ
-		+ "E Messdiener-Knappheit</br><br>Daher wird wohl" + messdiener.makeId()
-		+ "einspringen m" + References.ue + "ssen.</br></body></html>"));
-		rtn.add(messdiener);
-		}
-		}
-		} else {
-		new Erroropener(new Exception("<html><body>Die Messe:<br>" + m.getID()
-		+ "</br><br>hat schon neue Messdiener bekommen, die schon zu oft eingeteilt sind, aber es herrscht Messdiener-Knappheit</br></body></html>"));
-		}
-		}
-		rtn.sort(Messdiener.einteilen);
-		return rtn;
-		}*/
-
-		public ArrayList<Messdiener> get(StandartMesse sm, Messe m, boolean zwangdate, boolean zwanganz) {
+	public ArrayList<Messdiener> get(StandartMesse sm, Messe m, boolean zwangdate, boolean zwanganz) {
 		ArrayList<Messdiener> al = new ArrayList<>();
 		for (Messdiener medi : hauptarray) {
 			int id = 0;
@@ -329,5 +322,5 @@ public class FinishController implements Controller {
 		Collections.shuffle(al);
 		al.sort(Messdiener.einteilen);
 		return al;
-		}
+	}
 }

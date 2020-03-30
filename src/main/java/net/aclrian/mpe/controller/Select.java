@@ -69,17 +69,23 @@ public class Select implements Controller {
 				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 					if (mouseEvent.getClickCount() == 2) {
 						int i = list.getSelectionModel().getSelectedIndex();
-						if(i>0 && i<data.size())
+						if(i>=0 && i<data.size())
 						mc.changePaneMessdiener(data.get(i));
 					}
 				}
 			});
 			bearbeiten.setOnAction(e->{int i = list.getSelectionModel().getSelectedIndex();
-				if(i>0 && i<data.size()) mc.changePaneMessdiener(data.get(i));});
-				remove.setOnAction(arg0 -> {
+			if(i>=0 && i<data.size()) mc.changePaneMessdiener(data.get(i));});
+			remove.setOnAction(arg0 -> {
 				int i = list.getSelectionModel().getSelectedIndex();
-				if (i>0 && (list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString()))
+				if (i>=0 && (list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString()))
 						&& MediController.remove(data.get(i))) {
+					DateienVerwalter.dv.reloadMessdiener();
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						Dialogs.error(e,"Es könnte sein, dass der gelöschte Messdiener noch angezeigt wird.");
+					}
 					afterstartup(window,mc);
 				}
 			});
@@ -115,15 +121,16 @@ public class Select implements Controller {
 				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 					if (mouseEvent.getClickCount() == 2) {
 						int i = list.getSelectionModel().getSelectedIndex();
-						if(i>0 && i<datam.size()) mc.changePaneMesse(datam.get(i));
+						if(i>=0 && i<datam.size()) mc.changePaneMesse(datam.get(i));
 					}
 				}
 			});
 			bearbeiten.setOnAction(e->{int i = list.getSelectionModel().getSelectedIndex();
-				if(i>0 && i<datam.size()) mc.changePaneMesse(datam.get(i));});
+				if(i>=0 && i<datam.size()) mc.changePaneMesse(datam.get(i));});
 			remove.setOnAction(arg0 -> {
 				int i = list.getSelectionModel().getSelectedIndex();
-				if (i>0 && (list.getSelectionModel().getSelectedItem().getText().replaceAll("\t\t", "\t").equals(datam.get(i).toString()))) {
+				if (i>=0 && (list.getSelectionModel().getSelectedItem().getText().replaceAll("\t\t", "\t").equals(datam.get(i).toString()))) {
+					datam.remove(i);
 					updateMesse(mc.getMessen());
 				}
 			});

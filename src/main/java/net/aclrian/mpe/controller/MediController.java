@@ -35,8 +35,10 @@ import static net.aclrian.mpe.utils.Log.getLogger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.validator.routines.EmailValidator;
@@ -236,7 +238,11 @@ public class MediController implements Controller {
 					boolean b = moben.getNachnname().equals(m.getNachnname());
 					boolean bo = moben.getVorname().equals(m.getVorname());
 					if (!b || !bo) {
-						m.getFile().delete();
+						try {
+							Files.delete(moben.getFile().toPath());
+						} catch (IOException e) {
+							Dialogs.error(e, "Konnte den alten-veränderten Messdiener nicht löschen.");
+						}
 					}
 				}
 				m.setFreunde(getArrayString(freund, Messdiener.freundelenght));
@@ -268,6 +274,7 @@ public class MediController implements Controller {
 					WriteFile wf = new WriteFile(m);
 					wf.toXML();
 					getLogger().info("Messdiener " + m.makeId() + " wurde gespeichert!");
+					DateienVerwalter.dv.reloadMessdiener();
 				} catch (IOException e) {
 					Dialogs.error(e, "Konnte den Messdiener '" + m + "' nicht speichern");
 				}
@@ -349,13 +356,12 @@ public class MediController implements Controller {
 				WriteFile wf = new WriteFile(medi);
 				try {
 					wf.toXML();
-					return true;
 				} catch (IOException e) {
 					Dialogs.error(e, "Konnte bei dem Bekannten '" + medi
 							+ "' von dem zulöschenden Messdiener diesen nicht löschen.");
-					return false;
 				}
 			}
+			return true;
 		}
 		return false;
 	}
