@@ -1,5 +1,6 @@
 package net.aclrian.mpe.utils;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -7,7 +8,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -17,12 +21,12 @@ import net.aclrian.mpe.Main;
 import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class VersionIDHandler {
-	public static final String tag = "tag_name";
-	public static final String beta_start = "b";
-	public static final String urlToLatestReleaseJsonFile = "https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest";
+	private static final String tag = "tag_name";
+	//public static final String beta_start = "b";
+	private static final URI urlToLatestReleaseJsonFile = URI.create("https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest");
 	//public static final String directdownload = "https://aclrian.github.io/MessdienerPlanErsteller/download.html";
-	public static final String alternativedownloadurl = "https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest";
-	public static final String urlwithtag ="https://github.com/Aclrian/MessdienerPlanErsteller/releases/tag/";
+	private static final URI alternativedownloadurl = URI.create("https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest");
+	private static final String urlwithtag ="https://github.com/Aclrian/MessdienerPlanErsteller/releases/tag/";
 	private static String internettid;
 	
 	private static String searchVersionID() throws IOException, ParseException {
@@ -38,56 +42,47 @@ public class VersionIDHandler {
 				return EnumHandling.isTheLatest;
 			}
 			String programmsvid = Main.VersionID;
-			int localversion;
-			if (programmsvid.startsWith(beta_start)) {
-				String tmp = programmsvid.substring(1);
-				localversion = Integer.parseInt(tmp);
-			} else {
-				localversion = Integer.parseInt(Main.VersionID);
+			if (programmsvid.equals("")) {
+				MavenXpp3Reader reader = new MavenXpp3Reader();
+				Model model = reader.read(new FileReader("pom.xml"));
+				programmsvid = model.getVersion();
 			}
-			int internetversion;
-			if (internettid.startsWith(beta_start)) {
-				String s = internettid.substring(1);
-				internetversion = ((int) Double.parseDouble(s));
-			} else {
-				internetversion = Integer.parseInt(internettid);
-			}
-			if (localversion > internetversion) {
-				// update or beta request
-				if (Main.VersionID.equals(getBeta(Main.VersionID, internettid))) {
-					return EnumHandling.isOld;
+			if (!internettid.contains(".")) return EnumHandling.isTooNew;
+			if (internettid.equals(programmsvid)) return EnumHandling.isTheLatest;
+			else{
+				String[] inumbers = internettid.split(Pattern.quote("."));
+				String[] lnumbers = programmsvid.split(Pattern.quote("."));
+				int i = 0;
+				while (i<inumbers.length && i<lnumbers.length){
+					int inet = Integer.parseInt(inumbers[i]);
+					int loc = Integer.parseInt(lnumbers[i]);
+					if(inet>loc){
+						return EnumHandling.isOld;
+					} else if(inet<loc){
+						return EnumHandling.isTooNew;
+					}
+					i++;
 				}
-				return EnumHandling.isTooNew;
-			}
-			if (internetversion > localversion) {
-				if (internettid.equals(getBeta(Main.VersionID, internettid))) {
-					return EnumHandling.betaRequest;
+				if(inumbers.length != lnumbers.length){
+					if(inumbers.length>lnumbers.length){
+						return EnumHandling.isOld;
+					} else return EnumHandling.isTooNew;
 				}
-				return EnumHandling.isOld;
+				return EnumHandling.isTheLatest;
 			}
-			return EnumHandling.isTheLatest;
-		} catch (IOException | ParseException e) {
+		} catch(Exception e){
 			Log.getLogger().info("Running with: " + Main.VersionID);
 			return EnumHandling.error;
 		}
 	}
 
-	private static String getBeta(String versionid, String latestID) {
-		if (!versionid.startsWith(beta_start) && latestID.startsWith(beta_start)) {
-			return latestID;
-		} else if (versionid.startsWith(beta_start) && !latestID.startsWith(beta_start)) {
-			return versionid;
-		}
-		return "";
-	}
-
-	public static String getInternettid() {
+	private static String getInternettid() {
 		return internettid;
 	}
 
 	private static JSONObject doThigswithExceptions()
 			throws IOException, ParseException{
-		URL json = new URL(urlToLatestReleaseJsonFile);
+		URL json = urlToLatestReleaseJsonFile.toURL();
 		JSONParser parse = new JSONParser();
 		InputStream is = json.openStream();
 		Object obj = parse.parse(new InputStreamReader(is, StandardCharsets.UTF_8));
@@ -96,8 +91,9 @@ public class VersionIDHandler {
 	
 	private enum EnumHandling {
 		isTheLatest("Es wurde keine neuere Version gefunden"), isOld("Es wurde eine neuere Version gefunden"),
-		isTooNew("Neuereste Version"), error("Bei der Versionsüberprüfung kam es zu einem Fehler"),
-		betaRequest("Neue Beta-Version gefunden");
+		isTooNew("Neuereste Version"), error("Bei der Versionsüberprüfung kam es zu einem Fehler")
+	//	betaRequest("Neue Beta-Version gefunden")
+		;
 		private String message;
 		EnumHandling(String message) {
 			this.message = message;
@@ -112,15 +108,15 @@ public class VersionIDHandler {
 		EnumHandling eh = rankingVersionID();
 		switch (eh){
 			case isOld:
-			case betaRequest:
+		//	case betaRequest:
 				try {
 					Dialogs.open(new URI(VersionIDHandler.urlwithtag + getInternettid()),
 							eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
 				} catch (IOException | URISyntaxException e) {
 					try {
-						Dialogs.open(new URI(VersionIDHandler.alternativedownloadurl),
+						Dialogs.open(VersionIDHandler.alternativedownloadurl,
 								eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
-					} catch (IOException | URISyntaxException e1) {
+					} catch (IOException e1) {
 						getLogger().warn("Die Download-Url konnte nicht aufgelöst werden.");
 					}
 				}

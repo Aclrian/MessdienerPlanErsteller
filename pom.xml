@@ -127,6 +127,12 @@
 			<artifactId>maven-model</artifactId>
 			<version>3.3.9</version>
 		</dependency>
+		<!-- URI encode -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>5.2.5.RELEASE</version>
+		</dependency>
 	</dependencies>
 
 	<build>

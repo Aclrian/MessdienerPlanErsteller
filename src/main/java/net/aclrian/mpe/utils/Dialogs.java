@@ -1,6 +1,24 @@
 package net.aclrian.mpe.utils;
 
-import java.awt.Desktop;
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTextField;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import net.aclrian.fx.ASlider;
+import net.aclrian.mpe.messe.StandartMesse;
+import net.aclrian.mpe.pfarrei.Setting;
+
+import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -11,82 +29,65 @@ import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXTextField;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import net.aclrian.fx.ASlider;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.pfarrei.Setting;
-
 public class Dialogs {
 
-	public static class Icon {
+	private static class Icon {
 	}
+
+	private static Alert alertbuilder(AlertType type, String headertext){
+		Alert a = new Alert(type);
+		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
+		a.setHeaderText(headertext);
+		a.setTitle("MessdienerplanErsteller");
+
+		return a;
+	}
+
+	private static Alert alertbuilder(AlertType type, String headertext, Node n){
+		Alert a = alertbuilder(type, headertext);
+		a.getDialogPane().setExpandableContent(n);
+		a.getDialogPane().setExpanded(true);
+
+		return a;
+	}
+
 
 	private static Icon i = new Icon();
 
 	public static void info(String string) {
 		Log.getLogger().info(string);
-		Alert a = new Alert(AlertType.INFORMATION);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
-		a.showAndWait();
+		alertbuilder(AlertType.INFORMATION, string).showAndWait();
 	}
 
 	public static void info(String header, String string) {
 		Log.getLogger().info(string);
-		Alert a = new Alert(AlertType.INFORMATION);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setTitle(header);
-		a.setHeaderText(string);
+		Alert a = alertbuilder(AlertType.INFORMATION, header);
+		a.setContentText(string);
 		a.showAndWait();
 	}
 
 	public static void warn(String string) {
 		Log.getLogger().warn(string);
-		Alert a = new Alert(AlertType.WARNING);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
-		a.showAndWait();
+		alertbuilder(AlertType.WARNING, string).showAndWait();
 	}
 
 	public static void error(String string) {
 		Log.getLogger().error(string);
-		Alert a = new Alert(AlertType.ERROR);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
-		a.showAndWait();
+		alertbuilder(AlertType.ERROR, string).showAndWait();
 	}
 
 	public static void error(Exception e, String string) {
 		Log.getLogger().error(string);
 		Log.getLogger().error(e.getMessage());
-		try {
-			Log.getLogger().error(e.getCause().toString());
-		} catch (NullPointerException e1) {}
-		Alert a = new Alert(AlertType.ERROR);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
+		Log.getLogger().error(e.getCause()+"");
+		String header;
 		if(e.getLocalizedMessage()!= null && !e.getLocalizedMessage().equals("")) {
-			a.setHeaderText(string+"\n"+e.getLocalizedMessage());
+			 header = string+"\n"+e.getLocalizedMessage();
 		} else if(e.getMessage()!= null && !e.getMessage().equals("")){
-			a.setHeaderText(string+"\n"+e.getMessage());
+			header = string+"\n"+e.getMessage();
 		} else {
-			a.setHeaderText(string);
+			header = string;
 		}
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
@@ -96,35 +97,25 @@ public class Dialogs {
 		TextArea ta = new TextArea(sw.toString());
 		ta.setEditable(false);
 		vb.getChildren().addAll(l, ta);
-		a.getDialogPane().setExpandableContent(vb);
-		a.showAndWait();
+		alertbuilder(AlertType.ERROR, header, vb).showAndWait();
 	}
 
-	/**
-	 * 
-	 * @param open
-	 * @param string
-	 * @throws IOException
-	 */
 	public static void open(URI open, String string) throws IOException {
-		Alert a = new Alert(AlertType.CONFIRMATION);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
+		Alert a = alertbuilder(AlertType.CONFIRMATION, string);
 		Optional<ButtonType> res = a.showAndWait();
 		if (res.get() == ButtonType.OK) {
 			Desktop.getDesktop().browse(open);
 		}
 	}
 
-	public static void open(URI open, String titel, String string, String ok, String close) throws IOException {
+	public static void open(URI open, String string, String ok, String close) throws IOException {
 		ButtonType od = new ButtonType(ok, ButtonBar.ButtonData.OK_DONE);
 		ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
 		Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc);
 		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
 		a.setHeaderText(string);
-		a.setTitle(titel);
+		a.setTitle("MessdienerplanErsteller");
 		Optional<ButtonType> res = a.showAndWait();
 		if (res.get() == od) {
 			Desktop.getDesktop().browse(open);
@@ -132,19 +123,12 @@ public class Dialogs {
 	}
 
 	public static boolean frage(String string) {
-		Alert a = new Alert(AlertType.CONFIRMATION);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
-		Optional<ButtonType> res = a.showAndWait();
+		Optional<ButtonType> res = alertbuilder(AlertType.CONFIRMATION, string).showAndWait();
 		return res.get() == ButtonType.OK;
 	}
 
 	public static boolean frage(String string, String cancel, String ok) {
-		Alert a = new Alert(AlertType.CONFIRMATION);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
+		Alert a = alertbuilder(AlertType.CONFIRMATION, string);
 		((Button) a.getDialogPane().lookupButton(ButtonType.CANCEL)).setText(cancel);
 		((Button) a.getDialogPane().lookupButton(ButtonType.OK)).setText(ok);
 		Optional<ButtonType> res = a.showAndWait();
@@ -184,124 +168,70 @@ public class Dialogs {
 			b.setToggleGroup(g);
 			v.getChildren().add(b);
 		}
-		a.getDialogPane().setExpandableContent(v);
-		a.getDialogPane().setExpanded(true);
-		a.showAndWait();
+		alertbuilder(AlertType.INFORMATION,s,v).showAndWait();
 		if (g.getSelectedToggle() instanceof ARadioButton){
-			Object o = ((ARadioButton<?>) g.getSelectedToggle()).getI();
-			return o;
+			return ((ARadioButton<?>) g.getSelectedToggle()).getI();
 		}
 		return null;
 	}
 
 	public static <I> ArrayList<I> select(ArrayList<I> dataAmBestenSortiert, ArrayList<I> selected, String string) {
-		Alert a = new Alert(AlertType.INFORMATION);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
-		ListView<CheckBox> lw = new ListView<CheckBox>();
+		Alert a = alertbuilder(AlertType.INFORMATION, string);
+		ListView<CheckBox> lw = new ListView<>();
 		ArrayList<I> rtn = new ArrayList<I>();
-		for (int i = 0; i < dataAmBestenSortiert.size(); i++) {
+		for (I item : dataAmBestenSortiert) {
 			boolean b = false;
-			I e = dataAmBestenSortiert.get(i);
-			for (int j = 0; j < selected.size(); j++) {
-				if (selected.get(j).toString().equals(e.toString())) {
-					rtn.add(e);
+			for (I value : selected) {
+				if (value.toString().equals(item.toString())) {
+					rtn.add(item);
 					b = true;
 					break;
 				}
 			}
-			String s = e instanceof StandartMesse ? ((StandartMesse) e).tolangerBenutzerfreundlichenString() :  e.toString();
+			String s = item instanceof StandartMesse ? ((StandartMesse) item).tolangerBenutzerfreundlichenString() : item.toString();
 			CheckBox ch = new CheckBox(s);
 			ch.setSelected(b);
 			ch.selectedProperty().addListener((arg0, old, neu) -> {
 				if (neu && !old) {
-					rtn.add(e);
+					rtn.add(item);
 				} else if (!neu && old) {
-					rtn.remove(e);
+					rtn.remove(item);
 				}
 			});
 			lw.getItems().add(ch);
 		}
 		a.getDialogPane().setExpandableContent(lw);
 		a.getDialogPane().setExpanded(true);
-		a.showAndWait();
-		return rtn;
-	}
-
-	public static <I> ArrayList<I> selectS(ArrayList<I> dataAmBestenSortiert, ArrayList<String> selected,
-			String string) {
-		Alert a = new Alert(AlertType.INFORMATION);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
-		ListView<CheckBox> lw = new ListView<CheckBox>();
-		ArrayList<I> rtn = new ArrayList<I>();
-		for (int i = 0; i < dataAmBestenSortiert.size(); i++) {
-			boolean b = false;
-			I e = dataAmBestenSortiert.get(i);
-			for (int j = 0; j < selected.size(); j++) {
-				if (selected.get(j).equals(e.toString())) {
-					rtn.add(e);
-					b = true;
-					break;
-				}
-			}
-			String s = e instanceof StandartMesse ? ((StandartMesse) e).tolangerBenutzerfreundlichenString() :  e.toString();
-			CheckBox ch = new CheckBox(s);
-			ch.setSelected(b);
-			ch.selectedProperty().addListener((arg0, old, neu) -> {
-				if (neu && !old) {
-					rtn.add(e);
-				} else if (!neu && old) {
-					rtn.remove(e);
-				}
-			});
-			lw.getItems().add(ch);
-		}
-		a.getDialogPane().setExpanded(true);
-		a.getDialogPane().setExpandableContent(lw);
 		a.showAndWait();
 		return rtn;
 	}
 
 	public static ArrayList<Date> getDates(String string, String dl, String dz) {
-		Alert a = new Alert(AlertType.INFORMATION);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
 		JFXDatePicker d1 = new JFXDatePicker();
 		d1.setPromptText(dl);
 		JFXDatePicker d2 = new JFXDatePicker();
 		d2.setPromptText(dz);
-		ChangeListener<Object> e = new ChangeListener<Object>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Object> arg0, Object arg1, Object arg2) {
-				if (d1.getValue() != null && d2.getValue() != null) {
-					if (!Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
-							.after(Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()))) {
-						a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
-						return;
-					}
+		HBox hb = new HBox(d1, d2);
+		hb.setSpacing(20d);
+		Alert a = alertbuilder(AlertType.INFORMATION, string, hb);
+		ChangeListener<Object> e = (arg0, arg1, arg2) -> {
+			if (d1.getValue() != null && d2.getValue() != null) {
+				if (!Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
+						.after(Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()))) {
+					a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
+					return;
 				}
-				a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
 			}
+			a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
 		};
 		d1.valueProperty().addListener(e);
 		d1.focusedProperty().addListener(e);
 		d2.valueProperty().addListener(e);
 		d2.focusedProperty().addListener(e);
-		a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-		a.getDialogPane().setExpanded(true);
-		HBox hb = new HBox(d1, d2);
-		hb.setSpacing(20d);
-		a.getDialogPane().setExpandableContent(hb);
-		a.getDialogPane().setExpanded(true);
 		Optional<ButtonType> o = a.showAndWait();
 		try {
 			if (o.get().equals(ButtonType.OK)) {
-				ArrayList<Date> rtn = new ArrayList<Date>();
+				ArrayList<Date> rtn = new ArrayList<>();
 				rtn.add(0, Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 				rtn.add(1, Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 				return rtn;
@@ -311,10 +241,6 @@ public class Dialogs {
 	}
 
 	public static StandartMesse standartmesse(StandartMesse sm) {
-		Alert a = new Alert(AlertType.INFORMATION);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText("Neue Standartmesse erstellen:");
 		JFXTextField ort = new JFXTextField();
 		ort.setPromptText("Ort:");
 		JFXTextField typ = new JFXTextField();
@@ -336,6 +262,11 @@ public class Dialogs {
 		anz.setMin(0);
 		anz.setMax(40);
 		anz.setBlockIncrement(1);
+
+		VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz);
+		v.setSpacing(20);
+		Alert a = alertbuilder(AlertType.INFORMATION ,"Neue Standartmesse erstellen:");
+
 		ChangeListener<Object> e = (arg0, arg1, arg2) -> {
 			try {
 				if (!ort.getText().equals("") && !typ.getText().equals("")
@@ -354,11 +285,7 @@ public class Dialogs {
 		ort.focusedProperty().addListener(e);
 		wochentag.valueProperty().addListener(e);
 		wochentag.focusedProperty().addListener(e);
-
 		a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-		a.getDialogPane().setExpanded(true);
-		VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz);
-		v.setSpacing(20);
 		a.getDialogPane().setExpandableContent(v);
 		a.getDialogPane().setExpanded(true);
 		a.setOnShown(arg0 -> {
@@ -444,7 +371,7 @@ public class Dialogs {
 
 	private static class ARadioButton<I> extends RadioButton {
 		private I i;
-		public ARadioButton(I i) {
+		private ARadioButton(I i) {
 			super(i instanceof StandartMesse ? ((StandartMesse) i).tolangerBenutzerfreundlichenString() : i.toString());
 			this.i = i;
 		}
@@ -455,13 +382,7 @@ public class Dialogs {
 	}
 
 	public static void show(ArrayList<?> list, String string) {
-		Alert a = new Alert(AlertType.INFORMATION);
-		Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(i.getClass().getResourceAsStream("/images/title_32.png")));
-		a.setHeaderText(string);
 		ListView<?> lv = new ListView<>(FXCollections.observableArrayList(list));
-		a.getDialogPane().setExpandableContent(lv);
-		a.getDialogPane().setExpanded(true);
-		a.showAndWait();
+		alertbuilder(AlertType.INFORMATION, string, lv).showAndWait();
 	}
 }

@@ -56,7 +56,7 @@
          </GridPane.margin>
          <children>
             <Button fx:id="zurueck" mnemonicParsing="false" text="Zurück" />
-            <Button fx:id="mail" mnemonicParsing="false" text="E-Mail" />
+            <Button fx:id="mail" mnemonicParsing="false" text="E-Mail öffnen" onAction="#toEMAIL"/>
             <Button fx:id="word" mnemonicParsing="false" onAction="#toWORD" text="Word-Dokument" />
             <Button fx:id="pdf" mnemonicParsing="false" onAction="#toPDF" text="PDF-Dokument" />
             <Button fx:id="nichteingeteilte" mnemonicParsing="false" text="freie Messdiener" />

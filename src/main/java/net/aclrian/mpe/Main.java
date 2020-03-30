@@ -46,7 +46,6 @@ public class Main extends Application {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			Model model = reader.read(new FileReader("pom.xml"));
 			VersionID = model.getVersion();
-			Object o = getParameters();
 			getLogger().info("MpE: Version: " + VersionID);
 			getLogger().info("MpE-fx is starting");
 			stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
