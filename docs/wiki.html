@@ -29,11 +29,20 @@
 		<div id="inhalt">
 			<div id="anzahl">
 				<h3>Anzahl</h3>
-				<p>Damit ist die maximale Anzahl eines Messdieners in einer Altersklasse, die dieser in einem Monat dienen darf. Diese kann nach Altersgruppe und dem Leiter sein beeinflusst werden.</p>
+				<p>Dies Anzahl an gedienten Messen wird zwischen 2 Arten dieser unterschieden:
+    <ul><li><h4>maximale Anzahl:</h4>
+    Die maximale Anzahl beschreibt die Anzahl an Messen, die Messdiener nicht mehr dienen kann, weil dieser schon an genug Messen gedient hat.<br/>Sie kann zwischen Leitern und normalen Messdienern unterschieden werden, sodass bspw. Leiter nicht automatisch eingeteilt werden, wenn deren Wert auf 0 liegt. Liegt der Wert vom Eintrittsjahr höher als gespeichert werden kann (aktuell 18 Jahre) wird das älteste, mögliche Eintrittsjar genommen.
+		</li>
+    <li><h4>Anzahl nach Eintrittsjahr:</h4>
+	<p>Die Anzahl nach Eintrittsjahr gibt, an wie häufig Messdiener des jeweiligen Jahrgangs generell eingeteilt werden. Dabei ist zu beachten, dass jedes Jahr ein Messdiener in die nächst-höhere Gruppe kommt. So wird es möglich neuere Messdiener häufiger einzuteilen, um ihnen die nötige Ehrfahrung zu geben.<br/>
+	Wenn nun Messdiener in Messen eingeteilt werden, wird bei jedem Mal, wenn ein Messdiener eingeteilt wird, die Anzahl, wie oft dieser im Monat schon gedient hat, um 1 erhöht. Diese wird auf 0 gesetzt, wenn der Monat endet.</p>
+				</li></ol>
+				</p>
 			</div>
 			<div id="standartmesse">
 				<h3>Standartmesse</h3>
-				<p>Dies sind Messen, die sich wöchentlich in einer Pfarrei wiederholen und bei denen Messdienern ihre Vorlieben angeben können.<p>
+				<p>Dies sind Messen, die sich wöchentlich in einer Pfarrei wiederholen und von denen Messdienern ihre Vorlieben angeben können. Sie können selber eingegeben werden und werden in der Datei mit der Endung <i>.xml.pfarrei</i> gespeichert. Darin steht die Uhrzeit, Wochentag, Ort, Typ und die Anzahl der Messdiener.<br/>
+				Bei Messen, die keine Standartmesse haben, steht als Platzhalter <i>Sonstiges</i>. Bei solchen Messen gibt es keine Messdiener, die wegen dieser nicht vorhandenen Standartmesse nicht dienen können. Anders formuliert: Jeder favorisiert die sonstigen Messen.</p>
 			</div>
 		</div>
 		<div id="footer">
