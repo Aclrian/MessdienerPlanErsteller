@@ -14,13 +14,6 @@
 	<link rel="stylesheet" href="./css/styles.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="./js/main.js"></script>
-	<script type="text/javascript">
-	document.addEventListener('DOMContentLoaded', download, false);
-		function download(){
-			javascript:getData()
-			document.getElementById("warten").innerHTML = "<p id=\"dow\">Download funktioniert nicht? Klicke <a href=\"https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest\">hier</a></p>";
-		}
-	</script>
 	<title>Download | Messdienerplan erstellen</title>
 </head>
 <body>
@@ -35,8 +28,36 @@
 			</div>
 		</div>
 		<div id="inhalt">
-			<p id="warten">Bitte warten...<br>Download beginnt in Kürze.</p>
-			<br>
+		<table>
+		<col/><col/><col/>
+			<tr>
+				<th>Plattform</th>
+				<th>Beschreibung</th>
+				<th>Download</th>
+			</tr>
+			<tr>
+				<td>Windows/Linux/Mac</td>
+				<td>Java Anwendung*</td>
+				<td><a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/download/1.0.0/MessdienerplanErsteller-1.0.0.jar"><div></div>MessdienerplanErsteller-1.0.0.jar</a></td>
+			</tr>
+			<tr>
+				<td>Windows</td>
+				<td>portable Version*</td>
+				<td><a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/download/1.0.0/mpe_portable.exe">mpe_portable.exe</a></td>
+			</tr>
+			<tr>
+				<td>Windows</td>
+				<td>32bit Version</td>
+				<td><a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/download/1.0.0/MpE_Setup_32.exe">MpE_Setup_32.exe</a></td>
+			</tr>
+			<tr>
+				<td>Windows</td>
+				<td>64bit Version</td>
+				<td><a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/download/1.0.0/MpE_Setup_64.exe">MpE_Setup_64.exe</a></td>
+			</tr>
+			</table>
+			<p>* Sowohl die Java Anwendung, als auch die portable Anwendung benötigen Java 11. Diese bekommen man von <a href="https://adoptopenjdk.net/index.html?variant=openjdk11&jvmVariant=hotspot">AdoptOpenJDK</a> oder von <a href="https://www.oracle.com/java/technologies/javase-jdk14-downloads.html">Oracle</a>.
+			Wenn mehrere Java-Versionen installiert sind, sollte die <a href="https://java.com/de/download/help/path.xml">PATH-Systemvariable</a> auf Java 11 zeigen.</p>
 			<h2>Infos zu personenbezogenen Daten</h2>
 			<p>Diese Programm arbeitet mit <strong>personenbezogenen Daten</strong>:<br>
 			Für das Verwalten der Messdiener-Dateien v.a. im Sinne der Datenschutz-Grundverordnung ist die jeweilige Messdienergemeinschaft zuständig, die mit diesem Programm Messdienerpläne erstellt,
