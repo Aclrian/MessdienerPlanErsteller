@@ -17,11 +17,8 @@ import net.aclrian.mpe.utils.VersionIDHandler;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.DateienVerwalter.NoSuchPfarrei;
 import net.aclrian.mpe.utils.Dialogs;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-
 public class Main extends Application {
-	public static String VersionID;
+	public static String VersionID = "1.0.0";
 
 	public static void main(String[] args) {
 		Application.launch(Main.class, args);
@@ -43,9 +40,6 @@ public class Main extends Application {
 
 	public void main(Stage stage) {
 		try {
-			MavenXpp3Reader reader = new MavenXpp3Reader();
-			Model model = reader.read(new FileReader("pom.xml"));
-			VersionID = model.getVersion();
 			getLogger().info("MpE: Version: " + VersionID);
 			getLogger().info("MpE-fx is starting");
 			stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));

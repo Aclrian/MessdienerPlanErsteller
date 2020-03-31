@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.aclrian.messdiener</groupId>
-	<artifactId>messdienerplan-ersteller</artifactId>
-	<version>b699</version>
+	<artifactId>MessdienerplanErsteller</artifactId>
+	<version>1.0.0</version>
 <!-- Remember the fat jar comment-->
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -121,12 +121,6 @@
 			<artifactId>jaxb-runtime</artifactId>
 			<version>2.3.0-b170127.1453</version>
 		</dependency>
-		<!--Get version from pom-->
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-model</artifactId>
-			<version>3.3.9</version>
-		</dependency>
 		<!-- URI encode -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -158,7 +152,7 @@
 					<option>--add-opens</option>
 					<option>javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED</option>
                </options>
-		            <mainClass>net.aclrian.mpe.Main</mainClass>
+		           <mainClass>net.aclrian.mpe.ApplikationStarter</mainClass>
 					<commandlineArgs>-exe</commandlineArgs>
 					<includePathExceptionsInClasspath>true</includePathExceptionsInClasspath>
 		        </configuration>
@@ -194,7 +188,7 @@
 				</execution>
 			</executions>
 			</plugin>
-			        <plugin>
+	<!--		        <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
 						<version>3.2.0</version>
@@ -202,26 +196,59 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>net.aclrian.mpe.Main</mainClass>
+              <mainClass>net.aclrian.mpe.ApplikationStarter</mainClass>
             </manifest>
               <manifestEntries>
                     <Class-Path>.</Class-Path>
                 </manifestEntries>
           </archive>
         </configuration>
-      </plugin>
+      </plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
+				<version>3.8.1</version>
 				<configuration>
 					<source>11</source>
 					<target>11</target>
-					<testSource>1.8</testSource>
-					<testTarget>1.8</testTarget>
+					<release>11</release>
 					<compilerArgument>-Xlint:unchecked</compilerArgument>
 					<compilerArgument>-Xlint:deprecation</compilerArgument>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedClassifierName>project-classifier</shadedClassifierName>
+							<outputFile>shade\${project.artifactId}-${project.version}.jar</outputFile>
+							<transformers>
+								<transformer implementation=
+													 "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>net.aclrian.mpe.ApplikationStarter</mainClass>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
             </plugins>
 		<resources>
