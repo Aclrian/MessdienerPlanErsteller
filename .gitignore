@@ -24,6 +24,8 @@ hs_err_pid*
 ~$ml_output.docx
 html_output.docx
 html_output.docx
+/exe2/32bit/jdk*
+/exe2/64bit/jdk*
 /target/
 /.idea/
 *.exe

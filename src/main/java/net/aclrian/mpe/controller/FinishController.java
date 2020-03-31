@@ -171,7 +171,7 @@ public class FinishController implements Controller {
 	@FXML
 	public void toWORD(ActionEvent actionEvent) {
 		try{
-			String input = editor.getHtmlText();
+			String input = editor.getHtmlText().replaceAll("<p></p>","");
 			input = input.replaceAll("</br>","");
 			input = input.replaceAll("<br>","<br></br>");
 			Log.getLogger().debug(input);
