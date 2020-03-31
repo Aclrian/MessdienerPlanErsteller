@@ -60,7 +60,7 @@ public class VersionIDHandler {
 				return EnumHandling.isTheLatest;
 			}
 		} catch(Exception e){
-			Log.getLogger().info("Running with: " + Main.VersionID);
+			Log.getLogger().error(e);
 			return EnumHandling.error;
 		}
 	}
