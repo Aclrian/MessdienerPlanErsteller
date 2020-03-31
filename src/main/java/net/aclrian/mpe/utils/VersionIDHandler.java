@@ -1,6 +1,5 @@
 package net.aclrian.mpe.utils;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,8 +9,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -37,16 +34,8 @@ public class VersionIDHandler {
 	private static EnumHandling rankingVersionID() {
 		try {
 			internettid = searchVersionID();
-			Log.getLogger().info("Running with: " + Main.VersionID + " found: " + internettid);
-			if (Main.VersionID.equals(internettid)) {
-				return EnumHandling.isTheLatest;
-			}
 			String programmsvid = Main.VersionID;
-			if (programmsvid.equals("")) {
-				MavenXpp3Reader reader = new MavenXpp3Reader();
-				Model model = reader.read(new FileReader("pom.xml"));
-				programmsvid = model.getVersion();
-			}
+			Log.getLogger().info("Running with: " + Main.VersionID + " found: " + internettid);
 			if (!internettid.contains(".")) return EnumHandling.isTooNew;
 			if (internettid.equals(programmsvid)) return EnumHandling.isTheLatest;
 			else{
