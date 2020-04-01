@@ -8,16 +8,13 @@
   <meta name="language" content="German, de, deutsch" />
   <meta http-equiv="language" content="DE">
   <meta name="robots" content="index, follow"/>
-  <meta name="google-site-verification" content="ajA5dTIJMEqNQGwLDOUqQJEjzoa4aRFmlpO0vD-rhOo" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/java/net/aclrian/mpe/resources/title_32.png"/>
+  <link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/resources/images/title_32.png"/>
   <link rel="stylesheet" href="./css/styles.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="./js/main.js"></script>
-	<!-- JSON-LD-Markup generiert von Google Strukturierte Daten: Markup-Hilfe --> <script type="application/ld+json"> { "@context" : "http://schema.org", "@type" : "SoftwareApplication", "name" : "MessdienerplanErsteller", "url" : "https://github.com/Aclrian/MessdienerPlanErsteller/", "downloadUrl" : "https://aclrian.github.io/MessdienerPlanErsteller/download.html", "screenshot" : "https://aclrian.github.io/MessdienerPlanErsteller/data/programmbild.jpg" } </script>
 	<title>Messdienerplan kostenlos erstellen | MpE</title>
 </head>
-<body>
+<body onLoad="append()">
 	<div id="main">
 		<div id="head">
 			<h1>MessdienerplanErsteller</h1>
@@ -34,12 +31,12 @@
 			die lokal in einem beliebigem Ordner gespeichert werden. Es gibt es die Möglichkeit,
 			den generierten Messdienerplan in Pdf- und Word-Dokument zu speichern und als E-Mail zu versenden.
 			Auch können Messdiener manuell im Programm in Messen eingetragen werden, um sie für bestimmte Tage (Ferien) abzumelden.</p>
-			<center><a href="./galerie.html"><img class="" id="vorschau" src="./data/programmbild.jpg" alt="Vorschaubild" /></a></center>
+			<center><a href="./galerie.html"><img id="vorschau" src="./data/programmbild.jpg" alt="ein fertig generierter Plan" /></a></center>
 			<h3>Über das Projekt</h3>
 			<p>Das Projekt ist 2017 durch die Idee entstanden, einen Messdienerplan einfach und effizient zu erstellen.
 			Über dreijährige Entwicklung eines einzelnen Programmierer wurde es im Laufe der Zeit zu einem umfangreichen Programm. Währenddessen kam die Idee auf,
 			dass alle Pfarreien dieses Programm nutzen können, um einen Plan zu generieren. Dies war nämlich damals noch nicht im Programm vorgesehen und kostete viel Zeit.
-			Doch nun besteht die Möglichkeit, eigene Messen (sog. <a href="./wiki.html#standartmesse">Standartmessen</a>) zu erstellen. Deshalb gibt es diese Website und den Quellcode auf <a href="https://github.com/Aclrian/MessdienerPlanErsteller/">Github</a>.</p>
+			Doch nun besteht die Möglichkeit, eigene Messen (sog. <a href="./wiki.html#standartmesse">Standartmessen</a>) zu erstellen. Deshalb gibt es diese Website und den Programmcode auf <a href="https://github.com/Aclrian/MessdienerPlanErsteller/">Github</a>.</p>
 			
 			<h3>Wie funktioniert das Einteilen?</h3>
 			<p>Für jede Messe wird nach Messdienern gesucht, die zu der Messe dienen können
@@ -49,10 +46,18 @@
 			Wenn zwischen der ersten und der letzten Messe mehr als 30 Tage liegen,
 			wird die <a href="./wiki.html#anzahl">Anzahl</a> wieder auf 0 gesetzt.</p>
 			
+			<h3>Wo werden die Dateien gespeichert?</h3>
+			<p>Die Dateien werden <b>lokal</b> an einen auswählbaren Ort gespeichert. Sie werden vom Programm nirgendswo hochgeladen und erst recht nicht gespeichert. Das Prgramm verbindet sich nur dann mit dem Internet, wenn es auf eine neue Version überprüft, und sonst nicht.</p>
 		</div>
 		<div id="footer">
 			<a href="./galerie.html">Galerie</a>
 			<a href="./wiki.html">Begriffserklärung</a>
+			<div><p style="font-size: 2vw">Diese Website und das gesamte Projekt steht unter der <a href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/LICENSE">MIT-Lizenz:</a><br>
+			Daher gilt u.a. für die Benutzung: "THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND" (dt. "Die Software wird "so wie sie ist" bereitgestellt, ohne jeglicher Art der Garantie / ohne Gewähr" [gültig ist nur die englische Version]).</p>
+			<style type="text/css"></style>
+			<p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p></div>
+			<p class="email">info@MessdienerplanErsteller.com</p>
+		</div>
 		</div>
 	</div>
 </body>

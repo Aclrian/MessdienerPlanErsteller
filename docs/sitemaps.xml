@@ -6,32 +6,26 @@
                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 	<url>
 		<loc>https://aclrian.github.io/MessdienerPlanErsteller/</loc>
-		<lastmod>2019-03-09T11:40:05+00:00</lastmod>
+		<lastmod>2020-04-01T11:40:05+00:00</lastmod>
 		<changefreq>daily</changefreq>
 		<priority>1.00</priority>
 	</url>
 	<url>
 		<loc>https://aclrian.github.io/MessdienerPlanErsteller/wiki.html</loc>
-		<lastmod>2019-03-09T11:40:05+00:00</lastmod>
+		<lastmod>2019-04-01T11:40:05+00:00</lastmod>
 		<changefreq>daily</changefreq>
 		<priority>0.83</priority>
 	</url>
 	<url>
 		<loc>https://aclrian.github.io/MessdienerPlanErsteller/download.html</loc>
-		<lastmod>2019-03-09T11:40:05+00:00</lastmod>
+		<lastmod>2019-04-01T11:40:05+00:00</lastmod>
 		<changefreq>daily</changefreq>
 		<priority>0.66</priority>
 	</url>
 	<url>
 		<loc>https://aclrian.github.io/MessdienerPlanErsteller/galerie.html</loc>
-		<lastmod>2019-03-09T11:40:05+00:00</lastmod>
+		<lastmod>2019-04-01T11:40:05+00:00</lastmod>
 		<changefreq>daily</changefreq>
 		<priority>0.65</priority>
-	</url>
-	<url>
-		<loc>https://aclrian.github.io/MessdienerPlanErsteller/index.html</loc>
-		<lastmod>2019-03-09T11:40:05+00:00</lastmod>
-		<changefreq>weekly</changefreq>
-		<priority>0.43</priority>
 	</url>
 </urlset>
