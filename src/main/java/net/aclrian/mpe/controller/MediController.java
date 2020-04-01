@@ -178,6 +178,9 @@ public class MediController implements Controller {
 		freund = freunde2;
 		freunde.getItems().removeIf(p -> true);
 		for (Messdiener messdiener : freund) {
+			if(moben!=null && messdiener.makeId().equals(moben.makeId())){
+				continue;
+			}
 			freunde.getItems().add(new Label(messdiener.toString()));
 		}
 		freunde.getItems().add(lf);
@@ -187,6 +190,9 @@ public class MediController implements Controller {
 		geschwi = geschwi2;
 		geschwie.getItems().removeIf(p -> true);
 		for (Messdiener messdiener : geschwi) {
+			if(moben!=null && messdiener.makeId().equals(moben.makeId())){
+				continue;
+			}
 			geschwie.getItems().add(new Label(messdiener.toString()));
 		}
 		geschwie.getItems().add(lg);
