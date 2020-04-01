@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.Main;
+import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.pfarrei.Pfarrei;
@@ -81,11 +82,6 @@ public class PfarreiController {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.show();
 			cont.afterstartup();
-			Dialogs.info("Willkommen beim MessdienerplanErsteller!", "Als Erstes werden eine Daten benötigt:"
-					+ System.lineSeparator()
-					+ "Zunächst werden Standardmessen erstellt. Das sind die Messen, die sich wöchentlich wiederholen."
-					+ System.lineSeparator()
-					+ "Danach folgen Einstellungen, wie oft Messdiener eingeteilt werden sollen.");
 			getLogger().info("neue Pfarrei erstellen...");
 		} catch (IOException e) {
 			Dialogs.error(e, "Auf " + loader.getLocation() + " konnte nicht zugegriffen werden!");
@@ -127,6 +123,7 @@ public class PfarreiController {
 		Pfarrei pf = DateienVerwalter.dv.getPfarrei();
 		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
 		ol = FXCollections.observableArrayList(pf.getStandardMessen());
+		ol.removeIf(sm->sm instanceof Sonstiges);
 		ol.sort(StandartMesse.comfuerSMs);
 		settings = FXCollections.observableArrayList(pf.getSettings().getSettings());
 		nameS = pf.getName();
