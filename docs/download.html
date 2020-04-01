@@ -8,15 +8,13 @@
 	<meta name="language" content="German, de, deutsch" />
 	<meta http-equiv="language" content="DE">
 	<meta name="robots" content="index, follow"/>
-	<meta name="google-site-verification" content="ajA5dTIJMEqNQGwLDOUqQJEjzoa4aRFmlpO0vD-rhOo" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/java/net/aclrian/mpe/resources/title_32.png"/>
+	<link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/resources/images/title_32.png"/>
 	<link rel="stylesheet" href="./css/styles.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="./js/main.js"></script>
 	<title>Download | Messdienerplan erstellen</title>
 </head>
-<body>
+<body onLoad="append()">
 	<div id="main">
 		<div id="head3">
 			<a href="./"><h1>MessdienerplanErsteller</h1></a>
@@ -37,27 +35,29 @@
 			</tr>
 			<tr>
 				<td>Windows/Linux/Mac</td>
-				<td>Java Anwendung*</td>
+				<td>Java Anwendung¹</td>
 				<td><a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/download/1.0.0/MessdienerplanErsteller-1.0.0.jar"><div></div>MessdienerplanErsteller-1.0.0.jar</a></td>
 			</tr>
 			<tr>
 				<td>Windows</td>
-				<td>portable Version*</td>
+				<td>portable Version¹²</td>
 				<td><a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/download/1.0.0/mpe_portable.exe">mpe_portable.exe</a></td>
 			</tr>
 			<tr>
 				<td>Windows</td>
-				<td>32bit Version</td>
+				<td>32bit Version²</td>
 				<td><a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/download/1.0.0/MpE_Setup_32.exe">MpE_Setup_32.exe</a></td>
 			</tr>
 			<tr>
 				<td>Windows</td>
-				<td>64bit Version</td>
+				<td>64bit Version²</td>
 				<td><a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/download/1.0.0/MpE_Setup_64.exe">MpE_Setup_64.exe</a></td>
 			</tr>
 			</table>
-			<p>* Sowohl die Java Anwendung, als auch die portable Anwendung benötigen Java 11. Diese bekommen man von <a href="https://adoptopenjdk.net/index.html?variant=openjdk11&jvmVariant=hotspot">AdoptOpenJDK</a> oder von <a href="https://www.oracle.com/java/technologies/javase-jdk14-downloads.html">Oracle</a>.
+			<p>¹ Sowohl die Java Anwendung, als auch die portable Anwendung benötigen Java 11. Diese bekommen man von <a href="https://adoptopenjdk.net/index.html?variant=openjdk11&jvmVariant=hotspot">AdoptOpenJDK</a> oder von <a href="https://www.oracle.com/java/technologies/javase-jdk11-downloads.html">Oracle</a>.
 			Wenn mehrere Java-Versionen installiert sind, sollte die <a href="https://java.com/de/download/help/path.xml">PATH-Systemvariable</a> auf Java 11 zeigen.</p>
+			<p>² Diese Anwendungen können von Windows' SmartScreen blockiert werden, da eine Zertifikation (viel) Geld kostet. SmartScreen ist ein Reputationssystem, das das Programm nicht mehr blockiert, wenn es oft genug von unterschiedlichen Computern heruntergeladen und installiert wurde.<br/>
+			Aktuell kann man nur auf "Weitere Informationen" klicken und dann auf "Trotzdem ausführen", um die Datei zu starten.</p>
 			<h2>Infos zu personenbezogenen Daten</h2>
 			<p>Diese Programm arbeitet mit <strong>personenbezogenen Daten</strong>:<br>
 			Für das Verwalten der Messdiener-Dateien v.a. im Sinne der Datenschutz-Grundverordnung ist die jeweilige Messdienergemeinschaft zuständig, die mit diesem Programm Messdienerpläne erstellt,
@@ -74,6 +74,11 @@
 			<a href="./index.html">Startseite</a>
 			<a href="./galerie.html">Galerie</a>
 			<a href="./wiki.html">Begriffserklärung</a>
+			<div><p style="font-size: 2vw">Diese Website und das gesamte Projekt steht unter der <a href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/LICENSE">MIT-Lizenz:</a><br>
+			Daher gilt u.a. für die Benutzung: "THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND" (dt. "Die Software wird "so wie sie ist" bereitgestellt, ohne jeglicher Art der Garantie / ohne Gewähr" [gültig ist nur die englische Version]).</p>
+			<style type="text/css"></style>
+			<p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p></div>
+			<p class="email">info@MessdienerplanErsteller.com</p>
 		</div>
 	</div>
 </body>
