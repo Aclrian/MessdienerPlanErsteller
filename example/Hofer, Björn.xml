@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<XML>
+  <MpE-Creator LICENSE="MIT">Aclrian</MpE-Creator>
+  <Body>
+    <Vorname>Björn</Vorname>
+    <Nachname>Hofer</Nachname>
+    <Email>bjoern.hofer@t-online.de</Email>
+    <Messverhalten>
+      <Mi-18-00-4>true</Mi-18-00-4>
+      <Sa-15-00-2>true</Sa-15-00-2>
+      <Sa-17-30-3>true</Sa-17-30-3>
+      <So-10-00-6>true</So-10-00-6>
+    </Messverhalten>
+    <Leiter>false</Leiter>
+    <Eintritt>2019</Eintritt>
+    <Anvertraute>
+      <F1>LEER</F1>
+      <F2>LEER</F2>
+      <F3>LEER</F3>
+      <F4>LEER</F4>
+      <F5>LEER</F5>
+      <g1>LEER</g1>
+      <g2>LEER</g2>
+      <g3>LEER</g3>
+    </Anvertraute>
+  </Body>
+</XML>
