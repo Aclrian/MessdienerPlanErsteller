@@ -13,7 +13,7 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 public class ATilePane extends TilePane {
 
 	private static class ACheckBox extends CheckBox {
-		private Messdiener messdiener;
+		private final Messdiener messdiener;
 
 		public ACheckBox(Messdiener m) {
 			super(m.toString());

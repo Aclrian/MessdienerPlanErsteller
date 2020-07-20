@@ -2,8 +2,6 @@ package net.aclrian.mpe;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
 
-import java.io.FileReader;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
