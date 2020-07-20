@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class MainController {
-	private Stage stage;
+	private final Stage stage;
 	private ArrayList<Messe> messen = new ArrayList<>();
-	private Main m;
+	private final Main m;
 
 	@FXML
 	private GridPane grid;
@@ -54,7 +54,7 @@ public class MainController {
 		messdiener("/view/messdiener.fxml"), messe("/view/messe.fxml"), start("/view/mainmlg.fxml"), plan("/view/Aplan.fxml"),
 		ferien("/view/fplan.fxml"), stdmesse("/view/smesse.fxml"), selectMedi("/view/select.fxml"), selectMesse("/view/select.fxml");
 
-		private String location;
+		private final String location;
 
 		EnumPane(String location) {
 			this.location = location;
