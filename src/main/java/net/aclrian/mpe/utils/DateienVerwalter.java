@@ -233,13 +233,14 @@ public class DateienVerwalter {
 				InputStreamReader fileReader = new InputStreamReader(new FileInputStream(homedir), StandardCharsets.UTF_8);
 				BufferedReader bufferedReader = new BufferedReader(fileReader);
 				String line = bufferedReader.readLine();
+				if(line == null){
+					savepathNotFound(f, line);
+				}
 				File savepath = new File(line);
 				if (savepath.exists()) {
 						setSavepath(line);
 				} else {
-						Log.getLogger().info("Der Speicherort aus '" + f + "' ('"+line+"') existiert nicht!");
-						f.delete();
-						getSpeicherort();
+					savepathNotFound(f, line);
 				}
 				if(this.savepath==null || this.savepath.equals("")){
 					f.delete();
@@ -269,6 +270,12 @@ public class DateienVerwalter {
 			}
 		}
 		Log.getLogger().info("Der Speicherort liegt in: " + savepath);
+	}
+
+	private void savepathNotFound(File f, String line) {
+		Log.getLogger().info("Der Speicherort aus '" + f + "' ('" + line + "') existiert nicht!");
+		f.delete();//TODO
+		getSpeicherort();
 	}
 
 	public void reloadMessdiener() {
