@@ -7,10 +7,13 @@ import java.io.File;
 
 public class Log {
 	public static final Logger LOGGER = Logger.getLogger(Log.class);
+	public static final String PROGRAMM_NAME = "MessdienerplanErsteller";
 
 	public static Logger getLogger() {
 		return LOGGER;
-	};
+	}
+
+	private Log(){}
 
 	static {
 		init();
@@ -19,7 +22,7 @@ public class Log {
 	public static void init() {
 		try {
 			new File(FileSystemView.getFileSystemView().getDefaultDirectory() + File.separator
-					+ "MessdienerplanErsteller").mkdir();
+					+ PROGRAMM_NAME).mkdir();
 			Layout layout = new PatternLayout("[%d{yyyy-MM-dd HH:MM:ss}] [%-5p] [%l]: %m%n");
 			FileAppender fileAppender = new FileAppender( layout, getLogFile().getAbsolutePath(), true );
 			LOGGER.addAppender( fileAppender );
@@ -36,7 +39,7 @@ public class Log {
 
 	public static File getWorkingDir(){
 		File f = new File(FileSystemView.getFileSystemView().getDefaultDirectory() + File.separator
-				+ "MessdienerplanErsteller");
+				+ PROGRAMM_NAME);
 		if(!f.exists()) f.mkdir();
 		return f;
 	}

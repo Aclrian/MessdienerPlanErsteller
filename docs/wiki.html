@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
 	<meta name="description" content="Eine kurze Begriffserklärung zum Messdienerplan erstellen" />
 	<meta name="keywords" content="Messdienerplan, erstellen, generieren, Plan, Messdiener, Kaarst" /> 
 	<meta charset="utf-8"/>
 	<meta http-equiv="content-language" content="de-de">
 	<meta name="language" content="German, de, deutsch" />
-	<meta http-equiv="language" content="DE">
 	<meta name="robots" content="index, follow"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/resources/images/title_32.png"/>
@@ -27,20 +26,21 @@
 		<div id="inhalt">
 			<div id="anzahl">
 				<h3>Anzahl</h3>
-				<p>Dies Anzahl an gedienten Messen wird zwischen 2 Arten dieser unterschieden:
-    <ul><li><h4>maximale Anzahl:</h4>
-    Die maximale Anzahl beschreibt die Anzahl an Messen, die Messdiener nicht mehr dienen kann, weil dieser schon an genug Messen gedient hat.<br/>Sie kann zwischen Leitern und normalen Messdienern unterschieden werden, sodass bspw. Leiter nicht automatisch eingeteilt werden, wenn deren Wert auf 0 liegt. Liegt der Wert vom Eintrittsjahr höher als gespeichert werden kann (aktuell 18 Jahre) wird das älteste, mögliche Eintrittsjar genommen.
-		</li>
-    <li><h4>Anzahl nach Eintrittsjahr:</h4>
-	<p>Die Anzahl nach Eintrittsjahr gibt, an wie häufig Messdiener des jeweiligen Jahrgangs generell eingeteilt werden. Dabei ist zu beachten, dass jedes Jahr ein Messdiener in die nächst-höhere Gruppe kommt. So wird es möglich neuere Messdiener häufiger einzuteilen, um ihnen die nötige Ehrfahrung zu geben.<br/>
-	Wenn nun Messdiener in Messen eingeteilt werden, wird bei jedem Mal, wenn ein Messdiener eingeteilt wird, die Anzahl, wie oft dieser im Monat schon gedient hat, um 1 erhöht. Diese wird auf 0 gesetzt, wenn der Monat endet.</p>
-				</li></ol>
-				</p>
+				<p>Dies Anzahl an gedienten Messen wird zwischen 2 Arten dieser unterschieden:</p>
+    			<ul>
+					<li><h4>maximale Anzahl:</h4>
+					<p>Die maximale Anzahl beschreibt die Anzahl an Messen, die Messdiener nicht mehr dienen kann, weil dieser schon an genug Messen gedient hat.<br/>Sie kann zwischen Leitern und normalen Messdienern unterschieden werden, sodass bspw. Leiter nicht automatisch eingeteilt werden, wenn deren Wert auf 0 liegt. Liegt der Wert vom Eintrittsjahr höher als gespeichert werden kann (aktuell 18 Jahre) wird das älteste, mögliche Eintrittsjar genommen.</p>
+					</li>
+    				<li><h4>Anzahl nach Eintrittsjahr:</h4>
+					<p>Die Anzahl nach Eintrittsjahr gibt, an wie häufig Messdiener des jeweiligen Jahrgangs generell eingeteilt werden. Dabei ist zu beachten, dass jedes Jahr ein Messdiener in die nächst-höhere Gruppe kommt. So wird es möglich neuere Messdiener häufiger einzuteilen, um ihnen die nötige Ehrfahrung zu geben.<br/>
+					Wenn nun Messdiener in Messen eingeteilt werden, wird bei jedem Mal, wenn ein Messdiener eingeteilt wird, die Anzahl, wie oft dieser im Monat schon gedient hat, um 1 erhöht. Diese wird auf 0 gesetzt, wenn der Monat endet.</p>
+					</li>
+				</ul>
 			</div>
 			<div id="standartmesse">
 				<h3>Standartmesse</h3>
-				<p>Dies sind Messen, die sich wöchentlich in einer Pfarrei wiederholen und von denen Messdienern ihre Vorlieben angeben können. Sie können selber eingegeben werden und werden in der Datei mit der Endung <i>.xml.pfarrei</i> gespeichert. Darin steht die Uhrzeit, Wochentag, Ort, Typ und die Anzahl der Messdiener.<br/>
-				Bei Messen, die keine Standartmesse haben, steht als Platzhalter <i>Sonstiges</i>. Bei solchen Messen gibt es keine Messdiener, die wegen dieser nicht vorhandenen Standartmesse nicht dienen können. Anders formuliert: Jeder favorisiert die sonstigen Messen.</p>
+				<p>Dies sind Messen, die sich wöchentlich in einer Pfarrei wiederholen und von denen Messdienern ihre Vorlieben angeben können. Sie können selber eingegeben werden und werden in der Datei mit der Endung <em>.xml.pfarrei</em> gespeichert. Darin steht die Uhrzeit, Wochentag, Ort, Typ und die Anzahl der Messdiener.<br/>
+				Bei Messen, die keine Standartmesse haben, steht als Platzhalter <em>Sonstiges</em>. Bei solchen Messen gibt es keine Messdiener, die wegen dieser nicht vorhandenen Standartmesse nicht dienen können. Anders formuliert: Jeder favorisiert die sonstigen Messen.</p>
 			</div>
 		</div>
 		<div id="footer">
@@ -52,7 +52,6 @@
 			<p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p></div>
 			<p class="email">info@MessdienerplanErsteller.com</p>
 		</div>
-			</div>
 	</div>
 </body>
 </html>
