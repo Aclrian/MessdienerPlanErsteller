@@ -5,20 +5,20 @@ import net.aclrian.mpe.messdiener.Messdaten;
 public class Setting {
 
 	public enum Attribut{
-		year,
-		max
+		YEAR,
+		MAX
 	}
-	private Attribut a;
-	private int id;
-	private int anz_dienen;
-	public Setting(Attribut a, int id, int anz) {
-		this.a = a;
+	private final Attribut attribut;
+	private final int id;
+	private final int anzDienen;
+	public Setting(Attribut attribut, int id, int anz) {
+		this.attribut = attribut;
 		this.id = id;
-		this.anz_dienen = anz;
+		this.anzDienen = anz;
 	}
 	
-	public Attribut getA() {
-		return a;
+	public Attribut getAttribut() {
+		return attribut;
 	}
 	
 	public int getId() {
@@ -29,13 +29,13 @@ public class Setting {
 		return Messdaten.getMaxYear()-id;
 	}
 	
-	public int getAnz_dienen() {
-		return anz_dienen;
+	public int getAnzDienen() {
+		return anzDienen;
 	}
 
 	@Override
 	public String toString() {
-		return a.name() + " " + id + " " + anz_dienen;
+		return attribut.name() + " " + id + " " + anzDienen;
 	}
 
 }
