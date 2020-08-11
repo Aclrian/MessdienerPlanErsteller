@@ -2,9 +2,9 @@ package net.aclrian.mpe.pfarrei;
 
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
-import net.aclrian.mpe.utils.DateienVerwalter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -67,7 +67,7 @@ public class ReadFilePfarrei {
                 }
             }
         } catch (Exception e) {
-            Dialogs.getDialogs().error(e, "Fehler beim Lesen der Pfarrei.");
+            Dialogs.error(e, "Fehler beim Lesen der Pfarrei.");
         }
         return pf;
     }

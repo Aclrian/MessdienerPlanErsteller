@@ -55,7 +55,7 @@ public class Select implements Controller {
     public static List<Messe> generireDefaultMessen(Date anfang, Date ende) {
         ArrayList<Messe> rtn = new ArrayList<>();
         Calendar start = Calendar.getInstance();
-        for (StandartMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
+        for (StandartMesse sm : DateienVerwalter.getDateienVerwalter().getPfarrei().getStandardMessen()) {
             if (!(sm instanceof Sonstiges)) {
                 start.setTime(anfang);
                 List<Messe> m = optimieren(start, sm, ende, new ArrayList<>());
@@ -139,7 +139,7 @@ public class Select implements Controller {
 
     private EventHandler<ActionEvent> getEventHandlerGenerateForMesse(List<Messe> datam) {
         return arg0 -> {
-            List<Date> daten = Dialogs.getDialogs().getDates("Für welchen Zeitraum sollen Messen generiert werden?",
+            List<Date> daten = Dialogs.getDates("Für welchen Zeitraum sollen Messen generiert werden?",
                     "Von:", "Bis:");
             if (!daten.isEmpty()) {
                 try {
@@ -152,14 +152,14 @@ public class Select implements Controller {
                     list.getItems().removeIf(p -> true);
                     list.setItems(FXCollections.observableArrayList(l));
                 } catch (Exception e) {
-                    Dialogs.getDialogs().error(e, "Konnte die Messen nicht generieren.");
+                    Dialogs.error(e, "Konnte die Messen nicht generieren.");
                 }
             }
         };
     }
 
     private void messdiener(Window window, MainController mc) {
-        List<Messdiener> data = DateienVerwalter.getInstance().getMessdiener();
+        List<Messdiener> data = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
         data.sort(Messdiener.compForMedis);
         for (Messdiener datum : data) {
             list.getItems().add(new Label(datum.toString()));
@@ -179,7 +179,7 @@ public class Select implements Controller {
             int i = list.getSelectionModel().getSelectedIndex();
             if (i >= 0 && (list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString()))
                     && MediController.remove(data.get(i))) {
-                DateienVerwalter.getInstance().reloadMessdiener();
+                DateienVerwalter.getDateienVerwalter().reloadMessdiener();
                 afterstartup(window, mc);
             }
         });

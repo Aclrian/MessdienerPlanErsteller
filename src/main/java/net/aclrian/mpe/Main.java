@@ -10,8 +10,8 @@ import net.aclrian.mpe.controller.MainController;
 import net.aclrian.mpe.controller.MainController.EnumPane;
 import net.aclrian.mpe.controller.PfarreiController;
 import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.DateienVerwalter.NoSuchPfarrei;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.IDateienVerwalter;
 import net.aclrian.mpe.utils.VersionIDHandler;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
@@ -38,19 +38,20 @@ public class Main extends Application {
             stage.setScene(scene);
 
             stage.setTitle("MessdienerplanErsteller");
+            stage.setResizable(false);
             stage.show();
             ((MainController) loader.getController()).changePane(EnumPane.START);
             getLogger().info("Startbildschirm geladen");
         } catch (Exception e) {
-            Dialogs.getDialogs().error(e, "Es ist ein unerwarteter Fehler aufgetreten:");
+            Dialogs.error(e, "Es ist ein unerwarteter Fehler aufgetreten:");
         }
     }
 
     private boolean startPfarrei(Stage stage) {
         try {
             DateienVerwalter.reStart(stage);
-        } catch (IDateienVerwalter.NoSuchPfarrei e) {
-            PfarreiController.start(stage, e.getSavepath().getAbsolutePath(), this);
+        } catch (NoSuchPfarrei e) {
+            PfarreiController.start(stage, e.getSavepath(), this);
             return true;
         }
         return false;

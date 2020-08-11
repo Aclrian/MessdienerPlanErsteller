@@ -99,15 +99,15 @@ public class InfoController {
             e.printStackTrace();
         }
         pane.setExpanded(true);
-        quellcode.setOnAction(browse(quellcode));
-        mpeWebsite.setOnAction(browse(mpeWebsite));
+        quellcode.setOnAction(browse(quellcode.getText()));
+        mpeWebsite.setOnAction(browse(mpeWebsite.getText()));
         version.setText(Main.VERSION_ID);
         folder.setOnAction(open(Log.getWorkingDir()));
         log.setOnAction(e -> {
             try {
                 Desktop.getDesktop().open(Log.getLogFile());
             } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         });
         ArrayList<String[]> entries = new ArrayList<>();
@@ -117,7 +117,7 @@ public class InfoController {
                 entries.add(entry.split(Pattern.quote(",")));
             }
         } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Konnte Abhängigkeiten nicht lesen.");
+            Dialogs.error(e, "Konnte Abhängigkeiten nicht lesen.");
         }
         name.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[0]));
         name.setPrefWidth(table.getWidth() / 5.0);
@@ -136,23 +136,23 @@ public class InfoController {
                 ArrayList<String> sel = new ArrayList<>();
                 sel.add(table.getSelectionModel().getSelectedItem()[2]);
                 sel.add(table.getSelectionModel().getSelectedItem()[4]);
-                Object o = Dialogs.getDialogs().singleSelect(sel, "Wähle eine Website zum Öffnen:");
+                Object o = Dialogs.singleSelect(sel, "Wähle eine Website zum Öffnen:");
                 try {
                     if (o != null) Desktop.getDesktop().browse(new URI(o.toString()));
                 } catch (IOException | URISyntaxException e) {
-                    Dialogs.getDialogs().error(e, "Konnte die Website nicht öffnen.");
+                    Dialogs.error(e, "Konnte die Website nicht öffnen.");
                 }
 
             }
         });
     }
 
-    public EventHandler<ActionEvent> browse(Hyperlink link) {
+    public EventHandler<ActionEvent> browse(String url) {
         return event -> {
             try {
-                Desktop.getDesktop().browse(new URI(link.getText()));
+                Desktop.getDesktop().browse(new URI(url));
             } catch (IOException | URISyntaxException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         };
     }
@@ -162,7 +162,7 @@ public class InfoController {
             try {
                 Desktop.getDesktop().open(file);
             } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         };
     }

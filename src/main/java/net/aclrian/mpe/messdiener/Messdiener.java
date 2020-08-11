@@ -141,7 +141,7 @@ public class Messdiener {
         try {
             wf.toXML();
         } catch (Exception e) {
-            Dialogs.getDialogs().error(e, "Der Messdiener '" + makeId() + "' konnte nicht gespeichert werden.");
+            Dialogs.error(e, "Der Messdiener '" + makeId() + "' konnte nicht gespeichert werden.");
         }
     }
 
@@ -149,7 +149,7 @@ public class Messdiener {
         return nachname + ", " + vorname;
     }
 
-    public boolean istLeiter() {
+    public boolean isIstLeiter() {
         return this.istLeiter;
     }
 

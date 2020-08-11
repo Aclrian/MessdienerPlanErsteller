@@ -92,8 +92,11 @@ div, span, a {
 .btn {
     border: 1px solid white;
     padding: 5px;
+
     vertical-align: middle;
 }
+
+
 
 .ni {
     margin: 1vw 2vw;
@@ -157,6 +160,10 @@ li {
 table{
 	margin-left: auto;
 	margin-right: auto;
+}
+
+caption{
+    margin-bottom: 2vh;
 }
 
 caption{
