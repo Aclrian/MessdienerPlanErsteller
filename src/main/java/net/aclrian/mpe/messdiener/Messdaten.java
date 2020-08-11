@@ -26,8 +26,8 @@ public class Messdaten {
         geschwister = new ArrayList<>();
         freunde = new ArrayList<>();
         update(m);
-        maxMessen = berecheMax(m.getEintritt(), getMaxYear(), m.istLeiter(),
-                DateienVerwalter.getInstance().getPfarrei().getSettings());
+        maxMessen = berecheMax(m.getEintritt(), getMaxYear(), m.isIstLeiter(),
+                DateienVerwalter.getDateienVerwalter().getPfarrei().getSettings());
         anzMessen = 0;
         insgesamtEingeteilt = 0;
     }
@@ -48,13 +48,13 @@ public class Messdaten {
         ausgeteilt.remove(d);
     }
 
-    public int berecheMax(int eintritt, int aktdatum, boolean leiter, Einstellungen einstellungen) {
+    public int berecheMax(int eintritt, int aktdatum, boolean leiter, Einstellungen einst) {
         int id = 0;
         if (leiter) {
             id++;
         }
         int eins;
-        int zwei = einstellungen.getDaten(id).getAnzDienen();
+        int zwei = einst.getDaten(id).getAnzDienen();
 
         int abstand = aktdatum - eintritt;
         if (abstand < 0) {
@@ -63,7 +63,7 @@ public class Messdaten {
         if (abstand >= Einstellungen.LENGHT) {
             abstand = Einstellungen.LENGHT - 3;
         }
-        eins = einstellungen.getDaten(abstand + 2).getAnzDienen();
+        eins = einst.getDaten(abstand + 2).getAnzDienen();
         if (zwei < eins) {
             eins = zwei;
         }
@@ -114,7 +114,8 @@ public class Messdaten {
         rtn.addAll(setTeilAnvertraute(medis, geschwister));
         rtn.addAll(setTeilAnvertraute(medis, freunde));
 
-        return rd.removeDuplicatedEntries(rtn);
+        rd.removeDuplicatedEntries(rtn);
+        return rtn;
     }
 
     private ArrayList<Messdiener> setTeilAnvertraute(List<Messdiener> medis, List<Messdiener> freunde) {
@@ -142,7 +143,7 @@ public class Messdaten {
     }
 
     public boolean kann(Date date, boolean dateZwang, boolean anzZwang) {
-        return kanndann(date, dateZwang) && ((anzZwang && (((anzMessen - maxMessen) < 2) || anzMessen<=maxMessen)) || kannnoch());
+        return kanndann(date, dateZwang) && ((anzZwang && (anzMessen - maxMessen) < 2) || kannnoch());
     }
 
     public boolean kanndann(Date date, boolean zwang) {
@@ -229,10 +230,10 @@ public class Messdaten {
             Messdiener medi;
             if (!value.equals("") && !value.equals("LEER") && !value.equals("Vorname, Nachname")) {
                 try {
-                    medi = sucheMessdiener(value, m, DateienVerwalter.getInstance().getMessdiener());
+                    medi = sucheMessdiener(value, m, DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList());
                     if (medi != null) {
                         this.geschwister.add(medi);
-                        geschwister = rd.removeDuplicatedEntries(this.geschwister);
+                        rd.removeDuplicatedEntries(this.geschwister);
                     }
                 } catch (CouldnotFindMedi e) {
                     if (messdienerrNotFound(isfreund, s, m, value, e)) return;
@@ -242,7 +243,7 @@ public class Messdaten {
     }
 
     private boolean messdienerrNotFound(boolean isfreund, String[] s, Messdiener m, String value, CouldnotFindMedi e) {
-        boolean beheben = Dialogs.getDialogs().frage(e.getMessage(),
+        boolean beheben = Dialogs.frage(e.getMessage(),
                 "ignorieren", "beheben");
         if (beheben) {
             ArrayList<String> list = new ArrayList<>(Arrays.asList(s));
@@ -254,8 +255,9 @@ public class Messdaten {
             try {
                 wf.toXML();
             } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, "Konnte es nicht beheben.");
+                Dialogs.error(ex, "Konnte es nicht beheben.");
             }
+            DateienVerwalter.getDateienVerwalter().reloadMessdiener();
             update(isfreund, gew, m);
             return true;
         }
@@ -269,10 +271,6 @@ public class Messdaten {
             }
         }
         throw new CouldnotFindMedi("Konnte für " + akt.makeId() + " : " + geschwi + " nicht finden");
-    }
-
-    public int getAnzMessen() {
-        return anzMessen;
     }
 
     public static class CouldnotFindMedi extends Exception {

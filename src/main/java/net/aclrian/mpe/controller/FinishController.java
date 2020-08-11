@@ -15,15 +15,11 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-import org.docx4j.Docx4jProperties;
+import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 import org.docx4j.jaxb.Context;
-import org.docx4j.model.structure.PageSizePaper;
-import org.docx4j.openpackaging.contenttype.ContentType;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.PartName;
-import org.docx4j.openpackaging.parts.WordprocessingML.AlternativeFormatInputPart;
-import org.docx4j.relationships.Relationship;
-import org.docx4j.wml.CTAltChunk;
+import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
+import org.docx4j.wml.RFonts;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
@@ -33,7 +29,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -41,13 +36,11 @@ import java.util.*;
 
 public class FinishController implements Controller {
 
-    public static final String NICHT_EINGETEILTE_MESSDIENER = "Nicht eingeteilte Messdiener";
-
     private final String fertig;
     private final MainController.EnumPane pane;
     private final List<Messe> messen;
     private final List<Messdiener> hauptarray;
-    private final ArrayList<Messdiener> nichtEingeteile;
+    private final ArrayList<Messdiener> nichteingeteileList;
     private boolean locked = true;
     private String titel;
     private File pdfgen;
@@ -60,10 +53,9 @@ public class FinishController implements Controller {
     private Button nichteingeteilte;
     @FXML
     private Button zurueck;
-
     public FinishController(MainController.EnumPane old, List<Messe> messen) {
         this.pane = old;
-        this.hauptarray = DateienVerwalter.getInstance().getMessdiener();
+        this.hauptarray = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
         this.messen = messen;
         neuerAlgorythmus();
         StringBuilder s = new StringBuilder("<html>");
@@ -82,13 +74,13 @@ public class FinishController implements Controller {
         }
         s.append("</html>");
         fertig = s.toString();
-        nichtEingeteile = new ArrayList<>();
+        nichteingeteileList = new ArrayList<>();
         for (Messdiener medi : hauptarray) {
             if (medi.getMessdatenDaten().getInsgesamtEingeteilt() == 0) {
-                nichtEingeteile.add(medi);
+                nichteingeteileList.add(medi);
             }
         }
-        nichtEingeteile.sort(Messdiener.compForMedis);
+        nichteingeteileList.sort(Messdiener.compForMedis);
     }
 
     @Override
@@ -100,7 +92,7 @@ public class FinishController implements Controller {
     public void afterstartup(Window window, MainController mc) {
         nichteingeteilte.setOnAction(event -> nichteingeteilte());
         editor.setHtmlText(fertig);
-        zurueck.setOnAction(p -> zurueck(mc));
+        zurueck.setOnAction(p -> this.zurueck(mc));
     }
 
     @Override
@@ -109,34 +101,33 @@ public class FinishController implements Controller {
     }
 
     private void zurueck(MainController mc) {
-        Dialogs.YesNoCancelEnum delete = Dialogs.getDialogs().yesNoCancel("Ja", "Nein", "Hier bleiben",
-                "Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?");
-        if (delete.equals(Dialogs.YesNoCancelEnum.CANCEL)) {
-            return;
-        }
-        if (delete.equals(Dialogs.YesNoCancelEnum.YES)) {
-            DateienVerwalter.getInstance().getMessdiener()
-                    .forEach(m -> m.getMessdatenDaten().nullen());
-            for (Messe m : messen) {
-                m.nullen();
+        try {
+            boolean delete = Dialogs.yesNoCancel("Ja", "Nein", "Hier bleiben", "Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?");
+            if (delete) {
+                DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList().forEach(m -> m.getMessdatenDaten().nullen());
+                for (Messe m : messen) {
+                    m.nullen();
+                }
             }
+        } catch (NullPointerException e) {
+            //do nothing
         }
 
         locked = false;
-        mc.setMesse(messen, pane);
+        mc.setMesse(this, pane);
+    }
+
+    public List<Messe> getMessen() {
+        return messen;
     }
 
     private void nichteingeteilte() {
-        Dialogs.getDialogs().show(nichtEingeteile, NICHT_EINGETEILTE_MESSDIENER);
-    }
-
-    public List<Messdiener> getNichtEingeteile() {
-        return nichtEingeteile;
+        Dialogs.show(nichteingeteileList, "Nicht eingeteilte Messdiener");
     }
 
     @FXML
     public void toEMAIL() {
-        List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
+        List<Messdiener> medis = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
         StringBuilder sb = new StringBuilder("mailto:?");
         ArrayList<Messdiener> noemail = new ArrayList<>();
         for (Messdiener medi : medis) {
@@ -155,19 +146,16 @@ public class FinishController implements Controller {
         if (wordgen != null && wordgen.exists()) {
             ssb.append("Als Anhang hinzufügen: ").append(wordgen.getAbsolutePath()).append(" ?");
         }
-        sb.append("&body=").append(org.springframework.web.util.UriUtils.encode(sbb.toString(), StandardCharsets.UTF_8))
-                .append("%0D%0A")
-                .append(org.springframework.web.util.UriUtils.encode(ssb.toString(), StandardCharsets.UTF_8));
+        sb.append("&body=").append(org.springframework.web.util.UriUtils.encode(sbb.toString(), StandardCharsets.UTF_8)).append("%0D%0A").append(org.springframework.web.util.UriUtils.encode(ssb.toString(), StandardCharsets.UTF_8));
         try {
             URI uri = new URI(sb.toString());
             Desktop.getDesktop().mail(uri);
             Log.getLogger().info(sb.toString());
-            if (!noemail.isEmpty()) {
-                Dialogs.getDialogs().show(noemail, "Messdiener ohne E-Mail-Addresse:");
+            if (noemail.isEmpty()) {
+                Dialogs.show(noemail, "Messdiener ohne E-Mail-Addresse:");
             }
         } catch (IOException | URISyntaxException | IllegalArgumentException e) {
-            Dialogs.getDialogs().error(e, "Konnte den mailto-Link (" + URLEncoder.encode(sb.toString(), StandardCharsets.UTF_8)
-                    + ") nicht öffnen");
+            Dialogs.error(e, "Konnte den mailto-Link (" + URLEncoder.encode(sb.toString(), StandardCharsets.UTF_8) + ") nicht öffnen");
         }
     }
 
@@ -177,58 +165,46 @@ public class FinishController implements Controller {
         converterProperties.setCharset("UTF-8");
         try {
             File out = new File(Log.getWorkingDir().getAbsolutePath() + File.separator + titel + ".pdf");
-            HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8)),
+            //TODO should out deleted first?
+            HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").getBytes(StandardCharsets.UTF_8)),
                     new FileOutputStream(out), converterProperties);
             pdfgen = out;
             Desktop.getDesktop().open(out);
         } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu PDF konvertieren.");
+            Dialogs.error(e, "Konnte den Messdienerplan nicht zu PDF konvertieren.");
         }
     }
 
     @FXML
     public void toWORD(ActionEvent actionEvent) {
         try {
-            String input = editor.getHtmlText().replace("<p></p>", "")
-                    .replace("</br>", "")
-                    .replace("<br>", "<br></br>")
-                    .replace("</p><p><font></font></p><p><font><b>", "</p><br/><p><font></font></p><p><font><b>")
-                    .replace("\u2003", "    ");
+            String input = editor.getHtmlText().replace("<p></p>", "");
+            input = input.replace("</br>", "");
+            input = input.replace("<br>", "<br></br>");
             Log.getLogger().debug(input);
-            Log.getLogger().info(Charset.defaultCharset());
-
-            //see: https://github.com/plutext/docx4j/blob/master/docx4j-samples-resources/src/main/resources/docx4j.properties
-            Docx4jProperties.getProperties().setProperty("docx4j.PageSize", "B4JIS");
-            String papersize = Docx4jProperties.getProperties().getProperty("docx4j.PageSize", "B4JIS");
-
-            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage(PageSizePaper.valueOf(papersize), false);
-
-            AlternativeFormatInputPart afiPart = new AlternativeFormatInputPart(new PartName("/hw.html"));
-            afiPart.setBinaryData(input.getBytes());
-
-            afiPart.setContentType(new ContentType("text/html"));
-            Relationship altChunkRel = wordMLPackage.getMainDocumentPart().addTargetPart(afiPart);
-
-            CTAltChunk ac = Context.getWmlObjectFactory().createCTAltChunk();
-            ac.setId(altChunkRel.getId());
-            wordMLPackage.getMainDocumentPart().addObject(ac);
+            RFonts rfonts = Context.getWmlObjectFactory().createRFonts();
+            rfonts.setAscii("Century Gothic");
+            XHTMLImporterImpl.addFontMapping("Century Gothic", rfonts);
+            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
+            NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
+            wordMLPackage.getMainDocumentPart().addTargetPart(ndp);
+            ndp.unmarshalDefaultNumbering();
+            XHTMLImporterImpl importer = new XHTMLImporterImpl(wordMLPackage);
+            importer.setHyperlinkStyle("Hyperlink");
+            wordMLPackage.getMainDocumentPart().getContent().addAll(importer.convert(input, Log.getWorkingDir().getAbsolutePath()));
 
             File out = new File(Log.getWorkingDir() + File.separator + titel + ".docx");
-
-            wordMLPackage.getContentTypeManager().addDefaultContentType("html", "text/html");
+            //TODO should old deleted?
             wordMLPackage.save(out);
             wordgen = out;
             Desktop.getDesktop().open(out);
         } catch (Exception e) {
-            Dialogs.getDialogs().error(e, "Word-Dokument konnte nicht erstellt werden.");
+            Dialogs.error(e, "Word-Dokument konnte nicht erstellt werden.");
         }
     }
 
     private void neuerAlgorythmus() {
         hauptarray.sort(Messdiener.einteilen);
-        if (messen.isEmpty()) {
-            return;
-        }
         // neuer Monat:
         Calendar start = Calendar.getInstance();
         start.setTime(messen.get(0).getDate());
@@ -261,20 +237,18 @@ public class FinishController implements Controller {
             for (Messdiener medi : medis) {
                 einteilen(m, medi, false, false);
             }
-            if (!m.istFertig())
-                zwang(m);
+            if (!m.istFertig()) zwang(m);
         } else if (act == EnumAction.TYPE_BEACHTEN) {
             List<Messdiener> medis = get(m.getStandardMesse(), m, false, false);
             Log.getLogger().info(medis.size() + " für " + m.getNochBenoetigte());
             for (Messdiener messdiener : medis) {
                 einteilen(m, messdiener, false, false);
             }
-            if (!m.istFertig())
-                zwang(m);
+            if (!m.istFertig()) zwang(m);
         }
     }
 
-    public void zwang(Messe m, boolean zangDate, boolean zwangAnz, String loggerOutput) {
+    public void zwang(Messe m, boolean zangDate, boolean zwangAnz, String loggerOutput){
         List<Messdiener> medis = get(m.getStandardMesse(), m, zangDate, zwangAnz);
         Log.getLogger().warn(m + loggerOutput);
         for (Messdiener medi : medis) {
@@ -283,38 +257,31 @@ public class FinishController implements Controller {
     }
 
     private void zwang(Messe m) {
-        if (m.istFertig())
-            return;
-        final String start = "Die Messe ";
-        String secondPart = " hat zu wenige Messdiener.\nNoch ";
+        if (m.istFertig()) return;
+		final String start = "Die Messe ";
+		String secondPart = " hat zu wenige Messdiener.\nNoch ";
 
-        if (!(m.getStandardMesse() instanceof Sonstiges)) {
-            if (Dialogs.getDialogs().frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte()
-                    + " werden benötigt.\nSollen Messdiener eingeteilt werden, die standartmäßig die Messe \n'"
-                    + m.getStandardMesse().tokurzerBenutzerfreundlichenString()
-                    + "' dienen können, aber deren Anzahl schon zu hoch ist?")) {
+		if (!(m.getStandardMesse() instanceof Sonstiges)) {
+            if (Dialogs.frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte() + " werden benötigt.\nSollen Messdiener eingeteilt werden, die standartmäßig die Messe \n'" + m.getStandardMesse().tokurzerBenutzerfreundlichenString() + "' dienen können, aber deren Anzahl schon zu hoch ist?")) {
                 zwang(m, false, true, " einteilen ohne Anzahl beachten");
             }
             SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyy");
-            if (Dialogs.getDialogs().frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte()
-                    + " werden benötigt.\nSollen Messdiener eingeteilt werden, die an dem Tag \n'"
-                    + df.format(m.getDate()) + "' dienen können?")) {
+            if (Dialogs.frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte() + " werden benötigt.\nSollen Messdiener eingeteilt werden, die an dem Tag \n'" + df.format(m.getDate()) + "' dienen können?")) {
                 zwang(m, false, false, " einteilen ohne Standardmesse beachten");
             }
         }
-        if (m.istFertig()) {
-            return;
+		if (m.istFertig()) {
+		    return;
         }
-        if (Dialogs.getDialogs().frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte()
-                + " werden benötigt.\nSollen Messdiener zwangsweise eingeteilt werden?")) {
-            zwang(m, true, true, " einteilen ohne Standardmesse beachten");
+        if (Dialogs.frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte() + " werden benötigt.\nSollen Messdiener zwangsweise eingeteilt werden?")) {
+            zwang(m, true, true , " einteilen ohne Standardmesse beachten");
         }
         zuwenige(m);
     }
 
     private void zuwenige(Messe m) {
         if (!m.istFertig())
-            Dialogs.getDialogs().error("Die Messe" + m.getID().replaceAll("\t", "   ") + " wird zu wenige Messdiener haben.");
+            Dialogs.error("Die Messe" + m.getID().replaceAll("\t", "   ") + " wird zu wenige Messdiener haben.");
     }
 
     private void einteilen(Messe m, Messdiener medi, boolean zwangdate, boolean zwanganz) {
@@ -325,10 +292,9 @@ public class FinishController implements Controller {
             d = m.einteilen(medi, zwangdate, zwanganz);
         }
         if (!m.istFertig() && d) {
-            List<Messdiener> anv = medi.getMessdatenDaten()
-                    .getAnvertraute(DateienVerwalter.getInstance().getMessdiener());
+            List<Messdiener> anv = medi.getMessdatenDaten().getAnvertraute(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList());
             RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
-            anv = rd.removeDuplicatedEntries(anv);
+            rd.removeDuplicatedEntries(anv);
             if (!anv.isEmpty()) {
                 anv.sort(Messdiener.einteilen);
                 for (Messdiener messdiener : anv) {
@@ -346,10 +312,10 @@ public class FinishController implements Controller {
         ArrayList<Messdiener> al = new ArrayList<>();
         for (Messdiener medi : hauptarray) {
             int id = 0;
-            if (medi.istLeiter()) {
+            if (medi.isIstLeiter()) {
                 id++;
             }
-            int ii = DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).getAnzDienen();
+            int ii = DateienVerwalter.getDateienVerwalter().getPfarrei().getSettings().getDaten(id).getAnzDienen();
             if (medi.getDienverhalten().getBestimmtes(sm) && ii != 0
                     && medi.getMessdatenDaten().kann(m.getDate(), zwangdate, zwanganz)) {
                 al.add(medi);

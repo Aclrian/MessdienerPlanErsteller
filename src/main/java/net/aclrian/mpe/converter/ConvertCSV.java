@@ -18,6 +18,7 @@ public class ConvertCSV {
      * (leer ist ja sonst nein)| 4: Leiter Gegenteil von 3
      * 6: Nachname, Vorname 7: E-Mail
      */
+    //TODO add Implemention
     public ConvertCSV(File f, List<Integer> sortierung) throws IOException {
         Log.getLogger().warn("Das Unter-Programm unterstützt die Vorlieben von Messdienern nicht!\n-Also wann sie dienen können");
         if (f.exists() && f.getName().endsWith(".csv")) {
@@ -74,7 +75,7 @@ public class ConvertCSV {
                     break;
             }
         }
-        Messdiener m = new Messdiener(new File(DateienVerwalter.getInstance().getSavepath() + File.separator + nachname + ", " + vorname + ".xml"));
+        Messdiener m = new Messdiener(new File(DateienVerwalter.getDateienVerwalter().getSavepath() + File.separator + nachname + ", " + vorname + ".xml"));
         m.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, new Messverhalten());
         try {
             m.setEmail(email);

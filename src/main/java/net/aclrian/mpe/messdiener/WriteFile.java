@@ -84,8 +84,8 @@ public class WriteFile {
             Element mv = doc.createElement("Messverhalten");
             Messverhalten dv = me.getDienverhalten();
 
-            for (int i = 0; i < DateienVerwalter.getInstance().getPfarrei().getStandardMessen().size(); i++) {
-                StandartMesse messe = DateienVerwalter.getInstance().getPfarrei().getStandardMessen().get(i);
+            for (int i = 0; i < DateienVerwalter.getDateienVerwalter().getPfarrei().getStandardMessen().size(); i++) {
+                StandartMesse messe = DateienVerwalter.getDateienVerwalter().getPfarrei().getStandardMessen().get(i);
                 if (messe instanceof Sonstiges) {
                     continue;
                 }
@@ -98,7 +98,7 @@ public class WriteFile {
             body.appendChild(mv);
 
             Element leiter = doc.createElement("Leiter");
-            leiter.appendChild(doc.createTextNode(String.valueOf(this.me.istLeiter())));
+            leiter.appendChild(doc.createTextNode(String.valueOf(this.me.isIstLeiter())));
             body.appendChild(leiter);
 
             Element eintritt = doc.createElement("Eintritt");
@@ -117,17 +117,17 @@ public class WriteFile {
             body.appendChild(anvertraute);
 
             DOMSource domSource = new DOMSource(doc);
-            File path = DateienVerwalter.getInstance().getSavepath();
+            String path = DateienVerwalter.getDateienVerwalter().getSavepath();
             String datei = this.me.getNachnname() + ", " + this.me.getVorname();
 
             File file = new File(path, datei + ".xml");
             OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
             StreamResult result = new StreamResult(out);
             c.transformer.transform(domSource, result);
-            Log.getLogger().info("Datei wird gespeichert in: " + path.getAbsolutePath() + "//" + datei + ".xml");
+            Log.getLogger().info("Datei wird gespeichert in: " + path + "//" + datei + ".xml");
             me.setFile(file);
         } catch (ParserConfigurationException | TransformerException e) {
-            Dialogs.getDialogs().error(e, "Konnte den Messdiener " + me.makeId() + " nicht lesen.");
+            Dialogs.error(e, "Konnte den Messdiener " + me.makeId() + " nicht lesen.");
         }
     }
 
