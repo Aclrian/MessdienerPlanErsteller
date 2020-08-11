@@ -11,15 +11,18 @@ public class StartController implements Controller{
     @FXML
     private MenuItem mi;
     @FXML
-    private Label version_label, name;
+    private Label versionLabel;
+    @FXML
+	private Label name;
 
     public void initialize(){
-    	name.setText(DateienVerwalter.dv.getPfarrei().getName());
-        version_label.setText(Main.VersionID);
+    	name.setText(DateienVerwalter.getDateienVerwalter().getPfarrei().getName());
+        versionLabel.setText(Main.VERSION_ID);
     }
 
 	@Override
 	public void afterstartup(Window window, MainController mc) {
+    	//no operation
 	}
 
 	@Override

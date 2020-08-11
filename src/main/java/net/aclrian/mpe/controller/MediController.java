@@ -7,15 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Slider;
-import javafx.scene.control.SplitMenuButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
@@ -30,412 +22,414 @@ import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-
-import static net.aclrian.mpe.utils.Log.getLogger;
+import org.apache.commons.validator.routines.EmailValidator;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.validator.routines.EmailValidator;
+import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class MediController implements Controller {
-	public static final String eintritt_str = "Eintritt: ";
 
-	private ArrayList<Messdiener> freund, geschwi;
-	private Messdiener moben;
-	private boolean locked = true;
+    private static final String KONNTE = "Konnte den Messdiener '";
+    private List<Messdiener> freund;
+    private List<Messdiener> geschwi;
+    private Messdiener moben;
+    private boolean locked = true;
 
-	private Label lf, lg;
+    private Label bearbeitenFreunde;
+    private Label bearbeitenGeschwister;
 
-	private ObservableList<KannWelcheMesse> ol;
-	@FXML
-	private TableView<KannWelcheMesse> table;
-	@FXML
-	private TableColumn<KannWelcheMesse, String> stdm;
-	@FXML
-	private TableColumn<KannWelcheMesse, Boolean> kann;
-	@FXML
-	private Slider eintritt;
-	@FXML
-	private JFXTextField name, vorname, email;
-	@FXML
-	private CheckBox leiter;
-	@FXML
-	private ListView<Label> geschwie, freunde;
-	@FXML
-	private SplitMenuButton button;
-	@FXML
-	private MenuItem cancel, save_new;
+    private ObservableList<KannWelcheMesse> ol;
+    @FXML
+    private TableView<KannWelcheMesse> table;
+    @FXML
+    private TableColumn<KannWelcheMesse, String> stdm;
+    @FXML
+    private TableColumn<KannWelcheMesse, Boolean> kann;
+    @FXML
+    private Slider eintritt;
+    @FXML
+    private JFXTextField name;
+    @FXML
+    private JFXTextField vorname;
+    @FXML
+    private JFXTextField email;
+    @FXML
+    private CheckBox leiter;
+    @FXML
+    private ListView<Label> geschwie;
+    @FXML
+    private ListView<Label> freunde;
+    @FXML
+    private SplitMenuButton button;
+    @FXML
+    private MenuItem cancel;
+    @FXML
+    private MenuItem saveNew;
 
-	public MediController() {
-	}
+    public static String[] getArrayString(List<?> freunde2, int begr) {
+        String[] s = new String[begr];
+        for (int i = 0; i < s.length; i++) {
+            try {
+                s[i] = freunde2.get(i).toString();
+            } catch (IndexOutOfBoundsException | NullPointerException e) {
+                s[i] = "";
+            }
+        }
+        return s;
+    }
 
-	public void initialize() {
-		freund = new ArrayList<>();
-		geschwi = new ArrayList<>();
-		eintritt.setMax(Messdaten.getMaxYear());
-		eintritt.setMin(Messdaten.getMinYear());
-	}
+    private static void alteloeschen(Messdiener m, String[] array, ArrayList<Messdiener> ueberarbeitete) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals(m.toString())) {
+                array[i] = "";
+                ueberarbeitete.add(m);
+            }
+        }
+    }
 
-	@Override
-	public void afterstartup(Window window, MainController mc) {
-		cancel.setOnAction(e -> {
-			locked = false;
-			mc.changePane(EnumPane.selectMedi);
-		});
-		save_new.setOnAction(e -> {
-			if (getMedi()) {
-				locked = false;
-				mc.changePaneMesse(null);
-			}
-		});
-		button.setOnAction(e -> {
-			if (getMedi()) {
-				locked = false;
-				mc.changePane(EnumPane.selectMedi);
-			}
-		});
-		// Email valid
-		email.focusedProperty().addListener((arg0, oldValue, newValue) -> {
-			if (!newValue) {
-				email.setText(EmailValidator.getInstance().isValid(email.getText()) ? email.getText() : "");
-			}
-		});
-		// Value in Silder
-		ASlider.makeASlider(eintritt_str, eintritt,null);
-		eintritt.setValue(Messdaten.getMaxYear());
-		lf = new Label("Bearbeiten");
-		lf.setStyle("-fx-font-style: italic;");
-		lf.setOnMouseClicked(new EventHandler<Event>() {
+    public static boolean remove(Messdiener m) {
+        if (Dialogs.frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
+                "Löschen")) {
+            File file = m.getFile();
+            try {
+                Files.deleteIfExists(file.toPath());
+            } catch (IOException e) {
+                return false;
+            }
+            ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
+            for (Messdiener messdiener : DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList()) {
+                alteloeschen(m, messdiener.getFreunde(), ueberarbeitete);
+                alteloeschen(m, messdiener.getGeschwister(), ueberarbeitete);
+            }
+            for (Messdiener medi : ueberarbeitete) {
+                if (medi.toString().equals(m.toString())) {
+                    continue;
+                }
+                WriteFile wf = new WriteFile(medi);
+                try {
+                    wf.toXML();
+                } catch (IOException e) {
+                    Dialogs.error(e, "Konnte bei dem Bekannten '" + medi
+                            + "' von dem zulöschenden Messdiener diesen nicht löschen.");
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
-			@Override
-			public void handle(Event arg0) {
-				ArrayList<Messdiener> freunde = Dialogs.select(DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList(),
-						freund, "Freunde auswählen:");
-				if (freunde.size() >= Messdiener.freundelenght) {
-					Dialogs.error(
-							"Zu viele Freunde: Bitte nur " + (Messdiener.freundelenght - 1) + " Messdiener angeben.");
-					handle(arg0);
-					return;
-				}
-				updateFreunde(freunde);
-			}
-		});
-		freunde.getItems().add(lf);
+    private static ArrayList<Messdiener> alteloeschen(Messdiener m, String[] array) {
+        ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals(m.toString())) {
+                array[i] = "";
+                ueberarbeitete.add(m);
+            }
+        }
+        return ueberarbeitete;
+    }
 
-		lg = new Label("Bearbeiten");
-		lg.setStyle("-fx-font-style: italic;");
-		lg.setOnMouseClicked(new EventHandler<Event>() {
+    public void initialize() {
+        freund = new ArrayList<>();
+        geschwi = new ArrayList<>();
+        eintritt.setMax(Messdaten.getMaxYear());
+        eintritt.setMin(Messdaten.getMinYear());
+    }
 
-			@Override
-			public void handle(Event arg0) {
-				ArrayList<Messdiener> g = Dialogs.select(DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList(), geschwi,
-						"Geschwister auswählen:");
-				if (g.size() >= Messdiener.geschwilenght) {
-					Dialogs.error("Zu viele Geschwister: Bitte nur " + (Messdiener.geschwilenght - 1)
-							+ " Messdiener angeben.");
-					handle(arg0);
-					return;
-				}
-				updateGeschwister(g);
-			}
-		});
-		geschwie.getItems().add(lg);
+    @Override
+    public void afterstartup(Window window, MainController mc) {
+        cancel.setOnAction(e -> {
+            locked = false;
+            mc.changePane(EnumPane.SELECT_MEDI);
+        });
+        saveNew.setOnAction(e -> {
+            if (getMedi()) {
+                locked = false;
+                mc.changePaneMesse(null);
+            }
+        });
+        button.setOnAction(e -> {
+            if (getMedi()) {
+                locked = false;
+                mc.changePane(EnumPane.SELECT_MEDI);
+            }
+        });
+        // Email valid
+        email.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            boolean neu = newValue;
+            if (neu) {
+                email.setText(EmailValidator.getInstance().isValid(email.getText()) ? email.getText() : "");
+            }
+        });
+        // Value in Silder
+        ASlider.makeASlider("Eintritt: ", eintritt, null);
+        eintritt.setValue(Messdaten.getMaxYear());
+        bearbeitenFreunde = new Label("Bearbeiten");
+        bearbeitenFreunde.setStyle("-fx-font-style: italic;");
+        bearbeitenFreunde.setOnMouseClicked(new EventHandler<Event>() {
 
-		stdm.setCellValueFactory(new PropertyValueFactory<>("String"));
-		kann.setCellFactory(CheckBoxTableCell.forTableColumn(kann));
-		kann.setCellValueFactory(new PropertyValueFactory<>("kanndann"));
-		kann.setCellValueFactory(celldata -> {
-			KannWelcheMesse cellValue = celldata.getValue();
-			SimpleBooleanProperty property = new SimpleBooleanProperty(cellValue.isKanndann());
-			// Add listener to handler change
-			property.addListener((observable, oldValue, newValue) -> cellValue.setKanndann(newValue));
-			return property;
-		});
-		kann.setCellFactory(tc -> new CheckBoxTableCell<>());
-		kann.setEditable(true);
-		Messverhalten mv = new Messverhalten();
-		ol = FXCollections.observableArrayList(mv.getKannWelcheMessen());
-		ol.sort(KannWelcheMesse.sort);
-		stdm.setReorderable(false);
-		kann.setReorderable(false);
-		stdm.setSortable(false);
-		kann.setSortable(false);
-		table.setItems(ol);
-		table.setEditable(true);
+            @Override
+            public void handle(Event arg0) {
+                List<Messdiener> selected = Dialogs.select(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList(),
+                        freund, "Freunde auswählen:");
+                if (selected.size() >= Messdiener.LENGHT_FREUNDE) {
+                    Dialogs.error(
+                            "Zu viele Freunde: Bitte nur " + (Messdiener.LENGHT_FREUNDE - 1) + " Messdiener angeben.");
+                    handle(arg0);
+                    return;
+                }
+                updateFreunde(selected);
+            }
+        });
+        freunde.getItems().add(bearbeitenFreunde);
 
-		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		stdm.setMaxWidth(1f * Integer.MAX_VALUE * 85);
-		kann.setMaxWidth(1f * Integer.MAX_VALUE * 15);
-	}
+        bearbeitenGeschwister = new Label("Bearbeiten");
+        bearbeitenGeschwister.setStyle("-fx-font-style: italic;");
+        bearbeitenGeschwister.setOnMouseClicked(new EventHandler<Event>() {
 
-	private void updateFreunde(ArrayList<Messdiener> freunde2) {
-		freund = freunde2;
-		freunde.getItems().removeIf(p -> true);
-		for (Messdiener messdiener : freund) {
-			if(moben!=null && messdiener.makeId().equals(moben.makeId())){
-				continue;
-			}
-			freunde.getItems().add(new Label(messdiener.toString()));
-		}
-		freunde.getItems().add(lf);
-	}
+            @Override
+            public void handle(Event arg0) {
+                List<Messdiener> g = Dialogs.select(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList(), geschwi,
+                        "Geschwister auswählen:");
+                if (g.size() >= Messdiener.LENGHT_GESCHWISTER) {
+                    Dialogs.error("Zu viele Geschwister: Bitte nur " + (Messdiener.LENGHT_GESCHWISTER - 1)
+                            + " Messdiener angeben.");
+                    handle(arg0);
+                    return;
+                }
+                updateGeschwister(g);
+            }
+        });
+        geschwie.getItems().add(bearbeitenGeschwister);
 
-	private void updateGeschwister(ArrayList<Messdiener> geschwi2) {
-		geschwi = geschwi2;
-		geschwie.getItems().removeIf(p -> true);
-		for (Messdiener messdiener : geschwi) {
-			if(moben!=null && messdiener.makeId().equals(moben.makeId())){
-				continue;
-			}
-			geschwie.getItems().add(new Label(messdiener.toString()));
-		}
-		geschwie.getItems().add(lg);
-	}
+        stdm.setCellValueFactory(new PropertyValueFactory<>("String"));
+        kann.setCellFactory(CheckBoxTableCell.forTableColumn(kann));
+        kann.setCellValueFactory(new PropertyValueFactory<>("kanndann"));
+        kann.setCellValueFactory(celldata -> {
+            KannWelcheMesse cellValue = celldata.getValue();
+            SimpleBooleanProperty property = new SimpleBooleanProperty(cellValue.isKanndann());
+            // Add listener to handler change
+            property.addListener((observable, oldValue, newValue) -> cellValue.setKanndann(newValue));
+            return property;
+        });
+        kann.setCellFactory(tc -> new CheckBoxTableCell<>());
+        kann.setEditable(true);
+        Messverhalten mv = new Messverhalten();
+        ol = FXCollections.observableArrayList(mv.getKannWelcheMessen());
+        ol.sort(KannWelcheMesse.sort);
+        stdm.setReorderable(false);
+        kann.setReorderable(false);
+        stdm.setSortable(false);
+        kann.setSortable(false);
+        table.setItems(ol);
+        table.setEditable(true);
 
-	@Override
-	public boolean isLocked() {
-		return locked;
-	}
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        stdm.setMaxWidth(1f * Integer.MAX_VALUE * 85);
+        kann.setMaxWidth(1f * Integer.MAX_VALUE * 15);
+    }
 
-	public void setMedi(Messdiener messdiener) {
-		if(messdiener == null)return;
-		name.setText(messdiener.getNachnname());
-		vorname.setText(messdiener.getVorname());
-		email.setText(messdiener.getEmail());
-		leiter.setSelected(messdiener.isIstLeiter());
-		eintritt.setValue(messdiener.getEintritt());
-		updateFreunde(messdiener);
-		updateGeschwister(messdiener);
-		Object o = messdiener.getDienverhalten().getKannWelcheMessen().clone();
-		if (o instanceof ArrayList<?>) {
-			for (KannWelcheMesse kwm : ol) {
-				for (Object k : ((ArrayList<?>) o)) {
-					if (k instanceof KannWelcheMesse) {
-						KannWelcheMesse kw = (KannWelcheMesse) k;
-						if (kwm.getMesse().toString().equals(kw.getMesse().toString())
-								&& (kwm.isKanndann() != kw.isKanndann())) {
-							kwm.setKanndann(!kwm.isKanndann());
-						}
-					}
-				}
-			}
-		}
-		moben = messdiener;
-		getLogger().info("Messdiener wurde geladen");
-	}
+    private void updateFreunde(List<Messdiener> freund) {
+        this.freund = freund;
+        freunde.getItems().removeIf(p -> true);
+        for (Messdiener messdiener : this.freund) {
+            if (moben != null && messdiener.makeId().equals(moben.makeId())) {
+                continue;
+            }
+            freunde.getItems().add(new Label(messdiener.toString()));
+        }
+        freunde.getItems().add(bearbeitenFreunde);
+    }
 
-	public boolean getMedi() {
-		try {
-			if (!name.getText().equals("") && !vorname.getText().equals("")) {
-				// ME
-				Messdiener m = new Messdiener(null);
-				if (moben != null) {
-					m.setFile(moben.getFile());
-				}
-				m.setzeAllesNeu(vorname.getText(), name.getText(), (int) eintritt.getValue(), leiter.isSelected(),
-						Messverhalten.convert(ol), email.getText());
-				if (moben != null) {
-					boolean b = moben.getNachnname().equals(m.getNachnname());
-					boolean bo = moben.getVorname().equals(m.getVorname());
-					if (!b || !bo) {
-						try {
-							Files.delete(moben.getFile().toPath());
-						} catch (IOException e) {
-							Dialogs.error(e, "Konnte den alten-veränderten Messdiener nicht löschen.");
-						}
-					}
-				}
-				m.setFreunde(getArrayString(freund, Messdiener.freundelenght));
-				m.setGeschwister(getArrayString(geschwi, Messdiener.geschwilenght));
-				ArrayList<Messdiener> bearbeitete = new ArrayList<>();
-				for (Messdiener messdiener : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
-					bearbeitete.addAll(alteloeschen(m, messdiener.getFreunde()));
-					bearbeitete.addAll(alteloeschen(m, messdiener.getGeschwister()));
-					if (moben != null) {
-						bearbeitete.addAll(alteloeschen(moben, messdiener.getFreunde()));
-						bearbeitete.addAll(alteloeschen(moben, messdiener.getGeschwister()));
-					}
-				}
-				for (Messdiener medi : geschwi) {
-					addBekanntschaft(medi, m, true);
-					bearbeitete.add(medi);
-				}
-				for (Messdiener medi : freund) {
-					addBekanntschaft(medi, m, false);
-				}
-				// speichern
-				RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
-				rd.removeDuplicatedEntries(bearbeitete);
-				try {
-					for (Messdiener messdiener : bearbeitete) {
-						WriteFile wf = new WriteFile(messdiener);
-						wf.toXML();
-					}
-					WriteFile wf = new WriteFile(m);
-					wf.toXML();
-					getLogger().info("Messdiener " + m.makeId() + " wurde gespeichert!");
-					DateienVerwalter.dv.reloadMessdiener();
-				} catch (IOException e) {
-					Dialogs.error(e, "Konnte den Messdiener '" + m + "' nicht speichern");
-				}
-				return true;
-			} else {
-				Dialogs.warn("Bitte einen Namen eintragen!");
-			}
-		} catch (NotValidException e) {
-			Dialogs.warn("Bitte eine richtige E-Mail oder nichts angeben!");
-		}
-		return false;
-	}
+    private void updateGeschwister(List<Messdiener> geschwi2) {
+        geschwi = geschwi2;
+        geschwie.getItems().removeIf(p -> true);
+        for (Messdiener messdiener : geschwi) {
+            if (moben != null && messdiener.makeId().equals(moben.makeId())) {
+                continue;
+            }
+            geschwie.getItems().add(new Label(messdiener.toString()));
+        }
+        geschwie.getItems().add(bearbeitenGeschwister);
+    }
 
-	private void addBekanntschaft(Messdiener medi, Messdiener woben, boolean isGeschwister) {
-		if (!isGeschwister) {
-			ArrayList<String> leins = new ArrayList<>(Arrays.asList(medi.getFreunde()));
-			leins.add(woben.toString());
-			leins.removeIf(t -> t.equals(""));
-			String[] s = new String[5];
-			leins.toArray(s);
-			for (int i = 0; i < s.length; i++) {
-				if (s[i] == null) {
-					s[i] = "";
-				}
+    @Override
+    public boolean isLocked() {
+        return locked;
+    }
 
-			}
-			medi.setFreunde(s);
-		} else {
-			ArrayList<String> leins = new ArrayList<>(Arrays.asList(medi.getGeschwister()));
-			leins.add(woben.toString());
-			leins.removeIf(t -> t.equals(""));
-			String[] s = new String[5];
-			leins.toArray(s);
-			for (int i = 0; i < s.length; i++) {
-				if (s[i] == null) {
-					s[i] = "";
-				}
-			}
-			medi.setGeschwister(s);
-		}
-	}
+    private void setDienverhalten(List<KannWelcheMesse> o) {
+        for (KannWelcheMesse kwm : ol) {
+            for (KannWelcheMesse kwm2 : o) {
+                if (kwm.getMesse().toString().equals(kwm2.getMesse().toString())
+                        && (kwm.isKanndann() != kwm2.isKanndann())) {
+                    kwm.setKanndann(!kwm.isKanndann());
+                }
+            }
+        }
+    }
 
-	public static String[] getArrayString(ArrayList<?> freunde2, int begr) {
-		String[] s = new String[begr];
-		for (int i = 0; i < s.length; i++) {
-			try {
-				s[i] = freunde2.get(i).toString();
-			} catch (IndexOutOfBoundsException | NullPointerException e) {
-				s[i] = "";
-			}
-		}
-		return s;
-	}
+    public boolean getMedi() {
+        if (!name.getText().equals("") && !vorname.getText().equals("")) {
+            try {
+                // ME
+                Messdiener m = new Messdiener(null);
+                if (moben != null) {
+                    m.setFile(moben.getFile());
+                }
+                m.setzeAllesNeu(vorname.getText(), name.getText(), (int) eintritt.getValue(), leiter.isSelected(),
+                        Messverhalten.convert(ol), email.getText());
+                if (moben != null) {
+                    checkForChangedName(m);
+                }
+                setAndUpdateAnvertraute(m);
+                return true;
+            } catch (NotValidException e) {
+                Dialogs.warn("Bitte eine richtige E-Mail oder nichts angeben!");
+            }
+        } else {
+            Dialogs.warn("Bitte einen Namen eintragen!");
+        }
+        return false;
+    }
 
-	private static void alteloeschen(Messdiener m, String[] array, ArrayList<Messdiener> ueberarbeitete) {
-		for (int i = 0; i < array.length; i++) {
-			if (array[i].equals(m.toString())) {
-				array[i] = "";
-				ueberarbeitete.add(m);
-			}
-		}
-	}
+    private void checkForChangedName(Messdiener m) {
+        boolean b = moben.getNachnname().equals(m.getNachnname());
+        boolean bo = moben.getVorname().equals(m.getVorname());
+        if (!b || !bo) {
+            try {
+                Files.delete(moben.getFile().toPath());
+            } catch (IOException e) {
+                Dialogs.error(e, "Konnte den alten-veränderten Messdiener nicht löschen.");
+            }
+        }
+    }
 
-	public static boolean remove(Messdiener m) {
-		if (Dialogs.frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
-				"Löschen")) {
-			// moben.getFile().
-			File file = m.getFile();
-			if(file.exists())file.delete();
-			ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
-			for (Messdiener messdiener : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
-				alteloeschen(m, messdiener.getFreunde(), ueberarbeitete);
-				alteloeschen(m, messdiener.getGeschwister(), ueberarbeitete);
-			}
-			for (Messdiener medi : ueberarbeitete) {
-				if (medi.toString().equals(m.toString())) {
-					continue;
-				}
-				WriteFile wf = new WriteFile(medi);
-				try {
-					wf.toXML();
-				} catch (IOException e) {
-					Dialogs.error(e, "Konnte bei dem Bekannten '" + medi
-							+ "' von dem zulöschenden Messdiener diesen nicht löschen.");
-				}
-			}
-			return true;
-		}
-		return false;
-	}
+    private void setAndUpdateAnvertraute(Messdiener m) {
+        m.setFreunde(getArrayString(freund, Messdiener.LENGHT_FREUNDE));
+        m.setGeschwister(getArrayString(geschwi, Messdiener.LENGHT_GESCHWISTER));
+        ArrayList<Messdiener> bearbeitete = new ArrayList<>();
+        for (Messdiener messdiener : DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList()) {
+            bearbeitete.addAll(alteloeschen(m, messdiener.getFreunde()));
+            bearbeitete.addAll(alteloeschen(m, messdiener.getGeschwister()));
+            if (moben != null) {
+                bearbeitete.addAll(alteloeschen(moben, messdiener.getFreunde()));
+                bearbeitete.addAll(alteloeschen(moben, messdiener.getGeschwister()));
+            }
+        }
+        for (Messdiener medi : geschwi) {
+            addBekanntschaft(medi, m, true);
+            bearbeitete.add(medi);
+        }
+        for (Messdiener medi : freund) {
+            addBekanntschaft(medi, m, false);
+        }
+        // speichern
+        RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
+        rd.removeDuplicatedEntries(bearbeitete);
+        try {
+            for (Messdiener messdiener : bearbeitete) {
+                WriteFile wf = new WriteFile(messdiener);
+                wf.toXML();
+            }
+            WriteFile wf = new WriteFile(m);
+            wf.toXML();
+            getLogger().info("Messdiener " + m.makeId() + " wurde gespeichert!");
+            DateienVerwalter.getDateienVerwalter().reloadMessdiener();
+        } catch (IOException e) {
+            Dialogs.error(e, KONNTE + m + "' nicht speichern");
+        }
+    }
 
-	private static ArrayList<Messdiener> alteloeschen(Messdiener m, String[] array) {
-		ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
-		for (int i = 0; i < array.length; i++) {
-			if (array[i].equals(m.toString())) {
-				array[i] = "";
-				ueberarbeitete.add(m);
-			}
-		}
-		return ueberarbeitete;
-	}
+    public void setMedi(Messdiener messdiener) {
+        if (messdiener == null) return;
+        name.setText(messdiener.getNachnname());
+        vorname.setText(messdiener.getVorname());
+        email.setText(messdiener.getEmail());
+        leiter.setSelected(messdiener.isIstLeiter());
+        eintritt.setValue(messdiener.getEintritt());
+        updateFreunde(messdiener);
+        updateGeschwister(messdiener);
+        List<KannWelcheMesse> messen = messdiener.getDienverhalten().copy().getKannWelcheMessen();
+        setDienverhalten(messen);
+        moben = messdiener;
+        getLogger().info("Messdiener wurde geladen");
+    }
 
-	private void updateFreunde(Messdiener medi) {
-		ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(medi.getFreunde()));
-		ArrayList<Messdiener> alle = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
-		ArrayList<Messdiener> al = new ArrayList<>();
-		loop: for (int i = 0; i < arrayList.size(); i++) {
-			if (arrayList.get(i).equals("")) {
-				continue;
-			}
-			for (Messdiener messdiener : alle) {
-				if (arrayList.get(i).equals(messdiener.toString())) {
-					al.add(messdiener);
-					continue loop;
-				}
-			}
-			boolean beheben = Dialogs.frage(
-					"Konnte den Messdiener '" + arrayList.get(i) + "' als Freund von '" + medi + "' nicht finden!",
-					"Ignorieren", "Beheben");
-			if (beheben) {
-				arrayList.remove(i);
-				String[] freunde = arrayList.toArray(new String[arrayList.size()]);
-				medi.setFreunde(freunde);
-				updateFreunde(medi);
-				return;
-			}
-		}
-		updateFreunde(al);
-	}
+    private void addBekanntschaft(Messdiener medi, Messdiener woben, boolean isGeschwister) {
+        if (!isGeschwister) {
+            ArrayList<String> freundeStrings = new ArrayList<>(Arrays.asList(medi.getFreunde()));
+            medi.setFreunde(addToArray(freundeStrings, woben.toString(), Messdiener.LENGHT_FREUNDE));
+        } else {
+            ArrayList<String> geschwisterStrings = new ArrayList<>(Arrays.asList(medi.getGeschwister()));
+            medi.setGeschwister(addToArray(geschwisterStrings, woben.toString(), Messdiener.LENGHT_GESCHWISTER));
+        }
+    }
 
-	private void updateGeschwister(Messdiener medi) {
-		ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(medi.getGeschwister()));
-		ArrayList<Messdiener> alle = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
-		ArrayList<Messdiener> al = new ArrayList<>();
-		loop: for (int i = 0; i < arrayList.size(); i++) {
-			if (arrayList.get(i).equals("")) {
-				continue;
-			}
-			for (Messdiener messdiener : alle) {
-				if (arrayList.get(i).equals(messdiener.toString())) {
-					al.add(messdiener);
-					continue loop;
-				}
-			}
-			boolean beheben = Dialogs.frage(
-					"Konnte den Messdiener '" + arrayList.get(i) + "' als Geschwister von '" + medi + "' nicht finden!",
-					"ignorieren", "beheben");
-			if (beheben) {
-				arrayList.remove(i);
-				String[] gew = arrayList.toArray(new String[arrayList.size()]);
-				medi.setGeschwister(gew);
-				updateGeschwister(medi);
-				return;
-			}
-		}
-		updateGeschwister(al);
-	}
+    private String[] addToArray(ArrayList<String> strings, String toAdded, int limit) {
+        strings.add(toAdded);
+        strings.removeIf(t -> t == null || t.equals(""));
+        String[] s = new String[limit];
+        strings.toArray(s);
+        return s;
+    }
+
+    private void updateFreunde(Messdiener medi) {
+        ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(medi.getFreunde()));
+        List<Messdiener> alle = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
+        ArrayList<Messdiener> al = new ArrayList<>();
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (searchForMessdiener(arrayList, alle, al, i)) continue;
+            boolean beheben = Dialogs.frage(
+                    KONNTE + arrayList.get(i) + "' als Freund von '" + medi + "' nicht finden!",
+                    "Ignorieren", "Beheben");
+            if (beheben) {
+                arrayList.remove(i);
+                String[] freundeArray = arrayList.toArray(new String[0]);
+                medi.setFreunde(freundeArray);
+                updateFreunde(medi);
+                return;
+            }
+        }
+        updateFreunde(al);
+    }
+
+    private boolean searchForMessdiener(List<String> arrayList, List<Messdiener> alle, List<Messdiener> al, int i) {
+        if (arrayList.get(i).equals("")) {
+            return true;
+        }
+        for (Messdiener messdiener : alle) {
+            if (arrayList.get(i).equals(messdiener.toString())) {
+                al.add(messdiener);
+                break;
+            }
+        }
+        return !al.isEmpty();
+    }
+
+    private void updateGeschwister(Messdiener medi) {
+        ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(medi.getGeschwister()));
+        List<Messdiener> alle = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
+        ArrayList<Messdiener> al = new ArrayList<>();
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (searchForMessdiener(arrayList, alle, al, i)) continue;
+            boolean beheben = Dialogs.frage(
+                    KONNTE + arrayList.get(i) + "' als Geschwister von '" + medi + "' nicht finden!",
+                    "ignorieren", "beheben");
+            if (beheben) {
+                arrayList.remove(i);
+                String[] gew = arrayList.toArray(new String[0]);
+                medi.setGeschwister(gew);
+                updateGeschwister(medi);
+                return;
+            }
+        }
+        updateGeschwister(al);
+    }
 }

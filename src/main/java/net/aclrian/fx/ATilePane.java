@@ -1,6 +1,7 @@
 package net.aclrian.fx;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -32,7 +33,7 @@ public class ATilePane extends TilePane {
 		setMaxWidth(Double.MAX_VALUE);
 		setVgap(5d);
 		try {
-			ArrayList<Messdiener> medis = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
+			List<Messdiener> medis = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
 			medis.sort(Messdiener.compForMedis);
 			for (Messdiener messdiener : medis) {
 				ACheckBox cb = new ACheckBox(messdiener);
@@ -45,7 +46,7 @@ public class ATilePane extends TilePane {
 		}
 	}
 
-	public ArrayList<Messdiener> getSelected() {
+	public List<Messdiener> getSelected() {
 		ArrayList<Messdiener> rtn = new ArrayList<>();
 		for (Node n : getChildrenUnmodifiable()) {
 			if (n instanceof ACheckBox && ((ACheckBox) n).isSelected())
@@ -54,7 +55,7 @@ public class ATilePane extends TilePane {
 		return rtn;
 	}
 
-	public void setSelected(ArrayList<Messdiener> selected) {
+	public void setSelected(List<Messdiener> selected) {
 			for (Node n : getChildrenUnmodifiable()) {
 				if (n instanceof ACheckBox) {
 					for (Messdiener messdiener : selected) {

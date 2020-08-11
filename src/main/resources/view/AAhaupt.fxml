@@ -20,7 +20,7 @@
       <menus>
         <Menu mnemonicParsing="false" text="Datei">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#pfarrei_aendern" text="Pfarrei ändern">
+            <MenuItem mnemonicParsing="false" onAction="#editPfarrei" text="Pfarrei ändern">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="P" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                      </accelerator></MenuItem>
