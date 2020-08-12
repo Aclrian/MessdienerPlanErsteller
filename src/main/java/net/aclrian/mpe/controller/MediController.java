@@ -2,6 +2,7 @@ package net.aclrian.mpe.controller;
 
 import com.jfoenix.controls.JFXTextField;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -176,7 +177,7 @@ public class MediController implements Controller {
 
             @Override
             public void handle(Event arg0) {
-                List<Messdiener> selected = Dialogs.select(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList(),
+                List<Messdiener> selected = Dialogs.select(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList(), moben,
                         freund, "Freunde auswählen:");
                 if (selected.size() >= Messdiener.LENGHT_FREUNDE) {
                     Dialogs.error(
@@ -195,7 +196,7 @@ public class MediController implements Controller {
 
             @Override
             public void handle(Event arg0) {
-                List<Messdiener> g = Dialogs.select(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList(), geschwi,
+                List<Messdiener> g = Dialogs.select(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList(), moben, geschwi,
                         "Geschwister auswählen:");
                 if (g.size() >= Messdiener.LENGHT_GESCHWISTER) {
                     Dialogs.error("Zu viele Geschwister: Bitte nur " + (Messdiener.LENGHT_GESCHWISTER - 1)
@@ -208,9 +209,8 @@ public class MediController implements Controller {
         });
         geschwie.getItems().add(bearbeitenGeschwister);
 
-        stdm.setCellValueFactory(new PropertyValueFactory<>("String"));
+        stdm.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMesse().tokurzerBenutzerfreundlichenString()));
         kann.setCellFactory(CheckBoxTableCell.forTableColumn(kann));
-        kann.setCellValueFactory(new PropertyValueFactory<>("kanndann"));
         kann.setCellValueFactory(celldata -> {
             KannWelcheMesse cellValue = celldata.getValue();
             SimpleBooleanProperty property = new SimpleBooleanProperty(cellValue.isKanndann());
@@ -283,6 +283,7 @@ public class MediController implements Controller {
                 if (moben != null) {
                     m.setFile(moben.getFile());
                 }
+                ol = table.getItems();
                 m.setzeAllesNeu(vorname.getText(), name.getText(), (int) eintritt.getValue(), leiter.isSelected(),
                         Messverhalten.convert(ol), email.getText());
                 if (moben != null) {
@@ -297,6 +298,22 @@ public class MediController implements Controller {
             Dialogs.warn("Bitte einen Namen eintragen!");
         }
         return false;
+    }
+
+    public void setMedi(Messdiener messdiener) {
+        if (messdiener == null) return;
+        name.setText(messdiener.getNachnname());
+        vorname.setText(messdiener.getVorname());
+        email.setText(messdiener.getEmail());
+        leiter.setSelected(messdiener.isIstLeiter());
+        eintritt.setValue(messdiener.getEintritt());
+        table.setItems(FXCollections.observableList(messdiener.getDienverhalten().getKannWelcheMessen()));
+        updateFreunde(messdiener);
+        updateGeschwister(messdiener);
+        List<KannWelcheMesse> messen = messdiener.getDienverhalten().copy().getKannWelcheMessen();
+        setDienverhalten(messen);
+        moben = messdiener;
+        getLogger().info("Messdiener wurde geladen");
     }
 
     private void checkForChangedName(Messdiener m) {
@@ -314,7 +331,7 @@ public class MediController implements Controller {
     private void setAndUpdateAnvertraute(Messdiener m) {
         m.setFreunde(getArrayString(freund, Messdiener.LENGHT_FREUNDE));
         m.setGeschwister(getArrayString(geschwi, Messdiener.LENGHT_GESCHWISTER));
-        ArrayList<Messdiener> bearbeitete = new ArrayList<>();
+        List<Messdiener> bearbeitete = new ArrayList<>();
         for (Messdiener messdiener : DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList()) {
             bearbeitete.addAll(alteloeschen(m, messdiener.getFreunde()));
             bearbeitete.addAll(alteloeschen(m, messdiener.getGeschwister()));
@@ -330,36 +347,20 @@ public class MediController implements Controller {
         for (Messdiener medi : freund) {
             addBekanntschaft(medi, m, false);
         }
+        bearbeitete.add(m);
         // speichern
         RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
-        rd.removeDuplicatedEntries(bearbeitete);
+        bearbeitete = rd.removeDuplicatedEntries(bearbeitete);
         try {
             for (Messdiener messdiener : bearbeitete) {
                 WriteFile wf = new WriteFile(messdiener);
                 wf.toXML();
             }
-            WriteFile wf = new WriteFile(m);
-            wf.toXML();
             getLogger().info("Messdiener " + m.makeId() + " wurde gespeichert!");
             DateienVerwalter.getDateienVerwalter().reloadMessdiener();
         } catch (IOException e) {
             Dialogs.error(e, KONNTE + m + "' nicht speichern");
         }
-    }
-
-    public void setMedi(Messdiener messdiener) {
-        if (messdiener == null) return;
-        name.setText(messdiener.getNachnname());
-        vorname.setText(messdiener.getVorname());
-        email.setText(messdiener.getEmail());
-        leiter.setSelected(messdiener.isIstLeiter());
-        eintritt.setValue(messdiener.getEintritt());
-        updateFreunde(messdiener);
-        updateGeschwister(messdiener);
-        List<KannWelcheMesse> messen = messdiener.getDienverhalten().copy().getKannWelcheMessen();
-        setDienverhalten(messen);
-        moben = messdiener;
-        getLogger().info("Messdiener wurde geladen");
     }
 
     private void addBekanntschaft(Messdiener medi, Messdiener woben, boolean isGeschwister) {

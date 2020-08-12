@@ -68,7 +68,7 @@ public class StandartMesse {
 
     @SuppressWarnings("unused")
     public String toBenutzerfreundlichenString() {
-        return typ + " jeden " + wochentag + "., " + "um " + beginnStunde + ":" + beginnMinute + " in " + ort;
+        return typ + " jeden " + wochentag + "., " + "um " + beginnStunde + ":" + beginnMinute + " in " + ort + " ("+ anzMessdiener+")";
     }
 
     public String toReduziertenString() {
@@ -129,7 +129,7 @@ public class StandartMesse {
 
     public String getBeginnStundealsString() {
         String rtn = String.valueOf(this.beginnStunde);
-        if (rtn.length() == 1){
+        if (rtn.length() == 1) {
             rtn = "0" + this.beginnStunde;
         }
         return rtn;
