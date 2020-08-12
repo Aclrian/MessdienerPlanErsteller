@@ -99,8 +99,8 @@ public class InfoController {
             e.printStackTrace();
         }
         pane.setExpanded(true);
-        quellcode.setOnAction(browse(quellcode.getText()));
-        mpeWebsite.setOnAction(browse(mpeWebsite.getText()));
+        quellcode.setOnAction(browse(quellcode));
+        mpeWebsite.setOnAction(browse(mpeWebsite));
         version.setText(Main.VERSION_ID);
         folder.setOnAction(open(Log.getWorkingDir()));
         log.setOnAction(e -> {
@@ -147,10 +147,10 @@ public class InfoController {
         });
     }
 
-    public EventHandler<ActionEvent> browse(String url) {
+    public EventHandler<ActionEvent> browse(Hyperlink link) {
         return event -> {
             try {
-                Desktop.getDesktop().browse(new URI(url));
+                Desktop.getDesktop().browse(new URI(link.getText()));
             } catch (IOException | URISyntaxException ex) {
                 Dialogs.error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
