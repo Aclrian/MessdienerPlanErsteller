@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class FerienplanController implements Controller {
-    private final ArrayList<String> dates = new ArrayList<>();
+    private List<String> dates = new ArrayList<>();
     @FXML
     private TableColumn<Datentraeger, String> name;
     @FXML
@@ -54,7 +54,7 @@ public class FerienplanController implements Controller {
             dates.add(df.format(messe.getDate()));
         }
         RemoveDoppelte<String> rd = new RemoveDoppelte<>();
-        rd.removeDuplicatedEntries(dates);
+        dates = rd.removeDuplicatedEntries(dates);
         dates.sort((o1, o2) -> {
             try {
                 Date d1 = df.parse(o1);

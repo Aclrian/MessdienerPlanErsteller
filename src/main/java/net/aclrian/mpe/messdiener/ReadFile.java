@@ -36,8 +36,8 @@ public class ReadFile {
             dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             DocumentBuilder dbuilder = dbFactory.newDocumentBuilder();
-            Document doc = dbuilder.parse(new InputSource(path));
-            if (doc != null) {
+            Document doc = dbuilder.parse(new InputSource(String.valueOf(fXmlFile.toURI())));
+            if (doc != null && fXmlFile.getAbsolutePath().endsWith(DateienVerwalter.MESSDIENERDATEIENDUNG)) {
                 doc.getDocumentElement().normalize();
                 NodeList nList = doc.getElementsByTagName("XML");
                 for (int temp = 0; temp < nList.getLength(); temp++) {
