@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<Accordion maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<Accordion maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
   <panes>
     <TitledPane fx:id="pane" animated="false" text="MessdiernerplanErsteller">
          <content>
@@ -108,7 +108,7 @@
                         <Insets right="20.0" />
                      </GridPane.margin>
                   </Button>
-                  <Hyperlink fx:id="MpEwebsite" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="https://aclrian.github.io/MessdienerPlanErsteller/" GridPane.columnIndex="5" GridPane.columnSpan="8" GridPane.rowIndex="1">
+                  <Hyperlink fx:id="mpeWebsite" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="https://aclrian.github.io/MessdienerPlanErsteller/" GridPane.columnIndex="5" GridPane.columnSpan="8" GridPane.rowIndex="1">
                      <font>
                         <Font size="13.0" />
                      </font>
