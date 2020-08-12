@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import net.aclrian.fx.ASlider;
+import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Setting;
 
@@ -77,8 +78,9 @@ public class Dialogs {
 
     public static void error(Exception e, String string) {
         Log.getLogger().error(string);
-        Log.getLogger().error(e.getMessage());
-        Log.getLogger().error(e.getCause() + "");
+        StringWriter stack = new StringWriter();
+        e.printStackTrace(new PrintWriter(stack));
+        Log.getLogger().error(stack.toString());
         String header;
         if (e.getLocalizedMessage() != null && !e.getLocalizedMessage().equals("")) {
             header = string + "\n" + e.getLocalizedMessage();
@@ -203,6 +205,8 @@ public class Dialogs {
         a.showAndWait();
         return rtn;
     }
+
+
 
     public static List<Date> getDates(String string, String dl, String dz) {
         JFXDatePicker d1 = new JFXDatePicker();
@@ -358,6 +362,11 @@ public class Dialogs {
     public static void show(List<?> list, String string) {
         ListView<?> lv = new ListView<>(FXCollections.observableArrayList(list));
         alertbuilder(AlertType.INFORMATION, string, lv).showAndWait();
+    }
+
+    public static List<Messdiener> select(List<Messdiener> data, Messdiener without, List<Messdiener> freund, String s) {
+        data.remove(without);
+        return select(data, freund, s);
     }
 
     private static class ARadioButton<I> extends RadioButton {

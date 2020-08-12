@@ -27,246 +27,247 @@ import java.util.List;
 import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class MainController {
-	private final Stage stage;
-	public static final String NO_ACCESS = " konnte nicht zugegriffen werden!";
-	private List<Messe> messen = new ArrayList<>();
-	private final Main m;
+    public static final String NO_ACCESS = " konnte nicht zugegriffen werden!";
+    private final Stage stage;
+    private final Main m;
+    private List<Messe> messen = new ArrayList<>();
+    @FXML
+    private GridPane grid;
+    @FXML
+    private AnchorPane apane;
 
-	@FXML
-	private GridPane grid;
-	@FXML
-	private AnchorPane apane;
+    private Controller control;
+    private EnumPane ep;
 
-	private Controller control;
+    public MainController(Main m, Stage s) {
+        this.m = m;
+        this.stage = s;
+        s.setOnCloseRequest(e -> getLogger().info("Beenden"));
+    }
 
-	public MainController(Main m,Stage s) {
-		this.m = m;
-		this.stage = s;
-		s.setOnCloseRequest(e-> getLogger().info("Beenden"));
-	}
+    public void setMesse(FinishController finishController, EnumPane pane) {
+        messen = finishController.getMessen();
+        changePane(pane);
+    }
 
-	private EnumPane ep;
+    public void changePaneMessdiener(Messdiener messdiener) {
+        this.ep = EnumPane.MESSDIENER;
+        apane.getChildren().removeIf(p -> true);
+        URL u = getClass().getResource(ep.getLocation());
+        FXMLLoader fl = new FXMLLoader(u);
+        try {
+            load(fl);
+            if (control instanceof MediController) {
+                ((MediController) control).setMedi(messdiener);
+            }
+        } catch (IOException e) {
+            Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+        }
+    }
 
-	public void setMesse(FinishController finishController, EnumPane pane) {
-		messen = finishController.getMessen();
-		changePane(pane);
-	}
+    public void changePaneMesse(Messe messe) {
+        this.ep = EnumPane.MESSE;
+        apane.getChildren().removeIf(p -> true);
+        URL u = getClass().getResource(ep.getLocation());
+        FXMLLoader fl = new FXMLLoader(u);
+        try {
+            load(fl);
+            if (control instanceof MesseController) {
+                ((MesseController) control).setMesse(messe);
+                messen.remove(messe);
+            }
+        } catch (IOException e) {
+            Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+        }
+    }
 
-	public enum EnumPane {
-		MESSDIENER("/view/messdiener.fxml"), MESSE("/view/messe.fxml"), START("/view/mainmlg.fxml"), PLAN("/view/Aplan.fxml"),
-		FERIEN("/view/fplan.fxml"), STDMESSE("/view/smesse.fxml"), SELECT_MEDI("/view/select.fxml"), SELECT_MESSE("/view/select.fxml");
+    private void changePane(StandartMesse sm) {
+        if ((control == null || !control.isLocked()) && (ep != EnumPane.STDMESSE)) {
+            this.ep = EnumPane.STDMESSE;
+            apane.getChildren().removeIf(p -> true);
 
-		private final String location;
+            URL u = getClass().getResource(ep.getLocation());
+            FXMLLoader fl = new FXMLLoader(u);
+            try {
+                fl.setController(new StandartmesseController(sm));
+                load(fl);
+            } catch (IOException e) {
+                Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+            }
+        } else {
+            Dialogs.warn("Der Fensterbereich ist durch die Bearbeitung gesperrt!");
+        }
+    }
 
-		EnumPane(String location) {
-			this.location = location;
-		}
+    private void load(FXMLLoader fl) throws IOException {
+        Parent p;
+        p = fl.load();
+        AnchorPane.setBottomAnchor(p, 0d);
+        AnchorPane.setRightAnchor(p, 0d);
+        AnchorPane.setLeftAnchor(p, 0d);
+        AnchorPane.setTopAnchor(p, 0d);
+        apane.getChildren().add(p);
+        control = fl.getController();
+        control.afterstartup(p.getScene().getWindow(), this);
+    }
 
-		public String getLocation() {
-			return location;
-		}
-	}
+    public void changePane(EnumPane ep) {
+        if (this.ep == ep) {
+            return;
+        }
+        if ((control == null || !control.isLocked())) {
+            EnumPane old = this.ep;
+            this.ep = ep;
+            apane.getChildren().removeIf(p -> true);
+            URL u = getClass().getResource(ep.getLocation());
+            FXMLLoader fl = new FXMLLoader(u);
+            try {
+                if (ep == EnumPane.SELECT_MEDI) {
+                    control = new Select(Selecter.MESSDIENER, this);
+                    fl.setController(control);
+                } else if (ep == EnumPane.SELECT_MESSE) {
+                    control = new Select(Selecter.MESSE, this);
+                    fl.setController(control);
+                } else if (ep == EnumPane.PLAN) {
+                    control = new FinishController(old, messen);
+                    fl.setController(control);
+                }
+                load(fl);
+            } catch (IOException e) {
+                Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+            }
+        } else {
+            Dialogs.warn("Der Fensterbereich ist durch die Bearbeitung gesperrt!");
+        }
+    }
 
-	public void changePaneMessdiener(Messdiener messdiener) {
-		this.ep = EnumPane.MESSDIENER;
-		apane.getChildren().removeIf(p -> true);
-		URL u = getClass().getResource(ep.getLocation());
-		FXMLLoader fl = new FXMLLoader(u);
-		try {
-			load(fl);
-			if (control instanceof MediController) {
-				((MediController) control).setMedi(messdiener);
-			}
-		} catch (IOException e) {
-			Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
-		}
-	}
+    @FXML
+    public void messe(ActionEvent actionEvent) {
+        getLogger().info("zu Messen wechseln");
+        changePane(EnumPane.SELECT_MESSE);
+    }
 
-	public void changePaneMesse(Messe messe) {
-		this.ep = EnumPane.MESSE;
-		apane.getChildren().removeIf(p -> true);
-		URL u = getClass().getResource(ep.getLocation());
-		FXMLLoader fl = new FXMLLoader(u);
-		try {
-			load(fl);
-			if (control instanceof MesseController) {
-				((MesseController) control).setMesse(messe);
-				messen.remove(messe);
-			}
-		} catch (IOException e) {
-			Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
-		}
-	}
+    @FXML
+    public void medi(ActionEvent actionEvent) {
+        getLogger().info("zu Messdienern wechseln");
+        changePane(EnumPane.SELECT_MEDI);
+    }
 
-	private void changePane(StandartMesse sm) {
-		 if ((control == null || !control.isLocked()) && (ep != EnumPane.STDMESSE)) {
-			this.ep = EnumPane.STDMESSE;
-			apane.getChildren().removeIf(p -> true);
+    @FXML
+    public void generieren(ActionEvent actionEvent) {
+        if (!DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList().isEmpty() && !messen.isEmpty()) {
+            changePane(EnumPane.PLAN);
+        } else {
+            Dialogs.warn("Bitte erst Messen und Messdiener eingeben.");
+        }
+    }
 
-			URL u = getClass().getResource(ep.getLocation());
-			FXMLLoader fl = new FXMLLoader(u);
-			try {
-				fl.setController(new StandartmesseController(sm));
-				load(fl);
-			} catch (IOException e) {
-				Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
-			}
-		} else {
-			Dialogs.warn("Der Fensterbereich ist durch die Bearbeitung gesperrt!");
-		}
-	}
+    @FXML
+    public void editPfarrei(ActionEvent actionEvent) {
+        if (ep != EnumPane.START) {
+            Dialogs.info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
+            return;
+        }
+        messen = new ArrayList<>();
+        PfarreiController.start(new Stage(), m, stage);
+    }
 
-	private void load(FXMLLoader fl) throws IOException {
-		Parent p;
-		p = fl.load();
-		AnchorPane.setBottomAnchor(p, 0d);
-		AnchorPane.setRightAnchor(p, 0d);
-		AnchorPane.setLeftAnchor(p, 0d);
-		AnchorPane.setTopAnchor(p, 0d);
-		apane.getChildren().add(p);
-		control = fl.getController();
-		control.afterstartup(p.getScene().getWindow(), this);
-	}
+    @FXML
+    public void speicherort(ActionEvent actionEvent) {
+        if (ep != EnumPane.START) {
+            Dialogs.info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
+            return;
+        }
+        DateienVerwalter.getDateienVerwalter().erneuereSavepath();
+        ((Stage) grid.getParent().getScene().getWindow()).close();
+        m.main(new Stage());
+    }
 
-	public void changePane(EnumPane ep) {
-		if ((control == null || !control.isLocked()) && (this.ep != ep)) {
-			EnumPane old = this.ep;
-			this.ep = ep;
-			apane.getChildren().removeIf(p -> true);
-			URL u = getClass().getResource(ep.getLocation());
-			FXMLLoader fl = new FXMLLoader(u);
-			try {
-				if (ep == EnumPane.SELECT_MEDI) {
-					control = new Select(Selecter.MESSDIENER, this);
-					fl.setController(control);
-				}else if (ep == EnumPane.SELECT_MESSE) {
-					control = new Select(Selecter.MESSE, this);
-					fl.setController(control);
-				} else if(ep == EnumPane.PLAN){
-					control = new FinishController(old,messen);
-					fl.setController(control);
-				}
-				load(fl);
-			} catch (IOException e) {
-				Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
-			}
-		} else {
-			Dialogs.warn("Der Fensterbereich ist durch die Bearbeitung gesperrt!");
-		}
-	}
+    @FXML
+    public void ferienplan(ActionEvent actionEvent) {
+        if (!DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList().isEmpty() && !messen.isEmpty()) {
+            changePane(EnumPane.FERIEN);
+        } else {
+            Dialogs.warn("Bitte erst Messen und Messdiener eingeben.");
+        }
+    }
 
-	@FXML
-	public void messe(ActionEvent actionEvent) {
-		getLogger().info("zu Messen wechseln");
-		changePane(EnumPane.SELECT_MESSE);
-	}
+    @FXML
+    public void standardmesse(ActionEvent actionEvent) {
+        smesse(actionEvent);
+    }
 
-	@FXML
-	public void medi(ActionEvent actionEvent) {
-		getLogger().info("zu Messdienern wechseln");
-		changePane(EnumPane.SELECT_MEDI);
-	}
+    @FXML
+    public void hauptbildschirm(ActionEvent actionEvent) {
+        changePane(EnumPane.START);
+    }
 
-	@FXML
-	public void generieren(ActionEvent actionEvent) {
-		if (!DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList().isEmpty() && !messen.isEmpty()) {
-			changePane(EnumPane.PLAN);
-		} else{
-			Dialogs.warn("Bitte erst Messen und Messdiener eingeben.");
-		}
-	}
+    @FXML
+    public void smesse(ActionEvent actionEvent) {
+        StandartMesse sm = (StandartMesse) Dialogs.singleSelect(DateienVerwalter.getDateienVerwalter().getPfarrei().getStandardMessen(), "Bitte Standartmesse auswählen:");
+        if (sm != null) {
+            changePane(sm);
+        }
+    }
 
-	@FXML
-	public void editPfarrei(ActionEvent actionEvent) {
-		if(ep!=EnumPane.START){
-			Dialogs.info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
-			return;
-		}
-		messen = new ArrayList<>();
-		PfarreiController.start(new Stage(), m, stage);
-	}
+    @FXML
+    public void info(ActionEvent actionEvent) {
+        try {
+            InfoController ic = new InfoController(stage);
+            ic.start();
+        } catch (IOException e) {
+            Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+        }
+    }
 
-	@FXML
-	public void speicherort(ActionEvent actionEvent) {
-		if(ep!=EnumPane.START){
-			Dialogs.info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
-			return;
-		}
-			DateienVerwalter.getDateienVerwalter().erneuereSavepath();
-			((Stage)grid.getParent().getScene().getWindow()).close();
-			m.main(new Stage());
-	}
+    @FXML
+    public void log(ActionEvent event) {
+        try {
+            Desktop.getDesktop().open(Log.getLogFile());
+        } catch (IOException e) {
+            Dialogs.error(e, "Konnte das Protokoll nicht öffnen:");
+        }
+    }
 
-	@FXML
-	public void ferienplan(ActionEvent actionEvent) {
-		if (!DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList().isEmpty() && !messen.isEmpty()) {
-			changePane(EnumPane.FERIEN);
-		} else {
-			Dialogs.warn("Bitte erst Messen und Messdiener eingeben.");
-		}
-	}
+    @FXML
+    public void savepath(ActionEvent event) {
+        try {
+            Desktop.getDesktop().open(new File(DateienVerwalter.getDateienVerwalter().getSavepath()));
+        } catch (IOException e) {
+            Dialogs.error(e, "Konnte den Ordner nicht öffnen:");
+        }
+    }
 
-	@FXML
-	public void standardmesse(ActionEvent actionEvent) {
-		smesse(actionEvent);
-	}
+    @FXML
+    public void version(ActionEvent event) {
+        VersionIDHandler.versioncheck(true);
+    }
 
-	@FXML
-	public void hauptbildschirm(ActionEvent actionEvent) {
-		changePane(EnumPane.START);
-	}
+    @FXML
+    public void workingdir(ActionEvent event) {
+        try {
+            Desktop.getDesktop().open(Log.getWorkingDir());
+        } catch (IOException e) {
+            Dialogs.error(e, "Konnte den Ordner nicht öffnen:");
+        }
+    }
 
-	@FXML
-	public void smesse(ActionEvent actionEvent) {
-		StandartMesse sm = (StandartMesse) Dialogs.singleSelect(DateienVerwalter.getDateienVerwalter().getPfarrei().getStandardMessen(),"Bitte Standartmesse auswählen:");
-		if (sm != null){
-			changePane(sm);
-		}
-	}
+    public List<Messe> getMessen() {
+        return messen;
+    }
 
-	@FXML
-	public void info(ActionEvent actionEvent) {
-		try {
-			InfoController ic = new InfoController(stage);
-			ic.start();
-		} catch (IOException e) {
-			Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
-		}
-	}
+    public enum EnumPane {
+        MESSDIENER("/view/messdiener.fxml"), MESSE("/view/messe.fxml"), START("/view/mainmlg.fxml"), PLAN("/view/Aplan.fxml"),
+        FERIEN("/view/fplan.fxml"), STDMESSE("/view/smesse.fxml"), SELECT_MEDI("/view/select.fxml"), SELECT_MESSE("/view/select.fxml");
 
-	@FXML
-	public void log(ActionEvent event) {
-		try {
-			Desktop.getDesktop().open(Log.getLogFile());
-		} catch (IOException e) {
-			Dialogs.error(e,"Konnte das Protokoll nicht öffnen:");
-		}
-	}
+        private final String location;
 
-	@FXML
-	public void savepath(ActionEvent event) {
-		try {
-			Desktop.getDesktop().open(new File(DateienVerwalter.getDateienVerwalter().getSavepath()));
-		} catch (IOException e) {
-			Dialogs.error(e,"Konnte den Ordner nicht öffnen:");
-		}
-	}
+        EnumPane(String location) {
+            this.location = location;
+        }
 
-	@FXML
-	public void version(ActionEvent event) {
-		VersionIDHandler.versioncheck(true);
-	}
-
-	@FXML
-	public void workingdir(ActionEvent event) {
-		try {
-			Desktop.getDesktop().open(Log.getWorkingDir());
-		} catch (IOException e) {
-			Dialogs.error(e,"Konnte den Ordner nicht öffnen:");
-		}
-	}
-
-	public List<Messe> getMessen() {
-		return messen;
-	}
+        public String getLocation() {
+            return location;
+        }
+    }
 }

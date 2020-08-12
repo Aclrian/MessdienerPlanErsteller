@@ -114,8 +114,7 @@ public class Messdaten {
         rtn.addAll(setTeilAnvertraute(medis, geschwister));
         rtn.addAll(setTeilAnvertraute(medis, freunde));
 
-        rd.removeDuplicatedEntries(rtn);
-        return rtn;
+        return rd.removeDuplicatedEntries(rtn);
     }
 
     private ArrayList<Messdiener> setTeilAnvertraute(List<Messdiener> medis, List<Messdiener> freunde) {
@@ -233,7 +232,7 @@ public class Messdaten {
                     medi = sucheMessdiener(value, m, DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList());
                     if (medi != null) {
                         this.geschwister.add(medi);
-                        rd.removeDuplicatedEntries(this.geschwister);
+                        geschwister = rd.removeDuplicatedEntries(this.geschwister);
                     }
                 } catch (CouldnotFindMedi e) {
                     if (messdienerrNotFound(isfreund, s, m, value, e)) return;

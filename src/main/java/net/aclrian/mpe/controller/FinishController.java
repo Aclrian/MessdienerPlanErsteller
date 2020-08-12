@@ -2,6 +2,9 @@ package net.aclrian.mpe.controller;
 
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
+import fr.opensagres.poi.xwpf.converter.core.FileURIResolver;
+import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLConverter;
+import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLOptions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,17 +18,10 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
-import org.docx4j.jaxb.Context;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
-import org.docx4j.wml.RFonts;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -53,6 +49,7 @@ public class FinishController implements Controller {
     private Button nichteingeteilte;
     @FXML
     private Button zurueck;
+
     public FinishController(MainController.EnumPane old, List<Messe> messen) {
         this.pane = old;
         this.hauptarray = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
@@ -92,7 +89,7 @@ public class FinishController implements Controller {
     public void afterstartup(Window window, MainController mc) {
         nichteingeteilte.setOnAction(event -> nichteingeteilte());
         editor.setHtmlText(fertig);
-        zurueck.setOnAction(p -> this.zurueck(mc));
+        zurueck.setOnAction(p -> zurueck(mc));
     }
 
     @Override
@@ -102,15 +99,17 @@ public class FinishController implements Controller {
 
     private void zurueck(MainController mc) {
         try {
-            boolean delete = Dialogs.yesNoCancel("Ja", "Nein", "Hier bleiben", "Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?");
+            boolean delete = Dialogs.yesNoCancel("Ja", "Nein", "Hier bleiben",
+                    "Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?");
             if (delete) {
-                DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList().forEach(m -> m.getMessdatenDaten().nullen());
+                DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList()
+                        .forEach(m -> m.getMessdatenDaten().nullen());
                 for (Messe m : messen) {
                     m.nullen();
                 }
             }
         } catch (NullPointerException e) {
-            //do nothing
+            // do nothing
         }
 
         locked = false;
@@ -146,7 +145,9 @@ public class FinishController implements Controller {
         if (wordgen != null && wordgen.exists()) {
             ssb.append("Als Anhang hinzufügen: ").append(wordgen.getAbsolutePath()).append(" ?");
         }
-        sb.append("&body=").append(org.springframework.web.util.UriUtils.encode(sbb.toString(), StandardCharsets.UTF_8)).append("%0D%0A").append(org.springframework.web.util.UriUtils.encode(ssb.toString(), StandardCharsets.UTF_8));
+        sb.append("&body=").append(org.springframework.web.util.UriUtils.encode(sbb.toString(), StandardCharsets.UTF_8))
+                .append("%0D%0A")
+                .append(org.springframework.web.util.UriUtils.encode(ssb.toString(), StandardCharsets.UTF_8));
         try {
             URI uri = new URI(sb.toString());
             Desktop.getDesktop().mail(uri);
@@ -155,7 +156,8 @@ public class FinishController implements Controller {
                 Dialogs.show(noemail, "Messdiener ohne E-Mail-Addresse:");
             }
         } catch (IOException | URISyntaxException | IllegalArgumentException e) {
-            Dialogs.error(e, "Konnte den mailto-Link (" + URLEncoder.encode(sb.toString(), StandardCharsets.UTF_8) + ") nicht öffnen");
+            Dialogs.error(e, "Konnte den mailto-Link (" + URLEncoder.encode(sb.toString(), StandardCharsets.UTF_8)
+                    + ") nicht öffnen");
         }
     }
 
@@ -165,8 +167,20 @@ public class FinishController implements Controller {
         converterProperties.setCharset("UTF-8");
         try {
             File out = new File(Log.getWorkingDir().getAbsolutePath() + File.separator + titel + ".pdf");
-            //TODO should out deleted first?
-            HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").getBytes(StandardCharsets.UTF_8)),
+
+            InputStream in = new FileInputStream(out);
+            XWPFDocument document = new XWPFDocument(in);
+
+            XHTMLOptions options = XHTMLOptions.create().URIResolver(new FileURIResolver(new File("word/media")));
+
+            OutputStream os = new ByteArrayOutputStream();
+
+            XHTMLConverter.getInstance().convert(document, os, options);
+
+            // TODO should out deleted first?
+            HtmlConverter.convertToPdf(
+                    new ByteArrayInputStream(
+                            editor.getHtmlText().replace("<p></p>", "<br>").getBytes(StandardCharsets.UTF_8)),
                     new FileOutputStream(out), converterProperties);
             pdfgen = out;
             Desktop.getDesktop().open(out);
@@ -182,20 +196,9 @@ public class FinishController implements Controller {
             input = input.replace("</br>", "");
             input = input.replace("<br>", "<br></br>");
             Log.getLogger().debug(input);
-            RFonts rfonts = Context.getWmlObjectFactory().createRFonts();
-            rfonts.setAscii("Century Gothic");
-            XHTMLImporterImpl.addFontMapping("Century Gothic", rfonts);
-            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
-            NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
-            wordMLPackage.getMainDocumentPart().addTargetPart(ndp);
-            ndp.unmarshalDefaultNumbering();
-            XHTMLImporterImpl importer = new XHTMLImporterImpl(wordMLPackage);
-            importer.setHyperlinkStyle("Hyperlink");
-            wordMLPackage.getMainDocumentPart().getContent().addAll(importer.convert(input, Log.getWorkingDir().getAbsolutePath()));
 
             File out = new File(Log.getWorkingDir() + File.separator + titel + ".docx");
-            //TODO should old deleted?
-            wordMLPackage.save(out);
+            // TODO should old deleted?
             wordgen = out;
             Desktop.getDesktop().open(out);
         } catch (Exception e) {
@@ -237,18 +240,20 @@ public class FinishController implements Controller {
             for (Messdiener medi : medis) {
                 einteilen(m, medi, false, false);
             }
-            if (!m.istFertig()) zwang(m);
+            if (!m.istFertig())
+                zwang(m);
         } else if (act == EnumAction.TYPE_BEACHTEN) {
             List<Messdiener> medis = get(m.getStandardMesse(), m, false, false);
             Log.getLogger().info(medis.size() + " für " + m.getNochBenoetigte());
             for (Messdiener messdiener : medis) {
                 einteilen(m, messdiener, false, false);
             }
-            if (!m.istFertig()) zwang(m);
+            if (!m.istFertig())
+                zwang(m);
         }
     }
 
-    public void zwang(Messe m, boolean zangDate, boolean zwangAnz, String loggerOutput){
+    public void zwang(Messe m, boolean zangDate, boolean zwangAnz, String loggerOutput) {
         List<Messdiener> medis = get(m.getStandardMesse(), m, zangDate, zwangAnz);
         Log.getLogger().warn(m + loggerOutput);
         for (Messdiener medi : medis) {
@@ -257,24 +262,31 @@ public class FinishController implements Controller {
     }
 
     private void zwang(Messe m) {
-        if (m.istFertig()) return;
-		final String start = "Die Messe ";
-		String secondPart = " hat zu wenige Messdiener.\nNoch ";
+        if (m.istFertig())
+            return;
+        final String start = "Die Messe ";
+        String secondPart = " hat zu wenige Messdiener.\nNoch ";
 
-		if (!(m.getStandardMesse() instanceof Sonstiges)) {
-            if (Dialogs.frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte() + " werden benötigt.\nSollen Messdiener eingeteilt werden, die standartmäßig die Messe \n'" + m.getStandardMesse().tokurzerBenutzerfreundlichenString() + "' dienen können, aber deren Anzahl schon zu hoch ist?")) {
+        if (!(m.getStandardMesse() instanceof Sonstiges)) {
+            if (Dialogs.frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte()
+                    + " werden benötigt.\nSollen Messdiener eingeteilt werden, die standartmäßig die Messe \n'"
+                    + m.getStandardMesse().tokurzerBenutzerfreundlichenString()
+                    + "' dienen können, aber deren Anzahl schon zu hoch ist?")) {
                 zwang(m, false, true, " einteilen ohne Anzahl beachten");
             }
             SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyy");
-            if (Dialogs.frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte() + " werden benötigt.\nSollen Messdiener eingeteilt werden, die an dem Tag \n'" + df.format(m.getDate()) + "' dienen können?")) {
+            if (Dialogs.frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte()
+                    + " werden benötigt.\nSollen Messdiener eingeteilt werden, die an dem Tag \n'"
+                    + df.format(m.getDate()) + "' dienen können?")) {
                 zwang(m, false, false, " einteilen ohne Standardmesse beachten");
             }
         }
-		if (m.istFertig()) {
-		    return;
+        if (m.istFertig()) {
+            return;
         }
-        if (Dialogs.frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte() + " werden benötigt.\nSollen Messdiener zwangsweise eingeteilt werden?")) {
-            zwang(m, true, true , " einteilen ohne Standardmesse beachten");
+        if (Dialogs.frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte()
+                + " werden benötigt.\nSollen Messdiener zwangsweise eingeteilt werden?")) {
+            zwang(m, true, true, " einteilen ohne Standardmesse beachten");
         }
         zuwenige(m);
     }
@@ -292,9 +304,10 @@ public class FinishController implements Controller {
             d = m.einteilen(medi, zwangdate, zwanganz);
         }
         if (!m.istFertig() && d) {
-            List<Messdiener> anv = medi.getMessdatenDaten().getAnvertraute(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList());
+            List<Messdiener> anv = medi.getMessdatenDaten()
+                    .getAnvertraute(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList());
             RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
-            rd.removeDuplicatedEntries(anv);
+            anv = rd.removeDuplicatedEntries(anv);
             if (!anv.isEmpty()) {
                 anv.sort(Messdiener.einteilen);
                 for (Messdiener messdiener : anv) {
