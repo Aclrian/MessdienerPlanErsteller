@@ -1,6 +1,5 @@
 package net.aclrian.mpe.controller;
 
-import com.jfoenix.controls.JFXTextField;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -10,7 +9,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
 import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.controller.MainController.EnumPane;
@@ -55,11 +53,11 @@ public class MediController implements Controller {
     @FXML
     private Slider eintritt;
     @FXML
-    private JFXTextField name;
+    private TextField name;
     @FXML
-    private JFXTextField vorname;
+    private TextField vorname;
     @FXML
-    private JFXTextField email;
+    private TextField email;
     @FXML
     private CheckBox leiter;
     @FXML
