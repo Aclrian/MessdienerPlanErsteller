@@ -8,7 +8,6 @@ module MessdienerplanErsteller.main {
 	requires java.xml;
 	requires java.desktop;
 	requires spring.web;
-	requires com.jfoenix;
 	requires json.simple;
 	requires xhtmlrenderer;
 	requires html2pdf;
@@ -22,6 +21,7 @@ module MessdienerplanErsteller.main {
 	requires fr.opensagres.xdocreport.converter.docx.xwpf;
 	requires fr.opensagres.xdocreport.core;
 	requires poi.ooxml;
+	requires tornadofx.controls;
 
 	opens net.aclrian.fx;
 	opens net.aclrian.mpe;
