@@ -1,6 +1,5 @@
 package net.aclrian.mpe.controller;
 
-import com.jfoenix.controls.JFXTextField;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -70,7 +69,7 @@ public class PfarreiController {
 	@FXML
 	private TableColumn<Setting, Integer> anzahl;
 	@FXML
-	private JFXTextField name;
+	private TextField name;
 	@FXML
 	private CheckBox hochamt;
 	@FXML
