@@ -1,7 +1,5 @@
 package net.aclrian.mpe.utils;
 
-import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXTextField;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
@@ -10,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -209,9 +208,9 @@ public class Dialogs {
 
 
     public static List<Date> getDates(String string, String dl, String dz) {
-        JFXDatePicker d1 = new JFXDatePicker();
+        DatePicker d1 = new DatePicker();
         d1.setPromptText(dl);
-        JFXDatePicker d2 = new JFXDatePicker();
+        DatePicker d2 = new DatePicker();
         d2.setPromptText(dz);
         HBox hb = new HBox(d1, d2);
         hb.setSpacing(20d);
@@ -240,9 +239,9 @@ public class Dialogs {
     }
 
     public static StandartMesse standartmesse(StandartMesse sm) {
-        JFXTextField ort = new JFXTextField();
+        TextField ort = new TextField();
         ort.setPromptText("Ort:");
-        JFXTextField typ = new JFXTextField();
+        TextField typ = new TextField();
         typ.setPromptText("Typ:");
         ComboBox<String> wochentag = new ComboBox<>(
                 FXCollections.observableArrayList("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"));
