@@ -18,6 +18,7 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import java.awt.*;
@@ -167,20 +168,8 @@ public class FinishController implements Controller {
         converterProperties.setCharset("UTF-8");
         try {
             File out = new File(Log.getWorkingDir().getAbsolutePath() + File.separator + titel + ".pdf");
-
-            InputStream in = new FileInputStream(out);
-            XWPFDocument document = new XWPFDocument(in);
-
-            XHTMLOptions options = XHTMLOptions.create().URIResolver(new FileURIResolver(new File("word/media")));
-
-            OutputStream os = new ByteArrayOutputStream();
-
-            XHTMLConverter.getInstance().convert(document, os, options);
-
-            // TODO should out deleted first?
-            HtmlConverter.convertToPdf(
-                    new ByteArrayInputStream(
-                            editor.getHtmlText().replace("<p></p>", "<br>").getBytes(StandardCharsets.UTF_8)),
+            //TODO should out deleted first?
+            HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").getBytes(StandardCharsets.UTF_8)),
                     new FileOutputStream(out), converterProperties);
             pdfgen = out;
             Desktop.getDesktop().open(out);
@@ -197,8 +186,16 @@ public class FinishController implements Controller {
             input = input.replace("<br>", "<br></br>");
             Log.getLogger().debug(input);
 
+            InputStream in = IOUtils.toInputStream(input, StandardCharsets.UTF_8);
+            XWPFDocument document = new XWPFDocument(in);
+
+            XHTMLOptions options = XHTMLOptions.create();
+
             File out = new File(Log.getWorkingDir() + File.separator + titel + ".docx");
-            // TODO should old deleted?
+            FileOutputStream fos = new FileOutputStream(out, false);
+
+            XHTMLConverter.getInstance().convert(document, fos, options);
+
             wordgen = out;
             Desktop.getDesktop().open(out);
         } catch (Exception e) {

@@ -1,8 +1,5 @@
 package net.aclrian.mpe.controller;
 
-import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTimePicker;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Window;
@@ -14,9 +11,9 @@ import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
+import tornadofx.control.DateTimePicker;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -26,15 +23,15 @@ public class MesseController implements Controller {
     private StandartMesse standartMesse = null;
 
     @FXML
-    private JFXTextField titel;
+    private TextField titel;
     @FXML
-    private JFXTextField ort;
+    private TextField ort;
 
     @FXML
-    private JFXDatePicker datum;
+    private DatePicker datum;
 
     @FXML
-    private JFXTimePicker uhr;
+    private DateTimePicker uhr;
 
     @FXML
     private Slider slider;
@@ -104,7 +101,7 @@ public class MesseController implements Controller {
         standartMesse = new Sonstiges();
         smesse.setText(standartMesse.tolangerBenutzerfreundlichenString());
         smesse.setDisable(true);
-        uhr.set24HourView(true);
+        uhr.setFormat("HH:mm");
     }
 
     @Override
@@ -124,12 +121,12 @@ public class MesseController implements Controller {
         list.setSelected(messe.getEingeteilte());
         LocalDate ld = messe.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         datum.setValue(ld);
-        uhr.setValue(LocalDateTime.ofInstant(messe.getDate().toInstant(), ZoneId.systemDefault()).toLocalTime());
+        uhr.setValue(LocalDate.ofInstant(messe.getDate().toInstant(), ZoneId.systemDefault()));
         list.setSelected(messe.getEingeteilte());
     }
 
     private Date getDate() {
-        return Date.from(datum.getValue().atTime(uhr.getValue()).atZone(ZoneId.systemDefault()).toInstant());
+        return Date.from(datum.getValue().atTime(uhr.getDateTimeValue().toLocalTime()).atZone(ZoneId.systemDefault()).toInstant());
     }
 
     @FXML
