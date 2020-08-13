@@ -30,6 +30,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FinishController implements Controller {
 
@@ -184,10 +186,15 @@ public class FinishController implements Controller {
             String input = editor.getHtmlText().replace("<p></p>", "");
             input = input.replace("</br>", "");
             input = input.replace("<br>", "<br></br>");
+            input = input.replaceFirst("<html", "<html lang=\"de\"");
+            input = input.replaceFirst("<head>","<head><title>"+titel+ "</title>");
+            input = input.replaceAll("(<font>|<\\/font>)", "");
+            input = "<!DOCTYPE html>" + input;
+            //https://validator.w3.org/nu/?doc=https%3A%2F%2Fwww.w3schools.com%2Fhtml%2Fhtml_validate.html#textarea
             Log.getLogger().debug(input);
 
             InputStream in = IOUtils.toInputStream(input, StandardCharsets.UTF_8);
-            XWPFDocument document = new XWPFDocument(in);
+            XWPFDocument document = new XWPFDocument();
 
             XHTMLOptions options = XHTMLOptions.create();
 
