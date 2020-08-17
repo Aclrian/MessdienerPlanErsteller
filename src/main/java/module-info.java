@@ -12,7 +12,6 @@ module MessdienerplanErsteller.main {
     requires xhtmlrenderer;
     requires html2pdf;
     requires javafx.web;
-
     requires org.docx4j.core;
 	requires org.docx4j.openxml_objects;
     requires org.slf4j;
@@ -36,6 +35,5 @@ module MessdienerplanErsteller.main {
     exports net.aclrian.mpe.messe;
     exports net.aclrian.mpe.pfarrei;
     exports net.aclrian.mpe.utils;
-
 
 }
