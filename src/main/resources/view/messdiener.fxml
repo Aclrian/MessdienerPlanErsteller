@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -11,12 +11,13 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="net.aclrian.mpe.controller.MediController">
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.aclrian.mpe.controller.MediController">
   <columnConstraints>
       <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
       <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
@@ -92,9 +93,15 @@
           </Tab>
         </tabs>
       </TabPane>
-      <JFXTextField fx:id="name" focusColor="#009688" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Name" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="1" />
-      <JFXTextField fx:id="email" focusColor="#009688" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="E-Mail" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="2" />
-      <JFXTextField fx:id="vorname" focusColor="#009688" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Vorname" GridPane.columnIndex="8" GridPane.columnSpan="4" GridPane.rowIndex="1" />
-      <Slider fx:id="eintritt" maxHeight="1.7976931348623157E308" GridPane.columnIndex="8" GridPane.columnSpan="4" GridPane.rowIndex="2" />
+      <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Name" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets right="20.0" />
+         </GridPane.margin></TextField>
+      <TextField fx:id="email" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="E-Mail" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets right="20.0" />
+         </GridPane.margin></TextField>
+      <TextField fx:id="vorname" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Vorname" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="1" />
+      <Slider fx:id="eintritt" maxHeight="1.7976931348623157E308" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="2" />
    </children>
 </GridPane>

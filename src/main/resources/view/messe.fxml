@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXDatePicker?>
-<?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXTimePicker?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -18,8 +18,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 <?import net.aclrian.fx.ATilePane?>
-
-<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="net.aclrian.mpe.controller.MesseController">
+<?import tornadofx.control.DateTimePicker?>
+<?import javafx.scene.control.SpinnerValueFactory?>
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.aclrian.mpe.controller.MesseController">
     <columnConstraints>
         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
@@ -67,22 +68,24 @@
             <Insets />
          </GridPane.margin>
         </SplitMenuButton>
-        <JFXTextField fx:id="titel" focusColor="#009688" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Titel" GridPane.columnSpan="7" GridPane.rowIndex="1">
+        <TextField fx:id="titel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Titel" GridPane.columnSpan="7" GridPane.rowIndex="1">
             <GridPane.margin>
                 <Insets left="20.0" right="20.0" />
-            </GridPane.margin></JFXTextField>
-        <JFXTextField fx:id="ort" focusColor="#009688" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Ort" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="1" />
+            </GridPane.margin></TextField>
+        <TextField fx:id="ort" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Ort" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="1" />
         <Slider fx:id="slider" maxHeight="1.7976931348623157E308" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="2" />
-        <JFXDatePicker fx:id="datum" GridPane.columnSpan="4" GridPane.rowIndex="2">
+        <DatePicker fx:id="datum" promptText="Datum" GridPane.columnSpan="4" GridPane.rowIndex="2">
             <GridPane.margin>
                 <Insets left="20.0" />
             </GridPane.margin>
-        </JFXDatePicker>
-        <JFXTimePicker fx:id="uhr" GridPane.columnIndex="4" GridPane.columnSpan="3" GridPane.rowIndex="2">
+        </DatePicker>
+        <DateTimePicker fx:id="uhr" format="HH:mm" promptText="Uhrzeit" GridPane.columnIndex="4" GridPane.columnSpan="3" GridPane.rowIndex="2">
             <GridPane.margin>
                 <Insets right="20.0" />
             </GridPane.margin>
-        </JFXTimePicker>
+        </DateTimePicker>
+      <!--<Spinner fx:id="neuUhr" editable="true" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="3">
+      </Spinner>-->
         <BorderPane GridPane.columnSpan="16" GridPane.rowIndex="4" GridPane.rowSpan="4">
             <GridPane.margin>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

@@ -2,9 +2,6 @@ package net.aclrian.mpe.controller;
 
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
-import fr.opensagres.poi.xwpf.converter.core.FileURIResolver;
-import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLConverter;
-import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLOptions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,20 +15,29 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-import org.apache.commons.io.IOUtils;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.docx4j.Docx4jProperties;
+import org.docx4j.jaxb.Context;
+import org.docx4j.model.structure.PageSizePaper;
+import org.docx4j.openpackaging.contenttype.ContentType;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.PartName;
+import org.docx4j.openpackaging.parts.WordprocessingML.AlternativeFormatInputPart;
+import org.docx4j.relationships.Relationship;
+import org.docx4j.wml.CTAltChunk;
 
 import java.awt.*;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FinishController implements Controller {
 
@@ -171,7 +177,7 @@ public class FinishController implements Controller {
         try {
             File out = new File(Log.getWorkingDir().getAbsolutePath() + File.separator + titel + ".pdf");
             //TODO should out deleted first?
-            HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").getBytes(StandardCharsets.UTF_8)),
+            HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace(" ", "    ").getBytes(StandardCharsets.UTF_8)),
                     new FileOutputStream(out), converterProperties);
             pdfgen = out;
             Desktop.getDesktop().open(out);
@@ -183,27 +189,35 @@ public class FinishController implements Controller {
     @FXML
     public void toWORD(ActionEvent actionEvent) {
         try {
-            String input = editor.getHtmlText().replace("<p></p>", "");
-            input = input.replace("</br>", "");
-            input = input.replace("<br>", "<br></br>");
-            input = input.replaceFirst("<html", "<html lang=\"de\"");
-            input = input.replaceFirst("<head>","<head><title>"+titel+ "</title>");
-            input = input.replaceAll("(<font>|<\\/font>)", "");
-            input = "<!DOCTYPE html>" + input;
-            //https://validator.w3.org/nu/?doc=https%3A%2F%2Fwww.w3schools.com%2Fhtml%2Fhtml_validate.html#textarea
+            String input = editor.getHtmlText().replace("<p></p>", "")
+                    .replace("</br>", "")
+                    .replace("<br>", "<br></br>")
+                    .replace("</p><p><font></font></p><p><font><b>", "</p><br/><p><font></font></p><p><font><b>")
+                    .replace(" ", "    ");
             Log.getLogger().debug(input);
+            Log.getLogger().info(Charset.defaultCharset());
 
-            InputStream in = IOUtils.toInputStream(input, StandardCharsets.UTF_8);
-            XWPFDocument document = new XWPFDocument();
+            //see: https://github.com/plutext/docx4j/blob/master/docx4j-samples-resources/src/main/resources/docx4j.properties
+            Docx4jProperties.getProperties().setProperty("docx4j.PageSize", "B4JIS");
+            String papersize = Docx4jProperties.getProperties().getProperty("docx4j.PageSize", "B4JIS");
 
-            XHTMLOptions options = XHTMLOptions.create();
+            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage(PageSizePaper.valueOf(papersize), false);
+
+            AlternativeFormatInputPart afiPart = new AlternativeFormatInputPart(new PartName("/hw.html"));
+            afiPart.setBinaryData(input.getBytes());
+
+            afiPart.setContentType(new ContentType("text/html"));
+            Relationship altChunkRel = wordMLPackage.getMainDocumentPart().addTargetPart(afiPart);
+
+            CTAltChunk ac = Context.getWmlObjectFactory().createCTAltChunk();
+            ac.setId(altChunkRel.getId());
+            wordMLPackage.getMainDocumentPart().addObject(ac);
 
             File out = new File(Log.getWorkingDir() + File.separator + titel + ".docx");
-            FileOutputStream fos = new FileOutputStream(out, false);
 
-            XHTMLConverter.getInstance().convert(document, fos, options);
+            wordMLPackage.getContentTypeManager().addDefaultContentType("html", "text/html");
+            wordMLPackage.save(out);
 
-            wordgen = out;
             Desktop.getDesktop().open(out);
         } catch (Exception e) {
             Dialogs.error(e, "Word-Dokument konnte nicht erstellt werden.");
