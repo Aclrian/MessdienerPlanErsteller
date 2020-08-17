@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="425.0" prefWidth="728.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+<VBox maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="425.0" prefWidth="728.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -73,8 +73,8 @@
     </MenuBar>
       <GridPane fx:id="grid" minHeight="-Infinity" prefHeight="400.0" VBox.vgrow="ALWAYS">
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" percentWidth="85.0" prefWidth="600.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.0" minWidth="128.0" prefWidth="128.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="600.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" percentHeight="33.333" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -93,7 +93,7 @@
                   <RowConstraints minHeight="10.0" percentHeight="33.333" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <GridPane fx:id="medi_pane">
+                  <GridPane fx:id="medi_pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
@@ -112,7 +112,7 @@
                         </Button>
                      </children>
                   </GridPane>
-                  <GridPane fx:id="gen_pane" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                  <GridPane fx:id="gen_pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                      </columnConstraints>
@@ -131,7 +131,7 @@
                         </Button>
                      </children>
                   </GridPane>
-                  <GridPane fx:id="messe_pane" GridPane.rowIndex="1">
+                  <GridPane fx:id="messe_pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
