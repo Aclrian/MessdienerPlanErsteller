@@ -15,7 +15,6 @@ module MessdienerplanErsteller.main {
     requires log4j;
 
     requires org.docx4j.core;
-    requires tornadofx.controls;
 	requires org.docx4j.openxml_objects;
     requires org.slf4j;
     requires org.apache.logging.log4j;
