@@ -38,7 +38,6 @@ public class Main extends Application {
             stage.setScene(scene);
 
             stage.setTitle("MessdienerplanErsteller");
-            stage.setResizable(false);
             stage.show();
             ((MainController) loader.getController()).changePane(EnumPane.START);
             getLogger().info("Startbildschirm geladen");

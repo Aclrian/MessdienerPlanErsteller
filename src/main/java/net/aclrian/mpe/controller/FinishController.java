@@ -176,8 +176,7 @@ public class FinishController implements Controller {
         converterProperties.setCharset("UTF-8");
         try {
             File out = new File(Log.getWorkingDir().getAbsolutePath() + File.separator + titel + ".pdf");
-            //TODO should out deleted first?
-            HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace(" ", "    ").getBytes(StandardCharsets.UTF_8)),
+            HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8)),
                     new FileOutputStream(out), converterProperties);
             pdfgen = out;
             Desktop.getDesktop().open(out);
@@ -193,7 +192,7 @@ public class FinishController implements Controller {
                     .replace("</br>", "")
                     .replace("<br>", "<br></br>")
                     .replace("</p><p><font></font></p><p><font><b>", "</p><br/><p><font></font></p><p><font><b>")
-                    .replace(" ", "    ");
+                    .replace("\u2003", "    ");
             Log.getLogger().debug(input);
             Log.getLogger().info(Charset.defaultCharset());
 
@@ -217,7 +216,7 @@ public class FinishController implements Controller {
 
             wordMLPackage.getContentTypeManager().addDefaultContentType("html", "text/html");
             wordMLPackage.save(out);
-
+            wordgen = out;
             Desktop.getDesktop().open(out);
         } catch (Exception e) {
             Dialogs.error(e, "Word-Dokument konnte nicht erstellt werden.");

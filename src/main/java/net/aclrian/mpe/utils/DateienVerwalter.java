@@ -111,8 +111,9 @@ public class DateienVerwalter {
 		for (File f : files) {
 			if (!f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())) {
 				todel.add(f);
-			} else
+			} else {
 				candel = true;
+			}
 		}
 		if (candel)
 			todel.forEach(file -> {
