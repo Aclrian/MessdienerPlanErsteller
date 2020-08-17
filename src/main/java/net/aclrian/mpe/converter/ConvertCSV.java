@@ -18,7 +18,6 @@ public class ConvertCSV {
      * (leer ist ja sonst nein)| 4: Leiter Gegenteil von 3
      * 6: Nachname, Vorname 7: E-Mail
      */
-    //TODO add Implemention
     public ConvertCSV(File f, List<Integer> sortierung) throws IOException {
         Log.getLogger().warn("Das Unter-Programm unterstützt die Vorlieben von Messdienern nicht!\n-Also wann sie dienen können");
         if (f.exists() && f.getName().endsWith(".csv")) {

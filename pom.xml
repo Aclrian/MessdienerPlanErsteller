@@ -116,11 +116,6 @@
             <version>5.2.5.RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>no.tornado</groupId>
-            <artifactId>tornadofx-controls</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.docx4j</groupId>
             <artifactId>docx4j-core</artifactId>
             <version>11.1.8</version>
@@ -140,12 +135,6 @@
             <artifactId>log4j-to-slf4j</artifactId>
             <version>2.13.3</version>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
-        </dependency>
-
     </dependencies>
 
     <build>

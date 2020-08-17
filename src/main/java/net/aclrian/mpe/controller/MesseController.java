@@ -3,21 +3,19 @@ package net.aclrian.mpe.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Window;
-import javafx.util.converter.LocalTimeStringConverter;
 import net.aclrian.fx.ASlider;
 import net.aclrian.fx.ATilePane;
+import net.aclrian.fx.TimeSpinner;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import tornadofx.control.DateTimePicker;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class MesseController implements Controller {
@@ -27,6 +25,7 @@ public class MesseController implements Controller {
 
     @FXML
     private TextField titel;
+
     @FXML
     private TextField ort;
 
@@ -34,7 +33,7 @@ public class MesseController implements Controller {
     private DatePicker datum;
 
     @FXML
-    private DateTimePicker uhr;
+    private TimeSpinner uhr;
 
     @FXML
     private Slider slider;
@@ -50,6 +49,7 @@ public class MesseController implements Controller {
 
     @FXML
     private MenuItem saveNew;
+
     @FXML
     private MenuItem cancel;
 
@@ -81,6 +81,7 @@ public class MesseController implements Controller {
                 mc.changePane(MainController.EnumPane.SELECT_MESSE);
             }
         });
+        uhr.getValueFactory().setValue(null);
     }
 
     private boolean saveMesse(MainController mc) {
@@ -103,8 +104,7 @@ public class MesseController implements Controller {
         standartMesse = new Sonstiges();
         smesse.setText(standartMesse.tolangerBenutzerfreundlichenString());
         smesse.setDisable(true);
-        uhr.setFormat("HH:mm");
-     }
+    }
 
     @Override
     public boolean isLocked() {
@@ -123,12 +123,12 @@ public class MesseController implements Controller {
         list.setSelected(messe.getEingeteilte());
         LocalDate ld = messe.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         datum.setValue(ld);
-        uhr.setValue(LocalDate.ofInstant(messe.getDate().toInstant(), ZoneId.systemDefault()));
+        uhr.getValueFactory().setValue(LocalTime.ofInstant(messe.getDate().toInstant(), ZoneId.systemDefault()));
         list.setSelected(messe.getEingeteilte());
     }
 
     private Date getDate() {
-        return Date.from(datum.getValue().atTime(uhr.getDateTimeValue().toLocalTime()).atZone(ZoneId.systemDefault()).toInstant());
+        return Date.from(datum.getValue().atTime(uhr.getValue()).atZone(ZoneId.systemDefault()).toInstant());
     }
 
     @FXML
