@@ -3,6 +3,7 @@ package net.aclrian.mpe.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Window;
+import javafx.util.converter.LocalTimeStringConverter;
 import net.aclrian.fx.ASlider;
 import net.aclrian.fx.ATilePane;
 import net.aclrian.mpe.messdiener.Messdiener;
@@ -14,7 +15,9 @@ import net.aclrian.mpe.utils.Dialogs;
 import tornadofx.control.DateTimePicker;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class MesseController implements Controller {
@@ -78,7 +81,6 @@ public class MesseController implements Controller {
                 mc.changePane(MainController.EnumPane.SELECT_MESSE);
             }
         });
-
     }
 
     private boolean saveMesse(MainController mc) {
@@ -102,7 +104,7 @@ public class MesseController implements Controller {
         smesse.setText(standartMesse.tolangerBenutzerfreundlichenString());
         smesse.setDisable(true);
         uhr.setFormat("HH:mm");
-    }
+     }
 
     @Override
     public boolean isLocked() {
