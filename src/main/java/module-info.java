@@ -12,6 +12,7 @@ module MessdienerplanErsteller.main {
     requires xhtmlrenderer;
     requires html2pdf;
     requires javafx.web;
+
     requires org.docx4j.core;
 	requires org.docx4j.openxml_objects;
     requires org.slf4j;
