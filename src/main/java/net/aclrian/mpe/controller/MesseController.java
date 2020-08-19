@@ -58,7 +58,7 @@ public class MesseController implements Controller {
 
     @Override
     public void afterstartup(Window window, MainController mc) {
-        ASlider.makeASlider("Messdiener: ", slider, null);
+        ASlider.makeASlider("Messdiener", slider, null);
         slider.setValue(6d);
         slider.setMax(30);
         slider.setMin(1);
