@@ -283,17 +283,17 @@ public class Dialogs {
         a.getDialogPane().setExpandableContent(v);
         a.getDialogPane().setExpanded(true);
         a.setOnShown(arg0 -> {
-            ASlider.makeASlider("Stunde: ", stunde, null);
-            ASlider.makeASlider(minute, d -> {
-                String as;
-                if (d < 10) {
-                    as = "0" + new DecimalFormat("#").format(d);
-                } else
-                    as = new DecimalFormat("#").format(d);
-                as = "Minute: " + as;
-                return as;
-            });
-            ASlider.makeASlider("Anzahl: ", anz, new Tooltip("Anzahl der Messdiener"));
+            ASlider.makeASlider("Stunde", stunde, null);
+            ASlider.makeASlider(d -> {
+                            String as;
+                            if (d < 10) {
+                                as = "0" + new DecimalFormat("#").format(d);
+                            } else
+                                as = new DecimalFormat("#").format(d);
+                            as = "Minute: " + as;
+                            return as;
+                        }, minute, null);
+            ASlider.makeASlider("Anzahl", anz, new Tooltip("Anzahl der Messdiener"));
             if (sm != null) {
                 ort.setText(sm.getOrt());
                 typ.setText(sm.getTyp());

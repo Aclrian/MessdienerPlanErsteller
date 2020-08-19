@@ -167,7 +167,7 @@ public class MediController implements Controller {
             }
         });
         // Value in Silder
-        ASlider.makeASlider("Eintritt: ", eintritt, null);
+        ASlider.makeASlider("Eintritt", eintritt, null);
         eintritt.setValue(Messdaten.getMaxYear());
         bearbeitenFreunde = new Label("Bearbeiten");
         bearbeitenFreunde.setStyle("-fx-font-style: italic;");
