@@ -12,26 +12,18 @@ public class ASlider {
     public static final String SLIDER_VALUE = "sliderValue";
 
     static void setEventHandler(Slider s) {
-        s.setOnScroll(e -> {
-            double delta = s.getOrientation().equals(Orientation.HORIZONTAL) ? e.getDeltaY() : e.getDeltaX();
-            if (delta <= 0) {
-                double i1 = s.getValue() - 1;
-                if (i1 >= s.getMax()) {
-                    i1 = s.getMax();
-                } else {
-                    i1 = s.getMin();
-                }
-                s.setValue(i1);
-            } else {
-                double i1 = s.getValue() + 1;
-                if (i1 >= s.getMax()) {
-                    i1 = s.getMax();
-                } else {
-                    i1 = s.getMin();
-                }
-                s.setValue(i1);
-            }
-        });
+        s.setOnScroll(e -> scrollValue(s, e));
+    }
+
+    public static void scrollValue(Slider s, javafx.scene.input.ScrollEvent e) {
+        double delta = s.getOrientation().equals(Orientation.HORIZONTAL) ? e.getDeltaY() : e.getDeltaX();
+        int amount = 0;
+        if (delta < 0) {
+            amount = -1;
+        } else if(delta>0) {
+            amount = 1;
+        }
+        s.adjustValue(s.getValue()+amount);
     }
 
     public static void makeASlider(String value, Slider s, Tooltip tooltip) {
