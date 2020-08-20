@@ -15,7 +15,7 @@ import org.testfx.util.WaitForAsyncUtils;
 public class TestASlider extends ApplicationTest {
 
     private final String stringValue = "object2342+3";
-    private Slider instance;
+    private Slider slider;
     private Pane pane;
 
     @Override
