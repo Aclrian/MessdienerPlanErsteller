@@ -44,19 +44,19 @@
 body{
 	background-color: lightgrey;
 	font-family:veranda,sans-serif;
-	font-size: 2.75vw;
-	/* font-size: max(100em, 1200px);*/
+	font-size: min(2.75vw, 20px);
+	    line-height: 140%;
 }
 h1{
-	font-size: 6vw;
+	font-size: min(6vw, 28px);
 	text-align: center;
 }
 h2{
-	font-size: 5vw;
+	font-size: min(5vw, 25px);
 	text-align: left;
 }
 td{
-	font-size: 2.25vw;
+	font-size: min(2.25vw, 12px);
 }
 th, td{
 	border-bottom: 1px solid lightseagreen;
@@ -74,11 +74,8 @@ div, span,a{
 .btn{
 	border: 1px solid white;
 	padding: 5px;
-	
-vertical-align: middle;
-
-
-height: 3.25vw;
+	vertical-align: middle;
+	//height: 3.25vw;
 }
 .ni{
 	margin: 1vw 2vw;
@@ -109,10 +106,10 @@ a img{
 	border-spacing: 10px;
 }
 #bilder img, #bilder, #vorschau{
-	transition: 2s;
-	-moz-transition: 2s;
-	-o-transition: 2s;
-	-webkit-transition: 2s;
+	//transition: 2s;
+	//-moz-transition: 2s;
+	//-o-transition: 2s;
+	//-webkit-transition: 2s;
 	max-width: 80vw;
 	/*margin: 0 auto;*/
 }
@@ -131,4 +128,8 @@ a img{
 } 
 .email{
 	display: none;
+}
+table{
+	margin-left: auto;
+	margin-right: auto;
 }
