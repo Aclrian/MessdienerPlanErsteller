@@ -1,310 +1,172 @@
 package net.aclrian.mpe.utils;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Window;
+import javafx.stage.Stage;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.ReadFile;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.pfarrei.ReadFilePfarrei;
+import org.apache.commons.io.FileUtils;
 
-/**
- * Sonstige Klasse, die viel mit Ordnerverwaltung und Sortieren zu tun hat.
- *
- * @author Aclrian
- */
-public class DateienVerwalter {
-	public static final String PFARREDATEIENDUNG = ".xml.pfarrei";
-	public static final String MESSDIENERDATEIENDUNG = ".xml";
-	public static final String TEXTDATEI = File.separator + ".messdienerOrdnerPfad.txt";
-	private static DateienVerwalter dateienVerwalter;
-	private final Window window;
-	/**
-	 * Hier wird der Pfad gespeichert, indem die Messdiener gespeichert werden
-	 * sollen / sind <br>
-	 * andere Klassen erzeugen hiermit neue Messdiener an dem selben Ort</br>
-	 */
-	private String savepath;
-	private Pfarrei pf;
-	private ArrayList<Messdiener> medis;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.file.Files;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-	private DateienVerwalter(Window window) throws NoSuchPfarrei {
-		this.window = window;
-		getSpeicherort();
-		File f = getPfarreFile();
-		if (f == null) {
-			throw new NoSuchPfarrei(savepath);
-		}
-		pf = ReadFilePfarrei.getPfarrei(f.getAbsolutePath());
-	}
+public class DateienVerwalter implements IDateienVerwalter {
+    public static final String PFARREDATEIENDUNG = ".xml.pfarrei";
+    public static final String MESSDIENERDATEIENDUNG = ".xml";
+    private final File dir;
+    private Pfarrei pf;
+    private List<Messdiener> medis;
+    private FileOutputStream pfarreiFos;
+    private FileLock lock;
+    private static IDateienVerwalter instance;
 
-	public static DateienVerwalter getDateienVerwalter() {
-		return dateienVerwalter;
-	}
+    public static IDateienVerwalter getInstance() {
+        return instance;
+    }
 
-	public static void reStart(Window window) throws NoSuchPfarrei {
-		dateienVerwalter = new DateienVerwalter(window);
-	}
+    public static void setInstance(IDateienVerwalter instance) {
+        DateienVerwalter.instance = instance;
+    }
 
-	public Pfarrei getPfarrei() {
-		if (pf == null) {
-			reloadPfarrei();
-		}
-		return pf;
-	}
+    public static void reStart(Stage stage) throws NoSuchPfarrei {
+        Speicherort ort = new Speicherort(stage);
+        setInstance(new DateienVerwalter(ort.getSpeicherortString()));
+    }
 
-	private void reloadPfarrei() {
-		File f = getPfarreFile();
-		if (f == null) {
-			Dialogs.fatal("Es konnte keine Pfarrei gefunden werden.");
-			return;
-		}
-		Log.getLogger().info("Pfarrei gefunden in: " + f);
-		pf = ReadFilePfarrei.getPfarrei(f.getAbsolutePath());
-	}
+    public DateienVerwalter(String path) throws NoSuchPfarrei {
+        this.dir = new File(path);
+        lookForPfarreiFile();
+        Thread thread = new Thread(() -> {
+            try (WatchService service = dir.toPath().getFileSystem().newWatchService()) {
+                dir.toPath().register(service, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+                while (true) {
+                    useKey(service);
+                }
+            } catch (IOException e) {
+                Dialogs.getDialogs().warn("");
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
 
-	private ArrayList<File> getPfarreiFiles() {
-		ArrayList<File> files = new ArrayList<>();
-		File f = new File(savepath);
-		for (File file : Objects.requireNonNull(f.listFiles())) {
-			String s = file.toString();
-			if (s.endsWith(PFARREDATEIENDUNG)) {
-				files.add(file);
-			}
+    private void useKey(WatchService service) {
+        WatchKey key;
+        try {
+            key = service.take();
+            key.pollEvents();
+            reloadMessdiener();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
-		}
-		return files;
-	}
+    @Override
+    public File getSavepath() {
+        return dir;
+    }
 
-	private File getPfarreFile() {
-		ArrayList<File> files = getPfarreiFiles();
-		if (files.size() != 1) {
-			if (files.size() > 1) {
-				Dialogs.warn("Es darf nur eine Datei mit der Endung: '" + PFARREDATEIENDUNG + "' in dem Ordner: "
-						+ savepath + " vorhanden sein.");
-				return files.get(0);
-			} else {
-				return null;
-			}
-		} else {
-			return files.get(0);
-		}
-	}
+    @Override
+    public void reloadMessdiener() {
+        medis = null;
+    }
 
-	public void removeoldPfarrei(File neuePfarrei) {
-		ArrayList<File> files = getPfarreiFiles();
-		ArrayList<File> todel = new ArrayList<>();
-		boolean candel = false;
-		for (File f : files) {
-			if (!f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())) {
-				todel.add(f);
-			} else {
-				candel = true;
-			}
-		}
-		if (candel)
-			todel.forEach(file -> {
-				try {
-					Files.delete(file.toPath());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
-	}
+    @Override
+    public List<Messdiener> getMessdiener() {
+        if (medis == null) {
+            ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{MESSDIENERDATEIENDUNG}, true));
+            medis = new ArrayList<>();
+            files.forEach(file -> {
+                ReadFile rf = new ReadFile();
+                medis.add(rf.getMessdiener(file));
+            });
+        }
+        return medis;
+    }
 
-	/**
-	 * @return Ausgewaehlten Ordnerpfad
-	 */
-	private String waehleOrdner() {
-		DirectoryChooser f = new DirectoryChooser();
-		String s = "Ordner wählen, in dem alles gespeichert werden soll:";
-		f.setTitle(s);
-		File file = f.showDialog(window);
-		return file == null ? null : file.getPath();
-	}
 
-	private List<File> getPaths(File file, List<File> list) {
-		if (file == null || list == null || !file.isDirectory())
-			return Collections.emptyList();
-		File[] fileArr = file.listFiles();
-		assert fileArr != null;
-		for (File f : fileArr) {
-			if (f.isDirectory()) {
-				getPaths(f, list);
-			}
-			list.add(f);
-		}
-		return list;
-	}
+    //Pfarrei
 
-	private List<File> getAlleMessdienerFiles(String path) {
-		Log.getLogger().info("verzName: " + path);
-		return getPaths(new File(path), new ArrayList<>());
-	}
+    private void lookForPfarreiFile() throws NoSuchPfarrei {
+        ArrayList<File> files = getPfarreiFiles();
+        File pfarreiFile;
+        if (files.size() != 1) {
+            if (files.size() > 1) {
+                Dialogs.getDialogs().warn("Es darf nur eine Datei mit der Endung: '" + PFARREDATEIENDUNG + "' in dem Ordner: "
+                        + dir + " vorhanden sein.");
+                pfarreiFile = files.get(0);
+            } else {
+                throw new NoSuchPfarrei(dir);
+            }
+        } else {
+            pfarreiFile = files.get(0);
+        }
+        Log.getLogger().info("Pfarrei gefunden in: " + pfarreiFile);
+        pf = ReadFilePfarrei.getPfarrei(pfarreiFile.getAbsolutePath());
+        try {
+            pfarreiFos = new FileOutputStream(pfarreiFile);
+            FileChannel channel = pfarreiFos.getChannel();
+            lock = channel.lock();
+        } catch (IOException e) {
+            Dialogs.getDialogs().warn("Pfarrei-Datei konnte nicht vom Programm gehalten werden: " + e.getLocalizedMessage());
+        }
+    }
 
-	/**
-	 * @return Messdiener als List
-	 */
-	public List<Messdiener> getAlleMedisVomOrdnerAlsList() {
-		if (pf == null) {
-			reloadPfarrei();
-		}
-		if (medis == null) {
-			List<File> files = getAlleMessdienerFiles(savepath);
-			medis = new ArrayList<>();
-			for (File file : files) {
-				ReadFile rf = new ReadFile();
-				Messdiener m = rf.getMessdiener(file.getAbsolutePath());
-				if (m != null) {
-					medis.add(m);
-				}
-			}
-			for (Messdiener medi : medis) {
-				medi.setnewMessdatenDaten();
-			}
-		}
-		return medis;
-	}
+    @Override
+    public FileLock getLock() {
+        return lock;
+    }
 
-	public String getSavepath() {
-		if (savepath == null || savepath.equals("")) {
-			savepath = waehleOrdner();
-		}
-		return savepath;
-	}
+    @Override
+    public FileOutputStream getPfarreiFileOutputStream() {
+        return pfarreiFos;
+    }
 
-	private void setSavepath(String savepath) {
-		this.savepath = savepath;
-	}
+    private ArrayList<File> getPfarreiFiles() {
+        ArrayList<File> files = new ArrayList<>();
+        for (File file : Objects.requireNonNull(dir.listFiles())) {
+            String s = file.toString();
+            if (s.endsWith(PFARREDATEIENDUNG)) {
+                files.add(file);
+            }
+        }
+        return files;
+    }
 
-	public void erneuereSavepath() {
-		String homedir = System.getProperty("user.home");
-		homedir = homedir + TEXTDATEI;
-		File f = new File(homedir);
-		try {
-			Files.delete(f.toPath());
-			savepath = "";
-			getSpeicherort();
-		} catch (IOException e) {
-			Dialogs.warn("Konnte die Datei " + homedir + " nicht ändern.");
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void removeoldPfarrei(File neuePfarrei) {
+        ArrayList<File> files = getPfarreiFiles();
+        ArrayList<File> todel = new ArrayList<>();
+        boolean candel = false;
+        for (File f : files) {
+            if (!f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())) {
+                todel.add(f);
+            } else {
+                candel = true;
+            }
+        }
+        if (candel)
+            todel.forEach(file -> {
+                try {
+                    Files.delete(file.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+    }
 
-	private void getSpeicherort() {
-		String homedir = System.getProperty("user.home");
-		homedir = homedir + TEXTDATEI;
-		Log.getLogger().info("Das Home-Verzeichniss wurde gefunden: " + homedir);
-		File f = new File(homedir);
-		if (!f.exists()) {
-			createSaveFile(homedir);
-		} else {
-			if (readSaveFile(homedir, f))
-				return;
-		}
-		Log.getLogger().info("Der Speicherort liegt in: " + savepath);
-	}
-
-	private boolean readSaveFile(String homedir, File f) {
-		try (BufferedReader bufferedReader = new BufferedReader(
-				new InputStreamReader(new FileInputStream(homedir), StandardCharsets.UTF_8))) {
-			String line = bufferedReader.readLine();
-			if (line == null) {
-				savepathNotFound(f, null);
-				return true;
-			}
-			File saveFile = new File(line);
-			if (saveFile.exists()) {
-				setSavepath(line);
-			} else {
-				savepathNotFound(f, line);
-			}
-			if (this.savepath == null || this.savepath.equals("")) {
-				Files.delete(f.toPath());
-				getSavepath();
-			}
-		} catch (IOException e) {
-			Dialogs.error(e, "Die Datei '" + homedir + "' konnte nicht gelesen werden.");
-		}
-		if (savepath == null) {
-			savepath = waehleOrdner();
-			try (FileWriter fileWriter = new FileWriter(homedir);
-					BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-				if (savepath != null) {
-					bufferedWriter.write(savepath);
-				} else {
-					Dialogs.warn(
-							"Es wird ein Speicherort benötigt, um dort Messdiener zu speichern.\nBitte einen Speicherort eingeben!");
-					getSpeicherort();
-				}
-			} catch (IOException e) {
-				Log.getLogger().info("Auf den Speicherort '" + f + "' kann nicht zugegriffen werden!");
-				getSpeicherort();
-			}
-		}
-		return false;
-	}
-
-	private void createSaveFile(String homedir) {
-		String s;
-		if (savepath == null || savepath.equals("")) {
-			s = waehleOrdner();
-		} else {
-			s = savepath;
-		}
-		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(homedir))) {
-			if (s != null) {
-				Log.getLogger().info(s);
-				bufferedWriter.write(s);
-				setSavepath(s);
-			} else {
-				savepath = "";
-				Dialogs.warn(
-						"Es wird ein Speicherort benötigt, um dort Messdiener zu speichern.\nBitte einen Speicherort eingeben!");
-				getSpeicherort();
-			}
-		} catch (IOException e) {
-			Dialogs.error(e, "Der Speicherort konnte nicht gespeichert werden.");
-		}
-	}
-
-	private void savepathNotFound(File f, String line) {
-		Log.getLogger().info("Der Speicherort aus '" + f + "' ('" + line + "') existiert nicht!");
-		try {
-			Files.delete(f.toPath());
-			getSpeicherort();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
-
-	public void reloadMessdiener() {
-		medis = null;
-	}
-
-	public static class NoSuchPfarrei extends Exception {
-		private final String savepath;
-
-		public NoSuchPfarrei(String savepath) {
-			this.savepath = savepath;
-		}
-
-		public String getSavepath() {
-			return savepath;
-		}
-	}
+    @Override
+    public Pfarrei getPfarrei() {
+        return pf;
+    }
 }

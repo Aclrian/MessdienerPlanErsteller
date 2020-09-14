@@ -19,18 +19,20 @@ import net.aclrian.mpe.utils.RemoveDoppelte;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 public class FerienplanController implements Controller {
+    public static final String PATTERN = "dd.MM.yyyy";
+
     private List<String> dates = new ArrayList<>();
     @FXML
     private TableColumn<Datentraeger, String> name;
     @FXML
     private TableView<Datentraeger> table;
-
     @FXML
     private Button zurueck;
     @FXML
@@ -47,23 +49,17 @@ public class FerienplanController implements Controller {
 
     @Override
     public void afterstartup(Window window, MainController mc) {
-        List<Messdiener> medis = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+        List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN);
         ArrayList<Datentraeger> daten = new ArrayList<>();
         for (Messe messe : mc.getMessen()) {
-            dates.add(df.format(messe.getDate()));
+            dates.add(dateFormat.format(messe.getDate()));
         }
         RemoveDoppelte<String> rd = new RemoveDoppelte<>();
         dates = rd.removeDuplicatedEntries(dates);
         dates.sort((o1, o2) -> {
-            try {
-                Date d1 = df.parse(o1);
-                Date d2 = df.parse(o2);
-                return d1.compareTo(d2);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                return o1.compareTo(o2);
-            }
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN);
+            return LocalDate.parse(o1, formatter).compareTo(LocalDate.parse(o2, formatter));
         });
         TableColumn<Datentraeger, String> column = new TableColumn<>();
         column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMessdiener()));
@@ -85,7 +81,7 @@ public class FerienplanController implements Controller {
         table.setEditable(true);
         column.setEditable(false);
         for (Messdiener m : medis) {
-            daten.add(new Datentraeger(df, dates, m));
+            daten.add(new Datentraeger(dateFormat, dates, m));
         }
         table.setItems(FXCollections.observableArrayList(daten));
         fertig.setOnAction(event -> mc.changePane(MainController.EnumPane.PLAN));
@@ -95,7 +91,7 @@ public class FerienplanController implements Controller {
                 if (i != 0) {
                     int row = table.getFocusModel().getFocusedCell().getRow();
                     String s = dates.get(i - 1);
-                    table.getItems().get(row).get(s).setB(!table.getItems().get(row).get(s).isB());
+                    table.getItems().get(row).get(s).setKann(!table.getItems().get(row).get(s).kann());
                     table.refresh();
                     table.getFocusModel().focusLeftCell();
                     table.getFocusModel().focusRightCell();
@@ -108,7 +104,11 @@ public class FerienplanController implements Controller {
                 table.getItems().forEach(dt -> dt.get(d).getProperty().set(false));
             }
         });
-        hilfe.setOnAction(e -> Dialogs.info("Hier können Messdiener für bestimmte Tage abgemeldet werden:\n\nEin Hacken in einem Kasten heißt, dass der Messdiener an dem Tag nicht eingeteilt wird.\nMit den Pfeiltasten kann die Zelle gewechselt werden und mit dem Leerzeichen der Hacken gesetzt und entfernt werden.\n\nÄnderungen werden sofort umgesetzt und können nur durch Leeren komplett zurückgesetzt werden."));
+        hilfe.setOnAction(e -> Dialogs.getDialogs().info("Hier können Messdiener für bestimmte Tage abgemeldet werden:\n\nEin Hacken in einem Kasten heißt, dass der Messdiener an dem Tag nicht eingeteilt wird.\nMit den Pfeiltasten kann die Zelle gewechselt werden und mit dem Leerzeichen der Hacken gesetzt und entfernt werden.\n\nÄnderungen werden sofort umgesetzt und können nur durch Leeren komplett zurückgesetzt werden."));
+    }
+
+    public List<String> getDates() {
+        return dates;
     }
 
     @Override
@@ -116,15 +116,15 @@ public class FerienplanController implements Controller {
         return false;
     }
 
-    private static class Datentraeger {
-        private final HashMap<String, Datum> stringDatumHashMap = new HashMap<>();
+    public static class Datentraeger {
+        private final HashMap<String, Available> stringDatumHashMap = new HashMap<>();
         private final Messdiener m;
 
         public Datentraeger(SimpleDateFormat df, List<String> dates, Messdiener messdiener) {
             m = messdiener;
             for (String d : dates) {
-                Datum datum = new Datum(messdiener.getMessdatenDaten().ausgeteilt(d));
-                datum.getProperty().addListener((observable, oldValue, newValue) -> {
+                Available available = new Available(messdiener.getMessdatenDaten().ausgeteilt(d));
+                available.getProperty().addListener((observable, oldValue, newValue) -> {
                     boolean old = oldValue;
                     boolean neu = newValue;
                     if (old != neu) {
@@ -135,15 +135,15 @@ public class FerienplanController implements Controller {
                                 messdiener.getMessdatenDaten().ausausteilen(df.parse(d));
                             }
                         } catch (ParseException e) {
-                            Dialogs.error(e, "Konnte das Datum nicht bekommen.");
+                            Dialogs.getDialogs().error(e, "Konnte das Datum nicht bekommen.");
                         }
                     }
                 });
-                stringDatumHashMap.put(d, datum);
+                stringDatumHashMap.put(d, available);
             }
         }
 
-        public Datum get(String d) {
+        public Available get(String d) {
             return stringDatumHashMap.get(d);
         }
 
@@ -151,26 +151,25 @@ public class FerienplanController implements Controller {
             return m.makeId();
         }
 
-        private static class Datum {
-            private final SimpleBooleanProperty b;
+        public static class Available {
+            private final SimpleBooleanProperty kann;
 
-            public Datum(boolean b) {
-                this.b = new SimpleBooleanProperty(b);
+            public Available(boolean kann) {
+                this.kann = new SimpleBooleanProperty(kann);
             }
 
-            public boolean isB() {
-                return b.get();
+            public boolean kann() {
+                return kann.get();
             }
 
-            public void setB(boolean b) {
-                this.b.setValue(b);
+            public void setKann(boolean kann) {
+                this.kann.setValue(kann);
             }
 
             public SimpleBooleanProperty getProperty() {
-                return b;
+                return kann;
             }
         }
     }
-
 
 }

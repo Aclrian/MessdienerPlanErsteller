@@ -36,7 +36,7 @@ public class StandartmesseController implements Controller {
     public void initialize() {
         smesse.setText(sm.tokurzerBenutzerfreundlichenString());
         ArrayList<Messdiener> selected = new ArrayList<>();
-        for (Messdiener m : DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList()) {
+        for (Messdiener m : DateienVerwalter.getInstance().getMessdiener()) {
                 if (m.getDienverhalten().getBestimmtes(sm)) {
                     selected.add(m);
                 }
@@ -51,14 +51,14 @@ public class StandartmesseController implements Controller {
             mc.changePane(MainController.EnumPane.START);
         });
         fertig.setOnAction(event -> {
-            List<Messdiener> medis = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
+            List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
             for (Messdiener m : medis) {
                 try {
                     m.getDienverhalten().editiereBestimmteMesse(sm, pane.getSelected().contains(m));
                     WriteFile wf = new WriteFile(m);
                     wf.toXML();
                 } catch (IOException e) {
-                    Dialogs.error(e, "Konnte den Messdiener " + medis.toString() + " nicht speichern.");
+                    Dialogs.getDialogs().error(e, "Konnte den Messdiener " + medis.toString() + " nicht speichern.");
                 }
             }
             locked = false;

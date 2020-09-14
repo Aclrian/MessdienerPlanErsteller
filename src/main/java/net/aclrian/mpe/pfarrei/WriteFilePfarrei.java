@@ -107,20 +107,20 @@ public class WriteFilePfarrei {
             DOMSource domSource = new DOMSource(doc);
             String datei = pf.getName();
             datei = datei.replace(" ", "_");
-            savepath = savepath == null ? DateienVerwalter.getDateienVerwalter().getSavepath() : savepath;
+            savepath = savepath == null ? DateienVerwalter.getInstance().getSavepath().getAbsolutePath() : savepath;
             Log.getLogger()
                     .info("Pfarrei wird gespeichert in :" + savepath + File.separator + datei + DateienVerwalter.PFARREDATEIENDUNG);
             File f = new File(savepath + File.separator + datei + DateienVerwalter.PFARREDATEIENDUNG);
             StreamResult streamResult = new StreamResult(f);
             c.getTransformer().transform(domSource, streamResult);
-            DateienVerwalter.getDateienVerwalter().removeoldPfarrei(f);
+            DateienVerwalter.getInstance().removeoldPfarrei(f);
             Log.getLogger().info("Pfarrei: " + pf.getName() + "wurde erfolgreich gespeichert!");
         } catch (ParserConfigurationException | TransformerException pce) {
-            Dialogs.error(pce, "Fehler bei Speichern der Pfarrei:");
+            Dialogs.getDialogs().error(pce, "Fehler bei Speichern der Pfarrei:");
         }
     }
 
     public static void writeFile(Pfarrei pf) {
-        writeFile(pf, DateienVerwalter.getDateienVerwalter().getSavepath());
+        writeFile(pf, DateienVerwalter.getInstance().getSavepath().getAbsolutePath());
     }
 }
