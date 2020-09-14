@@ -107,7 +107,7 @@ public class InfoController {
             try {
                 Desktop.getDesktop().open(Log.getLogFile());
             } catch (IOException ex) {
-                Dialogs.error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         });
         ArrayList<String[]> entries = new ArrayList<>();
@@ -117,7 +117,7 @@ public class InfoController {
                 entries.add(entry.split(Pattern.quote(",")));
             }
         } catch (IOException e) {
-            Dialogs.error(e, "Konnte Abhängigkeiten nicht lesen.");
+            Dialogs.getDialogs().error(e, "Konnte Abhängigkeiten nicht lesen.");
         }
         name.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[0]));
         name.setPrefWidth(table.getWidth() / 5.0);
@@ -136,11 +136,11 @@ public class InfoController {
                 ArrayList<String> sel = new ArrayList<>();
                 sel.add(table.getSelectionModel().getSelectedItem()[2]);
                 sel.add(table.getSelectionModel().getSelectedItem()[4]);
-                Object o = Dialogs.singleSelect(sel, "Wähle eine Website zum Öffnen:");
+                Object o = Dialogs.getDialogs().singleSelect(sel, "Wähle eine Website zum Öffnen:");
                 try {
                     if (o != null) Desktop.getDesktop().browse(new URI(o.toString()));
                 } catch (IOException | URISyntaxException e) {
-                    Dialogs.error(e, "Konnte die Website nicht öffnen.");
+                    Dialogs.getDialogs().error(e, "Konnte die Website nicht öffnen.");
                 }
 
             }
@@ -152,7 +152,7 @@ public class InfoController {
             try {
                 Desktop.getDesktop().browse(new URI(link.getText()));
             } catch (IOException | URISyntaxException ex) {
-                Dialogs.error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         };
     }
@@ -162,7 +162,7 @@ public class InfoController {
             try {
                 Desktop.getDesktop().open(file);
             } catch (IOException ex) {
-                Dialogs.error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         };
     }
