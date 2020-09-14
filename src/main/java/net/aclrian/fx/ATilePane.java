@@ -19,18 +19,15 @@ public class ATilePane extends TilePane {
         setMaxHeight(Double.MAX_VALUE);
         setMaxWidth(Double.MAX_VALUE);
         setVgap(5d);
-        try {
-            List<Messdiener> medis = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
-            medis.sort(Messdiener.compForMedis);
-            for (Messdiener messdiener : medis) {
-                ACheckBox cb = new ACheckBox(messdiener);
-                cb.setMaxWidth(Double.MAX_VALUE);
-                cb.setStyle("-fx-padding: 0 0 0 10");
-                getChildren().add(cb);
-            }
-        } catch (Exception e) {
-            // For SceneBuilder
+        List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
+        medis.sort(Messdiener.compForMedis);
+        for (Messdiener messdiener : medis) {
+            ACheckBox cb = new ACheckBox(messdiener);
+            cb.setMaxWidth(Double.MAX_VALUE);
+            cb.setStyle("-fx-padding: 0 0 0 10");
+            getChildren().add(cb);
         }
+
     }
 
     public List<Messdiener> getSelected() {
@@ -55,7 +52,7 @@ public class ATilePane extends TilePane {
         }
     }
 
-    private static class ACheckBox extends CheckBox {
+    public static class ACheckBox extends CheckBox {
         private final Messdiener messdiener;
 
         public ACheckBox(Messdiener m) {

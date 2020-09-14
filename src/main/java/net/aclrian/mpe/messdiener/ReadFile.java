@@ -25,19 +25,18 @@ import java.io.File;
  */
 public class ReadFile {
     /**
-     * @param path die Datei
+     * @param xmlFile die Datei
      * @return den ausgelesenen Messdiener
      */
-    public Messdiener getMessdiener(String path) {
+    public Messdiener getMessdiener(File xmlFile) {
         Messdiener me = null;
         try {
-            File fXmlFile = new File(path);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             DocumentBuilder dbuilder = dbFactory.newDocumentBuilder();
-            Document doc = dbuilder.parse(new InputSource(String.valueOf(fXmlFile.toURI())));
-            if (doc != null && fXmlFile.getAbsolutePath().endsWith(DateienVerwalter.MESSDIENERDATEIENDUNG)) {
+            Document doc = dbuilder.parse(new InputSource(String.valueOf(xmlFile.toURI())));
+            if (doc != null && xmlFile.getAbsolutePath().endsWith(DateienVerwalter.MESSDIENERDATEIENDUNG)) {
                 doc.getDocumentElement().normalize();
                 NodeList nList = doc.getElementsByTagName("XML");
                 for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -54,17 +53,17 @@ public class ReadFile {
                         Messverhalten dienverhalten = readMessverhalten(eElement);
                         String[] freunde = new String[5];
                         String[] geschwister = new String[3];
-                        readFreunde(fXmlFile, eElement, freunde);
-                        readGeschwister(fXmlFile, eElement, geschwister);
+                        readFreunde(xmlFile, eElement, freunde);
+                        readGeschwister(xmlFile, eElement, geschwister);
 
-                        me = toMessdiener(fXmlFile, mail, vname, nname, eintritt, istLeiter, dienverhalten);
+                        me = toMessdiener(xmlFile, mail, vname, nname, eintritt, istLeiter, dienverhalten);
                         me.setFreunde(freunde);
                         me.setGeschwister(geschwister);
                     }
                 }
             }
         } catch (Exception e) {
-            Dialogs.error(e, "Fehler beim Lesen der Datei: " + path);
+            Dialogs.getDialogs().error(e, "Fehler beim Lesen der Datei: " + xmlFile);
             e.printStackTrace();
         }
         return me;
@@ -105,7 +104,7 @@ public class ReadFile {
 
     private Messverhalten readMessverhalten(Element eElement) {
         Messverhalten dienverhalten = new Messverhalten();
-        for (StandartMesse sm : DateienVerwalter.getDateienVerwalter().getPfarrei().getStandardMessen()) {
+        for (StandartMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
             if (sm instanceof Sonstiges) {
                 continue;
             }
@@ -195,8 +194,8 @@ public class ReadFile {
     }
 
     private void fixEmail(Messdiener me, String mail, String vname, String nname, int eintritt, boolean istLeiter, Messverhalten dienverhalten) {
-        if (Dialogs.frage("Die E-Mail-Addresse '" + mail + "' von " + me.makeId() + " ist ungültig und wird gelöscht.\nSoll eine neue eingegeben werden?")) {
-            String s = Dialogs.text("Neue E-Mail-Adresse von " + me.makeId() + " eingeben:\nWenn keine vorhanden ist, soll das Feld leer bleiben.", "E-Mail:");
+        if (Dialogs.getDialogs().frage("Die E-Mail-Addresse '" + mail + "' von " + me.makeId() + " ist ungültig und wird gelöscht.\nSoll eine neue eingegeben werden?")) {
+            String s = Dialogs.getDialogs().text("Neue E-Mail-Adresse von " + me.makeId() + " eingeben:\nWenn keine vorhanden ist, soll das Feld leer bleiben.", "E-Mail:");
             if (!s.equals("")) me.setEmailEmpty();
             try {
                 me.setEmail(s);

@@ -11,7 +11,7 @@ import net.aclrian.mpe.messdiener.Messdiener;
  * @author Aclrian
  *
  */
-public class Messe {
+public class Messe implements Comparable<Messe>{
 	@Override
 	public String toString() {
 		return getID();
@@ -51,7 +51,7 @@ public class Messe {
 
 	public boolean einteilen(Messdiener medi, boolean zwangdate, boolean zwanganz) {
 		if(medi.getMessdatenDaten().einteilen(getDate(), isHochamt(), zwangdate, zwanganz)) {
-			if (medi.isIstLeiter()) {
+			if (medi.istLeiter()) {
 				leiter.add(medi);
 				leiter.sort(Messdiener.compForMedis);
 			} else {
@@ -153,7 +153,7 @@ public class Messe {
 
 	public boolean vorzeitigEiteilen(Messdiener medi) {
 		if(medi.getMessdatenDaten().einteilenVorzeitig(date,hochamt)){
-			if (medi.isIstLeiter()) {
+			if (medi.istLeiter()) {
 				leiter.add(medi);
 			} else {
 				medis.add(medi);
@@ -174,4 +174,39 @@ public class Messe {
 		return leiter.size() + medis.size();
 	}
 
+	@Override
+	public int compareTo(Messe m) {
+		return date.compareTo(m.getDate());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Messe messe = (Messe) o;
+
+		if (hochamt != messe.hochamt) return false;
+		if (anzMessdiener != messe.anzMessdiener) return false;
+		if (!Objects.equals(date, messe.date)) return false;
+		if (!Objects.equals(kirche, messe.kirche)) return false;
+		if (!Objects.equals(em, messe.em)) return false;
+		if (!Objects.equals(typ, messe.typ)) return false;
+		if (!Objects.equals(medis, messe.medis)) return false;
+		return Objects.equals(leiter, messe.leiter);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = (hochamt ? 1 : 0);
+		result = 31 * result + anzMessdiener;
+		result = 31 * result + (date != null ? date.hashCode() : 0);
+		result = 31 * result + (kirche != null ? kirche.hashCode() : 0);
+		result = 31 * result + dateFormatWeekday.hashCode();
+		result = 31 * result + (em != null ? em.hashCode() : 0);
+		result = 31 * result + (typ != null ? typ.hashCode() : 0);
+		result = 31 * result + (medis != null ? medis.hashCode() : 0);
+		result = 31 * result + (leiter != null ? leiter.hashCode() : 0);
+		return result;
+	}
 }

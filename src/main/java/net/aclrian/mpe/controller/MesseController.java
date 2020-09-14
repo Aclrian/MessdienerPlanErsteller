@@ -72,7 +72,7 @@ public class MesseController implements Controller {
                 locked = false;
                 mc.changePaneMesse(null);
             } else {
-                Dialogs.warn("Bitte einen Titel, Ort, Datum und Uhrzeit eigeben.");
+                Dialogs.getDialogs().warn("Bitte einen Titel, Ort, Datum und Uhrzeit eigeben.");
             }
         });
         button.setOnAction(e -> {
@@ -89,7 +89,7 @@ public class MesseController implements Controller {
             Messe m = new Messe(hochamt.isSelected(), (int) slider.getValue(), getDate(), ort.getText(), titel.getText(), standartMesse);
             for (Messdiener medi : list.getSelected()) {
                 if (!m.vorzeitigEiteilen(medi)) {
-                    Dialogs.warn(medi.makeId() + " konnte nicht vorzeitig eingetielt werden.");
+                    Dialogs.getDialogs().warn(medi.makeId() + " konnte nicht vorzeitig eingetielt werden.");
                 }
             }
             mc.getMessen().add(m);
@@ -133,7 +133,7 @@ public class MesseController implements Controller {
 
     @FXML
     private void standardmesseBearbeiten() {
-        StandartMesse s = (StandartMesse) Dialogs.singleSelect(DateienVerwalter.getDateienVerwalter().getPfarrei().getStandardMessen(), "Standartmesse ändern:");
+        StandartMesse s = (StandartMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), "Standartmesse ändern:");
         if (s != null) {
             smesse.setText(s.tolangerBenutzerfreundlichenString());
             this.standartMesse = s;

@@ -26,6 +26,7 @@ import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.pfarrei.Setting;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.IDateienVerwalter;
 import net.aclrian.mpe.utils.Log;
 
 import java.io.IOException;
@@ -81,7 +82,7 @@ public class PfarreiController {
 		this.stage = stage;
 		this.main = m;
 		this.old = old;
-		Pfarrei pf = DateienVerwalter.getDateienVerwalter().getPfarrei();
+		Pfarrei pf = DateienVerwalter.getInstance().getPfarrei();
 		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
 		ol = FXCollections.observableArrayList(pf.getStandardMessen());
 		ol.removeIf(sm -> sm instanceof Sonstiges);
@@ -113,14 +114,14 @@ public class PfarreiController {
 			stage.setResizable(false);
 			stage.show();
 			cont.afterstartup();
-			Dialogs.info("Willkommen beim MessdienerplanErsteller!", "Als Erstes werden eine Daten benötigt:"
+			Dialogs.getDialogs().info("Willkommen beim MessdienerplanErsteller!", "Als Erstes werden eine Daten benötigt:"
 					+ System.lineSeparator()
 					+ "Zunächst werden Standardmessen erstellt. Das sind die Messen, die sich wöchentlich wiederholen."
 					+ System.lineSeparator()
 					+ "Danach folgen Einstellungen, wie oft Messdiener eingeteilt werden sollen.");
 			getLogger().info("neue Pfarrei erstellen...");
 		} catch (IOException e) {
-			Dialogs.error(e, "Auf " + loader.getLocation() + MainController.NO_ACCESS);
+			Dialogs.getDialogs().error(e, "Auf " + loader.getLocation() + MainController.NO_ACCESS);
 		}
 	}
 
@@ -141,7 +142,7 @@ public class PfarreiController {
 			cont.afterstartup();
 			getLogger().info("neue Pfarrei erstellen...");
 		} catch (IOException e) {
-			Dialogs.error(e, "Auf " + loader.getLocation() + MainController.NO_ACCESS);
+			Dialogs.getDialogs().error(e, "Auf " + loader.getLocation() + MainController.NO_ACCESS);
 		}
 	}
 
@@ -170,7 +171,7 @@ public class PfarreiController {
 				if (e.getClickCount() == 2 && e.getButton().equals(MouseButton.PRIMARY)) {
 					int i = settingTableView.getSelectionModel().getSelectedIndex();
 					Setting s = settings.get(i);
-					settings.set(i, Dialogs.chance(s));
+					settings.set(i, Dialogs.getDialogs().chance(s));
 				}
 			});
 		} else {
@@ -191,7 +192,7 @@ public class PfarreiController {
 		return e -> {
 			if (e.getClickCount() == 2 && e.getButton().equals(MouseButton.PRIMARY)) {
 				int i = table.getSelectionModel().getSelectedIndex();
-				StandartMesse standartMesse = Dialogs.standartmesse(ol.get(i));
+				StandartMesse standartMesse = Dialogs.getDialogs().standartmesse(ol.get(i));
 				if (standartMesse != null) {
 					ol.remove(i);
 					ol.add(standartMesse);
@@ -209,7 +210,7 @@ public class PfarreiController {
 
 	@FXML
 	public void neu(ActionEvent e) {
-		StandartMesse sm = Dialogs.standartmesse(null);
+		StandartMesse sm = Dialogs.getDialogs().standartmesse(null);
 		if (ol.isEmpty()) {
 			ol = FXCollections.observableArrayList(sm);
 			table.setItems(ol);
@@ -221,7 +222,7 @@ public class PfarreiController {
 	@FXML
 	public void save(ActionEvent e) {
 		if (name.getText().equals("")) {
-			Dialogs.error("Bitte gebe einen Namen ein.");
+			Dialogs.getDialogs().error("Bitte gebe einen Namen ein.");
 			return;
 		}
 		Einstellungen einst = new Einstellungen();
@@ -241,7 +242,7 @@ public class PfarreiController {
 				DateienVerwalter.reStart(old);
 				((Stage) s).close();
 				return;
-			} catch (DateienVerwalter.NoSuchPfarrei e1) {
+			} catch (IDateienVerwalter.NoSuchPfarrei e1) {
 				Log.getLogger().error(e1.getMessage());
 			}
 		}
@@ -249,7 +250,7 @@ public class PfarreiController {
 			((Stage) s).close();
 			main.main(new Stage());
 		} catch (Exception ex) {
-			Dialogs.info("Das Programm muss nun neu gestartet werden.");
+			Dialogs.getDialogs().info("Das Programm muss nun neu gestartet werden.");
 			System.exit(0);
 		}
 	}
@@ -276,7 +277,7 @@ public class PfarreiController {
 				hochamt.setSelected(hochamtB);
 			}
 		} catch (IOException e) {
-			Dialogs.error(e, "Auf " + loader.getLocation() + MainController.NO_ACCESS);
+			Dialogs.getDialogs().error(e, "Auf " + loader.getLocation() + MainController.NO_ACCESS);
 		}
 	}
 
@@ -284,7 +285,7 @@ public class PfarreiController {
 	public void weiter(ActionEvent e) {
 		weiter();
 		try {
-			Dialogs.open(URI.create(
+			Dialogs.getDialogs().open(URI.create(
 					"https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Was-wird-unter-'Anzahl'-verstanden%3F"),
 					"Nun geht es um die Anzahl, wie oft Messdiener eingeteilt werden sollen:" + System.lineSeparator()
 							+ "Hier gibt es die maximale Anzahl, bei der zwischen Leitern und normalen Messdienern unterschieden werden kann."
@@ -296,7 +297,7 @@ public class PfarreiController {
 							+ "Dabei ist zu beachten, dass jedes Jahr ein Messdiener in die nächst-höhere Gruppe kommt.",
 					"Mehr Informationen", "Verstanden");
 		} catch (IOException e1) {
-			Dialogs.info("Pfarrei erstellen", "Nun geht es um die Anzahl, wie oft Messdiener eingeteilt werden sollen."
+			Dialogs.getDialogs().info("Pfarrei erstellen", "Nun geht es um die Anzahl, wie oft Messdiener eingeteilt werden sollen."
 					+ System.lineSeparator()
 					+ "Hier gibt es die maximale Anzahl, bei der zwischen Leitern und normalen Messdienern unterschieden werden kann."
 					+ System.lineSeparator()
@@ -333,7 +334,7 @@ public class PfarreiController {
 			afterstartup();
 			getLogger().info("neue Pfarrei erstellen...zurück");
 		} catch (IOException e) {
-			Dialogs.error(e, "Auf " + loader.getLocation() + MainController.NO_ACCESS);
+			Dialogs.getDialogs().error(e, "Auf " + loader.getLocation() + MainController.NO_ACCESS);
 		}
 	}
 }
