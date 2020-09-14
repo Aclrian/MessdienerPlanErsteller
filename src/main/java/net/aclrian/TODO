@@ -3,3 +3,7 @@ darkmode
 resizeable font
 write tests
 wait for https://bugs.openjdk.java.net/browse/JDK-8090397
+
+pfarrei ändern fos vom Dateiverwalter nehmen
+savepath lesen
+module info shade exclude

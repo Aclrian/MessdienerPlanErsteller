@@ -26,8 +26,8 @@ public class Messdaten {
         geschwister = new ArrayList<>();
         freunde = new ArrayList<>();
         update(m);
-        maxMessen = berecheMax(m.getEintritt(), getMaxYear(), m.isIstLeiter(),
-                DateienVerwalter.getDateienVerwalter().getPfarrei().getSettings());
+        maxMessen = berecheMax(m.getEintritt(), getMaxYear(), m.istLeiter(),
+                DateienVerwalter.getInstance().getPfarrei().getSettings());
         anzMessen = 0;
         insgesamtEingeteilt = 0;
     }
@@ -48,13 +48,13 @@ public class Messdaten {
         ausgeteilt.remove(d);
     }
 
-    public int berecheMax(int eintritt, int aktdatum, boolean leiter, Einstellungen einst) {
+    public int berecheMax(int eintritt, int aktdatum, boolean leiter, Einstellungen einstellungen) {
         int id = 0;
         if (leiter) {
             id++;
         }
         int eins;
-        int zwei = einst.getDaten(id).getAnzDienen();
+        int zwei = einstellungen.getDaten(id).getAnzDienen();
 
         int abstand = aktdatum - eintritt;
         if (abstand < 0) {
@@ -63,7 +63,7 @@ public class Messdaten {
         if (abstand >= Einstellungen.LENGHT) {
             abstand = Einstellungen.LENGHT - 3;
         }
-        eins = einst.getDaten(abstand + 2).getAnzDienen();
+        eins = einstellungen.getDaten(abstand + 2).getAnzDienen();
         if (zwei < eins) {
             eins = zwei;
         }
@@ -142,7 +142,7 @@ public class Messdaten {
     }
 
     public boolean kann(Date date, boolean dateZwang, boolean anzZwang) {
-        return kanndann(date, dateZwang) && ((anzZwang && (anzMessen - maxMessen) < 2) || kannnoch());
+        return kanndann(date, dateZwang) && ((anzZwang && (((anzMessen - maxMessen) < 2) || anzMessen<=maxMessen)) || kannnoch());
     }
 
     public boolean kanndann(Date date, boolean zwang) {
@@ -229,7 +229,7 @@ public class Messdaten {
             Messdiener medi;
             if (!value.equals("") && !value.equals("LEER") && !value.equals("Vorname, Nachname")) {
                 try {
-                    medi = sucheMessdiener(value, m, DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList());
+                    medi = sucheMessdiener(value, m, DateienVerwalter.getInstance().getMessdiener());
                     if (medi != null) {
                         this.geschwister.add(medi);
                         geschwister = rd.removeDuplicatedEntries(this.geschwister);
@@ -242,7 +242,7 @@ public class Messdaten {
     }
 
     private boolean messdienerrNotFound(boolean isfreund, String[] s, Messdiener m, String value, CouldnotFindMedi e) {
-        boolean beheben = Dialogs.frage(e.getMessage(),
+        boolean beheben = Dialogs.getDialogs().frage(e.getMessage(),
                 "ignorieren", "beheben");
         if (beheben) {
             ArrayList<String> list = new ArrayList<>(Arrays.asList(s));
@@ -254,9 +254,8 @@ public class Messdaten {
             try {
                 wf.toXML();
             } catch (IOException ex) {
-                Dialogs.error(ex, "Konnte es nicht beheben.");
+                Dialogs.getDialogs().error(ex, "Konnte es nicht beheben.");
             }
-            DateienVerwalter.getDateienVerwalter().reloadMessdiener();
             update(isfreund, gew, m);
             return true;
         }
@@ -270,6 +269,10 @@ public class Messdaten {
             }
         }
         throw new CouldnotFindMedi("Konnte für " + akt.makeId() + " : " + geschwi + " nicht finden");
+    }
+
+    public int getAnzMessen() {
+        return anzMessen;
     }
 
     public static class CouldnotFindMedi extends Exception {
