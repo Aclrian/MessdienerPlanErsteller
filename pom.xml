@@ -163,7 +163,6 @@
             <version>2.1</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -242,31 +241,36 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <artifactSet>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters><artifactSet>
+                        <excludes>
+                            <exclude>module-info.java</exclude>
+                        </excludes>
+                    </artifactSet>
+                    <artifactSet>
                         <excludes>
                             <exclude>module-info.java</exclude>
                         </excludes>
                     </artifactSet>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>project-classifier</shadedClassifierName>
-                            <outputFile>shade\${project.artifactId}-${project.version}.jar</outputFile>
-                            <transformers>
-                                <transformer implementation=
-                                                     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>net.aclrian.mpe.ApplikationStarter</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration><executions>
+                    <shadedClassifierName>project-classifier</shadedClassifierName>
+                    <outputFile>shade\${project.artifactId}-${project.version}.jar</outputFile>
+                    <transformers>
+                        <transformer implementation=
+                                             "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>net.aclrian.mpe.ApplikationStarter</mainClass>
+                        </transformer>
+                    </transformers>
+                </configuration>
+                <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>

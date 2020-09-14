@@ -31,21 +31,33 @@ import java.util.*;
 public class Dialogs {
 
     public static final String ICON = "/images/title_32.png";
+    private static Dialogs dialogs;
 
     private Dialogs() {
     }
 
-    private static Alert alertbuilder(AlertType type, String headertext) {
+    public static Dialogs getDialogs(){
+        if(dialogs == null){
+            dialogs = new Dialogs();
+        }
+        return dialogs;
+    }
+
+    public static void setDialogs(Dialogs dialogs) {
+        Dialogs.dialogs = dialogs;
+    }
+
+    private Alert alertbuilder(AlertType type, String headertext) {
         Alert a = new Alert(type);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(Dialogs.class.getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
         a.setHeaderText(headertext);
         a.setTitle("MessdienerplanErsteller");
 
         return a;
     }
 
-    private static Alert alertbuilder(AlertType type, String headertext, Node n) {
+    private Alert alertbuilder(AlertType type, String headertext, Node n) {
         Alert a = alertbuilder(type, headertext);
         a.getDialogPane().setExpandableContent(n);
         a.getDialogPane().setExpanded(true);
@@ -53,29 +65,29 @@ public class Dialogs {
         return a;
     }
 
-    public static void info(String string) {
+    public void info(String string) {
         Log.getLogger().info(string);
         alertbuilder(AlertType.INFORMATION, string).showAndWait();
     }
 
-    public static void info(String header, String string) {
+    public void info(String header, String string) {
         Log.getLogger().info(string);
         Alert a = alertbuilder(AlertType.INFORMATION, header);
         a.setContentText(string);
         a.showAndWait();
     }
 
-    public static void warn(String string) {
+    public void warn(String string) {
         Log.getLogger().warn(string);
         alertbuilder(AlertType.WARNING, string).showAndWait();
     }
 
-    public static void error(String string) {
+    public void error(String string) {
         Log.getLogger().error(string);
         alertbuilder(AlertType.ERROR, string).showAndWait();
     }
 
-    public static void error(Exception e, String string) {
+    public void error(Exception e, String string) {
         Log.getLogger().error(string);
         StringWriter stack = new StringWriter();
         e.printStackTrace(new PrintWriter(stack));
@@ -99,7 +111,7 @@ public class Dialogs {
         alertbuilder(AlertType.ERROR, header, vb).showAndWait();
     }
 
-    public static void open(URI open, String string) throws IOException {
+    public void open(URI open, String string) throws IOException {
         Alert a = alertbuilder(AlertType.CONFIRMATION, string);
         Optional<ButtonType> res = a.showAndWait();
         if (res.isPresent() && (res.get() == ButtonType.OK)) {
@@ -107,12 +119,12 @@ public class Dialogs {
         }
     }
 
-    public static void open(URI open, String string, String ok, String close) throws IOException {
+    public void open(URI open, String string, String ok, String close) throws IOException {
         ButtonType od = new ButtonType(ok, ButtonBar.ButtonData.OK_DONE);
         ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
         Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(Dialogs.class.getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
         a.setHeaderText(string);
         a.setTitle("MessdienerplanErsteller");
         Optional<ButtonType> res = a.showAndWait();
@@ -121,12 +133,12 @@ public class Dialogs {
         }
     }
 
-    public static boolean frage(String string) {
+    public boolean frage(String string) {
         Optional<ButtonType> res = alertbuilder(AlertType.CONFIRMATION, string).showAndWait();
         return res.isPresent() && (res.get() == ButtonType.OK);
     }
 
-    public static boolean frage(String string, String cancel, String ok) {
+    public boolean frage(String string, String cancel, String ok) {
         Alert a = alertbuilder(AlertType.CONFIRMATION, string);
         ((Button) a.getDialogPane().lookupButton(ButtonType.CANCEL)).setText(cancel);
         ((Button) a.getDialogPane().lookupButton(ButtonType.OK)).setText(ok);
@@ -134,28 +146,28 @@ public class Dialogs {
         return res.isPresent() && (res.get() == ButtonType.OK);
     }
 
-    public static boolean yesNoCancel(String yes, String no, String cancel, String string) {
+    public YesNoCancelEnum yesNoCancel(String yes, String no, String cancel, String string) {
         ButtonType yesbtn = new ButtonType(yes, ButtonBar.ButtonData.YES);
         ButtonType cc = new ButtonType(cancel, ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType nobtn = new ButtonType(no, ButtonBar.ButtonData.NO);
         Alert a = new Alert(AlertType.CONFIRMATION, "", yesbtn, cc, nobtn);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(Dialogs.class.getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
         a.setHeaderText(string);
         Optional<ButtonType> res = a.showAndWait();
-        if (res.isPresent() && res.get() == cc) throw new NullPointerException();
-        return res.isPresent() && (res.get() == yesbtn);
+        if (res.isPresent() && res.get() == cc) return YesNoCancelEnum.CANCEL;
+        return res.isPresent() && (res.get() == yesbtn) ? YesNoCancelEnum.YES: YesNoCancelEnum.NO;
     }
 
-    public static void fatal(String string) {
+    public void fatal(String string) {
         error(string);
         System.exit(-1);
     }
 
-    public static <I> Object singleSelect(List<? extends I> list, String s) {
+    public <I> Object singleSelect(List<? extends I> list, String s) {
         Alert a = new Alert(AlertType.INFORMATION);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(Dialogs.class.getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
         a.setHeaderText(s);
         VBox v = new VBox();
         v.setSpacing(5d);
@@ -172,7 +184,7 @@ public class Dialogs {
         return null;
     }
 
-    public static <I> List<I> select(List<I> dataAmBestenSortiert, List<I> selected, String string) {
+    public <I> List<I> select(List<I> dataAmBestenSortiert, List<I> selected, String string) {
         Alert a = alertbuilder(AlertType.INFORMATION, string);
         ListView<CheckBox> lw = new ListView<>();
         ArrayList<I> rtn = new ArrayList<>();
@@ -207,7 +219,7 @@ public class Dialogs {
 
 
 
-    public static List<Date> getDates(String string, String dl, String dz) {
+    public List<Date> getDates(String string, String dl, String dz) {
         DatePicker d1 = new DatePicker();
         d1.setPromptText(dl);
         DatePicker d2 = new DatePicker();
@@ -238,7 +250,7 @@ public class Dialogs {
         return Collections.emptyList();
     }
 
-    public static StandartMesse standartmesse(StandartMesse sm) {
+    public StandartMesse standartmesse(StandartMesse sm) {
         TextField ort = new TextField();
         ort.setPromptText("Ort:");
         TextField typ = new TextField();
@@ -320,10 +332,10 @@ public class Dialogs {
         return null;
     }
 
-    public static String text(String string, String kurz) {
+    public String text(String string, String kurz) {
         TextInputDialog dialog = new TextInputDialog();
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(Dialogs.class.getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
         dialog.setTitle("Eingabe");
         dialog.setHeaderText(string);
         dialog.setContentText(kurz + ":");
@@ -334,10 +346,10 @@ public class Dialogs {
         return result.get();
     }
 
-    public static Setting chance(Setting s) {
+    public Setting chance(Setting s) {
         TextInputDialog dialog = new TextInputDialog();
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(Dialogs.class.getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
         dialog.setTitle("Eingabe");
         dialog.setHeaderText("Anzahl für den " + s.getJahr() + "er Jahrgang ändern");
         dialog.setContentText("neue Anzahl: ");
@@ -348,22 +360,23 @@ public class Dialogs {
         try {
             int anz = Integer.parseInt(result.get());
             if (anz < 0 || anz > 32) {
-                Dialogs.warn("Bitte eine Zahl zwischen 0 und 31 eingeben.");
-                return Dialogs.chance(s);
+                Dialogs.getDialogs().warn("Bitte eine Zahl zwischen 0 und 31 eingeben.");
+                return Dialogs.getDialogs().chance(s);
             }
             return new Setting(s.getAttribut(), s.getId(), anz);
         } catch (Exception e) {
-            Dialogs.warn(result.get() + " ist keine gültige Ganzzahl");
+            Dialogs.getDialogs().warn(result.get() + " ist keine gültige Ganzzahl");
             return s;
         }
     }
 
-    public static void show(List<?> list, String string) {
+    public void show(List<?> list, String string) {
         ListView<?> lv = new ListView<>(FXCollections.observableArrayList(list));
+        lv.setId("list");
         alertbuilder(AlertType.INFORMATION, string, lv).showAndWait();
     }
 
-    public static List<Messdiener> select(List<Messdiener> data, Messdiener without, List<Messdiener> freund, String s) {
+    public List<Messdiener> select(List<Messdiener> data, Messdiener without, List<Messdiener> freund, String s) {
         data.remove(without);
         return select(data, freund, s);
     }
@@ -379,5 +392,9 @@ public class Dialogs {
         public I getI() {
             return i;
         }
+    }
+
+    public enum YesNoCancelEnum {
+        YES, NO, CANCEL
     }
 }
