@@ -17,7 +17,7 @@ public class Messverhalten {
     private ArrayList<KannWelcheMesse> messen = new ArrayList<>();
 
     public Messverhalten() {
-        for (StandartMesse standartMesse : DateienVerwalter.getDateienVerwalter().getPfarrei().getStandardMessen()) {
+        for (StandartMesse standartMesse : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
             if (!(standartMesse instanceof Sonstiges)) {
                 this.messen.add(new KannWelcheMesse(standartMesse, false));
             }

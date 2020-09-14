@@ -93,7 +93,7 @@ public class MediController implements Controller {
     }
 
     public static boolean remove(Messdiener m) {
-        if (Dialogs.frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
+        if (Dialogs.getDialogs().frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
                 "Löschen")) {
             File file = m.getFile();
             try {
@@ -102,7 +102,7 @@ public class MediController implements Controller {
                 return false;
             }
             ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
-            for (Messdiener messdiener : DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList()) {
+            for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
                 alteloeschen(m, messdiener.getFreunde(), ueberarbeitete);
                 alteloeschen(m, messdiener.getGeschwister(), ueberarbeitete);
             }
@@ -114,7 +114,7 @@ public class MediController implements Controller {
                 try {
                     wf.toXML();
                 } catch (IOException e) {
-                    Dialogs.error(e, "Konnte bei dem Bekannten '" + medi
+                    Dialogs.getDialogs().error(e, "Konnte bei dem Bekannten '" + medi
                             + "' von dem zulöschenden Messdiener diesen nicht löschen.");
                 }
             }
@@ -175,10 +175,10 @@ public class MediController implements Controller {
 
             @Override
             public void handle(Event arg0) {
-                List<Messdiener> selected = Dialogs.select(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList(), moben,
+                List<Messdiener> selected = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben,
                         freund, "Freunde auswählen:");
                 if (selected.size() >= Messdiener.LENGHT_FREUNDE) {
-                    Dialogs.error(
+                    Dialogs.getDialogs().error(
                             "Zu viele Freunde: Bitte nur " + (Messdiener.LENGHT_FREUNDE - 1) + " Messdiener angeben.");
                     handle(arg0);
                     return;
@@ -194,10 +194,10 @@ public class MediController implements Controller {
 
             @Override
             public void handle(Event arg0) {
-                List<Messdiener> g = Dialogs.select(DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList(), moben, geschwi,
+                List<Messdiener> g = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben, geschwi,
                         "Geschwister auswählen:");
                 if (g.size() >= Messdiener.LENGHT_GESCHWISTER) {
-                    Dialogs.error("Zu viele Geschwister: Bitte nur " + (Messdiener.LENGHT_GESCHWISTER - 1)
+                    Dialogs.getDialogs().error("Zu viele Geschwister: Bitte nur " + (Messdiener.LENGHT_GESCHWISTER - 1)
                             + " Messdiener angeben.");
                     handle(arg0);
                     return;
@@ -290,10 +290,10 @@ public class MediController implements Controller {
                 setAndUpdateAnvertraute(m);
                 return true;
             } catch (NotValidException e) {
-                Dialogs.warn("Bitte eine richtige E-Mail oder nichts angeben!");
+                Dialogs.getDialogs().warn("Bitte eine richtige E-Mail oder nichts angeben!");
             }
         } else {
-            Dialogs.warn("Bitte einen Namen eintragen!");
+            Dialogs.getDialogs().warn("Bitte einen Namen eintragen!");
         }
         return false;
     }
@@ -303,7 +303,7 @@ public class MediController implements Controller {
         name.setText(messdiener.getNachnname());
         vorname.setText(messdiener.getVorname());
         email.setText(messdiener.getEmail());
-        leiter.setSelected(messdiener.isIstLeiter());
+        leiter.setSelected(messdiener.istLeiter());
         eintritt.setValue(messdiener.getEintritt());
         table.setItems(FXCollections.observableList(messdiener.getDienverhalten().getKannWelcheMessen()));
         updateFreunde(messdiener);
@@ -321,7 +321,7 @@ public class MediController implements Controller {
             try {
                 Files.delete(moben.getFile().toPath());
             } catch (IOException e) {
-                Dialogs.error(e, "Konnte den alten-veränderten Messdiener nicht löschen.");
+                Dialogs.getDialogs().error(e, "Konnte den alten-veränderten Messdiener nicht löschen.");
             }
         }
     }
@@ -330,7 +330,7 @@ public class MediController implements Controller {
         m.setFreunde(getArrayString(freund, Messdiener.LENGHT_FREUNDE));
         m.setGeschwister(getArrayString(geschwi, Messdiener.LENGHT_GESCHWISTER));
         List<Messdiener> bearbeitete = new ArrayList<>();
-        for (Messdiener messdiener : DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList()) {
+        for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
             bearbeitete.addAll(alteloeschen(m, messdiener.getFreunde()));
             bearbeitete.addAll(alteloeschen(m, messdiener.getGeschwister()));
             if (moben != null) {
@@ -355,9 +355,9 @@ public class MediController implements Controller {
                 wf.toXML();
             }
             getLogger().info("Messdiener " + m.makeId() + " wurde gespeichert!");
-            DateienVerwalter.getDateienVerwalter().reloadMessdiener();
+            DateienVerwalter.getInstance().reloadMessdiener();
         } catch (IOException e) {
-            Dialogs.error(e, KONNTE + m + "' nicht speichern");
+            Dialogs.getDialogs().error(e, KONNTE + m + "' nicht speichern");
         }
     }
 
@@ -381,11 +381,11 @@ public class MediController implements Controller {
 
     private void updateFreunde(Messdiener medi) {
         ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(medi.getFreunde()));
-        List<Messdiener> alle = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
+        List<Messdiener> alle = DateienVerwalter.getInstance().getMessdiener();
         ArrayList<Messdiener> al = new ArrayList<>();
         for (int i = 0; i < arrayList.size(); i++) {
             if (searchForMessdiener(arrayList, alle, al, i)) continue;
-            boolean beheben = Dialogs.frage(
+            boolean beheben = Dialogs.getDialogs().frage(
                     KONNTE + arrayList.get(i) + "' als Freund von '" + medi + "' nicht finden!",
                     "Ignorieren", "Beheben");
             if (beheben) {
@@ -414,11 +414,11 @@ public class MediController implements Controller {
 
     private void updateGeschwister(Messdiener medi) {
         ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(medi.getGeschwister()));
-        List<Messdiener> alle = DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList();
+        List<Messdiener> alle = DateienVerwalter.getInstance().getMessdiener();
         ArrayList<Messdiener> al = new ArrayList<>();
         for (int i = 0; i < arrayList.size(); i++) {
             if (searchForMessdiener(arrayList, alle, al, i)) continue;
-            boolean beheben = Dialogs.frage(
+            boolean beheben = Dialogs.getDialogs().frage(
                     KONNTE + arrayList.get(i) + "' als Geschwister von '" + medi + "' nicht finden!",
                     "ignorieren", "beheben");
             if (beheben) {

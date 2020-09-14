@@ -12,13 +12,9 @@ import net.aclrian.mpe.controller.Select.Selecter;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import net.aclrian.mpe.utils.VersionIDHandler;
+import net.aclrian.mpe.utils.*;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -45,8 +41,8 @@ public class MainController {
         s.setOnCloseRequest(e -> getLogger().info("Beenden"));
     }
 
-    public void setMesse(FinishController finishController, EnumPane pane) {
-        messen = finishController.getMessen();
+    public void setMesse(List<Messe> changedMessen, EnumPane pane) {
+        messen = changedMessen;
         changePane(pane);
     }
 
@@ -61,7 +57,7 @@ public class MainController {
                 ((MediController) control).setMedi(messdiener);
             }
         } catch (IOException e) {
-            Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+            Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
         }
     }
 
@@ -77,7 +73,7 @@ public class MainController {
                 messen.remove(messe);
             }
         } catch (IOException e) {
-            Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+            Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
         }
     }
 
@@ -92,10 +88,10 @@ public class MainController {
                 fl.setController(new StandartmesseController(sm));
                 load(fl);
             } catch (IOException e) {
-                Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+                Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
             }
         } else {
-            Dialogs.warn("Der Fensterbereich ist durch die Bearbeitung gesperrt!");
+            Dialogs.getDialogs().warn("Der Fensterbereich ist durch die Bearbeitung gesperrt!");
         }
     }
 
@@ -134,10 +130,10 @@ public class MainController {
                 }
                 load(fl);
             } catch (IOException e) {
-                Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+                Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
             }
         } else {
-            Dialogs.warn("Der Fensterbereich ist durch die Bearbeitung gesperrt!");
+            Dialogs.getDialogs().warn("Der Fensterbereich ist durch die Bearbeitung gesperrt!");
         }
     }
 
@@ -155,17 +151,17 @@ public class MainController {
 
     @FXML
     public void generieren(ActionEvent actionEvent) {
-        if (!DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList().isEmpty() && !messen.isEmpty()) {
+        if (!DateienVerwalter.getInstance().getMessdiener().isEmpty() && !messen.isEmpty()) {
             changePane(EnumPane.PLAN);
         } else {
-            Dialogs.warn("Bitte erst Messen und Messdiener eingeben.");
+            Dialogs.getDialogs().warn("Bitte erst Messen und Messdiener eingeben.");
         }
     }
 
     @FXML
     public void editPfarrei(ActionEvent actionEvent) {
         if (ep != EnumPane.START) {
-            Dialogs.info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
+            Dialogs.getDialogs().info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
             return;
         }
         messen = new ArrayList<>();
@@ -175,20 +171,21 @@ public class MainController {
     @FXML
     public void speicherort(ActionEvent actionEvent) {
         if (ep != EnumPane.START) {
-            Dialogs.info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
+            Dialogs.getDialogs().info("Bitte erst auf den Hauptbildschirm (F2) wechseln.");
             return;
         }
-        DateienVerwalter.getDateienVerwalter().erneuereSavepath();
+        Speicherort ort = new Speicherort(grid.getParent().getScene().getWindow());
+        ort.changeDir();
         ((Stage) grid.getParent().getScene().getWindow()).close();
         m.main(new Stage());
     }
 
     @FXML
     public void ferienplan(ActionEvent actionEvent) {
-        if (!DateienVerwalter.getDateienVerwalter().getAlleMedisVomOrdnerAlsList().isEmpty() && !messen.isEmpty()) {
+        if (!DateienVerwalter.getInstance().getMessdiener().isEmpty() && !messen.isEmpty()) {
             changePane(EnumPane.FERIEN);
         } else {
-            Dialogs.warn("Bitte erst Messen und Messdiener eingeben.");
+            Dialogs.getDialogs().warn("Bitte erst Messen und Messdiener eingeben.");
         }
     }
 
@@ -204,7 +201,7 @@ public class MainController {
 
     @FXML
     public void smesse(ActionEvent actionEvent) {
-        StandartMesse sm = (StandartMesse) Dialogs.singleSelect(DateienVerwalter.getDateienVerwalter().getPfarrei().getStandardMessen(), "Bitte Standartmesse auswählen:");
+        StandartMesse sm = (StandartMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), "Bitte Standartmesse auswählen:");
         if (sm != null) {
             changePane(sm);
         }
@@ -216,7 +213,7 @@ public class MainController {
             InfoController ic = new InfoController(stage);
             ic.start();
         } catch (IOException e) {
-            Dialogs.error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+            Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
         }
     }
 
@@ -225,16 +222,16 @@ public class MainController {
         try {
             Desktop.getDesktop().open(Log.getLogFile());
         } catch (IOException e) {
-            Dialogs.error(e, "Konnte das Protokoll nicht öffnen:");
+            Dialogs.getDialogs().error(e, "Konnte das Protokoll nicht öffnen:");
         }
     }
 
     @FXML
     public void savepath(ActionEvent event) {
         try {
-            Desktop.getDesktop().open(new File(DateienVerwalter.getDateienVerwalter().getSavepath()));
+            Desktop.getDesktop().open(DateienVerwalter.getInstance().getSavepath());
         } catch (IOException e) {
-            Dialogs.error(e, "Konnte den Ordner nicht öffnen:");
+            Dialogs.getDialogs().error(e, "Konnte den Ordner nicht öffnen:");
         }
     }
 
@@ -248,7 +245,7 @@ public class MainController {
         try {
             Desktop.getDesktop().open(Log.getWorkingDir());
         } catch (IOException e) {
-            Dialogs.error(e, "Konnte den Ordner nicht öffnen:");
+            Dialogs.getDialogs().error(e, "Konnte den Ordner nicht öffnen:");
         }
     }
 

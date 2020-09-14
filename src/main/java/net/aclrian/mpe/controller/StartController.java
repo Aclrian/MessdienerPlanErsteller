@@ -16,7 +16,7 @@ public class StartController implements Controller{
 	private Label name;
 
     public void initialize(){
-    	name.setText(DateienVerwalter.getDateienVerwalter().getPfarrei().getName());
+    	name.setText(DateienVerwalter.getInstance().getPfarrei().getName());
         versionLabel.setText(Main.VERSION_ID);
     }
 

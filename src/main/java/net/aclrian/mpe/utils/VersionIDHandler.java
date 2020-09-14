@@ -82,11 +82,11 @@ public class VersionIDHandler {
         switch (eh) {
             case IS_OLD:
                 try {
-                    Dialogs.open(new URI(VersionIDHandler.URL_WITH_TAG + getInternettid()),
+                    Dialogs.getDialogs().open(new URI(VersionIDHandler.URL_WITH_TAG + getInternettid()),
                             eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
                 } catch (IOException | URISyntaxException e) {
                     try {
-                        Dialogs.open(VersionIDHandler.alternativedownloadurl,
+                        Dialogs.getDialogs().open(VersionIDHandler.alternativedownloadurl,
                                 eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
                     } catch (IOException e1) {
                         getLogger().warn("Die Download-Url konnte nicht aufgelöst werden.");
@@ -95,10 +95,10 @@ public class VersionIDHandler {
                 break;
             case IS_THE_LATEST:
             case IS_TOO_NEW:
-                if (showall) Dialogs.info("Versionsüberprüfung", eh.getMessage());
+                if (showall) Dialogs.getDialogs().info("Versionsüberprüfung", eh.getMessage());
                 break;
             case ERROR:
-                if (showall) Dialogs.error(eh.getMessage());
+                if (showall) Dialogs.getDialogs().error(eh.getMessage());
                 break;
         }
         getLogger().info(eh.getMessage());
