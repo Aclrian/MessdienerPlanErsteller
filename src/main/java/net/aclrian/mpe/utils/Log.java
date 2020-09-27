@@ -24,7 +24,9 @@ public class Log {
 
     public static void init() {
         try {
-            Files.createFile(getWorkingDir().toPath());
+            if (Files.notExists(getWorkingDir().toPath())) {
+                Files.createFile(getWorkingDir().toPath());
+            }
             Files.createDirectories(new File(FileSystemView.getFileSystemView().getDefaultDirectory() + File.separator
                     + PROGRAMM_NAME).toPath());
             Layout layout = new PatternLayout("[%d{yyyy-MM-dd HH:MM:ss}] [%-5p] [%l]: %m%n");

@@ -24,6 +24,8 @@ import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class MainController {
     public static final String NO_ACCESS = " konnte nicht zugegriffen werden!";
+    public static final String GESPERRT = "Der Fensterbereich ist durch die Bearbeitung gesperrt!";
+    public static final String STANDARTMESSE_AUSWAEHLEN = "Bitte Standartmesse auswählen:";
     private final Stage stage;
     private final Main m;
     private List<Messe> messen = new ArrayList<>();
@@ -31,7 +33,6 @@ public class MainController {
     private GridPane grid;
     @FXML
     private AnchorPane apane;
-
     private Controller control;
     private EnumPane ep;
 
@@ -47,33 +48,39 @@ public class MainController {
     }
 
     public void changePaneMessdiener(Messdiener messdiener) {
-        this.ep = EnumPane.MESSDIENER;
-        apane.getChildren().removeIf(p -> true);
-        URL u = getClass().getResource(ep.getLocation());
-        FXMLLoader fl = new FXMLLoader(u);
-        try {
+        if (this.ep == EnumPane.MESSDIENER) {
+            return;
+        }
+        if ((control == null || !control.isLocked())) {
+            this.ep = EnumPane.MESSDIENER;
+            apane.getChildren().removeIf(p -> true);
+            URL u = getClass().getResource(ep.getLocation());
+            FXMLLoader fl = new FXMLLoader(u);
             load(fl);
             if (control instanceof MediController) {
                 ((MediController) control).setMedi(messdiener);
             }
-        } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+        } else {
+            Dialogs.getDialogs().warn(GESPERRT);
         }
     }
 
     public void changePaneMesse(Messe messe) {
-        this.ep = EnumPane.MESSE;
-        apane.getChildren().removeIf(p -> true);
-        URL u = getClass().getResource(ep.getLocation());
-        FXMLLoader fl = new FXMLLoader(u);
-        try {
+        if (this.ep == EnumPane.MESSE) {
+            return;
+        }
+        if ((control == null || !control.isLocked())) {
+            this.ep = EnumPane.MESSE;
+            apane.getChildren().removeIf(p -> true);
+            URL u = getClass().getResource(ep.getLocation());
+            FXMLLoader fl = new FXMLLoader(u);
             load(fl);
             if (control instanceof MesseController) {
                 ((MesseController) control).setMesse(messe);
                 messen.remove(messe);
             }
-        } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+        } else {
+            Dialogs.getDialogs().warn(GESPERRT);
         }
     }
 
@@ -84,27 +91,28 @@ public class MainController {
 
             URL u = getClass().getResource(ep.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
-            try {
-                fl.setController(new StandartmesseController(sm));
-                load(fl);
-            } catch (IOException e) {
-                Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
-            }
+            fl.setController(new StandartmesseController(sm));
+            load(fl);
         } else {
-            Dialogs.getDialogs().warn("Der Fensterbereich ist durch die Bearbeitung gesperrt!");
+            Dialogs.getDialogs().warn(GESPERRT);
         }
     }
 
-    private void load(FXMLLoader fl) throws IOException {
+    private void load(FXMLLoader fl) {
         Parent p;
-        p = fl.load();
-        AnchorPane.setBottomAnchor(p, 0d);
-        AnchorPane.setRightAnchor(p, 0d);
-        AnchorPane.setLeftAnchor(p, 0d);
-        AnchorPane.setTopAnchor(p, 0d);
-        apane.getChildren().add(p);
-        control = fl.getController();
-        control.afterstartup(p.getScene().getWindow(), this);
+        try {
+            p = fl.load();
+
+            AnchorPane.setBottomAnchor(p, 0d);
+            AnchorPane.setRightAnchor(p, 0d);
+            AnchorPane.setLeftAnchor(p, 0d);
+            AnchorPane.setTopAnchor(p, 0d);
+            apane.getChildren().add(p);
+            control = fl.getController();
+            control.afterstartup(p.getScene().getWindow(), this);
+        } catch (IOException e) {
+            Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+        }
     }
 
     public void changePane(EnumPane ep) {
@@ -117,23 +125,19 @@ public class MainController {
             apane.getChildren().removeIf(p -> true);
             URL u = getClass().getResource(ep.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
-            try {
-                if (ep == EnumPane.SELECT_MEDI) {
-                    control = new Select(Selecter.MESSDIENER, this);
-                    fl.setController(control);
-                } else if (ep == EnumPane.SELECT_MESSE) {
-                    control = new Select(Selecter.MESSE, this);
-                    fl.setController(control);
-                } else if (ep == EnumPane.PLAN) {
-                    control = new FinishController(old, messen);
-                    fl.setController(control);
-                }
-                load(fl);
-            } catch (IOException e) {
-                Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+            if (ep == EnumPane.SELECT_MEDI) {
+                control = new Select(Selecter.MESSDIENER, this);
+                fl.setController(control);
+            } else if (ep == EnumPane.SELECT_MESSE) {
+                control = new Select(Selecter.MESSE, this);
+                fl.setController(control);
+            } else if (ep == EnumPane.PLAN) {
+                control = new FinishController(old, messen);
+                fl.setController(control);
             }
+            load(fl);
         } else {
-            Dialogs.getDialogs().warn("Der Fensterbereich ist durch die Bearbeitung gesperrt!");
+            Dialogs.getDialogs().warn(GESPERRT);
         }
     }
 
@@ -201,7 +205,7 @@ public class MainController {
 
     @FXML
     public void smesse(ActionEvent actionEvent) {
-        StandartMesse sm = (StandartMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), "Bitte Standartmesse auswählen:");
+        StandartMesse sm = (StandartMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), STANDARTMESSE_AUSWAEHLEN);
         if (sm != null) {
             changePane(sm);
         }
@@ -251,6 +255,14 @@ public class MainController {
 
     public List<Messe> getMessen() {
         return messen;
+    }
+
+    public EnumPane getEnumPane() {
+        return ep;
+    }
+
+    public Controller getControl() {
+        return control;
     }
 
     public enum EnumPane {

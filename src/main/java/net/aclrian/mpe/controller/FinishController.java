@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Window;
+import javafx.util.Pair;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.Sonstiges;
@@ -24,6 +25,7 @@ import org.docx4j.openpackaging.parts.PartName;
 import org.docx4j.openpackaging.parts.WordprocessingML.AlternativeFormatInputPart;
 import org.docx4j.relationships.Relationship;
 import org.docx4j.wml.CTAltChunk;
+import org.springframework.web.util.UriUtils;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
@@ -136,6 +138,21 @@ public class FinishController implements Controller {
 
     @FXML
     public void toEMAIL() {
+        Pair<List<Messdiener>, StringBuilder> pair = getResourcesForEmail();
+        try {
+            URI uri = new URI(pair.getValue().toString());
+            Desktop.getDesktop().mail(uri);
+            Log.getLogger().info(pair.getValue().toString());
+            if (!pair.getKey().isEmpty()) {
+                Dialogs.getDialogs().show(pair.getKey(), "Messdiener ohne E-Mail-Addresse:");
+            }
+        } catch (IOException | URISyntaxException | IllegalArgumentException e) {
+            Dialogs.getDialogs().error(e, "Konnte den mailto-Link (" + URLEncoder.encode(pair.getValue().toString(), StandardCharsets.UTF_8)
+                    + ") nicht öffnen");
+        }
+    }
+
+    public Pair<List<Messdiener>, StringBuilder> getResourcesForEmail(){
         List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
         StringBuilder sb = new StringBuilder("mailto:?");
         ArrayList<Messdiener> noemail = new ArrayList<>();
@@ -146,7 +163,7 @@ public class FinishController implements Controller {
                 sb.append("bcc=").append(medi.getEmail()).append("&");
             }
         }
-        sb.append("subject=").append(org.springframework.web.util.UriUtils.encode(titel, StandardCharsets.UTF_8));
+        sb.append("subject=").append(UriUtils.encode(titel, StandardCharsets.UTF_8));
         StringBuilder sbb = new StringBuilder();
         StringBuilder ssb = new StringBuilder();
         if (pdfgen != null && pdfgen.exists()) {
@@ -155,20 +172,10 @@ public class FinishController implements Controller {
         if (wordgen != null && wordgen.exists()) {
             ssb.append("Als Anhang hinzufügen: ").append(wordgen.getAbsolutePath()).append(" ?");
         }
-        sb.append("&body=").append(org.springframework.web.util.UriUtils.encode(sbb.toString(), StandardCharsets.UTF_8))
+        sb.append("&body=").append(UriUtils.encode(sbb.toString(), StandardCharsets.UTF_8))
                 .append("%0D%0A")
-                .append(org.springframework.web.util.UriUtils.encode(ssb.toString(), StandardCharsets.UTF_8));
-        try {
-            URI uri = new URI(sb.toString());
-            Desktop.getDesktop().mail(uri);
-            Log.getLogger().info(sb.toString());
-            if (!noemail.isEmpty()) {
-                Dialogs.getDialogs().show(noemail, "Messdiener ohne E-Mail-Addresse:");
-            }
-        } catch (IOException | URISyntaxException | IllegalArgumentException e) {
-            Dialogs.getDialogs().error(e, "Konnte den mailto-Link (" + URLEncoder.encode(sb.toString(), StandardCharsets.UTF_8)
-                    + ") nicht öffnen");
-        }
+                .append(UriUtils.encode(ssb.toString(), StandardCharsets.UTF_8));
+        return new Pair<>(noemail, sb);
     }
 
     @FXML
@@ -180,7 +187,9 @@ public class FinishController implements Controller {
             HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8)),
                     new FileOutputStream(out), converterProperties);
             pdfgen = out;
-            Desktop.getDesktop().open(out);
+            if (actionEvent != null) {
+                Desktop.getDesktop().open(out);
+            }
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu PDF konvertieren.");
         }
@@ -218,7 +227,9 @@ public class FinishController implements Controller {
             wordMLPackage.getContentTypeManager().addDefaultContentType("html", "text/html");
             wordMLPackage.save(out);
             wordgen = out;
-            Desktop.getDesktop().open(out);
+            if (actionEvent != null) {
+                Desktop.getDesktop().open(out);
+            }
         } catch (Exception e) {
             Dialogs.getDialogs().error(e, "Word-Dokument konnte nicht erstellt werden.");
         }
@@ -261,16 +272,18 @@ public class FinishController implements Controller {
             for (Messdiener medi : medis) {
                 einteilen(m, medi, false, false);
             }
-            if (!m.istFertig())
+            if (!m.istFertig()) {
                 zwang(m);
+            }
         } else if (act == EnumAction.TYPE_BEACHTEN) {
             List<Messdiener> medis = get(m.getStandardMesse(), m, false, false);
             Log.getLogger().info(medis.size() + " für " + m.getNochBenoetigte());
             for (Messdiener messdiener : medis) {
                 einteilen(m, messdiener, false, false);
             }
-            if (!m.istFertig())
+            if (!m.istFertig()) {
                 zwang(m);
+            }
         }
     }
 
@@ -343,21 +356,25 @@ public class FinishController implements Controller {
     }
 
     public List<Messdiener> get(StandartMesse sm, Messe m, boolean zwangdate, boolean zwanganz) {
-        ArrayList<Messdiener> al = new ArrayList<>();
+        ArrayList<Messdiener> allForSMesse = new ArrayList<>();
         for (Messdiener medi : hauptarray) {
             int id = 0;
             if (medi.istLeiter()) {
                 id++;
             }
-            int ii = DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).getAnzDienen();
-            if (medi.getDienverhalten().getBestimmtes(sm) && ii != 0
+            if (medi.getDienverhalten().getBestimmtes(sm)
+                    && DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).getAnzDienen() != 0
                     && medi.getMessdatenDaten().kann(m.getDate(), zwangdate, zwanganz)) {
-                al.add(medi);
+                allForSMesse.add(medi);
             }
         }
-        Collections.shuffle(al);
-        al.sort(Messdiener.einteilen);
-        return al;
+        Collections.shuffle(allForSMesse);
+        allForSMesse.sort(Messdiener.einteilen);
+        return allForSMesse;
+    }
+
+    public String getTitle() {
+        return titel;
     }
 
     private enum EnumAction {

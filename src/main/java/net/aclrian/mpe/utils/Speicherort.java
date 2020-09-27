@@ -112,7 +112,7 @@ public class Speicherort {
     }
 
     public String getSpeicherortString() {
-        if (speicherortString == null || speicherortString.equals("")) {
+        if (speicherortString == null || speicherortString.isEmpty()) {
             speicherortString = waehleOrdner();
         }
         return speicherortString;
@@ -135,7 +135,10 @@ public class Speicherort {
 
     public void changeDir() {
         try {
-            Files.delete(new File(speicherortString).toPath());
+            String homedir = System.getProperty("user.home");
+            homedir = homedir + TEXTDATEI;
+            Files.delete(new File(homedir).toPath());
+            speicherortString = "";
             getSpeicherortString();
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Konnte den Speicherort nicht wechseln: " + e.getLocalizedMessage());
