@@ -18,6 +18,8 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+import static net.aclrian.mpe.utils.Log.getLogger;
+
 public class MesseController implements Controller {
     private boolean locked = true;
     private Messe moben = null;
@@ -125,6 +127,7 @@ public class MesseController implements Controller {
         datum.setValue(ld);
         uhr.getValueFactory().setValue(LocalTime.ofInstant(messe.getDate().toInstant(), ZoneId.systemDefault()));
         list.setSelected(messe.getEingeteilte());
+        getLogger().info("Messe wurde geladen");
     }
 
     private Date getDate() {

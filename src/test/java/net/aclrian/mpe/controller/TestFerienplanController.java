@@ -61,6 +61,12 @@ public class TestFerienplanController extends ApplicationTest {
         return c.getTime();
     }
 
+    public static Date getYesterday2() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, -2);
+        return c.getTime();
+    }
+
     @Override
     public void start(Stage stage) {
         pane = new Pane();

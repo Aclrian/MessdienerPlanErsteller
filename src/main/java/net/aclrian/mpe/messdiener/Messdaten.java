@@ -142,7 +142,7 @@ public class Messdaten {
     }
 
     public boolean kann(Date date, boolean dateZwang, boolean anzZwang) {
-        return kanndann(date, dateZwang) && ((anzZwang && (((anzMessen - maxMessen) < 2) || anzMessen<=maxMessen)) || kannnoch());
+        return kanndann(date, dateZwang) && !((anzZwang && !(((anzMessen - maxMessen) < 2) || anzMessen<=maxMessen)) || kannnoch());
     }
 
     public boolean kanndann(Date date, boolean zwang) {
@@ -167,7 +167,7 @@ public class Messdaten {
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         String sdate = df.format(date);
         for (Date d : array) {
-            if (df.format(d).equals(sdate)) {
+            if (df.format(d).equalsIgnoreCase(sdate)) {
                 return true;
             }
         }
