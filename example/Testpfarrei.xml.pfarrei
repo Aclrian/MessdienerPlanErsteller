@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<XML>
+  <MpE-Creator LICENSE="MIT">Aclrian</MpE-Creator>
+  <Body>
+    <Standartmessem>
+      <std_messe id="0">
+        <tag>Mi</tag>
+        <std>18</std>
+        <min>00</min>
+        <ort>St. Marien</ort>
+        <anz>4</anz>
+        <typ>Abendmesse</typ>
+      </std_messe>
+      <std_messe id="1">
+        <tag>Sa</tag>
+        <std>15</std>
+        <min>00</min>
+        <ort>Kapelle</ort>
+        <anz>2</anz>
+        <typ>Taufe</typ>
+      </std_messe>
+      <std_messe id="2">
+        <tag>Sa</tag>
+        <std>17</std>
+        <min>30</min>
+        <ort>St. Marien</ort>
+        <anz>3</anz>
+        <typ>Abendmesse</typ>
+      </std_messe>
+      <std_messe id="3">
+        <tag>So</tag>
+        <std>10</std>
+        <min>00</min>
+        <ort>St. Marien</ort>
+        <anz>6</anz>
+        <typ>Hl. Messe</typ>
+      </std_messe>
+    </Standartmessem>
+  </Body>
+  <Einstellungen>
+    <hochaemter>0</hochaemter>
+    <setting Lleiter="0">3</setting>
+    <setting Lleiter="1">3</setting>
+    <setting year="0">3</setting>
+    <setting year="1">3</setting>
+    <setting year="2">3</setting>
+    <setting year="3">3</setting>
+    <setting year="4">3</setting>
+    <setting year="5">3</setting>
+    <setting year="6">3</setting>
+    <setting year="7">3</setting>
+    <setting year="8">3</setting>
+    <setting year="9">3</setting>
+    <setting year="10">3</setting>
+    <setting year="11">3</setting>
+    <setting year="12">3</setting>
+    <setting year="13">3</setting>
+    <setting year="14">3</setting>
+    <setting year="15">3</setting>
+    <setting year="16">3</setting>
+    <setting year="17">3</setting>
+    <setting year="18">3</setting>
+  </Einstellungen>
+</XML>
