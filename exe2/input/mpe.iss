@@ -12,6 +12,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
+SignTool=MsSign $f
 AppId={{29F47445-1698-4AD7-B9CC-6CCF2062E1FF}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
@@ -23,11 +24,11 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\MpE
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=E:\Adrian\Documents\GitHub\MessdienerPlanErsteller\LICENSE
-InfoBeforeFile=E:\Adrian\Documents\GitHub\MessdienerPlanErsteller\exe\info.txt
+LicenseFile=C:\Users\adria\git\MessdienerPlanErsteller\LICENSE
+InfoBeforeFile=C:\Users\adria\git\MessdienerPlanErsteller\exe\info.txt
 OutputDir=E:\Adrian\Documents\GitHub\MessdienerPlanErsteller\exe\test\
 OutputBaseFilename=MessdienerplanErsteller
-SetupIconFile=E:\Adrian\Documents\GitHub\MessdienerPlanErsteller\exe\title_32.ico
+SetupIconFile=C:\Users\adria\git\MessdienerPlanErsteller\exe\title_32.ico
 Compression=lzma
 SolidCompression=yes
 
