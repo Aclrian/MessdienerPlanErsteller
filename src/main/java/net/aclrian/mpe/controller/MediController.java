@@ -35,6 +35,8 @@ import static net.aclrian.mpe.utils.Log.getLogger;
 public class MediController implements Controller {
 
     private static final String KONNTE = "Konnte den Messdiener '";
+    public static final String FREUNDE_AUSWAEHLEN = "Freunde auswählen:";
+    public static final String GESCHWISTER_AUSWAEHLEN = "Geschwister auswählen:";
     private List<Messdiener> freund;
     private List<Messdiener> geschwi;
     private Messdiener moben;
@@ -70,6 +72,8 @@ public class MediController implements Controller {
     private MenuItem cancel;
     @FXML
     private MenuItem saveNew;
+    public static final String FREUNDE_BEARBEITEN_ID = "freundeId";
+    public static final String GESCHWISTER_BEARBEITEN_ID = "geschwieId";
 
     public static String[] getArrayString(List<?> freunde2, int begr) {
         String[] s = new String[begr];
@@ -171,12 +175,13 @@ public class MediController implements Controller {
         eintritt.setValue(Messdaten.getMaxYear());
         bearbeitenFreunde = new Label("Bearbeiten");
         bearbeitenFreunde.setStyle("-fx-font-style: italic;");
+        bearbeitenFreunde.setId(FREUNDE_BEARBEITEN_ID);
         bearbeitenFreunde.setOnMouseClicked(new EventHandler<Event>() {
 
             @Override
             public void handle(Event arg0) {
                 List<Messdiener> selected = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben,
-                        freund, "Freunde auswählen:");
+                        freund, FREUNDE_AUSWAEHLEN);
                 if (selected.size() >= Messdiener.LENGHT_FREUNDE) {
                     Dialogs.getDialogs().error(
                             "Zu viele Freunde: Bitte nur " + (Messdiener.LENGHT_FREUNDE - 1) + " Messdiener angeben.");
@@ -190,12 +195,13 @@ public class MediController implements Controller {
 
         bearbeitenGeschwister = new Label("Bearbeiten");
         bearbeitenGeschwister.setStyle("-fx-font-style: italic;");
+        bearbeitenGeschwister.setId(GESCHWISTER_BEARBEITEN_ID);
         bearbeitenGeschwister.setOnMouseClicked(new EventHandler<Event>() {
 
             @Override
             public void handle(Event arg0) {
                 List<Messdiener> g = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben, geschwi,
-                        "Geschwister auswählen:");
+                        GESCHWISTER_AUSWAEHLEN);
                 if (g.size() >= Messdiener.LENGHT_GESCHWISTER) {
                     Dialogs.getDialogs().error("Zu viele Geschwister: Bitte nur " + (Messdiener.LENGHT_GESCHWISTER - 1)
                             + " Messdiener angeben.");
@@ -344,6 +350,7 @@ public class MediController implements Controller {
         }
         for (Messdiener medi : freund) {
             addBekanntschaft(medi, m, false);
+            bearbeitete.add(medi);
         }
         bearbeitete.add(m);
         // speichern
@@ -404,7 +411,7 @@ public class MediController implements Controller {
             return true;
         }
         for (Messdiener messdiener : alle) {
-            if (arrayList.get(i).equals(messdiener.toString())) {
+            if (arrayList.get(i).equals(messdiener.makeId())) {
                 al.add(messdiener);
                 break;
             }

@@ -64,8 +64,8 @@ public class WriteFile {
     public void toXML() throws IOException {
         try {
             Container c = writeXMLFile();
-            Document doc = c.doc;
-            Element xml = c.e;
+            Document doc = c.getDocument();
+            Element xml = c.getElement();
             Element body = doc.createElement("Body");
             xml.appendChild(body);
 
@@ -118,13 +118,13 @@ public class WriteFile {
 
             DOMSource domSource = new DOMSource(doc);
             File path = DateienVerwalter.getInstance().getSavepath();
-            String datei = this.me.getNachnname() + ", " + this.me.getVorname();
 
-            File file = new File(path, datei + ".xml");
+            File file = new File(path, me.makeId() + ".xml");
             OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
             StreamResult result = new StreamResult(out);
-            c.transformer.transform(domSource, result);
-            Log.getLogger().info("Datei wird gespeichert in: " + path.getAbsolutePath() + "//" + datei + ".xml");
+            c.getTransformer().transform(domSource, result);
+            out.close();
+            Log.getLogger().info("Datei wird gespeichert in: " + path.getAbsolutePath() + File.separator + me.makeId() + ".xml");
             me.setFile(file);
         } catch (ParserConfigurationException | TransformerException e) {
             Dialogs.getDialogs().error(e, "Konnte den Messdiener " + me.makeId() + " nicht lesen.");
@@ -132,108 +132,37 @@ public class WriteFile {
     }
 
     private void addGeschwister(Document doc, String[] g, Element anvertraute) {
-        Element g1 = doc.createElement("g1");
-        try {
-            if (g[0].equals("")) {
-                g1.appendChild(doc.createTextNode("LEER"));
-            } else {
-                g1.appendChild(doc.createTextNode(g[0]));
+        for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
+            Element ge = doc.createElement("g"+ (i+1));
+            try {
+                if (g[i].isEmpty()) {
+                    ge.appendChild(doc.createTextNode("LEER"));
+                } else {
+                    ge.appendChild(doc.createTextNode(g[i]));
+                }
+            } catch (NullPointerException e) {
+                me.getGeschwister()[i] = "";
+                ge.appendChild(doc.createTextNode("LEER"));
             }
-        } catch (NullPointerException e) {
-            me.getGeschwister()[0] = "";
-            g1.appendChild(doc.createTextNode("LEER"));
+            anvertraute.appendChild(ge);
         }
-        anvertraute.appendChild(g1);
-        Element g2 = doc.createElement("g2");
-        try {
-            if (g[1].equals("")) {
-                g2.appendChild(doc.createTextNode("LEER"));
-            } else {
-                g2.appendChild(doc.createTextNode(g[1]));
-            }
-        } catch (NullPointerException e) {
-            me.getGeschwister()[1] = "";
-            g2.appendChild(doc.createTextNode("LEER"));
-        }
-        anvertraute.appendChild(g2);
-        Element g3 = doc.createElement("g3");
-        try {
-            if (g[2].equals("")) {
-                g3.appendChild(doc.createTextNode("LEER"));
-            } else {
-                g3.appendChild(doc.createTextNode(g[2]));
-            }
-        } catch (NullPointerException e) {
-            me.getGeschwister()[2] = "";
-            g3.appendChild(doc.createTextNode("LEER"));
-        }
-        anvertraute.appendChild(g3);
     }
 
     private void addFreunde(Document doc, String[] f, Element anvertraute) {
-        Element f1 = doc.createElement("F1");
-        try {
-            if (f[0].equals("")) {
-                f1.appendChild(doc.createTextNode("LEER"));
-            } else {
-                f1.appendChild(doc.createTextNode(f[0]));
+        for (int i = 0; i < Messdiener.LENGHT_FREUNDE; i++) {
+            Element fr = doc.createElement("F" + (i+1));
+            try {
+                if (f[i].isEmpty()) {
+                    fr.appendChild(doc.createTextNode("LEER"));
+                } else {
+                    fr.appendChild(doc.createTextNode(f[i]));
+                }
+            } catch (NullPointerException e) {
+                me.getFreunde()[i] = "";
+                fr.appendChild(doc.createTextNode("LEER"));
             }
-        } catch (NullPointerException e) {
-            me.getFreunde()[0] = "";
-            f1.appendChild(doc.createTextNode("LEER"));
+            anvertraute.appendChild(fr);
         }
-
-        anvertraute.appendChild(f1);
-
-        Element f2 = doc.createElement("F2");
-        try {
-            if (f[1].equals("")) {
-                f2.appendChild(doc.createTextNode("LEER"));
-            } else {
-                f2.appendChild(doc.createTextNode(f[1]));
-            }
-        } catch (NullPointerException e) {
-            me.getFreunde()[1] = "";
-            f2.appendChild(doc.createTextNode("LEER"));
-        }
-        anvertraute.appendChild(f2);
-        Element f3 = doc.createElement("F3");
-        try {
-            if (f[2].equals("")) {
-                f3.appendChild(doc.createTextNode("LEER"));
-            } else {
-                f3.appendChild(doc.createTextNode(f[2]));
-            }
-        } catch (NullPointerException e) {
-            me.getFreunde()[2] = "";
-            f3.appendChild(doc.createTextNode("LEER"));
-        }
-        anvertraute.appendChild(f3);
-
-        Element f4 = doc.createElement("F4");
-        try {
-            if (f[3].equals("")) {
-                f4.appendChild(doc.createTextNode("LEER"));
-            } else {
-                f4.appendChild(doc.createTextNode(f[3]));
-            }
-        } catch (NullPointerException e) {
-            me.getFreunde()[3] = "";
-            f4.appendChild(doc.createTextNode("LEER"));
-        }
-        anvertraute.appendChild(f4);
-        Element f5 = doc.createElement("F5");
-        try {
-            if (f[4].equals("")) {
-                f5.appendChild(doc.createTextNode("LEER"));
-            } else {
-                f5.appendChild(doc.createTextNode(f[4]));
-            }
-        } catch (NullPointerException e) {
-            me.getFreunde()[4] = "";
-            f5.appendChild(doc.createTextNode("LEER"));
-        }
-        anvertraute.appendChild(f5);
     }
 
     public static class Container {

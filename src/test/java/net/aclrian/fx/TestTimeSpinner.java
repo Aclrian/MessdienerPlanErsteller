@@ -18,7 +18,7 @@ public class TestTimeSpinner extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         pane = new Pane();
-        Scene scene = new Scene(pane, 100, 100);
+        Scene scene = new Scene(pane, 10, 10);
         stage.setScene(scene);
         stage.show();
     }

@@ -302,12 +302,15 @@ public class TestMainController extends ApplicationTest {
             });
             Assertions.assertThat(this.listTargetWindows().size()).isGreaterThan(0);
         });
+        WaitForAsyncUtils.waitForFxEvents();
 
         //util
-        Mockito.when(dv.getSavepath()).thenReturn(new File(System.getProperty("user.dir")));
+        final File file = new File(System.getProperty("user.dir"));
+        Mockito.when(dv.getSavepath()).thenReturn(file);
         instance.log(null);
         instance.workingdir(null);
         instance.savepath(null);
+        Assertions.assertThat(true).isTrue();
     }
 
     @Test
@@ -357,6 +360,7 @@ public class TestMainController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         try {
             Files.copy(copy, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.delete(copy);
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
@@ -406,5 +410,11 @@ public class TestMainController extends ApplicationTest {
         final Node lookup = this.listWindows().get(1).getScene().lookup("#table");
         Assertions.assertThat(lookup).isInstanceOf(TableView.class);
         Assertions.assertThat(((TableView<?>) lookup).getItems().get(0).toString()).isEqualTo(pf.getStandardMessen().get(0).toString());
+        try {
+            Files.copy(copy, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.delete(copy);
+        } catch (IOException e) {
+            Assertions.fail(e.getMessage(), e);
+        }
     }
 }
