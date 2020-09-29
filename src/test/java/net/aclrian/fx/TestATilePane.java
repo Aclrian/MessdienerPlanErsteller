@@ -37,7 +37,7 @@ public class TestATilePane extends ApplicationTest {
         dv = Mockito.mock(DateienVerwalter.class);
 
         pane = new Pane();
-        Scene scene = new Scene(pane, 100, 100);
+        Scene scene = new Scene(pane, 10, 10);
         stage.setScene(scene);
         stage.show();
     }

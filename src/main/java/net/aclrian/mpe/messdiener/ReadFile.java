@@ -64,7 +64,6 @@ public class ReadFile {
             }
         } catch (Exception e) {
             Dialogs.getDialogs().error(e, "Fehler beim Lesen der Datei: " + xmlFile);
-            e.printStackTrace();
         }
         return me;
     }
