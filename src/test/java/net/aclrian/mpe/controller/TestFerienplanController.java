@@ -94,11 +94,11 @@ public class TestFerienplanController extends ApplicationTest {
         Mockito.when(mc.getMessen()).thenReturn(messen);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(medi1, medi2, medi3));
         Messdaten md1 = Mockito.mock(Messdaten.class);
-        Mockito.when(medi1.getMessdatenDaten()).thenReturn(md1);
+        Mockito.when(medi1.getMessdaten()).thenReturn(md1);
         Messdaten md2 = Mockito.mock(Messdaten.class);
-        Mockito.when(medi2.getMessdatenDaten()).thenReturn(md2);
+        Mockito.when(medi2.getMessdaten()).thenReturn(md2);
         Messdaten md3 = Mockito.mock(Messdaten.class);
-        Mockito.when(medi3.getMessdatenDaten()).thenReturn(md3);
+        Mockito.when(medi3.getMessdaten()).thenReturn(md3);
         DateienVerwalter.setInstance(dv);
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.FERIEN.getLocation());
@@ -156,11 +156,11 @@ public class TestFerienplanController extends ApplicationTest {
         Messdaten md1 = Mockito.mock(Messdaten.class);
         Mockito.when(md1.ausgeteilt(df.format(getToday()))).thenReturn(true);
         Mockito.when(md1.ausgeteilt(df.format(getTomorrow()))).thenReturn(true);
-        Mockito.when(medi1.getMessdatenDaten()).thenReturn(md1);
+        Mockito.when(medi1.getMessdaten()).thenReturn(md1);
         Messdaten md2 = Mockito.mock(Messdaten.class);
-        Mockito.when(medi2.getMessdatenDaten()).thenReturn(md2);
+        Mockito.when(medi2.getMessdaten()).thenReturn(md2);
         Messdaten md3 = Mockito.mock(Messdaten.class);
-        Mockito.when(medi3.getMessdatenDaten()).thenReturn(md3);
+        Mockito.when(medi3.getMessdaten()).thenReturn(md3);
         Mockito.when(md3.ausgeteilt(df.format(getYesterday()))).thenReturn(true);
         Mockito.when(md3.ausgeteilt(df.format(getToday()))).thenReturn(true);
         Mockito.when(md3.ausgeteilt(df.format(getTomorrow()))).thenReturn(true);

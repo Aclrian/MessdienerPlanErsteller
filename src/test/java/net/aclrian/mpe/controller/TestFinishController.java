@@ -21,7 +21,6 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import org.junit.Test;
-import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testfx.assertions.api.Assertions;
@@ -105,11 +104,11 @@ public class TestFinishController extends ApplicationTest {
         Mockito.when(m1.getEintritt()).thenReturn(Messdaten.getMaxYear());
         Mockito.when(m1.getEintritt()).thenReturn(Messdaten.getMaxYear());
         Messdaten md1 = new Messdaten(m1);
-        Mockito.when(m1.getMessdatenDaten()).thenReturn(md1);
+        Mockito.when(m1.getMessdaten()).thenReturn(md1);
         Messdaten md2 = new Messdaten(m2);
-        Mockito.when(m2.getMessdatenDaten()).thenReturn(md2);
+        Mockito.when(m2.getMessdaten()).thenReturn(md2);
         Messdaten md3 = new Messdaten(m3);
-        Mockito.when(m3.getMessdatenDaten()).thenReturn(md3);
+        Mockito.when(m3.getMessdaten()).thenReturn(md3);
 
         Mockito.doCallRealMethod().when(dialogs).show(Mockito.anyList(), Mockito.eq(FinishController.NICHT_EINGETEILTE_MESSDIENER));
         Platform.runLater(() -> {
@@ -128,7 +127,7 @@ public class TestFinishController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Date date = TestFerienplanController.getToday();
-        m1.getMessdatenDaten().einteilenVorzeitig(date, false);
+        m1.getMessdaten().einteilenVorzeitig(date, false);
 
 
         Platform.runLater(() -> Mockito.when(dialogs.yesNoCancel(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
@@ -141,7 +140,7 @@ public class TestFinishController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(m1.getMessdatenDaten().kanndann(date, false)).isFalse();
+        Assertions.assertThat(m1.getMessdaten().kanndann(date, false)).isFalse();
         Platform.runLater(() -> {
             if (pane.lookup("#zurueck") instanceof Button) {
                 Button zurueck = (Button) pane.lookup("#zurueck");
@@ -152,11 +151,11 @@ public class TestFinishController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         for (Messdiener m : dv.getMessdiener()) {
-            if (m.getMessdatenDaten().getInsgesamtEingeteilt() != 0 || m.getMessdatenDaten().getAnzMessen() != 0) {
+            if (m.getMessdaten().getInsgesamtEingeteilt() != 0 || m.getMessdaten().getAnzMessen() != 0) {
                 Assertions.fail("Not all Messdaten are zero");
             }
         }
-        Assertions.assertThat(m1.getMessdatenDaten().kanndann(date, false)).isTrue();
+        Assertions.assertThat(m1.getMessdaten().kanndann(date, false)).isTrue();
         Assertions.assertThat(instance.getNichtEingeteile()).contains(m1);
         Assertions.assertThat(instance.getNichtEingeteile()).contains(m2);
         Assertions.assertThat(instance.getNichtEingeteile()).contains(m3);
@@ -227,13 +226,13 @@ public class TestFinishController extends ApplicationTest {
         Mockito.when(m3.getEintritt()).thenReturn(Messdaten.getMaxYear());
         Mockito.when(m1Freund.getEintritt()).thenReturn(Messdaten.getMaxYear());
         Messdaten md1 = new Messdaten(m1);
-        Mockito.when(m1.getMessdatenDaten()).thenReturn(md1);
+        Mockito.when(m1.getMessdaten()).thenReturn(md1);
         Messdaten md2 = new Messdaten(m2);
-        Mockito.when(m2.getMessdatenDaten()).thenReturn(md2);
+        Mockito.when(m2.getMessdaten()).thenReturn(md2);
         Messdaten md3 = new Messdaten(m3);
-        Mockito.when(m3.getMessdatenDaten()).thenReturn(md3);
+        Mockito.when(m3.getMessdaten()).thenReturn(md3);
         Messdaten md1F = new Messdaten(m1Freund);
-        Mockito.when(m1Freund.getMessdatenDaten()).thenReturn(md1F);
+        Mockito.when(m1Freund.getMessdaten()).thenReturn(md1F);
         Messverhalten mv1 = new Messverhalten();
         Messverhalten mv2 = new Messverhalten();
         Messverhalten mv3 = new Messverhalten();
@@ -255,10 +254,10 @@ public class TestFinishController extends ApplicationTest {
 
         Mockito.doCallRealMethod().when(dialogs).show(Mockito.anyList(), Mockito.eq(FinishController.NICHT_EINGETEILTE_MESSDIENER));
 
-        Assertions.assertThat(m1.getMessdatenDaten().kann(me1.getDate(), false, false)).isFalse();
-        Assertions.assertThat(m1Freund.getMessdatenDaten().kann(me1.getDate(), false, false)).isFalse();
-        Assertions.assertThat(m1.getMessdatenDaten().kann(me2.getDate(), false, false)).isTrue();
-        Assertions.assertThat(m1Freund.getMessdatenDaten().kann(me2.getDate(), false, false)).isTrue();
+        Assertions.assertThat(m1.getMessdaten().kann(me1.getDate(), false, false)).isFalse();
+        Assertions.assertThat(m1Freund.getMessdaten().kann(me1.getDate(), false, false)).isFalse();
+        Assertions.assertThat(m1.getMessdaten().kann(me2.getDate(), false, false)).isTrue();
+        Assertions.assertThat(m1Freund.getMessdaten().kann(me2.getDate(), false, false)).isTrue();
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.PLAN.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
@@ -319,7 +318,7 @@ public class TestFinishController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         for (Messdiener m : dv.getMessdiener()) {
-            if (m.getMessdatenDaten().getInsgesamtEingeteilt() != 0 || m.getMessdatenDaten().getAnzMessen() != 0) {
+            if (m.getMessdaten().getInsgesamtEingeteilt() != 0 || m.getMessdaten().getAnzMessen() != 0) {
                 Assertions.fail("Not all Messdaten are zero");
             }
         }

@@ -46,8 +46,8 @@ public class TestMediController extends ApplicationTest {
     private Pane pane;
     private MediController instance;
 
-    private StandartMesse standartMesse = new StandartMesse("Mo", 8, "00", "o", 2, "t");
-    private String medi = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+    private final StandartMesse standartMesse = new StandartMesse("Mo", 8, "00", "o", 2, "t");
+    private final String medi = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
             "<XML>\n" +
             "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>\n" +
             "  <Body>\n" +
@@ -76,7 +76,7 @@ public class TestMediController extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         pane = new Pane();
-        scene = new Scene(pane, 1000, 1000);
+        scene = new Scene(pane, 100, 100);
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();
@@ -176,7 +176,6 @@ public class TestMediController extends ApplicationTest {
 
     @Test
     public void testGeschwister() {
-//use save and new
         File f = new File(System.getProperty("user.home") + File.separator + "Tannenbusch, Lea.xml");
         try {
             Files.write(f.toPath(), medi.getBytes(StandardCharsets.UTF_8));

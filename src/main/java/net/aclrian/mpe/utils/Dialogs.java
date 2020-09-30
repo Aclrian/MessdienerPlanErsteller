@@ -1,5 +1,6 @@
 package net.aclrian.mpe.utils;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
@@ -7,8 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -36,8 +37,8 @@ public class Dialogs {
     private Dialogs() {
     }
 
-    public static Dialogs getDialogs(){
-        if(dialogs == null){
+    public static Dialogs getDialogs() {
+        if (dialogs == null) {
             dialogs = new Dialogs();
         }
         return dialogs;
@@ -84,7 +85,11 @@ public class Dialogs {
 
     public void error(String string) {
         Log.getLogger().error(string);
-        alertbuilder(AlertType.ERROR, string).showAndWait();
+        if (Platform.isFxApplicationThread()) {
+            alertbuilder(AlertType.ERROR, string).showAndWait();
+        } else {
+            Platform.runLater(() -> alertbuilder(AlertType.INFORMATION, string).showAndWait());
+        }
     }
 
     public void error(Exception e, String string) {
@@ -108,7 +113,13 @@ public class Dialogs {
         TextArea ta = new TextArea(sw.toString());
         ta.setEditable(false);
         vb.getChildren().addAll(l, ta);
-        alertbuilder(AlertType.ERROR, header, vb).showAndWait();
+
+        if (Platform.isFxApplicationThread()) {
+            alertbuilder(AlertType.ERROR, header, vb).showAndWait();
+
+        } else {
+            Platform.runLater(() -> alertbuilder(AlertType.INFORMATION, string).showAndWait());
+        }
     }
 
     public void open(URI open, String string) throws IOException {
@@ -156,7 +167,7 @@ public class Dialogs {
         a.setHeaderText(string);
         Optional<ButtonType> res = a.showAndWait();
         if (res.isPresent() && res.get() == cc) return YesNoCancelEnum.CANCEL;
-        return res.isPresent() && (res.get() == yesbtn) ? YesNoCancelEnum.YES: YesNoCancelEnum.NO;
+        return res.isPresent() && (res.get() == yesbtn) ? YesNoCancelEnum.YES : YesNoCancelEnum.NO;
     }
 
     public void fatal(String string) {
@@ -216,7 +227,6 @@ public class Dialogs {
         a.showAndWait();
         return rtn;
     }
-
 
 
     public List<Date> getDates(String string, String dl, String dz) {
@@ -297,14 +307,14 @@ public class Dialogs {
         a.setOnShown(arg0 -> {
             ASlider.makeASlider("Stunde", stunde, null);
             ASlider.makeASlider(d -> {
-                            String as;
-                            if (d < 10) {
-                                as = "0" + new DecimalFormat("#").format(d);
-                            } else
-                                as = new DecimalFormat("#").format(d);
-                            as = "Minute: " + as;
-                            return as;
-                        }, minute, null);
+                String as;
+                if (d < 10) {
+                    as = "0" + new DecimalFormat("#").format(d);
+                } else
+                    as = new DecimalFormat("#").format(d);
+                as = "Minute: " + as;
+                return as;
+            }, minute, null);
             ASlider.makeASlider("Anzahl", anz, new Tooltip("Anzahl der Messdiener"));
             if (sm != null) {
                 ort.setText(sm.getOrt());
@@ -381,6 +391,10 @@ public class Dialogs {
         return select(data, freund, s);
     }
 
+    public enum YesNoCancelEnum {
+        YES, NO, CANCEL
+    }
+
     private static class ARadioButton<I> extends RadioButton {
         private final I i;
 
@@ -392,9 +406,5 @@ public class Dialogs {
         public I getI() {
             return i;
         }
-    }
-
-    public enum YesNoCancelEnum {
-        YES, NO, CANCEL
     }
 }

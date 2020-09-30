@@ -130,7 +130,7 @@ public class TestMainController extends ApplicationTest {
 
                 Mockito.when(dv.getMessdiener()).thenReturn(Collections.singletonList(messdiener));
                 final Messdaten md = Mockito.mock(Messdaten.class);//new Messdaten(messdiener);
-                Mockito.when(messdiener.getMessdatenDaten()).thenReturn(md);
+                Mockito.when(messdiener.getMessdaten()).thenReturn(md);
 
                 Assertions.assertThat(scene.lookup("#vorname")).isInstanceOf(TextField.class);
                 Assertions.assertThat(((TextField) scene.lookup("#vorname")).getText()).isEqualTo("v");

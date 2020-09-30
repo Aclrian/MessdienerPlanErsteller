@@ -123,16 +123,16 @@ public class FerienplanController implements Controller {
         public Datentraeger(SimpleDateFormat df, List<String> dates, Messdiener messdiener) {
             m = messdiener;
             for (String d : dates) {
-                Available available = new Available(messdiener.getMessdatenDaten().ausgeteilt(d));
+                Available available = new Available(messdiener.getMessdaten().ausgeteilt(d));
                 available.getProperty().addListener((observable, oldValue, newValue) -> {
                     boolean old = oldValue;
                     boolean neu = newValue;
                     if (old != neu) {
                         try {
                             if (neu) {
-                                messdiener.getMessdatenDaten().austeilen(df.parse(d));
+                                messdiener.getMessdaten().austeilen(df.parse(d));
                             } else {
-                                messdiener.getMessdatenDaten().ausausteilen(df.parse(d));
+                                messdiener.getMessdaten().ausausteilen(df.parse(d));
                             }
                         } catch (ParseException e) {
                             Dialogs.getDialogs().error(e, "Konnte das Datum nicht bekommen.");

@@ -86,7 +86,7 @@ public class FinishController implements Controller {
         fertig = s.toString();
         nichtEingeteile = new ArrayList<>();
         for (Messdiener medi : hauptarray) {
-            if (medi.getMessdatenDaten().getInsgesamtEingeteilt() == 0) {
+            if (medi.getMessdaten().getInsgesamtEingeteilt() == 0) {
                 nichtEingeteile.add(medi);
             }
         }
@@ -118,7 +118,7 @@ public class FinishController implements Controller {
         }
         if (delete.equals(Dialogs.YesNoCancelEnum.YES)) {
             DateienVerwalter.getInstance().getMessdiener()
-                    .forEach(m -> m.getMessdatenDaten().nullen());
+                    .forEach(m -> m.getMessdaten().nullen());
             for (Messe m : messen) {
                 m.nullen();
             }
@@ -252,7 +252,7 @@ public class FinishController implements Controller {
                 start.add(Calendar.MONTH, 1);
                 Log.getLogger().info("nächster Monat: Es ist " + df.format(me.getDate()));
                 for (Messdiener messdiener : hauptarray) {
-                    messdiener.getMessdatenDaten().naechsterMonat();
+                    messdiener.getMessdaten().naechsterMonat();
                 }
             }
             Log.getLogger().info("Messe dran: " + me.getID());
@@ -338,7 +338,7 @@ public class FinishController implements Controller {
             d = m.einteilen(medi, zwangdate, zwanganz);
         }
         if (!m.istFertig() && d) {
-            List<Messdiener> anv = medi.getMessdatenDaten()
+            List<Messdiener> anv = medi.getMessdaten()
                     .getAnvertraute(DateienVerwalter.getInstance().getMessdiener());
             RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
             anv = rd.removeDuplicatedEntries(anv);
@@ -346,7 +346,7 @@ public class FinishController implements Controller {
                 anv.sort(Messdiener.einteilen);
                 for (Messdiener messdiener : anv) {
                     boolean b = messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse());
-                    if (messdiener.getMessdatenDaten().kann(m.getDate(), zwangdate, zwanganz) && b) {
+                    if (messdiener.getMessdaten().kann(m.getDate(), zwangdate, zwanganz) && b) {
                         Log.getLogger().info(messdiener.makeId() + " dient mit " + medi.makeId() + "?");
                         einteilen(m, messdiener, zwangdate, zwanganz);
                     }
@@ -364,7 +364,7 @@ public class FinishController implements Controller {
             }
             if (medi.getDienverhalten().getBestimmtes(sm)
                     && DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).getAnzDienen() != 0
-                    && medi.getMessdatenDaten().kann(m.getDate(), zwangdate, zwanganz)) {
+                    && medi.getMessdaten().kann(m.getDate(), zwangdate, zwanganz)) {
                 allForSMesse.add(medi);
             }
         }
