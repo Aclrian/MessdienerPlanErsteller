@@ -25,11 +25,11 @@ public class Messdiener {
     public static final int LENGHT_FREUNDE = 5;
     public static final Comparator<Messdiener> compForMedis = (o1, o2) -> o1.makeId().compareToIgnoreCase(o2.makeId());
     public static final Comparator<? super Messdiener> einteilen = (Comparator<Messdiener>) (o1, o2) -> {
-        double d1 = o1.getMessdatenDaten().getSortierenDouble();// anz/max 0 kommt zuerst dann 0,5 --> 1
-        double d2 = o2.getMessdatenDaten().getSortierenDouble();
+        double d1 = o1.getMessdaten().getSortierenDouble();// anz/max 0 kommt zuerst dann 0,5 --> 1
+        double d2 = o2.getMessdaten().getSortierenDouble();
         if ((d1 == d2) && (d1 == 0)) {
-            int i1 = o1.getMessdatenDaten().getMaxMessen();
-            int i2 = o2.getMessdatenDaten().getMaxMessen();
+            int i1 = o1.getMessdaten().getMaxMessen();
+            int i2 = o2.getMessdaten().getMaxMessen();
             return Integer.compare(i2, i1);
         }
         return Double.compare(d1, d2);
@@ -205,7 +205,7 @@ public class Messdiener {
         this.dienverhalten = dienverhalten;
     }
 
-    public Messdaten getMessdatenDaten() {
+    public Messdaten getMessdaten() {
         return daten;
     }
 

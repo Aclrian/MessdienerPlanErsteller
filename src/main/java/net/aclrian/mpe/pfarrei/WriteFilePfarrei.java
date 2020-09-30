@@ -19,7 +19,8 @@ import java.util.List;
 
 public class WriteFilePfarrei {
 
-    private WriteFilePfarrei() {}
+    private WriteFilePfarrei() {
+    }
 
     public static void writeFile(Pfarrei pf, String savepath) {
         try {
@@ -115,8 +116,8 @@ public class WriteFilePfarrei {
             c.getTransformer().transform(domSource, streamResult);
             DateienVerwalter.getInstance().removeoldPfarrei(f);
             Log.getLogger().info("Pfarrei: " + pf.getName() + "wurde erfolgreich gespeichert!");
-        } catch (ParserConfigurationException | TransformerException pce) {
-            Dialogs.getDialogs().error(pce, "Fehler bei Speichern der Pfarrei:");
+        } catch (ParserConfigurationException | TransformerException exception) {
+            Dialogs.getDialogs().error(exception, "Fehler bei Speichern der Pfarrei:");
         }
     }
 

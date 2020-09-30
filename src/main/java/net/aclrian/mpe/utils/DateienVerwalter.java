@@ -18,30 +18,16 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class DateienVerwalter implements IDateienVerwalter {
     public static final String PFARREDATEIENDUNG = ".xml.pfarrei";
     public static final String MESSDIENERDATEIENDUNG = ".xml";
+    private static IDateienVerwalter instance;
     private final File dir;
     private Pfarrei pf;
     private List<Messdiener> medis;
     private FileOutputStream pfarreiFos;
     private FileLock lock;
-    private static IDateienVerwalter instance;
-
-    public static IDateienVerwalter getInstance() {
-        return instance;
-    }
-
-    public static void setInstance(IDateienVerwalter instance) {
-        DateienVerwalter.instance = instance;
-    }
-
-    public static void reStart(Stage stage) throws NoSuchPfarrei {
-        Speicherort ort = new Speicherort(stage);
-        setInstance(new DateienVerwalter(ort.getSpeicherortString()));
-    }
 
     public DateienVerwalter(String path) throws NoSuchPfarrei {
         this.dir = new File(path);
@@ -58,6 +44,19 @@ public class DateienVerwalter implements IDateienVerwalter {
         });
         thread.setDaemon(true);
         thread.start();
+    }
+
+    public static IDateienVerwalter getInstance() {
+        return instance;
+    }
+
+    public static void setInstance(IDateienVerwalter instance) {
+        DateienVerwalter.instance = instance;
+    }
+
+    public static void reStart(Stage stage) throws NoSuchPfarrei {
+        Speicherort ort = new Speicherort(stage);
+        setInstance(new DateienVerwalter(ort.getSpeicherortString()));
     }
 
     private void useKey(WatchService service) {
@@ -84,7 +83,7 @@ public class DateienVerwalter implements IDateienVerwalter {
     @Override
     public List<Messdiener> getMessdiener() {
         if (medis == null) {
-            ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{MESSDIENERDATEIENDUNG}, true));
+            ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{MESSDIENERDATEIENDUNG.substring(1)}, true));
             medis = new ArrayList<>();
             files.forEach(file -> {
                 ReadFile rf = new ReadFile();
@@ -96,9 +95,8 @@ public class DateienVerwalter implements IDateienVerwalter {
 
 
     //Pfarrei
-
     private void lookForPfarreiFile() throws NoSuchPfarrei {
-        ArrayList<File> files = getPfarreiFiles();
+        ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREDATEIENDUNG.substring(1)}, true));
         File pfarreiFile;
         if (files.size() != 1) {
             if (files.size() > 1) {
@@ -114,7 +112,7 @@ public class DateienVerwalter implements IDateienVerwalter {
         Log.getLogger().info("Pfarrei gefunden in: " + pfarreiFile);
         pf = ReadFilePfarrei.getPfarrei(pfarreiFile.getAbsolutePath());
         try {
-            pfarreiFos = new FileOutputStream(pfarreiFile);
+            pfarreiFos = new FileOutputStream(pfarreiFile, true);
             FileChannel channel = pfarreiFos.getChannel();
             lock = channel.lock();
         } catch (IOException e) {
@@ -132,20 +130,9 @@ public class DateienVerwalter implements IDateienVerwalter {
         return pfarreiFos;
     }
 
-    private ArrayList<File> getPfarreiFiles() {
-        ArrayList<File> files = new ArrayList<>();
-        for (File file : Objects.requireNonNull(dir.listFiles())) {
-            String s = file.toString();
-            if (s.endsWith(PFARREDATEIENDUNG)) {
-                files.add(file);
-            }
-        }
-        return files;
-    }
-
     @Override
     public void removeoldPfarrei(File neuePfarrei) {
-        ArrayList<File> files = getPfarreiFiles();
+        ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREDATEIENDUNG.substring(1)}, true));
         ArrayList<File> todel = new ArrayList<>();
         boolean candel = false;
         for (File f : files) {

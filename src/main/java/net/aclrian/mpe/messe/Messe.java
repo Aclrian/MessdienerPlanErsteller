@@ -50,7 +50,7 @@ public class Messe implements Comparable<Messe>{
 	}
 
 	public boolean einteilen(Messdiener medi, boolean zwangdate, boolean zwanganz) {
-		if(medi.getMessdatenDaten().einteilen(getDate(), isHochamt(), zwangdate, zwanganz)) {
+		if(medi.getMessdaten().einteilen(getDate(), isHochamt(), zwangdate, zwanganz)) {
 			if (medi.istLeiter()) {
 				leiter.add(medi);
 				leiter.sort(Messdiener.compForMedis);
@@ -152,7 +152,7 @@ public class Messe implements Comparable<Messe>{
 	}
 
 	public boolean vorzeitigEiteilen(Messdiener medi) {
-		if(medi.getMessdatenDaten().einteilenVorzeitig(date,hochamt)){
+		if(medi.getMessdaten().einteilenVorzeitig(date,hochamt)){
 			if (medi.istLeiter()) {
 				leiter.add(medi);
 			} else {

@@ -180,7 +180,7 @@ public class MainController {
         }
         Speicherort ort = new Speicherort(grid.getParent().getScene().getWindow());
         ort.changeDir();
-        ((Stage) grid.getParent().getScene().getWindow()).close();
+        ((Stage) grid.getScene().getWindow()).close();
         m.main(new Stage());
     }
 
