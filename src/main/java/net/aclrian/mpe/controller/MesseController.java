@@ -21,6 +21,7 @@ import java.util.Date;
 import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class MesseController implements Controller {
+    public static final String STANDARTMESSE_AUSWAEHLEN = "Standartmesse ändern:";
     private boolean locked = true;
     private Messe moben = null;
     private StandartMesse standartMesse = null;
@@ -58,6 +59,9 @@ public class MesseController implements Controller {
     @FXML
     private ATilePane list;
 
+    @FXML
+    private Button smbearbeiten;
+
     @Override
     public void afterstartup(Window window, MainController mc) {
         ASlider.makeASlider("Messdiener", slider, null);
@@ -81,6 +85,8 @@ public class MesseController implements Controller {
             if (saveMesse(mc)) {
                 locked = false;
                 mc.changePane(MainController.EnumPane.SELECT_MESSE);
+            } else {
+                Dialogs.getDialogs().warn("Bitte einen Titel, Ort, Datum und Uhrzeit eigeben.");
             }
         });
         uhr.getValueFactory().setValue(null);
@@ -91,7 +97,7 @@ public class MesseController implements Controller {
             Messe m = new Messe(hochamt.isSelected(), (int) slider.getValue(), getDate(), ort.getText(), titel.getText(), standartMesse);
             for (Messdiener medi : list.getSelected()) {
                 if (!m.vorzeitigEiteilen(medi)) {
-                    Dialogs.getDialogs().warn(medi.makeId() + " konnte nicht vorzeitig eingetielt werden.");
+                    Dialogs.getDialogs().warn(medi.makeId() + " konnte nicht vorzeitig eingeteilt werden.");
                 }
             }
             mc.getMessen().add(m);
@@ -136,7 +142,7 @@ public class MesseController implements Controller {
 
     @FXML
     private void standardmesseBearbeiten() {
-        StandartMesse s = (StandartMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), "Standartmesse ändern:");
+        StandartMesse s = (StandartMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), STANDARTMESSE_AUSWAEHLEN);
         if (s != null) {
             smesse.setText(s.tolangerBenutzerfreundlichenString());
             this.standartMesse = s;

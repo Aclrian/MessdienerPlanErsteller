@@ -45,7 +45,7 @@ public class PfarreiController {
     @FXML
     private final TableView<Setting> settingTableView = new TableView<>();
     @FXML
-    private TableView<StandartMesse> table = new TableView<>();
+    private final TableView<StandartMesse> table = new TableView<>();
     private String nameS = null;
     private int mediI;
     private int leiterI;
