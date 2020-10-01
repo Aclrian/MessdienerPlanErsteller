@@ -229,11 +229,11 @@ public class Dialogs {
     }
 
 
-    public List<Date> getDates(String string, String dl, String dz) {
+    public List<Date> getDates(String string, String von, String bis) {
         DatePicker d1 = new DatePicker();
-        d1.setPromptText(dl);
+        d1.setPromptText(von);
         DatePicker d2 = new DatePicker();
-        d2.setPromptText(dz);
+        d2.setPromptText(bis);
         HBox hb = new HBox(d1, d2);
         hb.setSpacing(20d);
         Alert a = alertbuilder(AlertType.INFORMATION, string, hb);
@@ -254,7 +254,7 @@ public class Dialogs {
         if (o.isPresent() && o.get().equals(ButtonType.OK)) {
             ArrayList<Date> rtn = new ArrayList<>();
             rtn.add(0, Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            rtn.add(1, Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            rtn.add(1, Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).plusDays(1).toInstant()));
             return rtn;
         }
         return Collections.emptyList();

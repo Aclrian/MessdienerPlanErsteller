@@ -109,9 +109,9 @@ public class TestStandartmesseController extends ApplicationTest {
         Assertions.assertThat(i).isEqualTo(2);
         Assertions.assertThat(scene.lookup("#fertig")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#fertig")).fire();
-        final File aFile = new File(f.getAbsolutePath() + File.separator + "a.xml");
+        final File aFile = new File(f.getAbsolutePath(),"a.xml");
         Assertions.assertThat(aFile).exists();
-        final File bFile = new File(f.getAbsolutePath() + File.separator + "b.xml");
+        final File bFile = new File(f.getAbsolutePath(), "b.xml");
         Assertions.assertThat(bFile).exists();
         try {
             Assertions.assertThat(Files.readString(aFile.toPath())).contains("<Mo-8-00-2>true</Mo-8-00-2>");

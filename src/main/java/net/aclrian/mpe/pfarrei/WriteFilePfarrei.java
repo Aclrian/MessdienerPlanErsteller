@@ -111,7 +111,7 @@ public class WriteFilePfarrei {
             savepath = savepath == null ? DateienVerwalter.getInstance().getSavepath().getAbsolutePath() : savepath;
             Log.getLogger()
                     .info("Pfarrei wird gespeichert in :" + savepath + File.separator + datei + DateienVerwalter.PFARREDATEIENDUNG);
-            File f = new File(savepath + File.separator + datei + DateienVerwalter.PFARREDATEIENDUNG);
+            File f = new File(savepath, datei + DateienVerwalter.PFARREDATEIENDUNG);
             StreamResult streamResult = new StreamResult(f);
             c.getTransformer().transform(domSource, streamResult);
             DateienVerwalter.getInstance().removeoldPfarrei(f);

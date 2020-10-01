@@ -280,7 +280,7 @@ public class TestFinishController extends ApplicationTest {
         Assertions.assertThat(md1F.kanndann(TestFerienplanController.getToday(), false)).isFalse();
         Assertions.assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
 
-        File out = new File(Log.getWorkingDir().getAbsolutePath() + File.separator + instance.getTitle() + ".pdf");
+        File out = new File(Log.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");
         try {
             if (out.exists()) {
                 Files.delete(out.toPath());
@@ -292,7 +292,7 @@ public class TestFinishController extends ApplicationTest {
             Log.getLogger().error(e.getMessage(), e);
             Assertions.fail(e.getMessage());
         }
-        out = new File(Log.getWorkingDir() + File.separator + instance.getTitle() + ".docx");
+        out = new File(Log.getWorkingDir(), instance.getTitle() + ".docx");
         try {
             if (out.exists()) {
                 Files.delete(out.toPath());
