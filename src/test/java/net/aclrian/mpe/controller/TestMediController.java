@@ -20,6 +20,7 @@ import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -37,6 +38,31 @@ import java.util.Collections;
 
 public class TestMediController extends ApplicationTest {
 
+    private final StandartMesse standartMesse = new StandartMesse("Mo", 8, "00", "o", 2, "t");
+    private final String medi = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
+            "<XML>" + System.getProperty("line.separator") +
+            "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator") +
+            "  <Body>" + System.getProperty("line.separator") +
+            "    <Vorname>Lea</Vorname>" + System.getProperty("line.separator") +
+            "    <Nachname>Tannenbusch</Nachname>" + System.getProperty("line.separator") +
+            "    <Email/>" + System.getProperty("line.separator") +
+            "    <Messverhalten>" + System.getProperty("line.separator") +
+            "      <" + standartMesse.toReduziertenString() + ">true</" + standartMesse.toReduziertenString() + ">" + System.getProperty("line.separator") +
+            "    </Messverhalten>" + System.getProperty("line.separator") +
+            "    <Leiter>false</Leiter>" + System.getProperty("line.separator") +
+            "    <Eintritt>2019</Eintritt>" + System.getProperty("line.separator") +
+            "    <Anvertraute>" + System.getProperty("line.separator") +
+            "      <F1>Müller, Lieschen</F1>" + System.getProperty("line.separator") +
+            "      <F2>LEER</F2>" + System.getProperty("line.separator") +
+            "      <F3>LEER</F3>" + System.getProperty("line.separator") +
+            "      <F4>LEER</F4>" + System.getProperty("line.separator") +
+            "      <F5>LEER</F5>" + System.getProperty("line.separator") +
+            "      <g1>Tannenbusch, Nora</g1>" + System.getProperty("line.separator") +
+            "      <g2>LEER</g2>" + System.getProperty("line.separator") +
+            "      <g3>LEER</g3>" + System.getProperty("line.separator") +
+            "    </Anvertraute>" + System.getProperty("line.separator") +
+            "  </Body>" + System.getProperty("line.separator") +
+            "</XML>\n";
     @Mock
     private DateienVerwalter dv;
     @Mock
@@ -45,33 +71,21 @@ public class TestMediController extends ApplicationTest {
     private Dialogs dialog;
     private Pane pane;
     private MediController instance;
-
-    private final StandartMesse standartMesse = new StandartMesse("Mo", 8, "00", "o", 2, "t");
-    private final String medi = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<XML>\n" +
-            "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>\n" +
-            "  <Body>\n" +
-            "    <Vorname>Lea</Vorname>\n" +
-            "    <Nachname>Tannenbusch</Nachname>\n" +
-            "    <Email/>\n" +
-            "    <Messverhalten>\n" +
-            "      <" + standartMesse.toReduziertenString() + ">true</" + standartMesse.toReduziertenString() + ">\n" +
-            "    </Messverhalten>\n" +
-            "    <Leiter>false</Leiter>\n" +
-            "    <Eintritt>2019</Eintritt>\n" +
-            "    <Anvertraute>\n" +
-            "      <F1>Müller, Lieschen</F1>\n" +
-            "      <F2>LEER</F2>\n" +
-            "      <F3>LEER</F3>\n" +
-            "      <F4>LEER</F4>\n" +
-            "      <F5>LEER</F5>\n" +
-            "      <g1>Tannenbusch, Nora</g1>\n" +
-            "      <g2>LEER</g2>\n" +
-            "      <g3>LEER</g3>\n" +
-            "    </Anvertraute>\n" +
-            "  </Body>\n" +
-            "</XML>\n";
     private Scene scene;
+
+    @AfterClass
+    public static void removeFiles() {
+        try {
+            final File nora = new File(System.getProperty("user.home"), "Tannenbusch, Nora.xml");
+            final File lea = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
+            final File liesch = new File(System.getProperty("user.home"), "Müller, Lieschen.xml");
+            Files.deleteIfExists(nora.toPath());
+            Files.deleteIfExists(lea.toPath());
+            Files.deleteIfExists(liesch.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void start(Stage stage) {
@@ -88,7 +102,7 @@ public class TestMediController extends ApplicationTest {
 
     @Test
     public void testReadAndSave() {
-        File f = new File(System.getProperty("user.home") + File.separator + "Tannenbusch, Lea.xml");
+        File f = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
         try {
             Files.write(f.toPath(), medi.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
@@ -148,7 +162,7 @@ public class TestMediController extends ApplicationTest {
         ((KannWelcheMesse) table.getItems().get(0)).setKanndann(false);
         Platform.runLater(() -> ((SplitMenuButton) scene.lookup("#button")).fire());
         WaitForAsyncUtils.waitForFxEvents();
-        final File newFile = new File(System.getProperty("user.home") + File.separator + "Tannenbusch, Luisa.xml");
+        final File newFile = new File(System.getProperty("user.home"), "Tannenbusch, Luisa.xml");
         Assertions.assertThat(newFile).exists();
         Platform.runLater(() -> {
             final Messdiener messdiener = new ReadFile().getMessdiener(newFile);
@@ -174,9 +188,10 @@ public class TestMediController extends ApplicationTest {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testGeschwister() {
-        File f = new File(System.getProperty("user.home") + File.separator + "Tannenbusch, Lea.xml");
+        File f = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
         try {
             Files.write(f.toPath(), medi.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
@@ -202,8 +217,7 @@ public class TestMediController extends ApplicationTest {
         Mockito.when(m2.getDienverhalten()).thenReturn(mv2);
         Mockito.when(m2.getFreunde()).thenReturn(new String[]{"Tannenbusch, Lea", "", "", "", ""});
         Mockito.when(dv.getSavepath()).thenReturn(f.getParentFile());
-        Mockito.when(dialog.select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.eq(MediController.FREUNDE_AUSWAEHLEN))).thenReturn(Collections.singletonList(m1));
-        Mockito.when(dialog.select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.eq(MediController.GESCHWISTER_AUSWAEHLEN))).thenReturn(Collections.singletonList(m2));
+        Mockito.when(dialog.select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.anyString())).thenReturn(Collections.singletonList(m2), Collections.singletonList(m1));
 
         final Messdiener messdiener = new ReadFile().getMessdiener(f);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, messdiener, m2));
@@ -237,25 +251,28 @@ public class TestMediController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(1)).select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.eq(MediController.FREUNDE_AUSWAEHLEN));
+        Mockito.verify(dialog, Mockito.times(1)).select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.eq(MediController.GESCHWISTER_AUSWAEHLEN));
+
+        Mockito.verify(mc, Mockito.times(1)).changePaneMessdiener(null);
         Mockito.verify(m1).setFreunde(Mockito.argThat(argument -> argument.length == 5 && argument[0].equalsIgnoreCase("Tannenbusch, Lea") && argument[1] == null && argument[2] == null && argument[3] == null && argument[4] == null));
         Mockito.verify(m2).setGeschwister(Mockito.argThat(argument -> argument.length == 3 && argument[0].equalsIgnoreCase("Tannenbusch, Lea") && argument[1] == null && argument[2] == null));
 
-        Mockito.verify(m1, Mockito.times(4)).getFreunde();
-        Mockito.verify(m1, Mockito.times(3)).getGeschwister();
+        Mockito.verify(m1, Mockito.times(24)).getFreunde();
+        Mockito.verify(m1, Mockito.times(16)).getGeschwister();
 
-        Mockito.verify(m2, Mockito.times(3)).getFreunde();
-        Mockito.verify(m2, Mockito.times(4)).getGeschwister();
+        Mockito.verify(m2, Mockito.times(24)).getFreunde();
+        Mockito.verify(m2, Mockito.times(16)).getGeschwister();
 
-        final File nora = new File(System.getProperty("user.home") + File.separator + "Tannenbusch, Nora.xml");
-        final File lea = new File(System.getProperty("user.home") + File.separator + "Tannenbusch, Lea.xml");
-        final File liesch = new File(System.getProperty("user.home") + File.separator + "Müller, Lieschen.xml");
+        final File nora = new File(System.getProperty("user.home"), "Tannenbusch, Nora.xml");
+        final File lea = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
+        final File liesch = new File(System.getProperty("user.home"), "Müller, Lieschen.xml");
 
         Assertions.assertThat(nora.exists()).isTrue();
         Assertions.assertThat(liesch.exists()).isTrue();
         Assertions.assertThat(lea.exists()).isTrue();
 
         try {
-
             Assertions.assertThat(Files.readString(lea.toPath())).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
                     "<XML>" + System.getProperty("line.separator") +
                     "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator") +
@@ -288,5 +305,4 @@ public class TestMediController extends ApplicationTest {
             Assertions.fail(e.getMessage(), e);
         }
     }
-
 }

@@ -32,6 +32,10 @@ import static net.aclrian.mpe.utils.Log.getLogger;
 public class Select implements Controller {
     private final Selecter selecter;
     private final MainController mc;
+    public static final String GENERIEREN_ID = "generierenID";
+    public static final String ZEITRAUM_WAEHLEN = "Für welchen Zeitraum sollen Messen generiert werden?";
+    public static final String VON = "Von:";
+    public static final String BIS = "Bis:";
     @FXML
     private GridPane gpane;
     @FXML
@@ -52,7 +56,7 @@ public class Select implements Controller {
         this.mc = mc;
     }
 
-    public static List<Messe> generireDefaultMessen(Date anfang, Date ende) {
+    public static List<Messe> generiereDefaultMessen(Date anfang, Date ende) {
         ArrayList<Messe> rtn = new ArrayList<>();
         Calendar start = Calendar.getInstance();
         for (StandartMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
@@ -106,6 +110,7 @@ public class Select implements Controller {
             messdiener(window, mc);
         } else if (selecter == Selecter.MESSE) {
             Button generieren = new Button();
+            generieren.setId(GENERIEREN_ID);
             generieren.setText("Messen generieren");
             text.setText("Messen anzeigen & bearbeiten");
             messe(mc, generieren);
@@ -139,11 +144,11 @@ public class Select implements Controller {
 
     private EventHandler<ActionEvent> getEventHandlerGenerateForMesse(List<Messe> datam) {
         return arg0 -> {
-            List<Date> daten = Dialogs.getDialogs().getDates("Für welchen Zeitraum sollen Messen generiert werden?",
-                    "Von:", "Bis:");
+            List<Date> daten = Dialogs.getDialogs().getDates(ZEITRAUM_WAEHLEN,
+                    VON, BIS);
             if (!daten.isEmpty()) {
                 try {
-                    datam.addAll(Select.generireDefaultMessen(daten.get(0), daten.get(1)));
+                    datam.addAll(Select.generiereDefaultMessen(daten.get(0), daten.get(1)));
                     datam.sort(Messe.compForMessen);
                     ArrayList<Label> l = new ArrayList<>();
                     for (Messe m : datam) {

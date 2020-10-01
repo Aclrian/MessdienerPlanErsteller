@@ -183,7 +183,7 @@ public class FinishController implements Controller {
         ConverterProperties converterProperties = new ConverterProperties();
         converterProperties.setCharset("UTF-8");
         try {
-            File out = new File(Log.getWorkingDir().getAbsolutePath() + File.separator + titel + ".pdf");
+            File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + ".pdf");
             HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8)),
                     new FileOutputStream(out), converterProperties);
             pdfgen = out;
@@ -222,7 +222,7 @@ public class FinishController implements Controller {
             ac.setId(altChunkRel.getId());
             wordMLPackage.getMainDocumentPart().addObject(ac);
 
-            File out = new File(Log.getWorkingDir() + File.separator + titel + ".docx");
+            File out = new File(Log.getWorkingDir(), titel + ".docx");
 
             wordMLPackage.getContentTypeManager().addDefaultContentType("html", "text/html");
             wordMLPackage.save(out);
@@ -302,14 +302,14 @@ public class FinishController implements Controller {
         String secondPart = " hat zu wenige Messdiener.\nNoch ";
 
         if (!(m.getStandardMesse() instanceof Sonstiges)) {
-            if (Dialogs.getDialogs().frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte()
+            if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
                     + " werden benötigt.\nSollen Messdiener eingeteilt werden, die standartmäßig die Messe \n'"
                     + m.getStandardMesse().tokurzerBenutzerfreundlichenString()
                     + "' dienen können, aber deren Anzahl schon zu hoch ist?")) {
                 zwang(m, false, true, " einteilen ohne Anzahl beachten");
             }
             SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyy");
-            if (Dialogs.getDialogs().frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte()
+            if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
                     + " werden benötigt.\nSollen Messdiener eingeteilt werden, die an dem Tag \n'"
                     + df.format(m.getDate()) + "' dienen können?")) {
                 zwang(m, false, false, " einteilen ohne Standardmesse beachten");
@@ -318,7 +318,7 @@ public class FinishController implements Controller {
         if (m.istFertig()) {
             return;
         }
-        if (Dialogs.getDialogs().frage(start + m.getID().replaceAll("\t", "   ") + secondPart + m.getNochBenoetigte()
+        if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
                 + " werden benötigt.\nSollen Messdiener zwangsweise eingeteilt werden?")) {
             zwang(m, true, true, " einteilen ohne Standardmesse beachten");
         }
@@ -327,7 +327,7 @@ public class FinishController implements Controller {
 
     private void zuwenige(Messe m) {
         if (!m.istFertig())
-            Dialogs.getDialogs().error("Die Messe" + m.getID().replaceAll("\t", "   ") + " wird zu wenige Messdiener haben.");
+            Dialogs.getDialogs().error("Die Messe" + m.getID().replace("\t", "   ") + " wird zu wenige Messdiener haben.");
     }
 
     private void einteilen(Messe m, Messdiener medi, boolean zwangdate, boolean zwanganz) {

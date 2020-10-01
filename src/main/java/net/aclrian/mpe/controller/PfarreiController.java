@@ -45,7 +45,7 @@ public class PfarreiController {
     @FXML
     private final TableView<Setting> settingTableView = new TableView<>();
     @FXML
-    private final TableView<StandartMesse> table = new TableView<>();
+    private /*NOT final!*/ TableView<StandartMesse> table = new TableView<>();
     private String nameS = null;
     private int mediI;
     private int leiterI;
@@ -183,7 +183,7 @@ public class PfarreiController {
             typ.setStyle(CENTERED);
             anz.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMessdienerAnzahl()));
             anz.setStyle(CENTERED);
-            table.getItems().addAll(ol);
+            table.setItems(ol);
             table.setOnMouseClicked(getMouseEventEventHandlerForTable());
         }
     }

@@ -338,7 +338,7 @@ public class TestMainController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Scene scene = new Scene(pane);
         Assertions.assertThat(System.getProperty("user.home").isEmpty()).isFalse();
-        File f = new File(System.getProperty("user.home") + File.separator + Speicherort.TEXTDATEI);
+        File f = new File(System.getProperty("user.home"), Speicherort.TEXTDATEI);
         final Path copy = Path.of(System.getProperty("user.home"), Speicherort.TEXTDATEI + "c");
         try {
             Files.copy(f.toPath(), copy, StandardCopyOption.REPLACE_EXISTING);
@@ -393,7 +393,7 @@ public class TestMainController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Scene scene = new Scene(pane);
         Assertions.assertThat(System.getProperty("user.home").isEmpty()).isFalse();
-        File f = new File(System.getProperty("user.home") + File.separator + Speicherort.TEXTDATEI);
+        File f = new File(System.getProperty("user.home"), Speicherort.TEXTDATEI);
         final Path copy = Path.of(System.getProperty("user.home"), Speicherort.TEXTDATEI + "c");
         try {
             Files.copy(f.toPath(), copy, StandardCopyOption.REPLACE_EXISTING);

@@ -74,7 +74,7 @@ public class ConvertCSV {
                     break;
             }
         }
-        Messdiener m = new Messdiener(new File(DateienVerwalter.getInstance().getSavepath() + File.separator + nachname + ", " + vorname + ".xml"));
+        Messdiener m = new Messdiener(new File(DateienVerwalter.getInstance().getSavepath(),  nachname + ", " + vorname + ".xml"));
         m.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, new Messverhalten());
         try {
             m.setEmail(email);

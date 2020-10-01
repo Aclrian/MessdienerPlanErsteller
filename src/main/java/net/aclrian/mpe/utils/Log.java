@@ -27,8 +27,7 @@ public class Log {
             if (Files.notExists(getWorkingDir().toPath())) {
                 Files.createFile(getWorkingDir().toPath());
             }
-            Files.createDirectories(new File(FileSystemView.getFileSystemView().getDefaultDirectory() + File.separator
-                    + PROGRAMM_NAME).toPath());
+            Files.createDirectories(new File(FileSystemView.getFileSystemView().getDefaultDirectory(), PROGRAMM_NAME).toPath());
             Layout layout = new PatternLayout("[%d{yyyy-MM-dd HH:MM:ss}] [%-5p] [%l]: %m%n");
             FileAppender fileAppender = new FileAppender(layout, getLogFile().getAbsolutePath(), true);
             LOGGER.addAppender(fileAppender);
@@ -40,11 +39,10 @@ public class Log {
     }
 
     public static File getLogFile() {
-        return new File(getWorkingDir().getAbsolutePath() + File.separator + "MpE" + ".log");
+        return new File(getWorkingDir().getAbsolutePath(), "MpE" + ".log");
     }
 
     public static File getWorkingDir() {
-        return new File(FileSystemView.getFileSystemView().getDefaultDirectory() + File.separator
-                + PROGRAMM_NAME);
+        return new File(FileSystemView.getFileSystemView().getDefaultDirectory(), PROGRAMM_NAME);
     }
 }

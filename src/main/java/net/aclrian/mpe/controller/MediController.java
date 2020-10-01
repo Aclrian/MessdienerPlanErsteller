@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
 
@@ -87,13 +88,24 @@ public class MediController implements Controller {
         return s;
     }
 
-    private static void alteloeschen(Messdiener m, String[] array, ArrayList<Messdiener> ueberarbeitete) {
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(m.toString())) {
-                array[i] = "";
-                ueberarbeitete.add(m);
+    private static Messdiener alteloeschen(Messdiener todel, Messdiener tosearchin) {
+        if(todel.equals(tosearchin)){
+            return todel;
+        }
+        Messdiener medi = null;
+        for (int i = 0; i < tosearchin.getGeschwister().length; i++) {
+            if (tosearchin.getGeschwister()[i].compareTo(todel.makeId()) == 0) {
+                tosearchin.getGeschwister()[i] = "";
+                medi = tosearchin;
             }
         }
+        for (int i = 0; i < tosearchin.getFreunde().length; i++) {
+            if (tosearchin.getFreunde()[i].compareTo(todel.makeId()) == 0) {
+                tosearchin.getFreunde()[i] = "";
+                medi = tosearchin;
+            }
+        }
+        return medi;
     }
 
     public static boolean remove(Messdiener m) {
@@ -101,15 +113,15 @@ public class MediController implements Controller {
                 "Löschen")) {
             File file = m.getFile();
             try {
-                Files.deleteIfExists(file.toPath());
+                Files.delete(file.toPath());
             } catch (IOException e) {
                 return false;
             }
             ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
             for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
-                alteloeschen(m, messdiener.getFreunde(), ueberarbeitete);
-                alteloeschen(m, messdiener.getGeschwister(), ueberarbeitete);
+                ueberarbeitete.add(alteloeschen(m, messdiener));
             }
+            ueberarbeitete.removeIf(Objects::isNull);
             for (Messdiener medi : ueberarbeitete) {
                 if (medi.toString().equals(m.toString())) {
                     continue;
@@ -125,17 +137,6 @@ public class MediController implements Controller {
             return true;
         }
         return false;
-    }
-
-    private static ArrayList<Messdiener> alteloeschen(Messdiener m, String[] array) {
-        ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(m.toString())) {
-                array[i] = "";
-                ueberarbeitete.add(m);
-            }
-        }
-        return ueberarbeitete;
     }
 
     public void initialize() {
@@ -154,7 +155,7 @@ public class MediController implements Controller {
         saveNew.setOnAction(e -> {
             if (getMedi()) {
                 locked = false;
-                mc.changePaneMesse(null);
+                mc.changePaneMessdiener(null);
             }
         });
         button.setOnAction(e -> {
@@ -337,11 +338,9 @@ public class MediController implements Controller {
         m.setGeschwister(getArrayString(geschwi, Messdiener.LENGHT_GESCHWISTER));
         List<Messdiener> bearbeitete = new ArrayList<>();
         for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
-            bearbeitete.addAll(alteloeschen(m, messdiener.getFreunde()));
-            bearbeitete.addAll(alteloeschen(m, messdiener.getGeschwister()));
+            bearbeitete.add(alteloeschen(m, messdiener));
             if (moben != null) {
-                bearbeitete.addAll(alteloeschen(moben, messdiener.getFreunde()));
-                bearbeitete.addAll(alteloeschen(moben, messdiener.getGeschwister()));
+                bearbeitete.add(alteloeschen(moben, messdiener));
             }
         }
         for (Messdiener medi : geschwi) {
@@ -352,10 +351,12 @@ public class MediController implements Controller {
             addBekanntschaft(medi, m, false);
             bearbeitete.add(medi);
         }
-        bearbeitete.add(m);
+        bearbeitete.removeIf(Objects::isNull);
         // speichern
+        bearbeitete.add(m);
         RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
         bearbeitete = rd.removeDuplicatedEntries(bearbeitete);
+        bearbeitete.removeIf(messdiener -> messdiener.hashCode() == moben.hashCode());
         try {
             for (Messdiener messdiener : bearbeitete) {
                 WriteFile wf = new WriteFile(messdiener);
