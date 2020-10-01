@@ -102,7 +102,6 @@ public class MainController {
         Parent p;
         try {
             p = fl.load();
-
             AnchorPane.setBottomAnchor(p, 0d);
             AnchorPane.setRightAnchor(p, 0d);
             AnchorPane.setLeftAnchor(p, 0d);

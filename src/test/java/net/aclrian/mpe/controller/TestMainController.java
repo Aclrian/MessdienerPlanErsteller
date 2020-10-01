@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -53,6 +54,7 @@ public class TestMainController extends ApplicationTest {
     @Mock
     private Main main;
     private Stage stage;
+    private Thread thread;
 
     @Override
     public void start(Stage stage) {
@@ -65,6 +67,7 @@ public class TestMainController extends ApplicationTest {
         dialogs = Mockito.mock(Dialogs.class);
         dv = Mockito.mock(DateienVerwalter.class);
         pf = Mockito.mock(Pfarrei.class);
+        thread = Thread.currentThread();
     }
 
     @Test
@@ -365,6 +368,7 @@ public class TestMainController extends ApplicationTest {
             Assertions.fail(e.getMessage(), e);
         }
         Assertions.assertThat(stage.focusedProperty().getValue()).isFalse();
+        robotContext().getKeyboardRobot().press(KeyCode.ESCAPE);
     }
 
     @Test
