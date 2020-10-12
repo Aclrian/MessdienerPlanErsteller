@@ -13,15 +13,18 @@ import net.aclrian.mpe.utils.Dialogs;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class StandartmesseController implements Controller {
 
-    private StandartMesse sm;
+    private final StandartMesse sm;
     private boolean locked = true;
     @FXML
     private ATilePane pane;
     @FXML
-    private Button abbrechen,fertig;
+    private Button abbrechen;
+    @FXML
+    private Button fertig;
     @FXML
     private Text smesse;
 
@@ -33,7 +36,7 @@ public class StandartmesseController implements Controller {
     public void initialize() {
         smesse.setText(sm.tokurzerBenutzerfreundlichenString());
         ArrayList<Messdiener> selected = new ArrayList<>();
-        for (Messdiener m : DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList()) {
+        for (Messdiener m : DateienVerwalter.getInstance().getMessdiener()) {
                 if (m.getDienverhalten().getBestimmtes(sm)) {
                     selected.add(m);
                 }
@@ -45,21 +48,21 @@ public class StandartmesseController implements Controller {
     public void afterstartup(Window window, MainController mc) {
         abbrechen.setOnAction(event -> {
             locked = false;
-            mc.changePane(MainController.EnumPane.start);
+            mc.changePane(MainController.EnumPane.START);
         });
         fertig.setOnAction(event -> {
-            ArrayList<Messdiener> medis = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
+            List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
             for (Messdiener m : medis) {
                 try {
                     m.getDienverhalten().editiereBestimmteMesse(sm, pane.getSelected().contains(m));
                     WriteFile wf = new WriteFile(m);
                     wf.toXML();
                 } catch (IOException e) {
-                    Dialogs.error(e, "Konnte den Messdiener " + medis.toString() + " nicht speichern.");
+                    Dialogs.getDialogs().error(e, "Konnte den Messdiener " + medis.toString() + " nicht speichern.");
                 }
             }
             locked = false;
-            mc.changePane(MainController.EnumPane.start);
+            mc.changePane(MainController.EnumPane.START);
         });
     }
 

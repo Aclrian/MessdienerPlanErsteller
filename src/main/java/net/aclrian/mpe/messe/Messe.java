@@ -1,10 +1,7 @@
 package net.aclrian.mpe.messe;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 import net.aclrian.mpe.messdiener.Messdiener;
 
@@ -14,7 +11,7 @@ import net.aclrian.mpe.messdiener.Messdiener;
  * @author Aclrian
  *
  */
-public class Messe {
+public class Messe implements Comparable<Messe>{
 	@Override
 	public String toString() {
 		return getID();
@@ -22,39 +19,39 @@ public class Messe {
 
 	public static final Comparator<Messe> compForMessen = Comparator.comparing(Messe::getDate);
 	private boolean hochamt;
-	private int anz_messdiener;
+	private int anzMessdiener;
 	private Date date;
 	private String kirche;
-	private SimpleDateFormat df = new SimpleDateFormat("EEE", Locale.GERMAN);
-	private StandartMesse em;
+	private final SimpleDateFormat dateFormatWeekday = new SimpleDateFormat("EEE", Locale.GERMAN);
+	private final StandartMesse em;
 	private String typ;
 	private ArrayList<Messdiener> medis = new ArrayList<>();
 	private ArrayList<Messdiener> leiter = new ArrayList<>();
 
 	public Messe(Date d, StandartMesse sm) {
-			this(false, sm.getAnz_messdiener(), d, sm.getOrt(), sm.getTyp(), sm);
+			this(false, sm.getAnzMessdiener(), d, sm.getOrt(), sm.getTyp(), sm);
 	}
 
-	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ) {
-		this(hochamt, anz_medis, datummituhrzeit, ort, typ, new Sonstiges());
+	public Messe(boolean hochamt, int anzMedis, Date datummituhrzeit, String ort, String typ) {
+		this(hochamt, anzMedis, datummituhrzeit, ort, typ, new Sonstiges());
 	}
 
-	public Messe(boolean hochamt, int anz_medis, Date datummituhrzeit, String ort, String typ, StandartMesse sm) {
-			bearbeiten(hochamt, anz_medis, datummituhrzeit, ort, typ);
+	public Messe(boolean hochamt, int anzMedis, Date datummituhrzeit, String ort, String typ, StandartMesse sm) {
+			bearbeiten(hochamt, anzMedis, datummituhrzeit, ort, typ);
 			em = sm;
 	}
 
-	public void bearbeiten(boolean hochamt, int anz_messdiener, Date date, String kirche, String type) {
+	public void bearbeiten(boolean hochamt, int anzMessdiener, Date date, String kirche, String type) {
 		this.hochamt = hochamt;
 		this.kirche = kirche;
 		this.typ = type;
 		this.date = date;
-		this.anz_messdiener = anz_messdiener;
+		this.anzMessdiener = anzMessdiener;
 	}
 
 	public boolean einteilen(Messdiener medi, boolean zwangdate, boolean zwanganz) {
-		if(medi.getMessdatenDaten().einteilen(getDate(), isHochamt(), zwangdate, zwanganz)) {
-			if (medi.isIstLeiter()) {
+		if(medi.getMessdaten().einteilen(getDate(), isHochamt(), zwangdate, zwanganz)) {
+			if (medi.istLeiter()) {
 				leiter.add(medi);
 				leiter.sort(Messdiener.compForMedis);
 			} else {
@@ -66,15 +63,15 @@ public class Messe {
 		return false;
 	}
 
-	public int getAnz_messdiener() {
-		return anz_messdiener;
+	public int getAnzMessdiener() {
+		return anzMessdiener;
 	}
 
 	public Date getDate() {
 		return date;
 	}
 
-	public ArrayList<Messdiener> getEingeteilte() {
+	public List<Messdiener> getEingeteilte() {
 		ArrayList<Messdiener> rtn = new ArrayList<>();
 		rtn.addAll(medis);
 		rtn.addAll(leiter);
@@ -90,7 +87,7 @@ public class Messe {
 	}
 
 	public String getID() {
-		SimpleDateFormat dfeee = new SimpleDateFormat("dd.MM.YYYY");
+		SimpleDateFormat dfeee = new SimpleDateFormat("dd.MM.yyyy");
 		SimpleDateFormat dftime = new SimpleDateFormat("HH:mm");
 		return getWochentag() + " " + dfeee.format(date) + "\t" + dftime.format(date) + " Uhr " + typ + " " + kirche;
 	}
@@ -101,7 +98,7 @@ public class Messe {
 		StringBuilder rtn = new StringBuilder("<html>");
 		rtn.append("<font>");
 		if (!getWochentag().equals("")) {
-			rtn.append("<p><b>").append(df.format(getDate())).append(" ").append(dfeee.format(date)).append("&emsp;").append(dftime.format(date)).append(" Uhr ");
+			rtn.append("<p><b>").append(dateFormatWeekday.format(getDate())).append(" ").append(dfeee.format(date)).append("&emsp;").append(dftime.format(date)).append(" Uhr ");
 			rtn.append(typ).append(" ").append(kirche);
 			rtn.append("</p></b></font></html>");
 		}
@@ -117,7 +114,7 @@ public class Messe {
 	}
 
 	public String getWochentag() {
-		return df.format(getDate());
+		return dateFormatWeekday.format(getDate());
 	}
 
 	public String htmlAusgeben() {
@@ -144,9 +141,9 @@ public class Messe {
 	}
 
 	public boolean istFertig() {
-		int anz_leiter = leiter.size();
-		int anz_medis = medis.size();
-		return (anz_medis + anz_leiter) >= anz_messdiener;
+		int anzLeiter = leiter.size();
+		int anzMedis = medis.size();
+		return (anzMedis + anzLeiter) >= anzMessdiener;
 	}
 	
 	public void nullen() {
@@ -155,8 +152,8 @@ public class Messe {
 	}
 
 	public boolean vorzeitigEiteilen(Messdiener medi) {
-		if(medi.getMessdatenDaten().einteilenVorzeitig(date,hochamt)){
-			if (medi.isIstLeiter()) {
+		if(medi.getMessdaten().einteilenVorzeitig(date,hochamt)){
+			if (medi.istLeiter()) {
 				leiter.add(medi);
 			} else {
 				medis.add(medi);
@@ -169,7 +166,7 @@ public class Messe {
 
 	public int getNochBenoetigte() {
 		int haben = getHatSchon();
-		int soll = anz_messdiener;
+		int soll = anzMessdiener;
 		return soll - haben;
 	}
 
@@ -177,4 +174,39 @@ public class Messe {
 		return leiter.size() + medis.size();
 	}
 
+	@Override
+	public int compareTo(Messe m) {
+		return date.compareTo(m.getDate());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Messe messe = (Messe) o;
+
+		if (hochamt != messe.hochamt) return false;
+		if (anzMessdiener != messe.anzMessdiener) return false;
+		if (!Objects.equals(date, messe.date)) return false;
+		if (!Objects.equals(kirche, messe.kirche)) return false;
+		if (!Objects.equals(em, messe.em)) return false;
+		if (!Objects.equals(typ, messe.typ)) return false;
+		if (!Objects.equals(medis, messe.medis)) return false;
+		return Objects.equals(leiter, messe.leiter);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = (hochamt ? 1 : 0);
+		result = 31 * result + anzMessdiener;
+		result = 31 * result + (date != null ? date.hashCode() : 0);
+		result = 31 * result + (kirche != null ? kirche.hashCode() : 0);
+		result = 31 * result + dateFormatWeekday.hashCode();
+		result = 31 * result + (em != null ? em.hashCode() : 0);
+		result = 31 * result + (typ != null ? typ.hashCode() : 0);
+		result = 31 * result + (medis != null ? medis.hashCode() : 0);
+		result = 31 * result + (leiter != null ? leiter.hashCode() : 0);
+		return result;
+	}
 }

@@ -12,76 +12,76 @@
 <?import javafx.scene.text.TextFlow?>
 <?import net.aclrian.fx.ATilePane?>
 
-<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-	<columnConstraints>
-		<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-	</columnConstraints>
-	<rowConstraints>
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-		<RowConstraints minHeight="10.0" percentHeight="14.2857143" prefHeight="30.0" vgrow="SOMETIMES" />
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-	</rowConstraints>
-	<children>
-      <FlowPane alignment="CENTER" hgap="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="16" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets bottom="20.0" left="20.0" right="20.0" />
-         </GridPane.margin>
-         <children>
-            <Button fx:id="abbrechen" mnemonicParsing="false" text="Abbrechen" />
-            <Button fx:id="fertig" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Fertig" />
-         </children>
-      </FlowPane>
-      <TextFlow maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textAlignment="CENTER" GridPane.columnSpan="16" GridPane.rowSpan="2">
-         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Messdiener für ">
-               <font>
-                  <Font name="System Bold" size="18.0" />
-               </font>
-            </Text>
-            <Text fx:id="smesse" strokeType="OUTSIDE" strokeWidth="0.0" text="#standartmesse#">
-               <font>
-                  <Font name="System Bold Italic" size="18.0" />
-               </font>
-            </Text>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" bearbeiten">
-               <font>
-                  <Font name="System Bold" size="18.0" />
-               </font>
-            </Text>
-         </children>
-         <GridPane.margin>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </GridPane.margin>
-      </TextFlow>
-      <ScrollPane GridPane.columnSpan="16" GridPane.rowIndex="2" GridPane.rowSpan="4">
-         <GridPane.margin>
-            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
-         </GridPane.margin>
-         <content>
-            <ATilePane fx:id="pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefColumns="-1" prefRows="8">
-               <padding>
-                  <Insets top="10.0" />
-               </padding></ATilePane>
-         </content>
-      </ScrollPane>
-	</children>
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml">
+    <columnConstraints>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints minHeight="10.0" percentHeight="14.2857143" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <FlowPane alignment="CENTER" hgap="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+              GridPane.columnSpan="16" GridPane.halignment="CENTER" GridPane.rowIndex="6"
+              GridPane.valignment="CENTER">
+        <GridPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0"/>
+        </GridPane.margin>
+        <Button fx:id="abbrechen" mnemonicParsing="false" text="Abbrechen"/>
+        <Button fx:id="fertig" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                mnemonicParsing="false" text="Fertig"/>
+    </FlowPane>
+    <TextFlow maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textAlignment="CENTER"
+              GridPane.columnSpan="16" GridPane.rowSpan="2">
+        <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </GridPane.margin>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Messdiener für ">
+            <font>
+                <Font name="System Bold" size="18.0"/>
+            </font>
+        </Text>
+        <Text fx:id="smesse" strokeType="OUTSIDE" strokeWidth="0.0" text="#standartmesse#">
+            <font>
+                <Font name="System Bold Italic" size="18.0"/>
+            </font>
+        </Text>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" bearbeiten">
+            <font>
+                <Font name="System Bold" size="18.0"/>
+            </font>
+        </Text>
+    </TextFlow>
+    <ScrollPane GridPane.columnSpan="16" GridPane.rowIndex="2" GridPane.rowSpan="4">
+        <GridPane.margin>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0"/>
+        </GridPane.margin>
+        <ATilePane fx:id="pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                   prefColumns="-1" prefRows="8">
+            <padding>
+                <Insets top="10.0"/>
+            </padding>
+        </ATilePane>
+    </ScrollPane>
 </GridPane>

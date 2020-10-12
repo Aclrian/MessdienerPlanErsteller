@@ -14,148 +14,138 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-  <children>
+<VBox maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="425.0" prefWidth="728.0"
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <MenuBar VBox.vgrow="NEVER">
-      <menus>
         <Menu mnemonicParsing="false" text="Datei">
-          <items>
-            <MenuItem mnemonicParsing="false" onAction="#pfarrei_aendern" text="Pfarrei ändern">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="P" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
-                     </accelerator></MenuItem>
+            <MenuItem mnemonicParsing="false" onAction="#editPfarrei" text="Pfarrei ändern">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" code="P" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
+                </accelerator>
+            </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#speicherort" text="Speicherort wechseln">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
-                     </accelerator></MenuItem>
-            <SeparatorMenuItem mnemonicParsing="false" />
+                <accelerator>
+                    <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
+                </accelerator>
+            </MenuItem>
+            <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem mnemonicParsing="false" onAction="#ferienplan" text="Ferienplan erstellen">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="F6" control="UP" meta="UP" shift="UP" shortcut="ANY" />
-                     </accelerator></MenuItem>
+                <accelerator>
+                    <KeyCodeCombination alt="UP" code="F6" control="UP" meta="UP" shift="UP" shortcut="ANY"/>
+                </accelerator>
+            </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#standardmesse" text="Standartmessen für Messdiener anzeigen">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="ANY" />
-                     </accelerator></MenuItem>
-          </items>
+                <accelerator>
+                    <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="ANY"/>
+                </accelerator>
+            </MenuItem>
         </Menu>
         <Menu mnemonicParsing="false" text="Ansicht">
-          <items>
             <MenuItem mnemonicParsing="false" onAction="#hauptbildschirm" text="Hauptbildschirm">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="F2" control="UP" meta="UP" shift="UP" shortcut="ANY" />
-                     </accelerator></MenuItem>
+                <accelerator>
+                    <KeyCodeCombination alt="UP" code="F2" control="UP" meta="UP" shift="UP" shortcut="ANY"/>
+                </accelerator>
+            </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#medi" text="Messdiener">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="F3" control="UP" meta="UP" shift="UP" shortcut="ANY" />
-                     </accelerator></MenuItem>
+                <accelerator>
+                    <KeyCodeCombination alt="UP" code="F3" control="UP" meta="UP" shift="UP" shortcut="ANY"/>
+                </accelerator>
+            </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#messe" text="Messen">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="F4" control="UP" meta="UP" shift="UP" shortcut="ANY" />
-                     </accelerator></MenuItem>
+                <accelerator>
+                    <KeyCodeCombination alt="UP" code="F4" control="UP" meta="UP" shift="UP" shortcut="ANY"/>
+                </accelerator>
+            </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#smesse" text="Standardmessen">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="ANY" />
-                     </accelerator></MenuItem>
-          </items>
+                <accelerator>
+                    <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="ANY"/>
+                </accelerator>
+            </MenuItem>
         </Menu>
         <Menu mnemonicParsing="false" text="Hilfe">
-            <items>
-                <MenuItem mnemonicParsing="false" onAction="#info" text="Über MpE" />
-                  <MenuItem mnemonicParsing="false" onAction="#version" text="Versionsüberprüfung" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#savepath" text="Messdienerordner öffnen" />
-                  <MenuItem mnemonicParsing="false" onAction="#workingdir" text="Programmordner öffnen" />
-                  <MenuItem mnemonicParsing="false" onAction="#log" text="Protokoll öffnen" />
-            </items>
+            <MenuItem mnemonicParsing="false" onAction="#info" text="Über MpE"/>
+            <MenuItem mnemonicParsing="false" onAction="#version" text="Versionsüberprüfung"/>
+            <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem mnemonicParsing="false" onAction="#savepath" text="Messdienerordner öffnen"/>
+            <MenuItem mnemonicParsing="false" onAction="#workingdir" text="Programmordner öffnen"/>
+            <MenuItem mnemonicParsing="false" onAction="#log" text="Protokoll öffnen"/>
         </Menu>
-      </menus>
     </MenuBar>
-      <GridPane fx:id="grid" minHeight="-Infinity" prefHeight="400.0" VBox.vgrow="ALWAYS">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" percentWidth="85.0" prefWidth="600.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" percentHeight="33.333" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" percentHeight="33.333" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" percentHeight="33.333" vgrow="SOMETIMES" />
-         </rowConstraints>
-         <children>
-            <AnchorPane fx:id="apane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="3" />
-            <GridPane style="-fx-background-color: royalblue;" GridPane.rowSpan="3">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" percentHeight="33.333" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" percentHeight="33.333" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" percentHeight="33.333" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <GridPane fx:id="medi_pane">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Button id="btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#medi" stylesheets="@../css/btn.css">
-                           <graphic>
-                              <ImageView fx:id="medi_pic" fitHeight="100.0" fitWidth="100.0">
-                                 <image>
-                                    <Image url="@../images/medi_w.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                     </children>
-                  </GridPane>
-                  <GridPane fx:id="gen_pane" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <Button id="btn" fx:id="gen_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#generieren" stylesheets="@../css/btn.css">
-                           <graphic>
-                              <ImageView fx:id="gen_pic" fitHeight="100.0" fitWidth="100.0">
-                                 <image>
-                                    <Image url="@../images/generieren_w.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                     </children>
-                  </GridPane>
-                  <GridPane fx:id="messe_pane" GridPane.rowIndex="1">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Button id="btn" fx:id="messe_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#messe" stylesheets="@../css/btn.css" GridPane.columnSpan="2" GridPane.rowSpan="3">
-                           <graphic>
-                              <ImageView fx:id="messe_pic" fitHeight="100.0" fitWidth="100.0">
-                                 <image>
-                                    <Image url="@../images/kirche_w.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                     </children>
-                  </GridPane>
-               </children>
+    <GridPane fx:id="grid" minHeight="-Infinity" prefHeight="400.0" VBox.vgrow="ALWAYS">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.0" minWidth="128.0" prefWidth="128.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="600.0"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" percentHeight="33.333" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" percentHeight="33.333" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" percentHeight="33.333" vgrow="SOMETIMES"/>
+        </rowConstraints>
+        <AnchorPane fx:id="apane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="3"/>
+        <GridPane style="-fx-background-color: royalblue;" GridPane.rowSpan="3">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" percentHeight="33.333" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" percentHeight="33.333" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" percentHeight="33.333" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <GridPane fx:id="medi_pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <Button id="btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#medi" stylesheets="@../css/btn.css">
+                    <graphic>
+                        <ImageView fx:id="medi_pic" fitHeight="100.0" fitWidth="100.0">
+                            <Image url="@../images/medi_w.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
             </GridPane>
-         </children>
-      </GridPane>
-  </children>
+            <GridPane fx:id="gen_pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                      GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <Button id="btn" fx:id="gen_btn" maxHeight="1.7976931348623157E308"
+                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#generieren"
+                        stylesheets="@../css/btn.css">
+                    <graphic>
+                        <ImageView fx:id="gen_pic" fitHeight="100.0" fitWidth="100.0">
+                            <Image url="@../images/generieren_w.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </GridPane>
+            <GridPane fx:id="messe_pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                      GridPane.rowIndex="1">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <Button id="btn" fx:id="messe_btn" maxHeight="1.7976931348623157E308"
+                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#messe"
+                        stylesheets="@../css/btn.css" GridPane.columnSpan="2" GridPane.rowSpan="3">
+                    <graphic>
+                        <ImageView fx:id="messe_pic" fitHeight="100.0" fitWidth="100.0">
+                            <Image url="@../images/kirche_w.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </GridPane>
+        </GridPane>
+    </GridPane>
 </VBox>

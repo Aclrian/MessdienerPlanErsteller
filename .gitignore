@@ -23,7 +23,6 @@ hs_err_pid*
 /bin/
 ~$ml_output.docx
 html_output.docx
-html_output.docx
 /exe2/32bit/jdk*
 /exe2/64bit/jdk*
 /target/
