@@ -1,7 +1,5 @@
 package net.aclrian.fx;
 
-import java.util.ArrayList;
-
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -10,60 +8,59 @@ import javafx.scene.layout.TilePane;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.utils.DateienVerwalter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ATilePane extends TilePane {
 
-	private static class ACheckBox extends CheckBox {
-		private final Messdiener messdiener;
+    public ATilePane() {
+        setAlignment(Pos.CENTER);
+        setOrientation(Orientation.VERTICAL);
+        setMaxHeight(Double.MAX_VALUE);
+        setMaxWidth(Double.MAX_VALUE);
+        setVgap(5d);
+            List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
+            medis.sort(Messdiener.compForMedis);
+            for (Messdiener messdiener : medis) {
+                ACheckBox cb = new ACheckBox(messdiener);
+                cb.setMaxWidth(Double.MAX_VALUE);
+                cb.setStyle("-fx-padding: 0 0 0 10");
+                getChildren().add(cb);
+            }
+    }
 
-		public ACheckBox(Messdiener m) {
-			super(m.toString());
-			messdiener = m;
-		}
+    public List<Messdiener> getSelected() {
+        ArrayList<Messdiener> rtn = new ArrayList<>();
+        for (Node n : getChildrenUnmodifiable()) {
+            if (n instanceof ACheckBox && ((ACheckBox) n).isSelected())
+                rtn.add(((ACheckBox) n).getMessdiener());
+        }
+        return rtn;
+    }
 
-		public Messdiener getMessdiener() {
-			return messdiener;
-		}
-	}
+    public void setSelected(List<Messdiener> selected) {
+        for (Node n : getChildrenUnmodifiable()) {
+            if (n instanceof ACheckBox) {
+                for (Messdiener messdiener : selected) {
+                    if (messdiener.toString().equals(((ACheckBox) n).getMessdiener().toString())) {
+                        ((CheckBox) n).setSelected(true);
+                    }
+                }
+            }
 
-	public ATilePane() {
-		setAlignment(Pos.CENTER);
-		setOrientation(Orientation.VERTICAL);
-		setMaxHeight(Double.MAX_VALUE);
-		setMaxWidth(Double.MAX_VALUE);
-		setVgap(5d);
-		try {
-			ArrayList<Messdiener> medis = DateienVerwalter.dv.getAlleMedisVomOrdnerAlsList();
-			medis.sort(Messdiener.compForMedis);
-			for (Messdiener messdiener : medis) {
-				ACheckBox cb = new ACheckBox(messdiener);
-				cb.setMaxWidth(Double.MAX_VALUE);
-				cb.setStyle("-fx-padding: 0 0 0 10");
-				getChildren().add(cb);
-			}
-		} catch (Exception e) {
-			// For SceneBuilder
-		}
-	}
+        }
+    }
 
-	public ArrayList<Messdiener> getSelected() {
-		ArrayList<Messdiener> rtn = new ArrayList<>();
-		for (Node n : getChildrenUnmodifiable()) {
-			if (n instanceof ACheckBox && ((ACheckBox) n).isSelected())
-				rtn.add(((ACheckBox) n).getMessdiener());
-		}
-		return rtn;
-	}
+    public static class ACheckBox extends CheckBox {
+        private final Messdiener messdiener;
 
-	public void setSelected(ArrayList<Messdiener> selected) {
-			for (Node n : getChildrenUnmodifiable()) {
-				if (n instanceof ACheckBox) {
-					for (Messdiener messdiener : selected) {
-						if (messdiener.toString().equals(((ACheckBox) n).getMessdiener().toString())) {
-							((CheckBox) n).setSelected(true);
-						}
-					}
-				}
+        public ACheckBox(Messdiener m) {
+            super(m.makeId());
+            messdiener = m;
+        }
 
-			}
-	}
+        public Messdiener getMessdiener() {
+            return messdiener;
+        }
+    }
 }

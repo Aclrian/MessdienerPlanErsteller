@@ -1,136 +1,137 @@
 package net.aclrian.mpe.messe;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Comparator;
-import java.util.Date;
-
-import net.aclrian.mpe.utils.Dialogs;
+import java.util.Objects;
 
 public class StandartMesse {
-	private int beginn_stunde;
-	private String beginn_minute;
-	private String ort;
-	private String Wochentag;
-	private int anz_messdiener;
-	private String typ;
+    public static final Comparator<StandartMesse> STANDART_MESSE_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
+    private final int beginnStunde;
+    private final String beginnMinute;
+    private final String ort;
+    private final String wochentag;
+    private final int anzMessdiener;
+    private final String typ;
 
-	public StandartMesse(String wochentag, int beginn_h, String beginn_min, String ort, int anz_messdiener,
-			String typ) {
-		this.ort = ort;
-		this.anz_messdiener = anz_messdiener;
-		this.typ = typ;
-		Wochentag = wochentag;
-		beginn_stunde = beginn_h;
-		beginn_minute = beginn_min;
-	}
+    public StandartMesse(String wochentag, int beginnH, String beginnMin, String ort, int anzMessdiener,
+                         String typ) {
+        this.ort = ort;
+        this.anzMessdiener = anzMessdiener;
+        this.typ = typ;
+        this.wochentag = wochentag;
+        beginnStunde = beginnH;
+        beginnMinute = beginnMin;
+    }
 
-	public int getBeginn_stunde() {
-		return beginn_stunde;
-	}
+    public int getBeginnStunde() {
+        return beginnStunde;
+    }
 
-	public String getBeginn_minute() {
-		return beginn_minute;
-	}
+    public String getBeginnMinuteString() {
+        return beginnMinute;
+    }
 
-	public int getBeginn_minuteInt(){return Integer.parseInt(beginn_minute);}
+    public int getBeginnMinute() {
+        return Integer.parseInt(beginnMinute);
+    }
 
-	public String getOrt() {
-		return ort;
-	}
+    public String getOrt() {
+        return ort;
+    }
 
-	public String getWochentag() {
-		return Wochentag;
-	}
+    public String getWochentag() {
+        return wochentag;
+    }
 
-	public int getAnz_messdiener() {
-		return anz_messdiener;
-	}
+    public int getAnzMessdiener() {
+        return anzMessdiener;
+    }
 
-	public String getTyp() {
-		return typ;
-	}
+    public String getTyp() {
+        return typ;
+    }
 
-	public String getString() {
-		return tokurzerBenutzerfreundlichenString();
-	}
+    public String getString() {
+        return tokurzerBenutzerfreundlichenString();
+    }
 
-	@Override
-	public String toString() {
-		String s = beginn_stunde<10? "0"+beginn_stunde:beginn_stunde+"";
-		return Wochentag + "_" + s + ":" + beginn_minute + "-" + ort + " " + typ + " "
-				+ anz_messdiener;
-	}
+    @Override
+    public String toString() {
+        String s = beginnStunde < 10 ? "0" + beginnStunde : beginnStunde + "";
+        return wochentag + "_" + s + ":" + beginnMinute + "-" + ort + " " + typ + " "
+                + anzMessdiener;
+    }
 
-	public String tokurzerBenutzerfreundlichenString() {
-		return Wochentag + ". " + beginn_stunde + ":" + beginn_minute + ": " + ort + " " + typ + " (" + anz_messdiener
-				+ ")";
-	}
+    public String tokurzerBenutzerfreundlichenString() {
+        return wochentag + ". " + beginnStunde + ":" + beginnMinute + ": " + ort + " " + typ + " (" + anzMessdiener
+                + ")";
+    }
 
-	@SuppressWarnings("unused")
-	public String toBenutzerfreundlichenString() {
-		return typ + " jeden " + Wochentag + "., " + "um " + beginn_stunde + ":" + beginn_minute + " in " + ort;
-	}
+    @SuppressWarnings("unused")
+    public String toBenutzerfreundlichenString() {
+        return typ + " jeden " + wochentag + "., " + "um " + beginnStunde + ":" + beginnMinute + " in " + ort + " ("+ anzMessdiener+")";
+    }
 
-	public String toReduziertenString() {
-		return Wochentag + "-" + beginn_stunde + "-" + beginn_minute  + // ort+ "-" + typ +
-				"-" + anz_messdiener;
-	}
+    public String toReduziertenString() {
+        return wochentag + "-" + beginnStunde + "-" + beginnMinute + // ort+ "-" + typ +
+                "-" + anzMessdiener;
+    }
 
-	public String getWochentags() {
-		if (Wochentag.equalsIgnoreCase("Mo")) {
-			return "montags";
-		}
-		if (Wochentag.equalsIgnoreCase("Di")) {
-			return "dienstags";
-		}
-		if (Wochentag.equalsIgnoreCase("Mi")) {
-			return "mittwochs";
-		}
-		if (Wochentag.equalsIgnoreCase("Do")) {
-			return "donnerstags";
-		}
-		if (Wochentag.equalsIgnoreCase("Fr")) {
-			return "freitags";
-		}
-		if (Wochentag.equalsIgnoreCase("Sa")) {
-			return "samstags";
-		}
-		if (Wochentag.equalsIgnoreCase("So")) {
-			return "sonntags";
-		}
-		return Wochentag;
-	}
+    public String getWochentags() {
+        if (wochentag.equalsIgnoreCase("Mo")) {
+            return "montags";
+        }
+        if (wochentag.equalsIgnoreCase("Di")) {
+            return "dienstags";
+        }
+        if (wochentag.equalsIgnoreCase("Mi")) {
+            return "mittwochs";
+        }
+        if (wochentag.equalsIgnoreCase("Do")) {
+            return "donnerstags";
+        }
+        if (wochentag.equalsIgnoreCase("Fr")) {
+            return "freitags";
+        }
+        if (wochentag.equalsIgnoreCase("Sa")) {
+            return "samstags";
+        }
+        if (wochentag.equalsIgnoreCase("So")) {
+            return "sonntags";
+        }
+        return wochentag;
+    }
 
-	public String tolangerBenutzerfreundlichenString() {
-		return getWochentags() + " um " + beginn_stunde + ":" + beginn_minute + " Uhr in " + ort + " als " + typ + " mit " + anz_messdiener
-				+ " Messdienern";
-	}
-	public String getZeit() {
-		return getWochentags() + " um " + beginn_stunde + ":" + beginn_minute + " Uhr";
-	}
-	public String getMessdienerAnzahl() {
-		return anz_messdiener+ " Messdiener";
-	}
+    public String tolangerBenutzerfreundlichenString() {
+        return getWochentags() + " um " + beginnStunde + ":" + beginnMinute + " Uhr in " + ort + " als " + typ + " mit " + anzMessdiener
+                + " Messdienern";
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Messverhalten) {
-			return this.toString().equals(obj.toString());
-		}
-		return false;
-	}
+    public String getZeit() {
+        return getWochentags() + " um " + beginnStunde + ":" + beginnMinute + " Uhr";
+    }
 
-	public static Comparator<StandartMesse> comfuerSMs = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
+    public String getMessdienerAnzahl() {
+        return anzMessdiener + " Messdiener";
+    }
 
-	public String getBeginn_stundealsString() {
-		String rtn = String.valueOf(this.beginn_stunde);
-		if (rtn.length() != 2) {
-			if (rtn.length() == 1) {
-				rtn = "";
-				rtn = "0" + this.beginn_stunde;
-			}
-		}
-		return rtn;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof StandartMesse) {
+            return this.tolangerBenutzerfreundlichenString().equals(((StandartMesse) obj).tolangerBenutzerfreundlichenString());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(beginnStunde, beginnMinute, ort, wochentag, anzMessdiener, typ);
+    }
+
+    public String getBeginnStundealsString() {
+        String rtn = String.valueOf(this.beginnStunde);
+        if (rtn.length() == 1) {
+            rtn = "0" + this.beginnStunde;
+        }
+        return rtn;
+    }
 }
