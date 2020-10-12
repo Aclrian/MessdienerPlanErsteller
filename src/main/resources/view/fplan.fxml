@@ -10,58 +10,60 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="net.aclrian.mpe.controller.FerienplanController">
-	<columnConstraints>
-		<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66" />
-	</columnConstraints>
-	<rowConstraints>
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-		<RowConstraints minHeight="10.0" percentHeight="14.2857143" prefHeight="30.0" vgrow="SOMETIMES" />
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-		<RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES" />
-	</rowConstraints>
-	<children>
-		<Label text="Ferienplan erstellen" GridPane.columnSpan="16" GridPane.halignment="CENTER">
-			<font>
-				<Font name="System Bold" size="18.0" />
-			</font>
-		</Label>
-      <TableView fx:id="table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="16" GridPane.rowIndex="1" GridPane.rowSpan="5">
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
-         <GridPane.margin>
-            <Insets left="10.0" right="10.0" />
-         </GridPane.margin>
-      </TableView>
-      <FlowPane alignment="CENTER" hgap="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="16" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets bottom="20.0" left="20.0" right="20.0" />
-         </GridPane.margin>
-         <children>
-            <Button fx:id="zurueck" mnemonicParsing="false" text="Zurück" />
-            <Button fx:id="leeren" mnemonicParsing="false" text="Leeren" />
-            <Button fx:id="hilfe" mnemonicParsing="false" text="Hilfe" />
-            <Button fx:id="fertig" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Fertig" />
-         </children>
-      </FlowPane>
-	</children>
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml" fx:controller="net.aclrian.mpe.controller.FerienplanController">
+    <columnConstraints>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints minHeight="10.0" percentHeight="14.2857143" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <Label text="Ferienplan erstellen" GridPane.columnSpan="16" GridPane.halignment="CENTER">
+        <font>
+            <Font name="System Bold" size="18.0"/>
+        </font>
+    </Label>
+    <TableView fx:id="table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+               GridPane.columnSpan="16" GridPane.rowIndex="1" GridPane.rowSpan="5">
+        <columnResizePolicy>
+          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <GridPane.margin>
+          <Insets left="10.0" right="10.0"/>
+        </GridPane.margin>
+    </TableView>
+    <FlowPane alignment="CENTER" hgap="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+              GridPane.columnSpan="16" GridPane.halignment="CENTER" GridPane.rowIndex="6"
+              GridPane.valignment="CENTER">
+        <GridPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0"/>
+        </GridPane.margin>
+        <Button fx:id="zurueck" mnemonicParsing="false" text="Zurück"/>
+        <Button fx:id="leeren" mnemonicParsing="false" text="Leeren"/>
+        <Button fx:id="hilfe" mnemonicParsing="false" text="Hilfe"/>
+        <Button fx:id="fertig" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                mnemonicParsing="false" text="Fertig"/>
+    </FlowPane>
 </GridPane>

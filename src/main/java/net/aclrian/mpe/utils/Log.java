@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class Log {
-    public static final Logger LOGGER = Logger.getLogger(Log.class);
+    private static final Logger LOGGER = Logger.getLogger(Log.class);
     public static final String PROGRAMM_NAME = "MessdienerplanErsteller";
 
     static {

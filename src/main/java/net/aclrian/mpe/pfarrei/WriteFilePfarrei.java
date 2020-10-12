@@ -76,11 +76,11 @@ public class WriteFilePfarrei {
             xml.appendChild(einst);
 
             Element hochamt = doc.createElement("hochaemter");
-            int booleany = 0;
+            int hochamtInt = 0;
             if (pf.zaehlenHochaemterMit()) {
-                booleany++;
+                hochamtInt++;
             }
-            hochamt.appendChild(doc.createTextNode(String.valueOf(booleany)));
+            hochamt.appendChild(doc.createTextNode(String.valueOf(hochamtInt)));
             einst.appendChild(hochamt);
 
             // Settings
@@ -96,12 +96,11 @@ public class WriteFilePfarrei {
                     year.setAttribute("year", idS);
                     year.appendChild(doc.createTextNode(val));
                     einst.appendChild(year);
-                }
-                if (a == Attribut.YEAR) {
-                    Element ee = doc.createElement("setting");
-                    ee.setAttribute("Lleiter", idS);
-                    ee.appendChild(doc.createTextNode(val));
-                    einst.appendChild(ee);
+                } else {
+                    Element max = doc.createElement("setting");
+                    max.setAttribute("Lleiter", idS);
+                    max.appendChild(doc.createTextNode(val));
+                    einst.appendChild(max);
                 }
             }
 
@@ -110,12 +109,11 @@ public class WriteFilePfarrei {
             datei = datei.replace(" ", "_");
             savepath = savepath == null ? DateienVerwalter.getInstance().getSavepath().getAbsolutePath() : savepath;
             Log.getLogger()
-                    .info("Pfarrei wird gespeichert in :" + savepath + File.separator + datei + DateienVerwalter.PFARREDATEIENDUNG);
+                    .info("Pfarrei wird gespeichert in:" + savepath + File.separator + datei + DateienVerwalter.PFARREDATEIENDUNG);
             File f = new File(savepath, datei + DateienVerwalter.PFARREDATEIENDUNG);
             StreamResult streamResult = new StreamResult(f);
             c.getTransformer().transform(domSource, streamResult);
             DateienVerwalter.getInstance().removeoldPfarrei(f);
-            Log.getLogger().info("Pfarrei: " + pf.getName() + "wurde erfolgreich gespeichert!");
         } catch (ParserConfigurationException | TransformerException exception) {
             Dialogs.getDialogs().error(exception, "Fehler bei Speichern der Pfarrei:");
         }

@@ -25,8 +25,8 @@ public class Einstellungen {
 		}
 		settings[i] = new Setting(Attribut.YEAR, eintrittabstandzumaktjahr, anzMaxDienen);
 		if (anzMaxDienen > settings[0].getAnzDienen()) {
-			Log.getLogger().info("Die Anzahl (" + anzMaxDienen + ") von der ID: year=" + eintrittabstandzumaktjahr
-					+ " ist groesser als der Maximale Standardwert von allen nicht Leitern. Dieser max. Wert wird somit neu gesetzt.");
+			Log.getLogger().info("Die Anzahl (" + anzMaxDienen + ") von der ID: " + eintrittabstandzumaktjahr
+					+ " ist groesser als der maximale Standardwert von allen nicht Leitern. Dieser max. Wert wird somit neu gesetzt.");
 			settings[0] = new Setting(Attribut.MAX, 0, anzMaxDienen);
 		}
 	}
@@ -50,8 +50,9 @@ public class Einstellungen {
 	}
 
 	public Setting getDaten(int index) {
-		if (index>20) {
-			return settings[20];
+		if (index>LENGHT) {
+			//if a medi has an older year of entry
+			return settings[LENGHT];
 		}
 		return settings[index];
 	}
