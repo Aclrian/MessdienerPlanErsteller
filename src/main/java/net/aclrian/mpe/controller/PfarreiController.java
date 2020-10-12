@@ -24,6 +24,7 @@ import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.pfarrei.Setting;
+import net.aclrian.mpe.pfarrei.WriteFilePfarrei;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.IDateienVerwalter;
@@ -37,13 +38,16 @@ import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class PfarreiController {
 
-    private static final String STANDARTMESSE_FXML = "/view/pfarrei/standardmesse.fxml";
+    public static final String STANDARTMESSE_FXML = "/view/pfarrei/standardmesse.fxml";
+    public static final String NICHTS_AUSGEWAEHLT = "Bitte eine Standartmesse auswählen:";
+    public static final String MEHR_INFORMATIONEN = "Mehr Informationen";
+    public static final String VERSTANDEN = "Verstanden";
     private static final String CENTERED = "-fx-alignment: CENTER;";
     private final Stage stage;
     private final Main main;
     // ----------------------------------------------------------------------
     @FXML
-    private final TableView<Setting> settingTableView = new TableView<>();
+    private TableView<Setting> settingTableView = new TableView<>();
     @FXML
     private /*NOT final!*/ TableView<StandartMesse> table = new TableView<>();
     private String nameS = null;
@@ -54,7 +58,6 @@ public class PfarreiController {
     private ObservableList<StandartMesse> ol = FXCollections.emptyObservableList();
     private boolean weiter = false;
     private Stage old;
-
     // ---------------------------------------
     private ObservableList<Setting> settings;
     @FXML
@@ -77,6 +80,14 @@ public class PfarreiController {
     private Slider leiter;
     @FXML
     private Slider medi;
+    @FXML
+    private Button neu;
+    @FXML
+    private Button loeschen;
+    @FXML
+    private Button weiterbtn;
+    @FXML
+    private Button zurueckbtn;
 
     public PfarreiController(Stage stage, Main m, Stage old) {
         this.stage = stage;
@@ -205,7 +216,11 @@ public class PfarreiController {
     @FXML
     public void loeschen(ActionEvent e) {
         StandartMesse a = table.getSelectionModel().getSelectedItem();
-        ol.removeIf(sm -> sm.toString().equals(a.toString()));
+        if (a != null) {
+            ol.removeIf(sm -> sm.toString().equals(a.toString()));
+        } else {
+            Dialogs.getDialogs().warn(NICHTS_AUSGEWAEHLT);
+        }
     }
 
     @FXML
@@ -221,8 +236,8 @@ public class PfarreiController {
 
     @FXML
     public void save(ActionEvent e) {
-        if (name.getText().equals("")) {
-            Dialogs.getDialogs().error("Bitte gebe einen Namen ein.");
+        if (name.getText().isEmpty()) {
+            Dialogs.getDialogs().warn("Bitte gebe einen Namen ein.");
             return;
         }
         Einstellungen einst = new Einstellungen();
@@ -235,8 +250,8 @@ public class PfarreiController {
         Pfarrei pf = new Pfarrei(einst, sm, name.getText(), hochamt.isSelected());
         Window s = ((Button) e.getSource()).getParent().getScene().getWindow();
         if (nameS != null)
-            net.aclrian.mpe.pfarrei.WriteFilePfarrei.writeFile(pf);
-        net.aclrian.mpe.pfarrei.WriteFilePfarrei.writeFile(pf, savepath);
+            WriteFilePfarrei.writeFile(pf);
+        WriteFilePfarrei.writeFile(pf, savepath);
         if (old != null) {
             try {
                 DateienVerwalter.reStart(old);
@@ -284,31 +299,17 @@ public class PfarreiController {
     @FXML
     public void weiter(ActionEvent e) {
         weiter();
-        try {
-            Dialogs.getDialogs().open(URI.create(
-                    "https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Was-wird-unter-'Anzahl'-verstanden%3F"),
-                    "Nun geht es um die Anzahl, wie oft Messdiener eingeteilt werden sollen:" + System.lineSeparator()
-                            + "Hier gibt es die maximale Anzahl, bei der zwischen Leitern und normalen Messdienern unterschieden werden kann."
-                            + System.lineSeparator()
-                            + "Diese beschreibt die Anzahl an Messen, die Messdiener nicht mehr dienen kann, weil dieser schon an genug Messen gedient hat."
-                            + System.lineSeparator()
-                            + "Die 'Anzahl nach Eintrittsjahr' gibt, an wie häufig Messdiener des jeweiligen Jahrgangs generell eingeteilt werden."
-                            + System.lineSeparator()
-                            + "Dabei ist zu beachten, dass jedes Jahr ein Messdiener in die nächst-höhere Gruppe kommt.",
-                    "Mehr Informationen", "Verstanden");
-        } catch (IOException e1) {
-            Dialogs.getDialogs().info("Pfarrei erstellen", "Nun geht es um die Anzahl, wie oft Messdiener eingeteilt werden sollen."
-                    + System.lineSeparator()
-                    + "Hier gibt es die maximale Anzahl, bei der zwischen Leitern und normalen Messdienern unterschieden werden kann."
-                    + System.lineSeparator()
-                    + "Diese beschreibt die Anzahl an Messen, die Messdiener nicht mehr dienen kann, weil dieser schon an genug Messen gedient hat."
-                    + System.lineSeparator()
-                    + "Die 'Anzahl nach Eintrittsjahr' gibt, an wie häufig Messdiener des jeweiligen Jahrgangs generell eingeteilt werden."
-                    + System.lineSeparator()
-                    + "Dabei ist zu beachten, dass jedes Jahr ein Messdiener in die nächst-höhere Gruppe kommt.");
-            Log.getLogger().warn(
-                    "NO PANIK: https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Was-wird-unter-'Anzahl'-verstanden%3F is dead! Long live GITHUB!");
-        }
+        Dialogs.getDialogs().open(URI.create(
+                "https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Was-wird-unter-'Anzahl'-verstanden%3F"),
+                "Nun geht es um die Anzahl, wie oft Messdiener eingeteilt werden sollen:" + System.lineSeparator()
+                        + "Hier gibt es die maximale Anzahl, bei der zwischen Leitern und normalen Messdienern unterschieden werden kann."
+                        + System.lineSeparator()
+                        + "Diese beschreibt die Anzahl an Messen, die Messdiener nicht mehr dienen kann, weil dieser schon an genug Messen gedient hat."
+                        + System.lineSeparator()
+                        + "Die 'Anzahl nach Eintrittsjahr' gibt, an wie häufig Messdiener des jeweiligen Jahrgangs generell eingeteilt werden."
+                        + System.lineSeparator()
+                        + "Dabei ist zu beachten, dass jedes Jahr ein Messdiener in die nächst-höhere Gruppe kommt.",
+                MEHR_INFORMATIONEN, VERSTANDEN);
     }
 
     @FXML

@@ -24,7 +24,7 @@ public class VersionIDHandler {
     private static String internettid;
 
     private static String searchVersionID() throws IOException, ParseException {
-        JSONObject jsonobj = doThigswithExceptions();
+        JSONObject jsonobj = parseJSONFile();
         return (String) jsonobj.get(TAG);
     }
 
@@ -64,11 +64,11 @@ public class VersionIDHandler {
         return EnumHandling.IS_THE_LATEST;
     }
 
-    private static String getInternettid() {
+    private static String getInternetId() {
         return internettid;
     }
 
-    private static JSONObject doThigswithExceptions()
+    private static JSONObject parseJSONFile()
             throws IOException, ParseException {
         URL json = urlToLatestReleaseJsonFile.toURL();
         JSONParser parse = new JSONParser();
@@ -82,7 +82,7 @@ public class VersionIDHandler {
         switch (eh) {
             case IS_OLD:
                 try {
-                    Dialogs.getDialogs().open(new URI(VersionIDHandler.URL_WITH_TAG + getInternettid()),
+                    Dialogs.getDialogs().open(new URI(VersionIDHandler.URL_WITH_TAG + getInternetId()),
                             eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
                 } catch (IOException | URISyntaxException e) {
                     try {
@@ -106,7 +106,7 @@ public class VersionIDHandler {
 
     private enum EnumHandling {
         IS_THE_LATEST("Es wurde keine neuere Version gefunden"), IS_OLD("Es wurde eine neuere Version gefunden"),
-        IS_TOO_NEW("Neuereste Version"), ERROR("Bei der Versionsüberprüfung kam es zu einem Fehler");
+        IS_TOO_NEW("Neuere Version"), ERROR("Bei der Versionsüberprüfung kam es zu einem Fehler");
         private final String message;
 
         EnumHandling(String message) {

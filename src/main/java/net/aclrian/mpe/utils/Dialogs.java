@@ -130,7 +130,7 @@ public class Dialogs {
         }
     }
 
-    public void open(URI open, String string, String ok, String close) throws IOException {
+    public void open(URI open, String string, String ok, String close) {
         ButtonType od = new ButtonType(ok, ButtonBar.ButtonData.OK_DONE);
         ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
         Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc);
@@ -140,7 +140,11 @@ public class Dialogs {
         a.setTitle("MessdienerplanErsteller");
         Optional<ButtonType> res = a.showAndWait();
         if (res.isPresent() && res.get() == od) {
-            Desktop.getDesktop().browse(open);
+            try {
+                Desktop.getDesktop().browse(open);
+            } catch (IOException e) {
+                dialogs.error("Konnte die URL: " + open + " nicht öffnen");
+            }
         }
     }
 

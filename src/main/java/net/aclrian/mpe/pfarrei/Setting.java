@@ -38,4 +38,23 @@ public class Setting {
 		return attribut.name() + " " + id + " " + anzDienen;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Setting setting = (Setting) o;
+
+		if (id != setting.id) return false;
+		if (anzDienen != setting.anzDienen) return false;
+		return attribut == setting.attribut;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = attribut != null ? attribut.hashCode() : 0;
+		result = 31 * result + id;
+		result = 31 * result + anzDienen;
+		return result;
+	}
 }

@@ -60,7 +60,7 @@ public class Messdaten {
         if (abstand < 0) {
             abstand = 0;
         }
-        if (abstand >= Einstellungen.LENGHT) {
+        if (abstand >= Einstellungen.LENGHT - 2) {
             abstand = Einstellungen.LENGHT - 3;
         }
         eins = einstellungen.getDaten(abstand + 2).getAnzDienen();

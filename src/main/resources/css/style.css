@@ -1,9 +1,6 @@
 #custom-slider .thumb {
-    -fx-background-image :url("https://i.imgur.com/SwDjIg7.png");
     -fx-background-color: transparent;
-
     -fx-padding: 24;
-
     /*-fx-pref-height: 48;*/
     /*-fx-pref-width: 48;*/
 }
