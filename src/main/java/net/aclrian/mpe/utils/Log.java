@@ -6,10 +6,11 @@ import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Log {
-    private static final Logger LOGGER = Logger.getLogger(Log.class);
     public static final String PROGRAMM_NAME = "MessdienerplanErsteller";
+    private static final Logger LOGGER = Logger.getLogger(Log.class);
 
     static {
         init();
@@ -27,7 +28,10 @@ public class Log {
             if (Files.notExists(getWorkingDir().toPath())) {
                 Files.createFile(getWorkingDir().toPath());
             }
-            Files.createDirectories(new File(FileSystemView.getFileSystemView().getDefaultDirectory(), PROGRAMM_NAME).toPath());
+            final Path dir = new File(FileSystemView.getFileSystemView().getDefaultDirectory(), PROGRAMM_NAME).toPath();
+            if (Files.notExists(dir)) {
+                Files.createDirectories(dir);
+            }
             Layout layout = new PatternLayout("[%d{yyyy-MM-dd HH:MM:ss}] [%-5p] [%l]: %m%n");
             FileAppender fileAppender = new FileAppender(layout, getLogFile().getAbsolutePath(), true);
             LOGGER.addAppender(fileAppender);
