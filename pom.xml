@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.aclrian.messdiener</groupId>
     <artifactId>MessdienerplanErsteller</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <!-- Remember the fat jar comment-->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -142,7 +142,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -245,20 +245,15 @@
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
+                                <exclude>module-info.java</exclude>
                                 <exclude>META-INF/*.SF</exclude>
                                 <exclude>META-INF/*.DSA</exclude>
                                 <exclude>META-INF/*.RSA</exclude>
                             </excludes>
                         </filter>
                     </filters><artifactSet>
-                        <excludes>
-                            <exclude>module-info.java</exclude>
-                        </excludes>
                     </artifactSet>
                     <artifactSet>
-                        <excludes>
-                            <exclude>module-info.java</exclude>
-                        </excludes>
                     </artifactSet>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <shadedClassifierName>project-classifier</shadedClassifierName>

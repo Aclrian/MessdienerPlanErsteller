@@ -17,7 +17,7 @@ import net.aclrian.mpe.utils.VersionIDHandler;
 import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class Main extends Application {
-    public static final String VERSION_ID = "1.0.0";
+    public static final String VERSION_ID = "1.0.1";
 
     public static void main(String[] args) {
         Application.launch(Main.class, args);
