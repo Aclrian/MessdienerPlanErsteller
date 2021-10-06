@@ -49,21 +49,11 @@ public class Messdaten {
     }
 
     public int berecheMax(int eintritt, int aktdatum, boolean leiter, Einstellungen einstellungen) {
-        int id = 0;
-        if (leiter) {
-            id++;
-        }
-        int eins;
-        int zwei = einstellungen.getDaten(id).getAnzDienen();
+        int id = leiter? 1:0;
 
-        int abstand = aktdatum - eintritt;
-        if (abstand < 0) {
-            abstand = 0;
-        }
-        if (abstand >= Einstellungen.LENGHT - 2) {
-            abstand = Einstellungen.LENGHT - 3;
-        }
-        eins = einstellungen.getDaten(abstand + 2).getAnzDienen();
+        int zwei = einstellungen.getDaten(id).getAnzDienen();
+        int abstand = Integer.min(Integer.max(aktdatum - eintritt, 0), Einstellungen.LENGHT - 3);
+        int eins = einstellungen.getDaten(abstand + 2).getAnzDienen();
         if (zwei < eins) {
             eins = zwei;
         }
@@ -142,7 +132,7 @@ public class Messdaten {
     }
 
     public boolean kann(Date date, boolean dateZwang, boolean anzZwang) {
-        return kanndann(date, dateZwang) && !((anzZwang && !(((anzMessen - maxMessen) < 2) || anzMessen<=maxMessen)) || kannnoch());
+        return kanndann(date, dateZwang) && (kannnoch() || ((anzZwang && (((anzMessen - maxMessen) < 2) || anzMessen<=maxMessen))));
     }
 
     public boolean kanndann(Date date, boolean zwang) {

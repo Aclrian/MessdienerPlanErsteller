@@ -89,6 +89,7 @@ public class DateienVerwalter implements IDateienVerwalter {
                 ReadFile rf = new ReadFile();
                 medis.add(rf.getMessdiener(file));
             });
+            medis.forEach(Messdiener::setnewMessdatenDaten);
         }
         return medis;
     }

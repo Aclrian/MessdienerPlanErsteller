@@ -9,8 +9,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.target>11</maven.compiler.target>
-        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
     </properties>
 
     <repositories>
@@ -29,30 +29,35 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>11.0.2</version>
+            <version>17.0.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>11.0.2</version>
+            <version>17.0.0.1</version>
         </dependency>
         <!--	<dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-graphics</artifactId>
-                <version>11.0.2</version>
+                <version>17.0.0.1</version>
                 <classifier>linux</classifier>
             </dependency>
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-graphics</artifactId>
-                <version>11.0.2</version>
+                <version>17.0.0.1</version>
                 <classifier>mac</classifier>
             </dependency>-->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>11.0.1</version>
+            <version>17.0.0.1</version>
 
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>17.0.0.1</version>
         </dependency>
         <!--Zum Lesen der Version von Github https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
         <dependency>
@@ -81,25 +86,6 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.29</version>
         </dependency>
-        <!--word-->
-        <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-ImportXHTML-->
-        <dependency>
-            <groupId>org.docx4j</groupId>
-            <artifactId>docx4j-ImportXHTML</artifactId>
-            <!--Can't extract module name from xalan-metainf-8.0.0.jar: Provider class org.docx4j.org.apache.xpath.jaxp.XPathFactoryImpl not in module-->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.docx4j.org.apache</groupId>
-                    <artifactId>xalan-metainf</artifactId>
-                </exclusion>
-            </exclusions>
-            <version>8.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.docx4j</groupId>
-            <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
-            <version>11.1.8</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/javax.activation/activation -->
         <dependency>
             <groupId>javax.activation</groupId>
@@ -120,9 +106,9 @@
             <version>5.2.5.RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>org.docx4j</groupId>
-            <artifactId>docx4j-core</artifactId>
-            <version>11.1.8</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -163,6 +149,11 @@
             <version>2.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jodconverter</groupId>
+            <artifactId>jodconverter-local</artifactId>
+            <version>4.4.2</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -170,7 +161,7 @@
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.4</version>
+                <version>0.0.8</version>
                 <configuration>
                     <mainClass>net.aclrian.mpe.ApplikationStarter</mainClass>
                     <commandlineArgs>-exe</commandlineArgs>
@@ -229,9 +220,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                    <release>11</release>
+                    <release>17</release>
                     <compilerArgument>-Xlint:unchecked</compilerArgument>
                     <compilerArgument>-Xlint:deprecation</compilerArgument>
                 </configuration>

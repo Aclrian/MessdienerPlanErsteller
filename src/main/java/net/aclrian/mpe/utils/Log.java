@@ -49,4 +49,8 @@ public class Log {
     public static File getWorkingDir() {
         return new File(FileSystemView.getFileSystemView().getDefaultDirectory(), PROGRAMM_NAME);
     }
+
+    public static void setLevel(Level level) {
+        LOGGER.setLevel(level);
+    }
 }

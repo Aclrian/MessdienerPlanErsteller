@@ -27,6 +27,7 @@ import org.testfx.assertions.api.Assertions;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -195,6 +196,8 @@ public class TestFinishController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
+        einst.editMaxDienen(true, 10);
+        einst.editiereYear(0, 9);
 
         Mockito.when(m1.makeId()).thenReturn("m1");
         Mockito.when(m2.makeId()).thenReturn("m2");

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" version="4">
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_11">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_17">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -11,19 +11,18 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.13.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:11.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:win:11.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:11.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:11.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:11.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:win:11.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:11.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:11.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-web:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-web:win:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:win:11.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:win:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-web:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-web:win:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:win:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:17.0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:win:17.0.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: commons-validator:commons-validator:1.4.1" level="project" />
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.8.3" level="project" />
@@ -42,12 +41,6 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.29" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.7.29" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
-    <orderEntry type="library" name="Maven: org.docx4j:docx4j-ImportXHTML:8.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.docx4j:xhtmlrenderer:3.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.lowagie:itext:2.1.7" level="project" />
-    <orderEntry type="library" name="Maven: org.docx4j:docx4j-JAXB-ReferenceImpl:11.1.8" level="project" />
-    <orderEntry type="library" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:2.3.2" level="project" />
-    <orderEntry type="library" name="Maven: jakarta.activation:jakarta.activation-api:1.2.1" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jaxb:jaxb-runtime:2.3.0-b170127.1453" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jaxb:jaxb-core:2.3.0-b170127.1453" level="project" />
@@ -60,31 +53,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.2.5.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:5.2.5.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.2.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.docx4j:docx4j-core:11.1.8" level="project" />
-    <orderEntry type="library" name="Maven: org.docx4j:docx4j-openxml-objects:11.1.8" level="project" />
-    <orderEntry type="library" name="Maven: org.docx4j:docx4j-openxml-objects-pml:11.1.8" level="project" />
-    <orderEntry type="library" name="Maven: org.docx4j:docx4j-openxml-objects-sml:11.1.8" level="project" />
-    <orderEntry type="library" name="Maven: org.plutext:jaxb-svg11:1.0.2" level="project" />
-    <orderEntry type="library" name="Maven: net.engio:mbassador:1.3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.26" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.9" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.18" level="project" />
-    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.12" level="project" />
-    <orderEntry type="library" name="Maven: commons-io:commons-io:2.6" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.8" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.11" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.9" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.9.9" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.9.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.xmlgraphics:xmlgraphics-commons:2.3" level="project" />
-    <orderEntry type="library" name="Maven: org.docx4j.org.apache:xalan-interpretive:11.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.docx4j.org.apache:xalan-serializer:11.0.0" level="project" />
-    <orderEntry type="library" name="Maven: net.arnx:wmf2svg:0.9.8" level="project" />
-    <orderEntry type="library" name="Maven: org.antlr:antlr-runtime:3.5.2" level="project" />
-    <orderEntry type="library" name="Maven: org.antlr:stringtemplate:3.2.1" level="project" />
-    <orderEntry type="library" name="Maven: antlr:antlr:2.7.7" level="project" />
-    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:2.8.1" level="project" />
-    <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.13.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.13.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-to-slf4j:2.13.3" level="project" />
@@ -98,5 +67,12 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.testfx:testfx-core:4.0.16-alpha" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.assertj:assertj-core:3.13.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest:2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jodconverter:jodconverter-local:4.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jodconverter:jodconverter-core:4.4.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
+    <orderEntry type="library" name="Maven: org.openoffice:juh:4.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openoffice:jurt:4.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openoffice:ridl:4.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openoffice:unoil:4.1.2" level="project" />
   </component>
 </module>

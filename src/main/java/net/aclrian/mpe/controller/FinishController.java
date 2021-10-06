@@ -16,15 +16,11 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-import org.docx4j.Docx4jProperties;
-import org.docx4j.jaxb.Context;
-import org.docx4j.model.structure.PageSizePaper;
-import org.docx4j.openpackaging.contenttype.ContentType;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.PartName;
-import org.docx4j.openpackaging.parts.WordprocessingML.AlternativeFormatInputPart;
-import org.docx4j.relationships.Relationship;
-import org.docx4j.wml.CTAltChunk;
+import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
+import org.jodconverter.core.office.OfficeUtils;
+import org.jodconverter.local.JodConverter;
+import org.jodconverter.local.office.LocalOfficeManager;
+import org.jodconverter.local.office.LocalOfficeUtils;
 import org.springframework.web.util.UriUtils;
 
 import java.awt.*;
@@ -152,7 +148,7 @@ public class FinishController implements Controller {
         }
     }
 
-    public Pair<List<Messdiener>, StringBuilder> getResourcesForEmail(){
+    public Pair<List<Messdiener>, StringBuilder> getResourcesForEmail() {
         List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
         StringBuilder sb = new StringBuilder("mailto:?");
         ArrayList<Messdiener> noemail = new ArrayList<>();
@@ -197,6 +193,16 @@ public class FinishController implements Controller {
 
     @FXML
     public void toWORD(ActionEvent actionEvent) {
+        final String office_home = System.getenv("OFFICE_HOME");
+        if (office_home != null || !office_home.isEmpty()) {
+            Log.getLogger().info("alternatives OfficeHome gefunden bei: " + office_home);
+            System.setProperty("office.home", office_home);
+        }
+        if (LocalOfficeUtils.getDefaultOfficeHome() == null) {
+            Dialogs.getDialogs().info("Für die Konvertierung wird LibreOffice (oder Openoffice) benötigt.", "Wenn es trotz Installation nicht erkannt wird, Systemvariable OFFICE_HOME anlegen, die den Installationspfad von der Officeanwendung enthält.");
+            return;
+        }
+        final LocalOfficeManager officeManager = LocalOfficeManager.install();
         try {
             String input = editor.getHtmlText().replace("<p></p>", "")
                     .replace("</br>", "")
@@ -206,32 +212,19 @@ public class FinishController implements Controller {
             Log.getLogger().debug(input);
             Log.getLogger().info(Charset.defaultCharset());
 
-            //see: https://github.com/plutext/docx4j/blob/master/docx4j-samples-resources/src/main/resources/docx4j.properties
-            Docx4jProperties.getProperties().setProperty("docx4j.PageSize", "B4JIS");
-            String papersize = Docx4jProperties.getProperties().getProperty("docx4j.PageSize", "B4JIS");
-
-            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage(PageSizePaper.valueOf(papersize), false);
-
-            AlternativeFormatInputPart afiPart = new AlternativeFormatInputPart(new PartName("/hw.html"));
-            afiPart.setBinaryData(input.getBytes());
-
-            afiPart.setContentType(new ContentType("text/html"));
-            Relationship altChunkRel = wordMLPackage.getMainDocumentPart().addTargetPart(afiPart);
-
-            CTAltChunk ac = Context.getWmlObjectFactory().createCTAltChunk();
-            ac.setId(altChunkRel.getId());
-            wordMLPackage.getMainDocumentPart().addObject(ac);
-
             File out = new File(Log.getWorkingDir(), titel + ".docx");
+            if (!out.exists()) out.createNewFile();
+            officeManager.start();
+            JodConverter.convert(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8))).as(DefaultDocumentFormatRegistry.HTML).to(out).execute();
 
-            wordMLPackage.getContentTypeManager().addDefaultContentType("html", "text/html");
-            wordMLPackage.save(out);
             wordgen = out;
             if (actionEvent != null) {
                 Desktop.getDesktop().open(out);
             }
         } catch (Exception e) {
             Dialogs.getDialogs().error(e, "Word-Dokument konnte nicht erstellt werden.");
+        } finally {
+            OfficeUtils.stopQuietly(officeManager);
         }
     }
 
@@ -358,10 +351,7 @@ public class FinishController implements Controller {
     public List<Messdiener> get(StandartMesse sm, Messe m, boolean zwangdate, boolean zwanganz) {
         ArrayList<Messdiener> allForSMesse = new ArrayList<>();
         for (Messdiener medi : hauptarray) {
-            int id = 0;
-            if (medi.istLeiter()) {
-                id++;
-            }
+            int id = medi.istLeiter() ? 1:0;
             if (medi.getDienverhalten().getBestimmtes(sm)
                     && DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).getAnzDienen() != 0
                     && medi.getMessdaten().kann(m.getDate(), zwangdate, zwanganz)) {
