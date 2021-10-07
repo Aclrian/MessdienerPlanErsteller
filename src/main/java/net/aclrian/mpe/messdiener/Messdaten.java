@@ -111,7 +111,7 @@ public class Messdaten {
         ArrayList<Messdiener> rtn = new ArrayList<>();
         for (Messdiener messdiener : freunde) {
             for (Messdiener medi : medis) {
-                if (messdiener.makeId().equals(medi.makeId())) {
+                if (messdiener.toString().equals(medi.toString())) {
                     rtn.add(medi);
                 }
             }
@@ -131,8 +131,8 @@ public class Messdaten {
         return !contains(date, ausgeteilt);
     }
 
-    public boolean kann(Date date, boolean dateZwang, boolean anzZwang) {
-        return kanndann(date, dateZwang) && (kannnoch() || ((anzZwang && (((anzMessen - maxMessen) < 2) || anzMessen<=maxMessen))));
+    public boolean kann(Date date, boolean dateZwang, boolean zwang) {
+        return kanndann(date, dateZwang) && (kannnoch() || (zwang && ((anzMessen - maxMessen) <= (int) (maxMessen * 0.2) + 1)));
     }
 
     public boolean kanndann(Date date, boolean zwang) {
@@ -254,11 +254,11 @@ public class Messdaten {
 
     public Messdiener sucheMessdiener(String geschwi, Messdiener akt, List<Messdiener> medis) throws CouldnotFindMedi {
         for (Messdiener messdiener : medis) {
-            if (messdiener.makeId().equals(geschwi)) {
+            if (messdiener.toString().equals(geschwi)) {
                 return messdiener;
             }
         }
-        throw new CouldnotFindMedi("Konnte für " + akt.makeId() + " : " + geschwi + " nicht finden");
+        throw new CouldnotFindMedi("Konnte für " + akt.toString() + " : " + geschwi + " nicht finden");
     }
 
     public int getAnzMessen() {

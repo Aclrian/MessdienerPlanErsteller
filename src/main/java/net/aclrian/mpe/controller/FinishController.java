@@ -17,6 +17,7 @@ import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
+import org.jodconverter.core.document.DocumentFormat;
 import org.jodconverter.core.office.OfficeUtils;
 import org.jodconverter.local.JodConverter;
 import org.jodconverter.local.office.LocalOfficeManager;
@@ -31,7 +32,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -54,6 +54,8 @@ public class FinishController implements Controller {
     private HTMLEditor editor;
     @FXML
     private Button mail;
+    @FXML
+    private Button word;
     @FXML
     private Button nichteingeteilte;
     @FXML
@@ -87,6 +89,12 @@ public class FinishController implements Controller {
             }
         }
         nichtEingeteile.sort(Messdiener.compForMedis);
+
+        final String office_home = System.getenv("OFFICE_HOME");
+        if (office_home != null && !office_home.isEmpty()) {
+            Log.getLogger().info("alternatives OfficeHome gefunden bei: {}", office_home);
+            System.setProperty("office.home", office_home);
+        }
     }
 
     @Override
@@ -138,7 +146,7 @@ public class FinishController implements Controller {
         try {
             URI uri = new URI(pair.getValue().toString());
             Desktop.getDesktop().mail(uri);
-            Log.getLogger().info(pair.getValue().toString());
+            Log.getLogger().info(pair.getValue());
             if (!pair.getKey().isEmpty()) {
                 Dialogs.getDialogs().show(pair.getKey(), "Messdiener ohne E-Mail-Addresse:");
             }
@@ -176,6 +184,14 @@ public class FinishController implements Controller {
 
     @FXML
     public void toPDF(ActionEvent actionEvent) {
+        if (LocalOfficeUtils.getDefaultOfficeHome() != null) {
+            Log.getLogger().info("Converting HTML to PDF with JODConverter");
+            boolean success = convert(actionEvent, false);
+            if (success) {
+                return;
+            }
+        }
+        Log.getLogger().info("Converting HTML to PDF with iText");
         ConverterProperties converterProperties = new ConverterProperties();
         converterProperties.setCharset("UTF-8");
         try {
@@ -191,41 +207,47 @@ public class FinishController implements Controller {
         }
     }
 
-    @FXML
-    public void toWORD(ActionEvent actionEvent) {
-        final String office_home = System.getenv("OFFICE_HOME");
-        if (office_home != null || !office_home.isEmpty()) {
-            Log.getLogger().info("alternatives OfficeHome gefunden bei: " + office_home);
-            System.setProperty("office.home", office_home);
-        }
-        if (LocalOfficeUtils.getDefaultOfficeHome() == null) {
-            Dialogs.getDialogs().info("Für die Konvertierung wird LibreOffice (oder Openoffice) benötigt.", "Wenn es trotz Installation nicht erkannt wird, Systemvariable OFFICE_HOME anlegen, die den Installationspfad von der Officeanwendung enthält.");
-            return;
+    private boolean convert(ActionEvent actionEvent, boolean isToDocx) {
+        String fileEnd = ".pdf";
+        DocumentFormat format = DefaultDocumentFormatRegistry.HTML;
+        if (isToDocx) {
+            fileEnd = ".docx";
+            format = DefaultDocumentFormatRegistry.DOCX;
         }
         final LocalOfficeManager officeManager = LocalOfficeManager.install();
         try {
-            String input = editor.getHtmlText().replace("<p></p>", "")
+            File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + fileEnd);
+            officeManager.start();
+            JodConverter.convert(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "")
                     .replace("</br>", "")
                     .replace("<br>", "<br></br>")
                     .replace("</p><p><font></font></p><p><font><b>", "</p><br/><p><font></font></p><p><font><b>")
-                    .replace("\u2003", "    ");
-            Log.getLogger().debug(input);
-            Log.getLogger().info(Charset.defaultCharset());
-
-            File out = new File(Log.getWorkingDir(), titel + ".docx");
-            if (!out.exists()) out.createNewFile();
-            officeManager.start();
-            JodConverter.convert(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8))).as(DefaultDocumentFormatRegistry.HTML).to(out).execute();
-
-            wordgen = out;
+                    .replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8))).as(format).to(out).execute();
+            if (isToDocx) {
+                wordgen = out;
+            } else {
+                pdfgen = out;
+            }
             if (actionEvent != null) {
                 Desktop.getDesktop().open(out);
             }
         } catch (Exception e) {
-            Dialogs.getDialogs().error(e, "Word-Dokument konnte nicht erstellt werden.");
+            Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu " + fileEnd + " konvertieren.");
+            return false;
         } finally {
             OfficeUtils.stopQuietly(officeManager);
         }
+        return true;
+    }
+
+    @FXML
+    public void toWORD(ActionEvent actionEvent) {
+        if (LocalOfficeUtils.getDefaultOfficeHome() == null) {
+            Dialogs.getDialogs().info("Für die Konvertierung wird LibreOffice (oder Openoffice) benötigt.", "Wenn es trotz Installation nicht erkannt wird, kann dafür eine Systemvariable OFFICE_HOME angelegt werden, die den Installationspfad von der Officeanwendung enthält.");
+            return;
+        }
+        Log.getLogger().info("Converting HTML to PDF with JODConverter");
+        convert(actionEvent, true);
     }
 
     private void neuerAlgorythmus() {
@@ -238,51 +260,53 @@ public class FinishController implements Controller {
         start.setTime(messen.get(0).getDate());
         start.add(Calendar.MONTH, 1);
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        Log.getLogger().info("nächster Monat bei: " + df.format(start.getTime()));
+        if (Log.getLogger().isDebugEnabled()) {
+            Log.getLogger().info("nächster Monat bei: {}", df.format(start.getTime()));
+        }
         // EIGENTLICHER ALGORYTHMUS
         for (Messe me : messen) {
             if (me.getDate().after(start.getTime())) {
                 start.add(Calendar.MONTH, 1);
-                Log.getLogger().info("nächster Monat: Es ist " + df.format(me.getDate()));
+                if (Log.getLogger().isDebugEnabled()) {
+                    Log.getLogger().info("nächster Monat: Es ist {}", df.format(me.getDate()));
+                }
                 for (Messdiener messdiener : hauptarray) {
                     messdiener.getMessdaten().naechsterMonat();
                 }
             }
-            Log.getLogger().info("Messe dran: " + me.getID());
+            Log.getLogger().info("Messe dran: {}", me.getID());
             if (me.getStandardMesse() instanceof Sonstiges) {
                 this.einteilen(me, EnumAction.EINFACH_EINTEILEN);
             } else {
                 this.einteilen(me, EnumAction.TYPE_BEACHTEN);
             }
-            Log.getLogger().info("Messe fertig: " + me.getID());
+            Log.getLogger().info("Messe fertig: {}", me.getID());
         }
     }
 
     private void einteilen(Messe m, EnumAction act) {
+        List<Messdiener> medis;
         if (act == EnumAction.EINFACH_EINTEILEN) {
-            List<Messdiener> medis = get(new Sonstiges(), m, false, false);
-            Log.getLogger().info(medis.size() + " für " + m.getNochBenoetigte());
-            for (Messdiener medi : medis) {
-                einteilen(m, medi, false, false);
-            }
-            if (!m.istFertig()) {
-                zwang(m);
-            }
-        } else if (act == EnumAction.TYPE_BEACHTEN) {
-            List<Messdiener> medis = get(m.getStandardMesse(), m, false, false);
-            Log.getLogger().info(medis.size() + " für " + m.getNochBenoetigte());
-            for (Messdiener messdiener : medis) {
-                einteilen(m, messdiener, false, false);
-            }
-            if (!m.istFertig()) {
-                zwang(m);
-            }
+            medis = get(new Sonstiges(), m, false, false);
+        } else {//EnumAction.TYPE_BEACHTEN
+            medis = get(m.getStandardMesse(), m, false, false);
+        }
+        if (Log.getLogger().isDebugEnabled()) {
+            Log.getLogger().info("{} für {}", medis.size(), m.getNochBenoetigte());
+        }
+        for (Messdiener medi : medis) {
+            einteilen(m, medi, false, false);
+        }
+        if (!m.istFertig()) {
+            zwang(m);
         }
     }
 
     public void zwang(Messe m, boolean zangDate, boolean zwangAnz, String loggerOutput) {
         List<Messdiener> medis = get(m.getStandardMesse(), m, zangDate, zwangAnz);
-        Log.getLogger().warn(m + loggerOutput);
+        if (Log.getLogger().isDebugEnabled()) {
+            Log.getLogger().warn("{} {}", m, loggerOutput);
+        }
         for (Messdiener medi : medis) {
             einteilen(m, medi, false, true);
         }
@@ -340,7 +364,7 @@ public class FinishController implements Controller {
                 for (Messdiener messdiener : anv) {
                     boolean b = messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse());
                     if (messdiener.getMessdaten().kann(m.getDate(), zwangdate, zwanganz) && b) {
-                        Log.getLogger().info(messdiener.makeId() + " dient mit " + medi.makeId() + "?");
+                        Log.getLogger().info("{} dient mit {}?", messdiener, medi);
                         einteilen(m, messdiener, zwangdate, zwanganz);
                     }
                 }
@@ -351,7 +375,7 @@ public class FinishController implements Controller {
     public List<Messdiener> get(StandartMesse sm, Messe m, boolean zwangdate, boolean zwanganz) {
         ArrayList<Messdiener> allForSMesse = new ArrayList<>();
         for (Messdiener medi : hauptarray) {
-            int id = medi.istLeiter() ? 1:0;
+            int id = medi.istLeiter() ? 1 : 0;
             if (medi.getDienverhalten().getBestimmtes(sm)
                     && DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).getAnzDienen() != 0
                     && medi.getMessdaten().kann(m.getDate(), zwangdate, zwanganz)) {

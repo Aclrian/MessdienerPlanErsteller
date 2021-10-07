@@ -129,9 +129,9 @@ public class TestFerienplanController extends ApplicationTest {
             Assertions.assertThat(table.getItems().size()).isEqualTo(3);
             for (Object o : table.getItems()) {
                 FerienplanController.Datentraeger o1 = (FerienplanController.Datentraeger) o;
-                Assertions.assertThat(o1.get(df.format(getYesterday())).getProperty().get()).isEqualTo(false);
-                Assertions.assertThat(o1.get(df.format(getToday())).getProperty().get()).isEqualTo(false);
-                Assertions.assertThat(o1.get(df.format(getTomorrow())).getProperty().get()).isEqualTo(false);
+                Assertions.assertThat(o1.get(df.format(getYesterday())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o1.get(df.format(getToday())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o1.get(df.format(getTomorrow())).property().get()).isEqualTo(false);
             }
         } catch (IndexOutOfBoundsException | ClassCastException | AssertionError e) {
             Log.getLogger().error(e.getMessage(), e);
@@ -147,9 +147,9 @@ public class TestFerienplanController extends ApplicationTest {
                 new Messe(false, 1, getToday(), "ort1", "typ1"),
                 new Messe(false, 2, getTomorrow(), "ort1", "typ1"),
                 new Messe(false, 2, getYesterday(), "ort1", "typ1"));
-        Mockito.when(medi1.makeId()).thenReturn("a");
-        Mockito.when(medi2.makeId()).thenReturn("b");
-        Mockito.when(medi3.makeId()).thenReturn("c");
+        Mockito.when(medi1.toString()).thenReturn("a");
+        Mockito.when(medi2.toString()).thenReturn("b");
+        Mockito.when(medi3.toString()).thenReturn("c");
 
         Mockito.when(mc.getMessen()).thenReturn(messen);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(medi1, medi2, medi3));
@@ -190,25 +190,21 @@ public class TestFerienplanController extends ApplicationTest {
             assert table != null;
             Assertions.assertThat(table.getColumns().size()).isEqualTo(4);
 
-            for (Object dt : table.getItems()) {
-                if (dt instanceof FerienplanController.Datentraeger) {
-                    if (((FerienplanController.Datentraeger) dt).getMessdiener().equalsIgnoreCase("a")) {
-                        Assertions.assertThat(((FerienplanController.Datentraeger) dt).get(df.format(getYesterday())).getProperty().get()).isEqualTo(false);
-                        Assertions.assertThat(((FerienplanController.Datentraeger) dt).get(df.format(getToday())).getProperty().get()).isEqualTo(true);
-                        Assertions.assertThat(((FerienplanController.Datentraeger) dt).get(df.format(getTomorrow())).getProperty().get()).isEqualTo(true);
-                    } else if (((FerienplanController.Datentraeger) dt).getMessdiener().equalsIgnoreCase("b")) {
-                        Assertions.assertThat(((FerienplanController.Datentraeger) dt).get(df.format(getYesterday())).getProperty().get()).isEqualTo(false);
-                        Assertions.assertThat(((FerienplanController.Datentraeger) dt).get(df.format(getToday())).getProperty().get()).isEqualTo(false);
-                        Assertions.assertThat(((FerienplanController.Datentraeger) dt).get(df.format(getTomorrow())).getProperty().get()).isEqualTo(false);
-                    } else if (((FerienplanController.Datentraeger) dt).getMessdiener().equalsIgnoreCase("c")) {
-                        Assertions.assertThat(((FerienplanController.Datentraeger) dt).get(df.format(getYesterday())).getProperty().get()).isEqualTo(true);
-                        Assertions.assertThat(((FerienplanController.Datentraeger) dt).get(df.format(getToday())).getProperty().get()).isEqualTo(true);
-                        Assertions.assertThat(((FerienplanController.Datentraeger) dt).get(df.format(getTomorrow())).getProperty().get()).isEqualTo(true);
-                    } else {
-                        Assertions.fail("False Item in TableView-List");
-                    }
+            for (FerienplanController.Datentraeger dt : table.getItems()) {
+                if (dt.getMessdiener().equalsIgnoreCase("a")) {
+                    Assertions.assertThat(dt.get(df.format(getYesterday())).property().get()).isEqualTo(false);
+                    Assertions.assertThat(dt.get(df.format(getToday())).property().get()).isEqualTo(true);
+                    Assertions.assertThat(dt.get(df.format(getTomorrow())).property().get()).isEqualTo(true);
+                } else if (dt.getMessdiener().equalsIgnoreCase("b")) {
+                    Assertions.assertThat(dt.get(df.format(getYesterday())).property().get()).isEqualTo(false);
+                    Assertions.assertThat(dt.get(df.format(getToday())).property().get()).isEqualTo(false);
+                    Assertions.assertThat(dt.get(df.format(getTomorrow())).property().get()).isEqualTo(false);
+                } else if (dt.getMessdiener().equalsIgnoreCase("c")) {
+                    Assertions.assertThat(dt.get(df.format(getYesterday())).property().get()).isEqualTo(true);
+                    Assertions.assertThat(dt.get(df.format(getToday())).property().get()).isEqualTo(true);
+                    Assertions.assertThat(dt.get(df.format(getTomorrow())).property().get()).isEqualTo(true);
                 } else {
-                    Assertions.fail(dt + "is not a " + FerienplanController.Datentraeger.class.getName());
+                    Assertions.fail("Wrong Item in TableView-List");
                 }
             }
             //some change action in TableView
@@ -216,21 +212,21 @@ public class TestFerienplanController extends ApplicationTest {
             ((Button) pane.lookup("#leeren")).fire();
             Assertions.assertThat(table.getItems().size()).isEqualTo(3);
             FerienplanController.Datentraeger changedCellData = null;
-            for (Object o : table.getItems()) {
-                FerienplanController.Datentraeger o1 = (FerienplanController.Datentraeger) o;
+            for (FerienplanController.Datentraeger o : table.getItems()) {
+                FerienplanController.Datentraeger o1 = o;
                 if (o1.getMessdiener().equalsIgnoreCase("b")) {
                     changedCellData = o1;
                 }
-                Assertions.assertThat(o1.get(df.format(getYesterday())).getProperty().get()).isEqualTo(false);
-                Assertions.assertThat(o1.get(df.format(getToday())).getProperty().get()).isEqualTo(false);
-                Assertions.assertThat(o1.get(df.format(getTomorrow())).getProperty().get()).isEqualTo(false);
+                Assertions.assertThat(o1.get(df.format(getYesterday())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o1.get(df.format(getToday())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o1.get(df.format(getTomorrow())).property().get()).isEqualTo(false);
             }
             table.getFocusModel().focus(1, table.getColumns().get(2));
             table.fireEvent(new KeyEvent(table, table, KeyEvent.KEY_PRESSED, " ", " ", KeyCode.SPACE, false, false, false, false));
             WaitForAsyncUtils.waitForFxEvents();
 
             assert changedCellData != null;
-            Assertions.assertThat(changedCellData.get(df.format(getToday())).kann()).isEqualTo(true);
+            Assertions.assertThat(changedCellData.get(df.format(getToday())).property().get()).isEqualTo(true);
         } catch (IndexOutOfBoundsException | ClassCastException | AssertionError e) {
             Log.getLogger().error(e.getMessage(), e);
             Assertions.fail("Couldn't find table");

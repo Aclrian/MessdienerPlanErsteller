@@ -71,7 +71,7 @@ public class FerienplanController implements Controller {
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         for (String date : dates) {
             TableColumn<Datentraeger, Boolean> col = new TableColumn<>();
-            col.setCellValueFactory(param -> param.getValue().get(date).getProperty());
+            col.setCellValueFactory(param -> param.getValue().get(date).property());
             col.setCellFactory(param -> new CheckBoxTableCell<>());
             col.setEditable(true);
             col.setPrefWidth(100);
@@ -91,7 +91,7 @@ public class FerienplanController implements Controller {
                 if (i != 0) {
                     int row = table.getFocusModel().getFocusedCell().getRow();
                     String s = dates.get(i - 1);
-                    table.getItems().get(row).get(s).setKann(!table.getItems().get(row).get(s).kann());
+                    table.getItems().get(row).get(s).property.set(!table.getItems().get(row).get(s).property().get());
                     table.refresh();
                     table.getFocusModel().focusLeftCell();
                     table.getFocusModel().focusRightCell();
@@ -101,7 +101,7 @@ public class FerienplanController implements Controller {
         zurueck.setOnAction(e -> mc.changePane(MainController.EnumPane.START));
         leeren.setOnAction(e -> {
             for (String d : dates) {
-                table.getItems().forEach(dt -> dt.get(d).getProperty().set(false));
+                table.getItems().forEach(dt -> dt.get(d).property().set(false));
             }
         });
         hilfe.setOnAction(e -> Dialogs.getDialogs().info("Hier können Messdiener für bestimmte Tage abgemeldet werden:\n\nEin Hacken in einem Kasten heißt, dass der Messdiener an dem Tag nicht eingeteilt wird.\nMit den Pfeiltasten kann die Zelle gewechselt werden und mit dem Leerzeichen der Hacken gesetzt und entfernt werden.\n\nÄnderungen werden sofort umgesetzt und können nur durch Leeren komplett zurückgesetzt werden."));
@@ -123,8 +123,8 @@ public class FerienplanController implements Controller {
         public Datentraeger(SimpleDateFormat df, List<String> dates, Messdiener messdiener) {
             m = messdiener;
             for (String d : dates) {
-                Available available = new Available(messdiener.getMessdaten().ausgeteilt(d));
-                available.getProperty().addListener((observable, oldValue, newValue) -> {
+                Available available = new Available(new SimpleBooleanProperty(messdiener.getMessdaten().ausgeteilt(d)));
+                available.property().addListener((observable, oldValue, newValue) -> {
                     boolean old = oldValue;
                     boolean neu = newValue;
                     if (old != neu) {
@@ -148,27 +148,12 @@ public class FerienplanController implements Controller {
         }
 
         public String getMessdiener() {
-            return m.makeId();
+            return m.toString();
         }
 
-        public static class Available {
-            private final SimpleBooleanProperty kann;
-
-            public Available(boolean kann) {
-                this.kann = new SimpleBooleanProperty(kann);
-            }
-
-            public boolean kann() {
-                return kann.get();
-            }
-
-            public void setKann(boolean kann) {
-                this.kann.setValue(kann);
-            }
-
-            public SimpleBooleanProperty getProperty() {
-                return kann;
-            }
+        public record Available(
+                SimpleBooleanProperty property
+        ) {
         }
     }
 

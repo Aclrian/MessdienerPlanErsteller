@@ -57,8 +57,8 @@ public class MainController {
             URL u = getClass().getResource(ep.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
             load(fl);
-            if (control instanceof MediController) {
-                ((MediController) control).setMedi(messdiener);
+            if (control instanceof MediController mc) {
+                mc.setMedi(messdiener);
             }
         } else {
             Dialogs.getDialogs().warn(GESPERRT);
@@ -75,8 +75,8 @@ public class MainController {
             URL u = getClass().getResource(ep.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
             load(fl);
-            if (control instanceof MesseController) {
-                ((MesseController) control).setMesse(messe);
+            if (control instanceof MesseController mc) {
+                mc.setMesse(messe);
                 messen.remove(messe);
             }
         } else {
@@ -110,7 +110,7 @@ public class MainController {
             control = fl.getController();
             control.afterstartup(p.getScene().getWindow(), this);
         } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Auf " + ep.getLocation() + NO_ACCESS);
+            Dialogs.getDialogs().fatal(e, "Auf " + ep.getLocation() + NO_ACCESS);
         }
     }
 

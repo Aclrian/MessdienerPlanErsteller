@@ -96,7 +96,7 @@ public class PfarreiController {
         Pfarrei pf = DateienVerwalter.getInstance().getPfarrei();
         stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
         ol = FXCollections.observableArrayList(pf.getStandardMessen());
-        ol.removeIf(sm -> sm instanceof Sonstiges);
+        ol.removeIf(Sonstiges.class::isInstance);
         ol.sort(StandartMesse.STANDART_MESSE_COMPARATOR);
         settings = FXCollections.observableArrayList(pf.getSettings().getSettings());
         nameS = pf.getName();

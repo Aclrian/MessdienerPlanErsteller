@@ -1,50 +1,40 @@
 package net.aclrian.mpe.utils;
 
+import com.google.gson.Gson;
 import net.aclrian.mpe.Main;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class VersionIDHandler {
-    private static final String TAG = "tag_name";
     private static final URI urlToLatestReleaseJsonFile = URI.create("https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest");
     private static final URI alternativedownloadurl = URI.create("https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest");
     private static final String URL_WITH_TAG = "https://github.com/Aclrian/MessdienerPlanErsteller/releases/tag/";
     private static String internettid;
 
-    private static String searchVersionID() throws IOException, ParseException {
-        JSONObject jsonobj = parseJSONFile();
-        return (String) jsonobj.get(TAG);
-    }
-
     private static EnumHandling rankingVersionID() {
-        try {
-            internettid = searchVersionID();
-            String programmsvid = Main.VERSION_ID;
-            Log.getLogger().info("Running with: " + Main.VERSION_ID + " found: " + internettid);
+        try (InputStream is = urlToLatestReleaseJsonFile.toURL().openStream()) {
+            Gson gson = new Gson();
+            internettid = gson.fromJson(new String(is.readAllBytes(), StandardCharsets.UTF_8), Version.class).getVersion();
+            Log.getLogger().info("Running with: {} found: {}", Main.VERSION_ID, internettid);
             if (!internettid.contains(".")) return EnumHandling.IS_TOO_NEW;
-            if (internettid.equals(programmsvid)) return EnumHandling.IS_THE_LATEST;
-            return oldNewOrLatest(programmsvid);
+            if (internettid.equals(Main.VERSION_ID)) return EnumHandling.IS_THE_LATEST;
+            return oldNewOrLatest();
         } catch (Exception e) {
             Log.getLogger().error(e);
             return EnumHandling.ERROR;
         }
     }
 
-    private static EnumHandling oldNewOrLatest(String programmsvid) {
+    private static EnumHandling oldNewOrLatest() {
         String[] inumbers = internettid.split(Pattern.quote("."));
-        String[] lnumbers = programmsvid.split(Pattern.quote("."));
+        String[] lnumbers = Main.VERSION_ID.split(Pattern.quote("."));
         int i = 0;
         while (i < inumbers.length && i < lnumbers.length) {
             int inet = Integer.parseInt(inumbers[i]);
@@ -68,15 +58,6 @@ public class VersionIDHandler {
         return internettid;
     }
 
-    private static JSONObject parseJSONFile()
-            throws IOException, ParseException {
-        URL json = urlToLatestReleaseJsonFile.toURL();
-        JSONParser parse = new JSONParser();
-        InputStream is = json.openStream();
-        Object obj = parse.parse(new InputStreamReader(is, StandardCharsets.UTF_8));
-        return (JSONObject) obj;
-    }
-
     public static void versioncheck(boolean showall) {
         EnumHandling eh = rankingVersionID();
         switch (eh) {
@@ -93,12 +74,11 @@ public class VersionIDHandler {
                     }
                 }
                 break;
-            case IS_THE_LATEST:
-            case IS_TOO_NEW:
-                if (showall) Dialogs.getDialogs().info("Versionsüberprüfung", eh.getMessage());
-                break;
             case ERROR:
                 if (showall) Dialogs.getDialogs().error(eh.getMessage());
+                break;
+            default:
+                if (showall) Dialogs.getDialogs().info("Versionsüberprüfung", eh.getMessage());
                 break;
         }
         getLogger().info(eh.getMessage());
@@ -115,6 +95,14 @@ public class VersionIDHandler {
 
         public String getMessage() {
             return message;
+        }
+    }
+
+    private static class Version {
+        private String tag_name;
+
+        public String getVersion() {
+            return tag_name;
         }
     }
 }

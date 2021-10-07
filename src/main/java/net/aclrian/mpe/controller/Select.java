@@ -135,7 +135,7 @@ public class Select implements Controller {
         });
         remove.setOnAction(arg0 -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && (list.getSelectionModel().getSelectedItem().getText().replaceAll("\t\t", "\t").equals(datam.get(i).toString()))) {
+            if (i >= 0 && (list.getSelectionModel().getSelectedItem().getText().replace("\t\t", "\t").equals(datam.get(i).toString()))) {
                 datam.remove(i);
                 updateMesse(mc.getMessen());
             }
@@ -152,7 +152,7 @@ public class Select implements Controller {
                     datam.sort(Messe.compForMessen);
                     ArrayList<Label> l = new ArrayList<>();
                     for (Messe m : datam) {
-                        l.add(new Label(m.getID().replaceAll("\t", "\t\t")));
+                        l.add(new Label(m.getID().replace("\t", "\t\t")));
                     }
                     list.getItems().removeIf(p -> true);
                     list.setItems(FXCollections.observableArrayList(l));
@@ -194,7 +194,7 @@ public class Select implements Controller {
         list.getItems().removeIf(t -> true);
         datam.sort(Messe.compForMessen);
         for (Messe messe : datam) {
-            list.getItems().add(new Label(messe.getID().replaceAll("\t", "\t\t")));
+            list.getItems().add(new Label(messe.getID().replace("\t", "\t\t")));
         }
     }
 
