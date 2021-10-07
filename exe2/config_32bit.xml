@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\adria\git\MessdienerPlanErsteller\exe2\MessdienerplanErsteller-1.0.0.jar</jar>
+  <jar>C:\Users\adria\git\MessdienerPlanErsteller\shade\MessdienerplanErsteller-1.0.1.jar</jar>
   <outfile>C:\Users\adria\git\MessdienerPlanErsteller\exe2\32bit\mpe_32bit.exe</outfile>
   <errTitle></errTitle>
   <cmdLine>-exe</cmdLine>
