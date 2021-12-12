@@ -2,7 +2,6 @@ package net.aclrian.mpe.utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -15,9 +14,6 @@ public class Log {
     private static final Logger LOGGER;
 
     static {
-        System.setProperty("logFilename", getLogFile().toString());
-        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-        ctx.reconfigure();
         LOGGER = LogManager.getLogger(Log.class);
         init();
     }
@@ -45,7 +41,9 @@ public class Log {
     }
 
     public static File getLogFile() {
-        return new File(getWorkingDir().getAbsolutePath(), "MpE" + ".log");
+        File f = new File("MpE.log");
+        assert f.exists();
+        return f;
     }
 
     public static File getWorkingDir() {
