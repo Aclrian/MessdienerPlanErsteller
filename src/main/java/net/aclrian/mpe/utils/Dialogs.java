@@ -96,7 +96,7 @@ public class Dialogs {
         Log.getLogger().error(string);
         StringWriter stack = new StringWriter();
         e.printStackTrace(new PrintWriter(stack));
-        Log.getLogger().error(stack.toString());
+        Log.getLogger().error(stack);
         String header;
         if (e.getLocalizedMessage() != null && !e.getLocalizedMessage().equals("")) {
             header = string + "\n" + e.getLocalizedMessage();
@@ -174,16 +174,12 @@ public class Dialogs {
         return res.isPresent() && (res.get() == yesbtn) ? YesNoCancelEnum.YES : YesNoCancelEnum.NO;
     }
 
-    public void fatal(String string) {
-        error(string);
+    public void fatal(Exception e, String string) {
+        error(e, string);
         System.exit(-1);
     }
 
     public <I> Object singleSelect(List<? extends I> list, String s) {
-        Alert a = new Alert(AlertType.INFORMATION);
-        Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
-        a.setHeaderText(s);
         VBox v = new VBox();
         v.setSpacing(5d);
         ToggleGroup g = new ToggleGroup();
@@ -212,7 +208,7 @@ public class Dialogs {
                     break;
                 }
             }
-            String s = item instanceof StandartMesse ? ((StandartMesse) item).tolangerBenutzerfreundlichenString() : item.toString();
+            String s = item instanceof StandartMesse sm ? sm.tolangerBenutzerfreundlichenString() : item.toString();
             CheckBox ch = new CheckBox(s);
             ch.setSelected(b);
             ch.selectedProperty().addListener((arg0, oldB, neuB) -> {
@@ -403,7 +399,7 @@ public class Dialogs {
         private final I i;
 
         private ARadioButton(I i) {
-            super(i instanceof StandartMesse ? ((StandartMesse) i).tolangerBenutzerfreundlichenString() : i.toString());
+            super(i instanceof StandartMesse sm ? sm.tolangerBenutzerfreundlichenString() : i.toString());
             this.i = i;
         }
 

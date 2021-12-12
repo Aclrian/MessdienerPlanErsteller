@@ -79,7 +79,7 @@ public class ConvertCSV {
         try {
             m.setEmail(email);
         } catch (NotValidException e) {
-            Log.getLogger().info(email + " von " + m.makeId() + " ist nicht gültig");
+            Log.getLogger().info("{} von {} ist nicht gültig", email, m);
             m.setEmailEmpty();
         }
         m.makeXML();

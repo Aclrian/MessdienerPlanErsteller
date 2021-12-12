@@ -32,17 +32,17 @@ public class ATilePane extends TilePane {
     public List<Messdiener> getSelected() {
         ArrayList<Messdiener> rtn = new ArrayList<>();
         for (Node n : getChildrenUnmodifiable()) {
-            if (n instanceof ACheckBox && ((ACheckBox) n).isSelected())
-                rtn.add(((ACheckBox) n).getMessdiener());
+            if (n instanceof ACheckBox acb && acb.isSelected())
+                rtn.add(acb.getMessdiener());
         }
         return rtn;
     }
 
     public void setSelected(List<Messdiener> selected) {
         for (Node n : getChildrenUnmodifiable()) {
-            if (n instanceof ACheckBox) {
+            if (n instanceof ACheckBox acb) {
                 for (Messdiener messdiener : selected) {
-                    if (messdiener.toString().equals(((ACheckBox) n).getMessdiener().toString())) {
+                    if (messdiener.toString().equals(acb.getMessdiener().toString())) {
                         ((CheckBox) n).setSelected(true);
                     }
                 }
@@ -55,7 +55,7 @@ public class ATilePane extends TilePane {
         private final Messdiener messdiener;
 
         public ACheckBox(Messdiener m) {
-            super(m.makeId());
+            super(m.toString());
             messdiener = m;
         }
 

@@ -89,6 +89,7 @@ public class DateienVerwalter implements IDateienVerwalter {
                 ReadFile rf = new ReadFile();
                 medis.add(rf.getMessdiener(file));
             });
+            medis.forEach(Messdiener::setnewMessdatenDaten);
         }
         return medis;
     }
@@ -109,14 +110,14 @@ public class DateienVerwalter implements IDateienVerwalter {
         } else {
             pfarreiFile = files.get(0);
         }
-        Log.getLogger().info("Pfarrei gefunden in: " + pfarreiFile);
-        pf = ReadFilePfarrei.getPfarrei(pfarreiFile.getAbsolutePath());
+        Log.getLogger().info("Pfarrei gefunden in: {}", pfarreiFile);
         try {
+            pf = ReadFilePfarrei.getPfarrei(pfarreiFile.getAbsolutePath());
             pfarreiFos = new FileOutputStream(pfarreiFile, true);
             FileChannel channel = pfarreiFos.getChannel();
             lock = channel.lock();
-        } catch (IOException e) {
-            Dialogs.getDialogs().warn("Pfarrei-Datei konnte nicht vom Programm gehalten werden: " + e.getLocalizedMessage());
+        } catch (Exception e) {
+            Dialogs.getDialogs().fatal(e, "Pfarrei-Datei konnte nicht vom Programm gehalten werden: " + e.getLocalizedMessage());
         }
     }
 
