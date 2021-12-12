@@ -49,21 +49,11 @@ public class Messdaten {
     }
 
     public int berecheMax(int eintritt, int aktdatum, boolean leiter, Einstellungen einstellungen) {
-        int id = 0;
-        if (leiter) {
-            id++;
-        }
-        int eins;
-        int zwei = einstellungen.getDaten(id).getAnzDienen();
+        int id = leiter? 1:0;
 
-        int abstand = aktdatum - eintritt;
-        if (abstand < 0) {
-            abstand = 0;
-        }
-        if (abstand >= Einstellungen.LENGHT - 2) {
-            abstand = Einstellungen.LENGHT - 3;
-        }
-        eins = einstellungen.getDaten(abstand + 2).getAnzDienen();
+        int zwei = einstellungen.getDaten(id).getAnzDienen();
+        int abstand = Integer.min(Integer.max(aktdatum - eintritt, 0), Einstellungen.LENGHT - 3);
+        int eins = einstellungen.getDaten(abstand + 2).getAnzDienen();
         if (zwei < eins) {
             eins = zwei;
         }
@@ -121,7 +111,7 @@ public class Messdaten {
         ArrayList<Messdiener> rtn = new ArrayList<>();
         for (Messdiener messdiener : freunde) {
             for (Messdiener medi : medis) {
-                if (messdiener.makeId().equals(medi.makeId())) {
+                if (messdiener.toString().equals(medi.toString())) {
                     rtn.add(medi);
                 }
             }
@@ -141,8 +131,8 @@ public class Messdaten {
         return !contains(date, ausgeteilt);
     }
 
-    public boolean kann(Date date, boolean dateZwang, boolean anzZwang) {
-        return kanndann(date, dateZwang) && !((anzZwang && !(((anzMessen - maxMessen) < 2) || anzMessen<=maxMessen)) || kannnoch());
+    public boolean kann(Date date, boolean dateZwang, boolean zwang) {
+        return kanndann(date, dateZwang) && (kannnoch() || (zwang && ((anzMessen - maxMessen) <= (int) (maxMessen * 0.2) + 1)));
     }
 
     public boolean kanndann(Date date, boolean zwang) {
@@ -264,11 +254,11 @@ public class Messdaten {
 
     public Messdiener sucheMessdiener(String geschwi, Messdiener akt, List<Messdiener> medis) throws CouldnotFindMedi {
         for (Messdiener messdiener : medis) {
-            if (messdiener.makeId().equals(geschwi)) {
+            if (messdiener.toString().equals(geschwi)) {
                 return messdiener;
             }
         }
-        throw new CouldnotFindMedi("Konnte für " + akt.makeId() + " : " + geschwi + " nicht finden");
+        throw new CouldnotFindMedi("Konnte für " + akt.toString() + " : " + geschwi + " nicht finden");
     }
 
     public int getAnzMessen() {

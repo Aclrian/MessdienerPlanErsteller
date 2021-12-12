@@ -203,14 +203,14 @@ public class TestMediController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
         DateienVerwalter.setInstance(dv);
         Messdiener m1 = Mockito.mock(Messdiener.class);
-        Mockito.when(m1.makeId()).thenReturn("Tannenbusch, Nora");
+        Mockito.when(m1.toString()).thenReturn("Tannenbusch, Nora");
         Mockito.when(m1.toString()).thenReturn("Tannenbusch, Nora");
         Mockito.when(m1.getGeschwister()).thenReturn(new String[]{"Tannenbusch, Lea", "", ""});
         final Messverhalten mv1 = new Messverhalten();
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
         Mockito.when(m1.getFreunde()).thenReturn(new String[]{"", "", "", "", ""});
         Messdiener m2 = Mockito.mock(Messdiener.class);
-        Mockito.when(m2.makeId()).thenReturn("Müller, Lieschen");
+        Mockito.when(m2.toString()).thenReturn("Müller, Lieschen");
         Mockito.when(m2.toString()).thenReturn("Müller, Lieschen");
         Mockito.when(m2.getGeschwister()).thenReturn(new String[]{"", "", ""});
         final Messverhalten mv2 = new Messverhalten();

@@ -129,8 +129,7 @@ public class ReadFile {
             g2 = eElement.getElementsByTagName("g2").item(0).getTextContent();
             g3 = eElement.getElementsByTagName("g3").item(0).getTextContent();
         } catch (NullPointerException e) {
-            Log.getLogger().info("Es wurde eine Alte Version von Messdiener-Dateien gefunden!"
-                    + fXmlFile.getName());
+            Log.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
         }
         if (!g1.equals("LEER")) {
             geschwister[0] = g1;
@@ -162,8 +161,7 @@ public class ReadFile {
             f4 = eElement.getElementsByTagName("F4").item(0).getTextContent();
             f5 = eElement.getElementsByTagName("F5").item(0).getTextContent();
         } catch (NullPointerException e) {
-            Log.getLogger().info("Es wurde eine Alte Version von Messdiener-Dateien gefunden!"
-                    + fXmlFile.getName());
+            Log.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
         }
         if (!f1.equals("LEER")) {
             freunde[0] = f1;
@@ -193,8 +191,8 @@ public class ReadFile {
     }
 
     private void fixEmail(Messdiener me, String mail, String vname, String nname, int eintritt, boolean istLeiter, Messverhalten dienverhalten) {
-        if (Dialogs.getDialogs().frage("Die E-Mail-Addresse '" + mail + "' von " + me.makeId() + " ist ungültig und wird gelöscht.\nSoll eine neue eingegeben werden?")) {
-            String s = Dialogs.getDialogs().text("Neue E-Mail-Adresse von " + me.makeId() + " eingeben:\nWenn keine vorhanden ist, soll das Feld leer bleiben.", "E-Mail:");
+        if (Dialogs.getDialogs().frage("Die E-Mail-Addresse '" + mail + "' von " + me + " ist ungültig und wird gelöscht.\nSoll eine neue eingegeben werden?")) {
+            String s = Dialogs.getDialogs().text("Neue E-Mail-Adresse von " + me + " eingeben:\nWenn keine vorhanden ist, soll das Feld leer bleiben.", "E-Mail:");
             if (!s.equals("")) me.setEmailEmpty();
             try {
                 me.setEmail(s);

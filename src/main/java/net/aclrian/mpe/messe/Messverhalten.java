@@ -50,7 +50,7 @@ public class Messverhalten {
                 return;
             }
         }
-        Log.getLogger().warn("Standartmesse nicht gefunden:" + messe);
+        Log.getLogger().warn("Standartmesse nicht gefunden: {}", messe);
     }
 
     /**
