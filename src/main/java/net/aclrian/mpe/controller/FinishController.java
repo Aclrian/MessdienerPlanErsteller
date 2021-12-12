@@ -18,6 +18,7 @@ import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
+import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeUtils;
 import org.jodconverter.local.JodConverter;
 import org.jodconverter.local.office.LocalOfficeManager;
@@ -186,10 +187,7 @@ public class FinishController implements Controller {
     public void toPDF(ActionEvent actionEvent) {
         if (LocalOfficeUtils.getDefaultOfficeHome() != null) {
             Log.getLogger().info("Converting HTML to PDF with JODConverter");
-            boolean success = convert(actionEvent, false);
-            if (success) {
-                return;
-            }
+            convert(actionEvent, false);
         }
         Log.getLogger().info("Converting HTML to PDF with iText");
         ConverterProperties converterProperties = new ConverterProperties();
@@ -207,7 +205,7 @@ public class FinishController implements Controller {
         }
     }
 
-    private boolean convert(ActionEvent actionEvent, boolean isToDocx) {
+    private void convert(ActionEvent actionEvent, boolean isToDocx) {
         String fileEnd = ".pdf";
         DocumentFormat format = DefaultDocumentFormatRegistry.HTML;
         if (isToDocx) {
@@ -215,14 +213,19 @@ public class FinishController implements Controller {
             format = DefaultDocumentFormatRegistry.DOCX;
         }
         final LocalOfficeManager officeManager = LocalOfficeManager.install();
+        File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + fileEnd);
         try {
-            File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + fileEnd);
             officeManager.start();
-            JodConverter.convert(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "")
-                    .replace("</br>", "")
-                    .replace("<br>", "<br></br>")
-                    .replace("</p><p><font></font></p><p><font><b>", "</p><br/><p><font></font></p><p><font><b>")
-                    .replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8))).as(format).to(out).execute();
+        } catch (OfficeException e) {
+            Dialogs.getDialogs().error(e, "Fehler beim Konvertieren");
+            return;
+        }
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "")
+                .replace("</br>", "")
+                .replace("<br>", "<br></br>")
+                .replace("</p><p><font></font></p><p><font><b>", "</p><br/><p><font></font></p><p><font><b>")
+                .replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8))){
+            JodConverter.convert(bais).as(format).to(out).execute();
             if (isToDocx) {
                 wordgen = out;
             } else {
@@ -233,11 +236,9 @@ public class FinishController implements Controller {
             }
         } catch (Exception e) {
             Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu " + fileEnd + " konvertieren.");
-            return false;
         } finally {
             OfficeUtils.stopQuietly(officeManager);
         }
-        return true;
     }
 
     @FXML

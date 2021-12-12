@@ -180,10 +180,6 @@ public class Dialogs {
     }
 
     public <I> Object singleSelect(List<? extends I> list, String s) {
-        Alert a = new Alert(AlertType.INFORMATION);
-        Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
-        a.setHeaderText(s);
         VBox v = new VBox();
         v.setSpacing(5d);
         ToggleGroup g = new ToggleGroup();

@@ -32,11 +32,11 @@ public class Log {
     public static void init() {
         try {
             if (Files.notExists(getWorkingDir().toPath())) {
-                Files.createFile(getWorkingDir().toPath());
+                Files.createDirectories(getWorkingDir().toPath());
             }
             final Path dir = new File(FileSystemView.getFileSystemView().getDefaultDirectory(), PROGRAMM_NAME).toPath();
             if (Files.notExists(dir)) {
-                Files.createDirectories(dir);
+                Files.createFile(dir);
             }
             LOGGER.info("-------------------------------");
         } catch (IOException e) {

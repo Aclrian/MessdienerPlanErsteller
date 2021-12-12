@@ -14,10 +14,12 @@ import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.IDateienVerwalter;
 import net.aclrian.mpe.utils.VersionIDHandler;
 
+import java.util.Objects;
+
 import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class Main extends Application {
-    public static final String VERSION_ID = "1.0.1";
+    public static final String VERSION_ID = "1.0.2";
 
     public static void main(String[] args) {
         Application.launch(Main.class, args);
@@ -27,7 +29,7 @@ public class Main extends Application {
         try {
             getLogger().info("MpE: Version: " + VERSION_ID);
             getLogger().info("MpE-fx is starting");
-            stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
+            stage.getIcons().add(new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/title_32.png"))));
             VersionIDHandler.versioncheck(false);
             if (startPfarrei(stage)) return;
             FXMLLoader loader = new FXMLLoader();
