@@ -118,7 +118,7 @@ public class TestPfarreiController extends ApplicationTest {
             });
             WaitForAsyncUtils.waitForFxEvents();
             Assertions.assertThat(((TableView<StandartMesse>) root.lookup("#table")).getItems()).hasSize(2);
-            Mockito.verify(dialog, Mockito.times(1)).warn(Mockito.eq(PfarreiController.NICHTS_AUSGEWAEHLT));
+            Mockito.verify(dialog, Mockito.times(1)).warn(PfarreiController.NICHTS_AUSGEWAEHLT);
             ((TableView<?>) root.lookup("#table")).getSelectionModel().select(1);
 
             Platform.runLater(() -> {
@@ -158,7 +158,7 @@ public class TestPfarreiController extends ApplicationTest {
             Mockito.verify(dialog, Mockito.times(2)).open(Mockito.any(), Mockito.anyString(), Mockito.eq(PfarreiController.MEHR_INFORMATIONEN), Mockito.eq(PfarreiController.VERSTANDEN));
             final Setting setting = ((TableView<Setting>) scene.lookup("#settingTableView")).getItems().get(0);
             final Setting newSetting = new Setting(setting.getAttribut(), setting.getId(), 2);
-            Mockito.when(dialog.chance(Mockito.eq(setting))).thenReturn(newSetting);
+            Mockito.when(dialog.chance(setting)).thenReturn(newSetting);
             Platform.runLater(() -> {
                 scene.lookup("#settingTableView").requestFocus();
                 scene.lookup("#settingTableView").requestFocus();
@@ -240,9 +240,9 @@ public class TestPfarreiController extends ApplicationTest {
             Assertions.assertThat(pfRead.getSettings().getDaten(0).toString()).isEqualTo("MAX 0 2");
             Assertions.assertThat(pfRead.getSettings().getDaten(1).toString()).isEqualTo("MAX 1 4");
             Assertions.assertThat(pfRead.getSettings().getSettings()).containsOnlyOnce(newSetting);
-            Assertions.assertThat(pfRead.getSettings().getSettings()).allMatch(s -> s.equals(newSetting)|| s.getAnzDienen() == 0);
+            Assertions.assertThat(pfRead.getSettings().getSettings()).allMatch(s -> s.equals(newSetting) || s.getAnzDienen() == 0);
             Files.delete(file.toPath());
-        } catch (IOException e) {
+        } catch (Exception e) {
             Assertions.fail(e.getMessage(), e);
         }
     }

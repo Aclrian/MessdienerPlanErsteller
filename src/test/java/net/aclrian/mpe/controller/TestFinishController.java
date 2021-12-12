@@ -85,9 +85,9 @@ public class TestFinishController extends ApplicationTest {
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
 
-        Mockito.when(m1.makeId()).thenReturn("m1");
-        Mockito.when(m2.makeId()).thenReturn("m2");
-        Mockito.when(m3.makeId()).thenReturn("m3");
+        Mockito.when(m1.toString()).thenReturn("m1");
+        Mockito.when(m2.toString()).thenReturn("m2");
+        Mockito.when(m3.toString()).thenReturn("m3");
         Mockito.when(m1.istLeiter()).thenReturn(false);
         Mockito.when(m2.istLeiter()).thenReturn(false);
         Mockito.when(m3.istLeiter()).thenReturn(false);
@@ -195,12 +195,14 @@ public class TestFinishController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
+        einst.editMaxDienen(true, 10);
+        einst.editiereYear(0, 9);
 
-        Mockito.when(m1.makeId()).thenReturn("m1");
-        Mockito.when(m2.makeId()).thenReturn("m2");
-        Mockito.when(m3.makeId()).thenReturn("m3");
+        Mockito.when(m1.toString()).thenReturn("m1");
+        Mockito.when(m2.toString()).thenReturn("m2");
+        Mockito.when(m3.toString()).thenReturn("m3");
         final String m1FreundString = "dfc";
-        Mockito.when(m1Freund.makeId()).thenReturn(m1FreundString);
+        Mockito.when(m1Freund.toString()).thenReturn(m1FreundString);
         Mockito.when(m1Freund.istLeiter()).thenReturn(false);
         Mockito.when(m1.istLeiter()).thenReturn(false);
         Mockito.when(m2.istLeiter()).thenReturn(true);

@@ -97,7 +97,7 @@ public class MesseController implements Controller {
             Messe m = new Messe(hochamt.isSelected(), (int) slider.getValue(), getDate(), ort.getText(), titel.getText(), standartMesse);
             for (Messdiener medi : list.getSelected()) {
                 if (!m.vorzeitigEiteilen(medi)) {
-                    Dialogs.getDialogs().warn(medi.makeId() + " konnte nicht vorzeitig eingeteilt werden.");
+                    Dialogs.getDialogs().warn(medi + "{} konnte nicht vorzeitig eingeteilt werden.");
                 }
             }
             mc.getMessen().add(m);

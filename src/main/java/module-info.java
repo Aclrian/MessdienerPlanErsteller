@@ -1,23 +1,21 @@
 module MessdienerplanErsteller.main {
 
-    requires javafx.graphics;
-    requires javafx.controls;
-    requires commons.validator;
-    requires javafx.fxml;
-    requires org.apache.commons.io;
-    requires java.xml;
     requires java.desktop;
-    requires spring.web;
-    requires json.simple;
-    requires xhtmlrenderer;
-    requires html2pdf;
+    requires java.sql;
+    requires java.xml;
+
+    requires javafx.controls;
+    requires javafx.fxml;
     requires javafx.web;
 
-    requires org.docx4j.core;
-	requires org.docx4j.openxml_objects;
-    requires org.slf4j;
+    requires html2pdf;//this is the only direct dependency that is nonmodular
+    requires jodconverter.local;
+    requires jodconverter.core;
+    requires org.apache.commons.io;
     requires org.apache.logging.log4j;
-    requires log4j;
+    requires spring.web;
+    requires com.google.gson;
+    requires org.apache.logging.log4j.core;
 
     opens net.aclrian.fx;
     opens net.aclrian.mpe;
