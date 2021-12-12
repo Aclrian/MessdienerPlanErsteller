@@ -63,7 +63,7 @@ public class TestSelect extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         pane = new Pane();
-        scene = new Scene(pane, 1000, 1000);
+        scene = new Scene(pane, 10, 10);
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();
@@ -89,8 +89,8 @@ public class TestSelect extends ApplicationTest {
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
-        Mockito.when(m1.makeId()).thenReturn("cdajklsdfkldjoa");
-        Mockito.when(m2.makeId()).thenReturn("sdjgdlöfkgjclvk");
+        Mockito.when(m1.toString()).thenReturn("cdajklsdfkldjoa");
+        Mockito.when(m2.toString()).thenReturn("sdjgdlöfkgjclvk");
         Mockito.when(m1.getFile()).thenReturn(f1);
         Mockito.when(m2.getFile()).thenReturn(f2);
         Mockito.when(m1.getFreunde()).thenReturn(new String[]{"sdjgdlöfkgjclvk", "", "", "", "", ""});
@@ -120,11 +120,11 @@ public class TestSelect extends ApplicationTest {
 
         ((ListView<?>) list).getSelectionModel().select(0);
         list.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, false, false, false, false, false, false, false, false, false, false, null));
-        Mockito.verify(mc, Mockito.times(1)).changePaneMessdiener(Mockito.eq(m1));
+        Mockito.verify(mc, Mockito.times(1)).changePaneMessdiener(m1);
 
         Assertions.assertThat(scene.lookup("#bearbeiten")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#bearbeiten")).fire();
-        Mockito.verify(mc, Mockito.times(2)).changePaneMessdiener(Mockito.eq(m1));
+        Mockito.verify(mc, Mockito.times(2)).changePaneMessdiener(m1);
 
         Assertions.assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#neu")).fire();
@@ -183,7 +183,7 @@ public class TestSelect extends ApplicationTest {
         try {
             Date von = df.parse("1.10.2020");
             Date bis = df.parse("15.10.2020");
-            Mockito.when(dialog.getDates(Mockito.eq(Select.ZEITRAUM_WAEHLEN), Mockito.eq(Select.VON), Mockito.eq(Select.BIS))).thenReturn(Arrays.asList(von, bis));
+            Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -213,11 +213,11 @@ public class TestSelect extends ApplicationTest {
 
         ((ListView<?>) scene.lookup("#list")).getSelectionModel().select(0);
         scene.lookup("#list").fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, false, false, false, false, false, false, false, false, false, false, null));
-        Mockito.verify(mc, Mockito.times(1)).changePaneMesse(Mockito.eq(m1));
+        Mockito.verify(mc, Mockito.times(1)).changePaneMesse(m1);
 
         Assertions.assertThat(scene.lookup("#bearbeiten")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#bearbeiten")).fire();
-        Mockito.verify(mc, Mockito.times(2)).changePaneMesse(Mockito.eq(m1));
+        Mockito.verify(mc, Mockito.times(2)).changePaneMesse(m1);
 
         Assertions.assertThat(scene.lookup("#" + Select.GENERIEREN_ID)).isInstanceOf(Button.class);
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);

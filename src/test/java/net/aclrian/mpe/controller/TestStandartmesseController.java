@@ -68,11 +68,11 @@ public class TestStandartmesseController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
         final Messverhalten mv1 = new Messverhalten();
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
-        Mockito.when(m1.makeId()).thenReturn("a");
+        Mockito.when(m1.toString()).thenReturn("a");
         final Messverhalten mv2 = new Messverhalten();
         mv2.editiereBestimmteMesse(standartMesse, true);
         Mockito.when(m2.getDienverhalten()).thenReturn(mv2);
-        Mockito.when(m2.makeId()).thenReturn("b");
+        Mockito.when(m2.toString()).thenReturn("b");
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2));
         Mockito.when(m2.getFreunde()).thenReturn(new String[]{"", "", "", "", ""});
         Mockito.when(m2.getGeschwister()).thenReturn(new String[]{"", "", ""});

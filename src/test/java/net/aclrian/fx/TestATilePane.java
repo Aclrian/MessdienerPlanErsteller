@@ -46,9 +46,9 @@ public class TestATilePane extends ApplicationTest {
     public void test() {
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(medi1, medi2, medi3));
-        Mockito.when(medi1.makeId()).thenReturn("z");
-        Mockito.when(medi2.makeId()).thenReturn("b");
-        Mockito.when(medi3.makeId()).thenReturn("a");
+        Mockito.when(medi1.toString()).thenReturn("z");
+        Mockito.when(medi2.toString()).thenReturn("b");
+        Mockito.when(medi3.toString()).thenReturn("a");
         Platform.runLater(() -> {
             instance = new ATilePane();
             pane.getChildren().add(instance);

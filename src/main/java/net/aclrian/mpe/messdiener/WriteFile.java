@@ -119,15 +119,15 @@ public class WriteFile {
             DOMSource domSource = new DOMSource(doc);
             File path = DateienVerwalter.getInstance().getSavepath();
 
-            File file = new File(path, me.makeId() + ".xml");
+            File file = new File(path, me + ".xml");
             OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
             StreamResult result = new StreamResult(out);
             c.getTransformer().transform(domSource, result);
             out.close();
-            Log.getLogger().info("Datei wird gespeichert in: " + path.getAbsolutePath() + File.separator + me.makeId() + ".xml");
+            Log.getLogger().info("Datei wird gespeichert in: {}", file);
             me.setFile(file);
         } catch (ParserConfigurationException | TransformerException e) {
-            Dialogs.getDialogs().error(e, "Konnte den Messdiener " + me.makeId() + " nicht lesen.");
+            Dialogs.getDialogs().error(e, "Konnte den Messdiener " + me + " nicht lesen.");
         }
     }
 

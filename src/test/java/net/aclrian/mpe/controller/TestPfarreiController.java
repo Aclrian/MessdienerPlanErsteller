@@ -63,7 +63,7 @@ public class TestPfarreiController extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         pane = new Pane();
-        scene = new Scene(pane, 1000, 1000);
+        scene = new Scene(pane, 10, 10);
         this.stage = stage;
         stage.setScene(scene);
         stage.setResizable(true);
@@ -118,7 +118,7 @@ public class TestPfarreiController extends ApplicationTest {
             });
             WaitForAsyncUtils.waitForFxEvents();
             Assertions.assertThat(((TableView<StandartMesse>) root.lookup("#table")).getItems()).hasSize(2);
-            Mockito.verify(dialog, Mockito.times(1)).warn(Mockito.eq(PfarreiController.NICHTS_AUSGEWAEHLT));
+            Mockito.verify(dialog, Mockito.times(1)).warn(PfarreiController.NICHTS_AUSGEWAEHLT);
             ((TableView<?>) root.lookup("#table")).getSelectionModel().select(1);
 
             Platform.runLater(() -> {
@@ -158,7 +158,7 @@ public class TestPfarreiController extends ApplicationTest {
             Mockito.verify(dialog, Mockito.times(2)).open(Mockito.any(), Mockito.anyString(), Mockito.eq(PfarreiController.MEHR_INFORMATIONEN), Mockito.eq(PfarreiController.VERSTANDEN));
             final Setting setting = ((TableView<Setting>) scene.lookup("#settingTableView")).getItems().get(0);
             final Setting newSetting = new Setting(setting.getAttribut(), setting.getId(), 2);
-            Mockito.when(dialog.chance(Mockito.eq(setting))).thenReturn(newSetting);
+            Mockito.when(dialog.chance(setting)).thenReturn(newSetting);
             Platform.runLater(() -> {
                 scene.lookup("#settingTableView").requestFocus();
                 scene.lookup("#settingTableView").requestFocus();
@@ -188,46 +188,48 @@ public class TestPfarreiController extends ApplicationTest {
             WaitForAsyncUtils.waitForFxEvents();
             File file = new File(System.getProperty("user.home"), "namesdfsdjklflös" + DateienVerwalter.PFARREDATEIENDUNG);
             Assertions.assertThat(file).exists();
-            Assertions.assertThat(Files.readString(file.toPath()).replace(System.getProperty("line.separator"), "\n")).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                    "<XML>\n" +
-                    "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>\n" +
-                    "  <Body>\n" +
-                    "    <Standartmessem>\n" +
-                    "      <std_messe id=\"0\">\n" +
-                    "        <tag>Mo</tag>\n" +
-                    "        <std>8</std>\n" +
-                    "        <min>00</min>\n" +
-                    "        <ort>o</ort>\n" +
-                    "        <anz>9</anz>\n" +
-                    "        <typ>t</typ>\n" +
-                    "      </std_messe>\n" +
-                    "    </Standartmessem>\n" +
-                    "  </Body>\n" +
-                    "  <Einstellungen>\n" +
-                    "    <hochaemter>1</hochaemter>\n" +
-                    "    <setting Lleiter=\"0\">2</setting>\n" +
-                    "    <setting Lleiter=\"1\">4</setting>\n" +
-                    "    <setting year=\"0\">2</setting>\n" +
-                    "    <setting year=\"1\">0</setting>\n" +
-                    "    <setting year=\"2\">0</setting>\n" +
-                    "    <setting year=\"3\">0</setting>\n" +
-                    "    <setting year=\"4\">0</setting>\n" +
-                    "    <setting year=\"5\">0</setting>\n" +
-                    "    <setting year=\"6\">0</setting>\n" +
-                    "    <setting year=\"7\">0</setting>\n" +
-                    "    <setting year=\"8\">0</setting>\n" +
-                    "    <setting year=\"9\">0</setting>\n" +
-                    "    <setting year=\"10\">0</setting>\n" +
-                    "    <setting year=\"11\">0</setting>\n" +
-                    "    <setting year=\"12\">0</setting>\n" +
-                    "    <setting year=\"13\">0</setting>\n" +
-                    "    <setting year=\"14\">0</setting>\n" +
-                    "    <setting year=\"15\">0</setting>\n" +
-                    "    <setting year=\"16\">0</setting>\n" +
-                    "    <setting year=\"17\">0</setting>\n" +
-                    "    <setting year=\"18\">0</setting>\n" +
-                    "  </Einstellungen>\n" +
-                    "</XML>\n");
+            Assertions.assertThat(Files.readString(file.toPath()).replace(System.getProperty("line.separator"), "\n")).isEqualTo("""
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                    <XML>
+                      <MpE-Creator LICENSE="MIT">Aclrian</MpE-Creator>
+                      <Body>
+                        <Standartmessem>
+                          <std_messe id="0">
+                            <tag>Mo</tag>
+                            <std>8</std>
+                            <min>00</min>
+                            <ort>o</ort>
+                            <anz>9</anz>
+                            <typ>t</typ>
+                          </std_messe>
+                        </Standartmessem>
+                      </Body>
+                      <Einstellungen>
+                        <hochaemter>1</hochaemter>
+                        <setting Lleiter="0">2</setting>
+                        <setting Lleiter="1">4</setting>
+                        <setting year="0">2</setting>
+                        <setting year="1">0</setting>
+                        <setting year="2">0</setting>
+                        <setting year="3">0</setting>
+                        <setting year="4">0</setting>
+                        <setting year="5">0</setting>
+                        <setting year="6">0</setting>
+                        <setting year="7">0</setting>
+                        <setting year="8">0</setting>
+                        <setting year="9">0</setting>
+                        <setting year="10">0</setting>
+                        <setting year="11">0</setting>
+                        <setting year="12">0</setting>
+                        <setting year="13">0</setting>
+                        <setting year="14">0</setting>
+                        <setting year="15">0</setting>
+                        <setting year="16">0</setting>
+                        <setting year="17">0</setting>
+                        <setting year="18">0</setting>
+                      </Einstellungen>
+                    </XML>
+                    """);
             Pfarrei pfRead = ReadFilePfarrei.getPfarrei(file.getAbsolutePath());
             Assertions.assertThat(pfRead.getStandardMessen()).containsExactlyInAnyOrder(standartmesse, new Sonstiges());
             Assertions.assertThat(pfRead.zaehlenHochaemterMit()).isTrue();
@@ -240,9 +242,9 @@ public class TestPfarreiController extends ApplicationTest {
             Assertions.assertThat(pfRead.getSettings().getDaten(0).toString()).isEqualTo("MAX 0 2");
             Assertions.assertThat(pfRead.getSettings().getDaten(1).toString()).isEqualTo("MAX 1 4");
             Assertions.assertThat(pfRead.getSettings().getSettings()).containsOnlyOnce(newSetting);
-            Assertions.assertThat(pfRead.getSettings().getSettings()).allMatch(s -> s.equals(newSetting)|| s.getAnzDienen() == 0);
+            Assertions.assertThat(pfRead.getSettings().getSettings()).allMatch(s -> s.equals(newSetting) || s.getAnzDienen() == 0);
             Files.delete(file.toPath());
-        } catch (IOException e) {
+        } catch (Exception e) {
             Assertions.fail(e.getMessage(), e);
         }
     }

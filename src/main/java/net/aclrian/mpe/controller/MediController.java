@@ -20,8 +20,8 @@ import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
-import org.apache.commons.validator.routines.EmailValidator;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,13 +94,13 @@ public class MediController implements Controller {
         }
         Messdiener medi = null;
         for (int i = 0; i < tosearchin.getGeschwister().length; i++) {
-            if (tosearchin.getGeschwister()[i].compareTo(todel.makeId()) == 0) {
+            if (tosearchin.getGeschwister()[i].compareTo(todel.toString()) == 0) {
                 tosearchin.getGeschwister()[i] = "";
                 medi = tosearchin;
             }
         }
         for (int i = 0; i < tosearchin.getFreunde().length; i++) {
-            if (tosearchin.getFreunde()[i].compareTo(todel.makeId()) == 0) {
+            if (tosearchin.getFreunde()[i].compareTo(todel.toString()) == 0) {
                 tosearchin.getFreunde()[i] = "";
                 medi = tosearchin;
             }
@@ -168,7 +168,7 @@ public class MediController implements Controller {
         email.focusedProperty().addListener((arg0, oldValue, newValue) -> {
             boolean neu = newValue;
             if (neu) {
-                email.setText(EmailValidator.getInstance().isValid(email.getText()) ? email.getText() : "");
+                email.setText(Messdiener.EMAIL_PATTERN.matcher(email.getText()).matches() ? email.getText() : "");
             }
         });
         // Value in Silder
@@ -244,7 +244,7 @@ public class MediController implements Controller {
         this.freund = freund;
         freunde.getItems().removeIf(p -> true);
         for (Messdiener messdiener : this.freund) {
-            if (moben != null && messdiener.makeId().equals(moben.makeId())) {
+            if (moben != null && messdiener.toString().equals(moben.toString())) {
                 continue;
             }
             freunde.getItems().add(new Label(messdiener.toString()));
@@ -256,7 +256,7 @@ public class MediController implements Controller {
         geschwi = geschwi2;
         geschwie.getItems().removeIf(p -> true);
         for (Messdiener messdiener : geschwi) {
-            if (moben != null && messdiener.makeId().equals(moben.makeId())) {
+            if (moben != null && messdiener.toString().equals(moben.toString())) {
                 continue;
             }
             geschwie.getItems().add(new Label(messdiener.toString()));
@@ -362,7 +362,9 @@ public class MediController implements Controller {
                 WriteFile wf = new WriteFile(messdiener);
                 wf.toXML();
             }
-            getLogger().info("Messdiener " + m.makeId() + " wurde gespeichert!");
+            if (Log.getLogger().isDebugEnabled()) {
+                getLogger().info("Messdiener {} wurde gespeichert!", m);
+            }
             DateienVerwalter.getInstance().reloadMessdiener();
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, KONNTE + m + "' nicht speichern");
@@ -412,7 +414,7 @@ public class MediController implements Controller {
             return true;
         }
         for (Messdiener messdiener : alle) {
-            if (arrayList.get(i).equals(messdiener.makeId())) {
+            if (arrayList.get(i).equals(messdiener.toString())) {
                 al.add(messdiener);
                 break;
             }

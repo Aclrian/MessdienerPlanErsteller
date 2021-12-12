@@ -1,6 +1,8 @@
 package net.aclrian.mpe.utils;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -10,9 +12,13 @@ import java.nio.file.Path;
 
 public class Log {
     public static final String PROGRAMM_NAME = "MessdienerplanErsteller";
-    private static final Logger LOGGER = Logger.getLogger(Log.class);
+    private static final Logger LOGGER;
 
     static {
+        System.setProperty("logFilename", getLogFile().toString());
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        ctx.reconfigure();
+        LOGGER = LogManager.getLogger(Log.class);
         init();
     }
 
@@ -26,16 +32,12 @@ public class Log {
     public static void init() {
         try {
             if (Files.notExists(getWorkingDir().toPath())) {
-                Files.createFile(getWorkingDir().toPath());
+                Files.createDirectories(getWorkingDir().toPath());
             }
             final Path dir = new File(FileSystemView.getFileSystemView().getDefaultDirectory(), PROGRAMM_NAME).toPath();
             if (Files.notExists(dir)) {
-                Files.createDirectories(dir);
+                Files.createFile(dir);
             }
-            Layout layout = new PatternLayout("[%d{yyyy-MM-dd HH:MM:ss}] [%-5p] [%l]: %m%n");
-            FileAppender fileAppender = new FileAppender(layout, getLogFile().getAbsolutePath(), true);
-            LOGGER.addAppender(fileAppender);
-            LOGGER.setLevel(Level.ALL);
             LOGGER.info("-------------------------------");
         } catch (IOException e) {
             Log.getLogger().error(e.getMessage(), e);
@@ -47,6 +49,6 @@ public class Log {
     }
 
     public static File getWorkingDir() {
-        return new File(FileSystemView.getFileSystemView().getDefaultDirectory(), PROGRAMM_NAME);
+        return new File(FileSystemView.getFileSystemView().getDefaultDirectory().getAbsolutePath(), PROGRAMM_NAME);
     }
 }

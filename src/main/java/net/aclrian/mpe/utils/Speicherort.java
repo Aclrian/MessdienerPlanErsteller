@@ -26,7 +26,7 @@ public class Speicherort {
     private void genaerateSpeicherort() {
         String homedir = System.getProperty("user.home");
         homedir = homedir + TEXTDATEI;
-        Log.getLogger().info("Das Home-Verzeichniss wurde gefunden: " + homedir);
+        Log.getLogger().info("Das Home-Verzeichniss wurde gefunden: {}", homedir);
         File f = new File(homedir);
         if (!f.exists()) {
             createSaveFile(homedir);
@@ -34,7 +34,7 @@ public class Speicherort {
             if (readSaveFile(homedir, f))
                 return;
         }
-        Log.getLogger().info("Der Speicherort liegt in: " + speicherortString);
+        Log.getLogger().info("Der Speicherort liegt in: {}", speicherortString);
     }
 
     private boolean readSaveFile(String homedir, File f) {
@@ -70,7 +70,7 @@ public class Speicherort {
                     getSpeicherortString();
                 }
             } catch (IOException e) {
-                Log.getLogger().info("Auf den Speicherort '" + f + "' kann nicht zugegriffen werden!");
+                Log.getLogger().info("Auf den Speicherort '{}' kann nicht zugegriffen werden!", f);
                 getSpeicherortString();
             }
         }
@@ -123,7 +123,7 @@ public class Speicherort {
     }
 
     private void speicherortNotFound(File f, String line) {
-        Log.getLogger().info("Der Speicherort aus '" + f + "' ('" + line + "') existiert nicht!");
+        Log.getLogger().info("Der Speicherort aus '{}' ('{}') existiert nicht!", f, line);
         try {
             Files.delete(f.toPath());
             getSpeicherortString();
