@@ -4,7 +4,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] [%l]: %m%n"/>
         </Console>
-        <File name="MyFile" fileName="${sys:logFilename}" immediateFlush="true" append="true">
+        <File name="MyFile" fileName="MpE.log" immediateFlush="true" append="true">
             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] [%l]: %m%n"/>
         </File>
     </Appenders>

@@ -15,7 +15,6 @@ public class Log {
     private static final Logger LOGGER;
 
     static {
-        System.setProperty("logFilename", getLogFile().toString());
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         ctx.reconfigure();
         LOGGER = LogManager.getLogger(Log.class);
@@ -45,7 +44,9 @@ public class Log {
     }
 
     public static File getLogFile() {
-        return new File(getWorkingDir().getAbsolutePath(), "MpE" + ".log");
+        File f = new File("MpE.log");
+        assert f.exists();
+        return f;
     }
 
     public static File getWorkingDir() {
