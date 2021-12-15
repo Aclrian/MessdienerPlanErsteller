@@ -63,7 +63,7 @@ public class TestSelect extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         pane = new Pane();
-        scene = new Scene(pane, 1000, 1000);
+        scene = new Scene(pane, 10, 10);
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();
