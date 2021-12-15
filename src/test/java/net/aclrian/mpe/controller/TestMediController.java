@@ -35,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 public class TestMediController extends ApplicationTest {
 
@@ -104,7 +105,7 @@ public class TestMediController extends ApplicationTest {
     public void testReadAndSave() {
         File f = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
         try {
-            Files.write(f.toPath(), medi.getBytes(StandardCharsets.UTF_8));
+            Files.writeString(f.toPath(), medi);
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
@@ -150,6 +151,11 @@ public class TestMediController extends ApplicationTest {
         ((TextField) scene.lookup("#email")).setText("lol");
         Platform.runLater(() -> scene.lookup("#email").requestFocus());
         WaitForAsyncUtils.waitForFxEvents();
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Assertions.assertThat(((TextField) scene.lookup("#email")).getText().isEmpty()).isTrue();
         ((TextField) scene.lookup("#email")).setText("a@abc.de");
         Platform.runLater(() -> scene.lookup("#email").requestFocus());
@@ -193,7 +199,7 @@ public class TestMediController extends ApplicationTest {
     public void testGeschwister() {
         File f = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
         try {
-            Files.write(f.toPath(), medi.getBytes(StandardCharsets.UTF_8));
+            Files.writeString(f.toPath(), medi);
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
