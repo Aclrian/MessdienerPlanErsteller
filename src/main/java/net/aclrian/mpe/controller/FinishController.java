@@ -1,40 +1,26 @@
 package net.aclrian.mpe.controller;
 
-import com.itextpdf.html2pdf.ConverterProperties;
-import com.itextpdf.html2pdf.HtmlConverter;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
+import com.itextpdf.html2pdf.*;
+import javafx.event.*;
+import javafx.fxml.*;
 import javafx.scene.control.Button;
-import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.*;
 import javafx.stage.Window;
-import javafx.util.Pair;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import net.aclrian.mpe.utils.RemoveDoppelte;
-import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
-import org.jodconverter.core.document.DocumentFormat;
-import org.jodconverter.core.office.OfficeException;
-import org.jodconverter.core.office.OfficeUtils;
-import org.jodconverter.local.JodConverter;
-import org.jodconverter.local.office.LocalOfficeManager;
-import org.jodconverter.local.office.LocalOfficeUtils;
-import org.springframework.web.util.UriUtils;
+import javafx.util.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
+import org.jodconverter.core.document.*;
+import org.jodconverter.core.office.*;
+import org.jodconverter.local.*;
+import org.jodconverter.local.office.*;
+import org.springframework.web.util.*;
 
 import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.*;
+import java.text.*;
 import java.util.List;
 import java.util.*;
 
@@ -185,27 +171,29 @@ public class FinishController implements Controller {
 
     @FXML
     public void toPDF(ActionEvent actionEvent) {
-        if (LocalOfficeUtils.getDefaultOfficeHome() != null) {
-            Log.getLogger().info("Converting HTML to PDF with JODConverter");
-            convert(actionEvent, false);
-        }
-        Log.getLogger().info("Converting HTML to PDF with iText");
-        ConverterProperties converterProperties = new ConverterProperties();
-        converterProperties.setCharset("UTF-8");
         try {
-            File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + ".pdf");
-            HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8)),
-                    new FileOutputStream(out), converterProperties);
-            pdfgen = out;
+            if (LocalOfficeUtils.getDefaultOfficeHome() != null) {
+                Log.getLogger().info("Converting HTML to PDF with JODConverter");
+                convert(false);
+            } else {
+                Log.getLogger().info("Converting HTML to PDF with iText");
+                ConverterProperties converterProperties = new ConverterProperties();
+                converterProperties.setCharset("UTF-8");
+
+                File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + ".pdf");
+                HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8)),
+                        new FileOutputStream(out), converterProperties);
+                pdfgen = out;
+            }
             if (actionEvent != null) {
-                Desktop.getDesktop().open(out);
+                Desktop.getDesktop().open(pdfgen);
             }
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu PDF konvertieren.");
         }
     }
 
-    private void convert(ActionEvent actionEvent, boolean isToDocx) {
+    private void convert(boolean isToDocx) {
         String fileEnd = ".pdf";
         DocumentFormat format = DefaultDocumentFormatRegistry.HTML;
         if (isToDocx) {
@@ -218,21 +206,17 @@ public class FinishController implements Controller {
             officeManager.start();
         } catch (OfficeException e) {
             Dialogs.getDialogs().error(e, "Fehler beim Konvertieren");
-            return;
         }
         try (ByteArrayInputStream bais = new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "")
                 .replace("</br>", "")
                 .replace("<br>", "<br></br>")
                 .replace("</p><p><font></font></p><p><font><b>", "</p><br/><p><font></font></p><p><font><b>")
-                .replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8))){
+                .replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8))) {
             JodConverter.convert(bais).as(format).to(out).execute();
             if (isToDocx) {
                 wordgen = out;
             } else {
                 pdfgen = out;
-            }
-            if (actionEvent != null) {
-                Desktop.getDesktop().open(out);
             }
         } catch (Exception e) {
             Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu " + fileEnd + " konvertieren.");
@@ -243,12 +227,19 @@ public class FinishController implements Controller {
 
     @FXML
     public void toWORD(ActionEvent actionEvent) {
-        if (LocalOfficeUtils.getDefaultOfficeHome() == null) {
-            Dialogs.getDialogs().info("Für die Konvertierung wird LibreOffice (oder Openoffice) benötigt.", "Wenn es trotz Installation nicht erkannt wird, kann dafür eine Systemvariable OFFICE_HOME angelegt werden, die den Installationspfad von der Officeanwendung enthält.");
-            return;
+        try {
+            if (LocalOfficeUtils.getDefaultOfficeHome() == null) {
+                Dialogs.getDialogs().info("Für die Konvertierung wird LibreOffice (oder Openoffice) benötigt.", "Wenn es trotz Installation nicht erkannt wird, kann dafür eine Systemvariable OFFICE_HOME angelegt werden, die den Installationspfad von der Officeanwendung enthält.");
+                return;
+            }
+            Log.getLogger().info("Converting PDF to WORD with JODConverter");
+            convert(true);
+            if (actionEvent != null) {
+                Desktop.getDesktop().open(pdfgen);
+            }
+        } catch (IOException e) {
+            Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu DOCX konvertieren.");
         }
-        Log.getLogger().info("Converting HTML to PDF with JODConverter");
-        convert(actionEvent, true);
     }
 
     private void neuerAlgorythmus() {

@@ -1,34 +1,25 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import net.aclrian.mpe.messdiener.Messdaten;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Log;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
+import org.junit.*;
+import org.mockito.*;
+import org.testfx.assertions.api.*;
+import org.testfx.framework.junit.*;
+import org.testfx.util.*;
 
-import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.io.*;
+import java.net.*;
+import java.text.*;
+import java.util.*;
 
 public class TestFerienplanController extends ApplicationTest {
 
@@ -109,7 +100,7 @@ public class TestFerienplanController extends ApplicationTest {
                 instance.afterstartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
                 Log.getLogger().error(e.getMessage(), e);
-                Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage());
+                Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
@@ -135,7 +126,7 @@ public class TestFerienplanController extends ApplicationTest {
             }
         } catch (IndexOutOfBoundsException | ClassCastException | AssertionError e) {
             Log.getLogger().error(e.getMessage(), e);
-            Assertions.fail("Couldn't find table");
+            Assertions.fail("Couldn't find table", e);
         }
     }
 
@@ -174,7 +165,7 @@ public class TestFerienplanController extends ApplicationTest {
                 instance.afterstartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
                 Log.getLogger().error(e.getMessage(), e);
-                Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage());
+                Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
@@ -213,13 +204,12 @@ public class TestFerienplanController extends ApplicationTest {
             Assertions.assertThat(table.getItems().size()).isEqualTo(3);
             FerienplanController.Datentraeger changedCellData = null;
             for (FerienplanController.Datentraeger o : table.getItems()) {
-                FerienplanController.Datentraeger o1 = o;
-                if (o1.getMessdiener().equalsIgnoreCase("b")) {
-                    changedCellData = o1;
+                if (o.getMessdiener().equalsIgnoreCase("b")) {
+                    changedCellData = o;
                 }
-                Assertions.assertThat(o1.get(df.format(getYesterday())).property().get()).isEqualTo(false);
-                Assertions.assertThat(o1.get(df.format(getToday())).property().get()).isEqualTo(false);
-                Assertions.assertThat(o1.get(df.format(getTomorrow())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o.get(df.format(getYesterday())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o.get(df.format(getToday())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o.get(df.format(getTomorrow())).property().get()).isEqualTo(false);
             }
             table.getFocusModel().focus(1, table.getColumns().get(2));
             table.fireEvent(new KeyEvent(table, table, KeyEvent.KEY_PRESSED, " ", " ", KeyCode.SPACE, false, false, false, false));

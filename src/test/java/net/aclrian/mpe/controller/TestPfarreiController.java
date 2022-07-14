@@ -1,43 +1,28 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.robot.Robot;
-import javafx.stage.Stage;
-import net.aclrian.mpe.Main;
-import net.aclrian.mpe.messdiener.Messdaten;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.pfarrei.Einstellungen;
-import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.pfarrei.ReadFilePfarrei;
-import net.aclrian.mpe.pfarrei.Setting;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import org.junit.AfterClass;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.scene.robot.*;
+import javafx.stage.*;
+import net.aclrian.mpe.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.pfarrei.*;
+import net.aclrian.mpe.utils.*;
+import org.junit.*;
+import org.mockito.*;
+import org.testfx.assertions.api.*;
+import org.testfx.framework.junit.*;
+import org.testfx.util.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.*;
+import java.nio.file.*;
 
 public class TestPfarreiController extends ApplicationTest {
-//PfarreiController.start(stage, e.getSavepath().getAbsolutePath(), this);
 
     @Mock
     private DateienVerwalter dv;
@@ -45,14 +30,14 @@ public class TestPfarreiController extends ApplicationTest {
     private Main main;
     @Mock
     private Dialogs dialog;
-    private Pane pane;
     private PfarreiController instance;
     private Scene scene;
     private Stage stage;
+    private AutoCloseable openMocks;
 
     @AfterClass
     public static void deleteFile() {
-        File file = new File(System.getProperty("user.home"), "namesdfsdjklflös" + DateienVerwalter.PFARREDATEIENDUNG);
+        File file = new File(System.getProperty("user.home"), "name" + DateienVerwalter.PFARREDATEIENDUNG);
         try {
             Files.deleteIfExists(file.toPath());
         } catch (IOException e) {
@@ -62,14 +47,19 @@ public class TestPfarreiController extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        pane = new Pane();
+        Pane pane = new Pane();
         scene = new Scene(pane, 10, 10);
         this.stage = stage;
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();
 
-        MockitoAnnotations.openMocks(this);
+        openMocks = MockitoAnnotations.openMocks(this);
+    }
+
+    @After
+    public void close() throws Exception {
+        openMocks.close();
     }
 
     @SuppressWarnings("unchecked")
