@@ -309,39 +309,8 @@ public class TestMainController extends ApplicationTest {
         instance.savepath(null);
         Assertions.assertThat(true).isTrue();
     }
-
-    @Test
-    public void testSpeicherort() {
-        Dialogs.setDialogs(dialogs);
-        DateienVerwalter.setInstance(dv);
-        Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        String titel = "LOL ";
-        Mockito.when(pf.getName()).thenReturn(titel);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse("Mo", 9, "00", "o", 0, "t")));
-
-        FXMLLoader loader = new FXMLLoader();
-        loader.setController(new MainController(main, stage));
-        instance = loader.getController();
-        loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
-        try {
-            pane = loader.load();
-            Platform.runLater(() -> stage.show());
-        } catch (IOException e) {
-            Assertions.fail(e.getMessage(), e);
-        }
-        WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(System.getProperty("user.home").isEmpty()).isFalse();
-        File f = new File(System.getProperty("user.home"), Speicherort.TEXTDATEI);
-        final Path copy = Path.of(System.getProperty("user.home"), Speicherort.TEXTDATEI + "c");
-        try {
-            Files.copy(f.toPath(), copy, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            Assertions.fail(e.getMessage(), e);
-        }
-        Assertions.assertThat(stage.focusedProperty().getValue()).isTrue();
-    }
-
-    @Ignore("Robotcontext should not ru on ci")
+    
+    @Ignore("Robotcontext should not run on ci")
     @Test
     public void testChangeSpeicherort() {
         Dialogs.setDialogs(dialogs);
@@ -430,13 +399,6 @@ public class TestMainController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Scene scene = new Scene(pane);
         Assertions.assertThat(System.getProperty("user.home").isEmpty()).isFalse();
-        File f = new File(System.getProperty("user.home"), Speicherort.TEXTDATEI);
-        final Path copy = Path.of(System.getProperty("user.home"), Speicherort.TEXTDATEI + "c");
-        try {
-            Files.copy(f.toPath(), copy, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            Assertions.fail(e.getMessage(), e);
-        }
         Platform.runLater(() -> {
             stage.setScene(scene);
             stage.setTitle("MessdienerplanErsteller");
@@ -451,11 +413,5 @@ public class TestMainController extends ApplicationTest {
         final Node lookup = this.listWindows().get(1).getScene().lookup("#table");
         Assertions.assertThat(lookup).isInstanceOf(TableView.class);
         Assertions.assertThat(((TableView<?>) lookup).getItems().get(0).toString()).isEqualTo(pf.getStandardMessen().get(0).toString());
-        try {
-            Files.copy(copy, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            Files.delete(copy);
-        } catch (IOException e) {
-            Assertions.fail(e.getMessage(), e);
-        }
     }
 }

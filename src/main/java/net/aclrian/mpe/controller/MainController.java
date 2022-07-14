@@ -1,5 +1,6 @@
 package net.aclrian.mpe.controller;
 
+import javafx.application.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -180,7 +181,7 @@ public class MainController {
         Speicherort ort = new Speicherort(grid.getParent().getScene().getWindow());
         ort.changeDir();
         ((Stage) grid.getScene().getWindow()).close();
-        m.main(new Stage());
+        Platform.runLater(()-> m.main(new Stage()));
     }
 
     @FXML

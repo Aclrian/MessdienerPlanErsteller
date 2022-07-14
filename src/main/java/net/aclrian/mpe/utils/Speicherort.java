@@ -20,10 +20,10 @@ public class Speicherort {
 
     public Speicherort(Window window) {
         this.window = window;
-        genaerateSpeicherort();
+        generateSpeicherort();
     }
 
-    private void genaerateSpeicherort() {
+    private void generateSpeicherort() {
         String homedir = System.getProperty("user.home");
         homedir = homedir + TEXTDATEI;
         Log.getLogger().info("Das Home-Verzeichniss wurde gefunden: {}", homedir);
