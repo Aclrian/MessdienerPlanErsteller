@@ -24,3 +24,6 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml -X
+      env:
+          JAVA_TOOL_OPTIONS: "-Dprism.verbose=true -Dprism.order=sw"
+
