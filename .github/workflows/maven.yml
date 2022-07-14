@@ -26,5 +26,3 @@ jobs:
       run: mvn compile
     - name: SonarQube Quality Gate Check
       uses: SonarSource/sonarqube-quality-gate-action@v1.0.0
-
-
