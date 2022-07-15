@@ -19,6 +19,8 @@ import org.testfx.util.*;
 import java.io.*;
 import java.net.*;
 import java.text.*;
+import java.time.*;
+import java.time.format.*;
 import java.util.*;
 
 public class TestFerienplanController extends ApplicationTest {
@@ -36,26 +38,20 @@ public class TestFerienplanController extends ApplicationTest {
     @Mock
     private Messdiener medi3;
 
-    public static Date getToday() {
-        return Calendar.getInstance().getTime();
+    public static LocalDate getToday() {
+        return LocalDate.now();
     }
 
-    public static Date getTomorrow() {
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, 1);
-        return c.getTime();
+    public static LocalDate getTomorrow() {
+        return LocalDate.now().plusDays(1);
     }
 
-    public static Date getYesterday() {
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, -1);
-        return c.getTime();
+    public static LocalDate getYesterday() {
+        return LocalDate.now().plusDays(-1);
     }
 
-    public static Date getYesterday2() {
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, -2);
-        return c.getTime();
+    public static LocalDate getYesterday2() {
+        return LocalDate.now().plusDays(-2);
     }
 
     @Override
@@ -75,13 +71,14 @@ public class TestFerienplanController extends ApplicationTest {
 
     @Test
     public void testWithoutMessen() {
-        Date d = getToday();
-        d.setTime(d.getTime() + 1);
+        final LocalDateTime tomorrow = getTomorrow().atTime(10, 42);
+        final LocalDateTime yesterday = getYesterday().atTime(3, 14);
+        final LocalDateTime today = getToday().atTime(0, 0);
         List<Messe> messen = Arrays.asList(
-                new Messe(false, 1, getToday(), "ort1", "typ1"),
-                new Messe(false, 1, d, "ort1", "typ1"),
-                new Messe(false, 2, getTomorrow(), "ort1", "typ1"),
-                new Messe(false, 2, getYesterday(), "ort1", "typ1"));
+                new Messe(false, 1, today, "ort1", "typ1"),
+                new Messe(false, 1, getToday().atTime(1,0), "ort1", "typ1"),
+                new Messe(false, 2, tomorrow, "ort1", "typ1"),
+                new Messe(false, 2, yesterday, "ort1", "typ1"));
         Mockito.when(mc.getMessen()).thenReturn(messen);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(medi1, medi2, medi3));
         Messdaten md1 = Mockito.mock(Messdaten.class);
@@ -105,12 +102,12 @@ public class TestFerienplanController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
 
-        SimpleDateFormat df = new SimpleDateFormat(FerienplanController.PATTERN);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(FerienplanController.PATTERN);
 
         Assertions.assertThat(instance.getDates().size()).isEqualTo(3);
-        Assertions.assertThat(instance.getDates().get(0)).isEqualTo(df.format(getYesterday()));
-        Assertions.assertThat(instance.getDates().get(1)).isEqualTo(df.format(getToday()));
-        Assertions.assertThat(instance.getDates().get(2)).isEqualTo(df.format(getTomorrow()));
+        Assertions.assertThat(instance.getDates().get(0)).isEqualTo(formatter.format(yesterday));
+        Assertions.assertThat(instance.getDates().get(1)).isEqualTo(formatter.format(today));
+        Assertions.assertThat(instance.getDates().get(2)).isEqualTo(formatter.format(tomorrow));
         try {
             GridPane gridPane = (GridPane) pane.getChildrenUnmodifiable().get(0);
             TableView<?> table = (TableView<?>) gridPane.getChildrenUnmodifiable().stream().filter(node -> node instanceof TableView).findFirst().orElse(null);
@@ -120,9 +117,9 @@ public class TestFerienplanController extends ApplicationTest {
             Assertions.assertThat(table.getItems().size()).isEqualTo(3);
             for (Object o : table.getItems()) {
                 FerienplanController.Datentraeger o1 = (FerienplanController.Datentraeger) o;
-                Assertions.assertThat(o1.get(df.format(getYesterday())).property().get()).isEqualTo(false);
-                Assertions.assertThat(o1.get(df.format(getToday())).property().get()).isEqualTo(false);
-                Assertions.assertThat(o1.get(df.format(getTomorrow())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o1.get(formatter.format(yesterday)).property().get()).isEqualTo(false);
+                Assertions.assertThat(o1.get(formatter.format(today)).property().get()).isEqualTo(false);
+                Assertions.assertThat(o1.get(formatter.format(tomorrow)).property().get()).isEqualTo(false);
             }
         } catch (IndexOutOfBoundsException | ClassCastException | AssertionError e) {
             Log.getLogger().error(e.getMessage(), e);
@@ -132,12 +129,12 @@ public class TestFerienplanController extends ApplicationTest {
 
     @Test
     public void withData() {
-        SimpleDateFormat df = new SimpleDateFormat(FerienplanController.PATTERN);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(FerienplanController.PATTERN);
 
         List<Messe> messen = Arrays.asList(
-                new Messe(false, 1, getToday(), "ort1", "typ1"),
-                new Messe(false, 2, getTomorrow(), "ort1", "typ1"),
-                new Messe(false, 2, getYesterday(), "ort1", "typ1"));
+                new Messe(false, 1, getToday().atTime(0,0), "ort1", "typ1"),
+                new Messe(false, 2, getTomorrow().atTime(0,0), "ort1", "typ1"),
+                new Messe(false, 2, getYesterday().atTime(0,0), "ort1", "typ1"));
         Mockito.when(medi1.toString()).thenReturn("a");
         Mockito.when(medi2.toString()).thenReturn("b");
         Mockito.when(medi3.toString()).thenReturn("c");
@@ -145,16 +142,16 @@ public class TestFerienplanController extends ApplicationTest {
         Mockito.when(mc.getMessen()).thenReturn(messen);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(medi1, medi2, medi3));
         Messdaten md1 = Mockito.mock(Messdaten.class);
-        Mockito.when(md1.ausgeteilt(df.format(getToday()))).thenReturn(true);
-        Mockito.when(md1.ausgeteilt(df.format(getTomorrow()))).thenReturn(true);
+        Mockito.when(md1.ausgeteilt(getToday())).thenReturn(true);
+        Mockito.when(md1.ausgeteilt(getTomorrow())).thenReturn(true);
         Mockito.when(medi1.getMessdaten()).thenReturn(md1);
         Messdaten md2 = Mockito.mock(Messdaten.class);
         Mockito.when(medi2.getMessdaten()).thenReturn(md2);
         Messdaten md3 = Mockito.mock(Messdaten.class);
         Mockito.when(medi3.getMessdaten()).thenReturn(md3);
-        Mockito.when(md3.ausgeteilt(df.format(getYesterday()))).thenReturn(true);
-        Mockito.when(md3.ausgeteilt(df.format(getToday()))).thenReturn(true);
-        Mockito.when(md3.ausgeteilt(df.format(getTomorrow()))).thenReturn(true);
+        Mockito.when(md3.ausgeteilt(getYesterday())).thenReturn(true);
+        Mockito.when(md3.ausgeteilt(getToday())).thenReturn(true);
+        Mockito.when(md3.ausgeteilt(getTomorrow())).thenReturn(true);
         DateienVerwalter.setInstance(dv);
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.FERIEN.getLocation());
@@ -171,9 +168,9 @@ public class TestFerienplanController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assertions.assertThat(instance.getDates().size()).isEqualTo(3);
-        Assertions.assertThat(instance.getDates().get(0)).isEqualTo(df.format(getYesterday()));
-        Assertions.assertThat(instance.getDates().get(1)).isEqualTo(df.format(getToday()));
-        Assertions.assertThat(instance.getDates().get(2)).isEqualTo(df.format(getTomorrow()));
+        Assertions.assertThat(instance.getDates().get(0)).isEqualTo(formatter.format(getYesterday()));
+        Assertions.assertThat(instance.getDates().get(1)).isEqualTo(formatter.format(getToday()));
+        Assertions.assertThat(instance.getDates().get(2)).isEqualTo(formatter.format(getTomorrow()));
         try {
             GridPane gridPane = (GridPane) pane.getChildrenUnmodifiable().get(0);
             @SuppressWarnings("unchecked")
@@ -183,17 +180,17 @@ public class TestFerienplanController extends ApplicationTest {
 
             for (FerienplanController.Datentraeger dt : table.getItems()) {
                 if (dt.getMessdiener().equalsIgnoreCase("a")) {
-                    Assertions.assertThat(dt.get(df.format(getYesterday())).property().get()).isEqualTo(false);
-                    Assertions.assertThat(dt.get(df.format(getToday())).property().get()).isEqualTo(true);
-                    Assertions.assertThat(dt.get(df.format(getTomorrow())).property().get()).isEqualTo(true);
+                    Assertions.assertThat(dt.get(formatter.format(getYesterday())).property().get()).isEqualTo(false);
+                    Assertions.assertThat(dt.get(formatter.format(getToday())).property().get()).isEqualTo(true);
+                    Assertions.assertThat(dt.get(formatter.format(getTomorrow())).property().get()).isEqualTo(true);
                 } else if (dt.getMessdiener().equalsIgnoreCase("b")) {
-                    Assertions.assertThat(dt.get(df.format(getYesterday())).property().get()).isEqualTo(false);
-                    Assertions.assertThat(dt.get(df.format(getToday())).property().get()).isEqualTo(false);
-                    Assertions.assertThat(dt.get(df.format(getTomorrow())).property().get()).isEqualTo(false);
+                    Assertions.assertThat(dt.get(formatter.format(getYesterday())).property().get()).isEqualTo(false);
+                    Assertions.assertThat(dt.get(formatter.format(getToday())).property().get()).isEqualTo(false);
+                    Assertions.assertThat(dt.get(formatter.format(getTomorrow())).property().get()).isEqualTo(false);
                 } else if (dt.getMessdiener().equalsIgnoreCase("c")) {
-                    Assertions.assertThat(dt.get(df.format(getYesterday())).property().get()).isEqualTo(true);
-                    Assertions.assertThat(dt.get(df.format(getToday())).property().get()).isEqualTo(true);
-                    Assertions.assertThat(dt.get(df.format(getTomorrow())).property().get()).isEqualTo(true);
+                    Assertions.assertThat(dt.get(formatter.format(getYesterday())).property().get()).isEqualTo(true);
+                    Assertions.assertThat(dt.get(formatter.format(getToday())).property().get()).isEqualTo(true);
+                    Assertions.assertThat(dt.get(formatter.format(getTomorrow())).property().get()).isEqualTo(true);
                 } else {
                     Assertions.fail("Wrong Item in TableView-List");
                 }
@@ -207,16 +204,16 @@ public class TestFerienplanController extends ApplicationTest {
                 if (o.getMessdiener().equalsIgnoreCase("b")) {
                     changedCellData = o;
                 }
-                Assertions.assertThat(o.get(df.format(getYesterday())).property().get()).isEqualTo(false);
-                Assertions.assertThat(o.get(df.format(getToday())).property().get()).isEqualTo(false);
-                Assertions.assertThat(o.get(df.format(getTomorrow())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o.get(formatter.format(getYesterday())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o.get(formatter.format(getToday())).property().get()).isEqualTo(false);
+                Assertions.assertThat(o.get(formatter.format(getTomorrow())).property().get()).isEqualTo(false);
             }
             table.getFocusModel().focus(1, table.getColumns().get(2));
             table.fireEvent(new KeyEvent(table, table, KeyEvent.KEY_PRESSED, " ", " ", KeyCode.SPACE, false, false, false, false));
             WaitForAsyncUtils.waitForFxEvents();
 
             assert changedCellData != null;
-            Assertions.assertThat(changedCellData.get(df.format(getToday())).property().get()).isEqualTo(true);
+            Assertions.assertThat(changedCellData.get(formatter.format(getToday())).property().get()).isEqualTo(true);
         } catch (IndexOutOfBoundsException | ClassCastException | AssertionError e) {
             Log.getLogger().error(e.getMessage(), e);
             Assertions.fail("Couldn't find table");

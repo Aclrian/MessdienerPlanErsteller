@@ -24,6 +24,7 @@ import org.testfx.util.*;
 import java.io.*;
 import java.nio.file.*;
 import java.text.*;
+import java.time.*;
 import java.time.format.*;
 import java.util.*;
 
@@ -62,7 +63,7 @@ public class TestMainController extends ApplicationTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         String titel = "LOL ";
         Mockito.when(pf.getName()).thenReturn(titel);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse("Mo", 9, "00", "o", 0, "t")));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
         FXMLLoader loader = new FXMLLoader();
 
         loader.setController(new MainController(main, stage));
@@ -161,12 +162,7 @@ public class TestMainController extends ApplicationTest {
                 Mockito.when(m.getKirche()).thenReturn("ort");
                 Mockito.when(m.getID()).thenReturn("id");
 
-                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-                try {
-                    Mockito.when(m.getDate()).thenReturn(df.parse(date));
-                } catch (ParseException e) {
-                    Assertions.fail(e.getMessage(), e);
-                }
+                Mockito.when(m.getDate()).thenReturn(LocalDateTime.of(2020, 1, 1, 8, 0));
                 Mockito.when(m.getAnzMessdiener()).thenReturn(1);
                 Mockito.when(m.isHochamt()).thenReturn(true);
                 Mockito.when(m.getStandardMesse()).thenReturn(new Sonstiges());
@@ -318,7 +314,7 @@ public class TestMainController extends ApplicationTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         String titel = "LOL ";
         Mockito.when(pf.getName()).thenReturn(titel);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse("Mo", 9, "00", "o", 0, "t")));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
 
         FXMLLoader loader = new FXMLLoader();
         loader.setController(new MainController(main, stage));
@@ -384,7 +380,7 @@ public class TestMainController extends ApplicationTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Einstellungen einstellungen = new Einstellungen();
         Mockito.when(pf.getSettings()).thenReturn(einstellungen);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse("Mo", 9, "00", "o", 0, "t")));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
         FXMLLoader loader = new FXMLLoader();
 
         loader.setController(new MainController(main, stage));

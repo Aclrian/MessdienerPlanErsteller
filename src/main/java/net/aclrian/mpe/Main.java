@@ -14,7 +14,9 @@ import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.IDateienVerwalter;
 import net.aclrian.mpe.utils.VersionIDHandler;
 
-import java.util.Objects;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
 
@@ -22,6 +24,12 @@ public class Main extends Application {
     public static final String VERSION_ID = "1.0.2";
 
     public static void main(String[] args) {
+        LocalDate d = LocalDate.now();
+        for (int i = 0; i<8; i++) {
+            System.out.println(d.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.GERMAN));
+            d= d.plusDays(1);
+        }
+        System.exit(0);
         Application.launch(Main.class, args);
     }
 

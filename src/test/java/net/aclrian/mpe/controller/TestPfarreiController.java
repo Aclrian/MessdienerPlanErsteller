@@ -21,6 +21,7 @@ import org.testfx.util.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.time.*;
 
 public class TestPfarreiController extends ApplicationTest {
 
@@ -70,8 +71,8 @@ public class TestPfarreiController extends ApplicationTest {
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Mockito.when(dialog.chance(Mockito.any())).thenReturn(null);
-        StandartMesse standartmesse = new StandartMesse("Mo", 8, "00", "o", 9, "t");
-        StandartMesse standartmesse1 = new StandartMesse("Di", 5, "09", "o1", 5, "t2");
+        StandartMesse standartmesse = new StandartMesse(DayOfWeek.MONDAY, 8, "00", "o", 9, "t");
+        StandartMesse standartmesse1 = new StandartMesse(DayOfWeek.TUESDAY, 5, "09", "o1", 5, "t2");
         Mockito.when(dialog.standartmesse(Mockito.isNull())).thenReturn(standartmesse, standartmesse1);
         FXMLLoader loader = new FXMLLoader();
         PfarreiController cont = new PfarreiController(stage, System.getProperty("user.home"), main);

@@ -1,18 +1,19 @@
 package net.aclrian.mpe.messe;
 
-import java.util.Comparator;
-import java.util.Objects;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
 
 public class StandartMesse {
     public static final Comparator<StandartMesse> STANDART_MESSE_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
     private final int beginnStunde;
     private final String beginnMinute;
     private final String ort;
-    private final String wochentag;
+    private final DayOfWeek wochentag;
     private final int anzMessdiener;
     private final String typ;
 
-    public StandartMesse(String wochentag, int beginnH, String beginnMin, String ort, int anzMessdiener,
+    public StandartMesse(DayOfWeek wochentag, int beginnH, String beginnMin, String ort, int anzMessdiener,
                          String typ) {
         this.ort = ort;
         this.anzMessdiener = anzMessdiener;
@@ -38,7 +39,7 @@ public class StandartMesse {
         return ort;
     }
 
-    public String getWochentag() {
+    public DayOfWeek getWochentag() {
         return wochentag;
     }
 
@@ -76,38 +77,13 @@ public class StandartMesse {
                 "-" + anzMessdiener;
     }
 
-    public String getWochentags() {
-        if (wochentag.equalsIgnoreCase("Mo")) {
-            return "montags";
-        }
-        if (wochentag.equalsIgnoreCase("Di")) {
-            return "dienstags";
-        }
-        if (wochentag.equalsIgnoreCase("Mi")) {
-            return "mittwochs";
-        }
-        if (wochentag.equalsIgnoreCase("Do")) {
-            return "donnerstags";
-        }
-        if (wochentag.equalsIgnoreCase("Fr")) {
-            return "freitags";
-        }
-        if (wochentag.equalsIgnoreCase("Sa")) {
-            return "samstags";
-        }
-        if (wochentag.equalsIgnoreCase("So")) {
-            return "sonntags";
-        }
-        return wochentag;
-    }
-
     public String tolangerBenutzerfreundlichenString() {
-        return getWochentags() + " um " + beginnStunde + ":" + beginnMinute + " Uhr in " + ort + " als " + typ + " mit " + anzMessdiener
+        return wochentag.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " um " + beginnStunde + ":" + beginnMinute + " Uhr in " + ort + " als " + typ + " mit " + anzMessdiener
                 + " Messdienern";
     }
 
     public String getZeit() {
-        return getWochentags() + " um " + beginnStunde + ":" + beginnMinute + " Uhr";
+        return wochentag.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " um " + beginnStunde + ":" + beginnMinute + " Uhr";
     }
 
     public String getMessdienerAnzahl() {

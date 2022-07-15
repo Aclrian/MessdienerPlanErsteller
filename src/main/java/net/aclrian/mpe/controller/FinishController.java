@@ -21,6 +21,8 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
 import java.text.*;
+import java.time.*;
+import java.time.format.*;
 import java.util.List;
 import java.util.*;
 
@@ -59,8 +61,8 @@ public class FinishController implements Controller {
             String m1 = messe.htmlAusgeben();
             m1 = m1.substring(6, m1.length() - 7);
             if (i == 0) {
-                Date start = messe.getDate();
-                Date ende = messen.get(messen.size() - 1).getDate();
+                LocalDateTime start = messe.getDate();
+                LocalDateTime ende = messen.get(messen.size() - 1).getDate();
                 SimpleDateFormat df = new SimpleDateFormat("dd. MMMM", Locale.GERMAN);
                 titel = "Messdienerplan vom " + df.format(start) + " bis " + df.format(ende);
                 s.append("<h1>").append(titel).append("</h1>");
@@ -248,19 +250,18 @@ public class FinishController implements Controller {
             return;
         }
         // neuer Monat:
-        Calendar start = Calendar.getInstance();
-        start.setTime(messen.get(0).getDate());
-        start.add(Calendar.MONTH, 1);
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        LocalDate nextMonth = messen.get(0).getDate().toLocalDate();
+        nextMonth = nextMonth.plusMonths(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         if (Log.getLogger().isDebugEnabled()) {
-            Log.getLogger().info("nächster Monat bei: {}", df.format(start.getTime()));
+            Log.getLogger().info("nächster Monat bei: {}", formatter.format(nextMonth));
         }
         // EIGENTLICHER ALGORYTHMUS
         for (Messe me : messen) {
-            if (me.getDate().after(start.getTime())) {
-                start.add(Calendar.MONTH, 1);
+            if (me.getDate().toLocalDate().isAfter(nextMonth)) {
+                nextMonth = nextMonth.plusMonths(1);
                 if (Log.getLogger().isDebugEnabled()) {
-                    Log.getLogger().info("nächster Monat: Es ist {}", df.format(me.getDate()));
+                    Log.getLogger().info("nächster Monat: Es ist {}", formatter.format(me.getDate().toLocalDate()));
                 }
                 for (Messdiener messdiener : hauptarray) {
                     messdiener.getMessdaten().naechsterMonat();
@@ -355,7 +356,7 @@ public class FinishController implements Controller {
                 anv.sort(Messdiener.einteilen);
                 for (Messdiener messdiener : anv) {
                     boolean b = messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse());
-                    if (messdiener.getMessdaten().kann(m.getDate(), zwangdate, zwanganz) && b) {
+                    if (messdiener.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz) && b) {
                         Log.getLogger().info("{} dient mit {}?", messdiener, medi);
                         einteilen(m, messdiener, zwangdate, zwanganz);
                     }
@@ -370,7 +371,7 @@ public class FinishController implements Controller {
             int id = medi.istLeiter() ? 1 : 0;
             if (medi.getDienverhalten().getBestimmtes(sm)
                     && DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).getAnzDienen() != 0
-                    && medi.getMessdaten().kann(m.getDate(), zwangdate, zwanganz)) {
+                    && medi.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz)) {
                 allForSMesse.add(medi);
             }
         }

@@ -24,8 +24,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
-import java.text.DecimalFormat;
-import java.time.ZoneId;
+import java.text.*;
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.*;
 import java.util.List;
 import java.util.*;
 
@@ -51,7 +53,7 @@ public class Dialogs {
     private Alert alertbuilder(AlertType type, String headertext) {
         Alert a = new Alert(type);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(headertext);
         a.setTitle("MessdienerplanErsteller");
 
@@ -135,7 +137,7 @@ public class Dialogs {
         ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
         Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(string);
         a.setTitle("MessdienerplanErsteller");
         Optional<ButtonType> res = a.showAndWait();
@@ -167,7 +169,7 @@ public class Dialogs {
         ButtonType nobtn = new ButtonType(no, ButtonBar.ButtonData.NO);
         Alert a = new Alert(AlertType.CONFIRMATION, "", yesbtn, cc, nobtn);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(string);
         Optional<ButtonType> res = a.showAndWait();
         if (res.isPresent() && res.get() == cc) return YesNoCancelEnum.CANCEL;
@@ -319,7 +321,7 @@ public class Dialogs {
             if (sm != null) {
                 ort.setText(sm.getOrt());
                 typ.setText(sm.getTyp());
-                wochentag.setValue(sm.getWochentag());
+                wochentag.setValue(sm.getWochentag().getDisplayName(TextStyle.FULL, Locale.getDefault()));
                 stunde.setValue(sm.getBeginnStunde());
                 minute.setValue(1);
                 minute.setValue(sm.getBeginnMinute());
@@ -336,7 +338,9 @@ public class Dialogs {
             String min = String.valueOf((int) minute.getValue());
             if (((int) minute.getValue()) < 10)
                 min = "0" + min;
-            return new StandartMesse(wochentag.getValue(), (int) stunde.getValue(), min, ort.getText(),
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault());
+            TemporalAccessor accessor = formatter.parse(wochentag.getValue());
+            return new StandartMesse(DayOfWeek.from(accessor), (int) stunde.getValue(), min, ort.getText(),
                     (int) anz.getValue(), typ.getText());
         }
         return null;
@@ -345,7 +349,7 @@ public class Dialogs {
     public String text(String string, String kurz) {
         TextInputDialog dialog = new TextInputDialog();
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         dialog.setTitle("Eingabe");
         dialog.setHeaderText(string);
         dialog.setContentText(kurz + ":");
@@ -359,7 +363,7 @@ public class Dialogs {
     public Setting chance(Setting s) {
         TextInputDialog dialog = new TextInputDialog();
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         dialog.setTitle("Eingabe");
         dialog.setHeaderText("Anzahl für den " + s.getJahr() + "er Jahrgang ändern");
         dialog.setContentText("neue Anzahl: ");

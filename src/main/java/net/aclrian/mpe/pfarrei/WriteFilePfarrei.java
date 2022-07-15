@@ -15,7 +15,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.util.List;
+import java.time.format.*;
+import java.util.*;
 
 public class WriteFilePfarrei {
 
@@ -45,7 +46,7 @@ public class WriteFilePfarrei {
                 stdm.setAttribute("id", String.valueOf(i));
 
                 Element tag = doc.createElement("tag");
-                tag.appendChild(doc.createTextNode(m.getWochentag()));
+                tag.appendChild(doc.createTextNode(m.getWochentag().getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault())));
                 stdm.appendChild(tag);
 
                 Element std = doc.createElement("std");

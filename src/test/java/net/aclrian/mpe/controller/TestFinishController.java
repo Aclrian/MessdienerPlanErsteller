@@ -22,6 +22,7 @@ import org.testfx.util.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
+import java.time.*;
 import java.util.*;
 
 public class TestFinishController extends ApplicationTest {
@@ -112,7 +113,7 @@ public class TestFinishController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
 
-        Date date = TestFerienplanController.getToday();
+        LocalDate date = TestFerienplanController.getToday();
         m1.getMessdaten().einteilenVorzeitig(date, false);
 
 
@@ -173,7 +174,7 @@ public class TestFinishController extends ApplicationTest {
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        StandartMesse standartMesse = new StandartMesse("So", 8, "00", "o1", 2, "t1");
+        StandartMesse standartMesse = new StandartMesse(DayOfWeek.SUNDAY, 8, "00", "o1", 2, "t1");
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
@@ -232,9 +233,9 @@ public class TestFinishController extends ApplicationTest {
         Mockito.when(m3.getDienverhalten()).thenReturn(mv3);
         Mockito.when(m1Freund.getDienverhalten()).thenReturn(mv1F);
 
-        Messe me1 = new Messe(false, 1, TestFerienplanController.getYesterday2(), "o1", "t1");
-        Messe me2 = new Messe(TestFerienplanController.getToday(), standartMesse);
-        Messe me3 = new Messe(false, 1, TestFerienplanController.getTomorrow(), "o3", "t3");
+        Messe me1 = new Messe(false, 1, TestFerienplanController.getYesterday2().atTime(0,0), "o1", "t1");
+        Messe me2 = new Messe(TestFerienplanController.getToday().atTime(0, 0), standartMesse);
+        Messe me3 = new Messe(false, 1, TestFerienplanController.getTomorrow().atTime(0, 0), "o3", "t3");
 
         Mockito.doCallRealMethod().when(dialogs).show(Mockito.anyList(), Mockito.eq(FinishController.NICHT_EINGETEILTE_MESSDIENER));
 
@@ -314,7 +315,7 @@ public class TestFinishController extends ApplicationTest {
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        StandartMesse standartMesse = new StandartMesse("Mo", 8, "00", "o1", 2, "t1");
+        StandartMesse standartMesse = new StandartMesse(DayOfWeek.MONDAY, 8, "00", "o1", 2, "t1");
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
@@ -373,9 +374,9 @@ public class TestFinishController extends ApplicationTest {
         Mockito.when(m3.getDienverhalten()).thenReturn(mv3);
         Mockito.when(m1Freund.getDienverhalten()).thenReturn(mv1F);
 
-        Messe me1 = new Messe(false, 1, TestFerienplanController.getYesterday2(), "o1", "t1");
-        Messe me2 = new Messe(TestFerienplanController.getToday(), standartMesse);
-        Messe me3 = new Messe(false, 1, TestFerienplanController.getTomorrow(), "o3", "t3");
+        Messe me1 = new Messe(false, 1, TestFerienplanController.getYesterday2().atTime(0, 0), "o1", "t1");
+        Messe me2 = new Messe(TestFerienplanController.getToday().atTime(0, 0), standartMesse);
+        Messe me3 = new Messe(false, 1, TestFerienplanController.getTomorrow().atTime(0, 0), "o3", "t3");
 
         Mockito.doCallRealMethod().when(dialogs).show(Mockito.anyList(), Mockito.eq(FinishController.NICHT_EINGETEILTE_MESSDIENER));
 

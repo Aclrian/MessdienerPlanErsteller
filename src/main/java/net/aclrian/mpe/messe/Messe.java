@@ -1,6 +1,7 @@
 package net.aclrian.mpe.messe;
 
 import java.text.SimpleDateFormat;
+import java.time.*;
 import java.util.*;
 
 import net.aclrian.mpe.messdiener.Messdiener;
@@ -20,7 +21,7 @@ public class Messe implements Comparable<Messe>{
 	public static final Comparator<Messe> compForMessen = Comparator.comparing(Messe::getDate);
 	private boolean hochamt;
 	private int anzMessdiener;
-	private Date date;
+	private LocalDateTime date;
 	private String kirche;
 	private final SimpleDateFormat dateFormatWeekday = new SimpleDateFormat("EEE", Locale.GERMAN);
 	private final StandartMesse em;
@@ -28,20 +29,20 @@ public class Messe implements Comparable<Messe>{
 	private ArrayList<Messdiener> medis = new ArrayList<>();
 	private ArrayList<Messdiener> leiter = new ArrayList<>();
 
-	public Messe(Date d, StandartMesse sm) {
+	public Messe(LocalDateTime d, StandartMesse sm) {
 			this(false, sm.getAnzMessdiener(), d, sm.getOrt(), sm.getTyp(), sm);
 	}
 
-	public Messe(boolean hochamt, int anzMedis, Date datummituhrzeit, String ort, String typ) {
+	public Messe(boolean hochamt, int anzMedis, LocalDateTime datummituhrzeit, String ort, String typ) {
 		this(hochamt, anzMedis, datummituhrzeit, ort, typ, new Sonstiges());
 	}
 
-	public Messe(boolean hochamt, int anzMedis, Date datummituhrzeit, String ort, String typ, StandartMesse sm) {
+	public Messe(boolean hochamt, int anzMedis, LocalDateTime datummituhrzeit, String ort, String typ, StandartMesse sm) {
 			bearbeiten(hochamt, anzMedis, datummituhrzeit, ort, typ);
 			em = sm;
 	}
 
-	public void bearbeiten(boolean hochamt, int anzMessdiener, Date date, String kirche, String type) {
+	public void bearbeiten(boolean hochamt, int anzMessdiener, LocalDateTime date, String kirche, String type) {
 		this.hochamt = hochamt;
 		this.kirche = kirche;
 		this.typ = type;
@@ -50,7 +51,7 @@ public class Messe implements Comparable<Messe>{
 	}
 
 	public boolean einteilen(Messdiener medi, boolean zwangdate, boolean zwanganz) {
-		if(medi.getMessdaten().einteilen(getDate(), isHochamt(), zwangdate, zwanganz)) {
+		if(medi.getMessdaten().einteilen(date.toLocalDate(), hochamt, zwangdate, zwanganz)) {
 			if (medi.istLeiter()) {
 				leiter.add(medi);
 				leiter.sort(Messdiener.compForMedis);
@@ -67,7 +68,7 @@ public class Messe implements Comparable<Messe>{
 		return anzMessdiener;
 	}
 
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
@@ -152,7 +153,7 @@ public class Messe implements Comparable<Messe>{
 	}
 
 	public boolean vorzeitigEiteilen(Messdiener medi) {
-		if(medi.getMessdaten().einteilenVorzeitig(date,hochamt)){
+		if(medi.getMessdaten().einteilenVorzeitig(date.toLocalDate(),hochamt)){
 			if (medi.istLeiter()) {
 				leiter.add(medi);
 			} else {

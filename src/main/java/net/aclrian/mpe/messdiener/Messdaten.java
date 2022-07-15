@@ -8,6 +8,7 @@ import net.aclrian.mpe.utils.RemoveDoppelte;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.*;
 import java.util.*;
 
 public class Messdaten {
@@ -18,9 +19,9 @@ public class Messdaten {
     private List<Messdiener> freunde;
     private int anzMessen;
     private int insgesamtEingeteilt;
-    private ArrayList<Date> eingeteilt = new ArrayList<>();
-    private ArrayList<Date> ausgeteilt = new ArrayList<>();
-    private ArrayList<Date> pause = new ArrayList<>();
+    private ArrayList<LocalDate> eingeteilt = new ArrayList<>();
+    private ArrayList<LocalDate> ausgeteilt = new ArrayList<>();
+    private ArrayList<LocalDate> pause = new ArrayList<>();
 
     public Messdaten(Messdiener m) {
         geschwister = new ArrayList<>();
@@ -40,16 +41,16 @@ public class Messdaten {
         return Calendar.getInstance().get(Calendar.YEAR);
     }
 
-    public void austeilen(Date d) {
+    public void austeilen(LocalDate d) {
         ausgeteilt.add(d);
     }
 
-    public void ausausteilen(Date d) {
+    public void ausausteilen(LocalDate d) {
         ausgeteilt.remove(d);
     }
 
     public int berecheMax(int eintritt, int aktdatum, boolean leiter, Einstellungen einstellungen) {
-        int id = leiter? 1:0;
+        int id = leiter ? 1 : 0;
 
         int zwei = einstellungen.getDaten(id).getAnzDienen();
         int abstand = Integer.min(Integer.max(aktdatum - eintritt, 0), Einstellungen.LENGHT - 3);
@@ -60,7 +61,7 @@ public class Messdaten {
         return eins;
     }
 
-    public boolean einteilen(Date date, boolean hochamt, boolean datezwang, boolean anzzwang) {
+    public boolean einteilen(LocalDate date, boolean hochamt, boolean datezwang, boolean anzzwang) {
         if (kann(date, datezwang, anzzwang)) {
             eingeteilt.add(date);
             pause.add(gettheNextDay(date));
@@ -76,7 +77,7 @@ public class Messdaten {
     }
 
 
-    public boolean einteilenVorzeitig(Date date, boolean hochamt) {
+    public boolean einteilenVorzeitig(LocalDate date, boolean hochamt) {
         if (kannvorzeitg(date)) {
             eingeteilt.add(date);
             insgesamtEingeteilt++;
@@ -127,15 +128,18 @@ public class Messdaten {
         return maxMessen;
     }
 
-    public boolean kannvorzeitg(Date date) {
+    public boolean kannvorzeitg(LocalDate date) {
         return !contains(date, ausgeteilt);
     }
 
-    public boolean kann(Date date, boolean dateZwang, boolean zwang) {
+    public boolean kann(LocalDateTime date, boolean dateZwang, boolean zwang) {
+        return kann(date.toLocalDate(), dateZwang, zwang);
+    }
+    public boolean kann(LocalDate date, boolean dateZwang, boolean zwang) {
         return kanndann(date, dateZwang) && (kannnoch() || (zwang && ((anzMessen - maxMessen) <= (int) (maxMessen * 0.2) + 1)));
     }
 
-    public boolean kanndann(Date date, boolean zwang) {
+    public boolean kanndann(LocalDate date, boolean zwang) {
         if (eingeteilt.isEmpty() && ausgeteilt.isEmpty() && (zwang || pause.isEmpty())) {
             return true;
         }
@@ -153,25 +157,12 @@ public class Messdaten {
         return true;
     }
 
-    private boolean contains(Date date, ArrayList<Date> array) {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        String sdate = df.format(date);
-        for (Date d : array) {
-            if (df.format(d).equalsIgnoreCase(sdate)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean contains(LocalDate date, ArrayList<LocalDate> array) {
+        return array.contains(date);
     }
 
-    public boolean ausgeteilt(String sdate) {
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-        for (Date d : ausgeteilt) {
-            if (df.format(d).equals(sdate)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean ausgeteilt(LocalDate date) {
+        return ausgeteilt.contains(date);
     }
 
     private boolean kannnoch() {
@@ -182,18 +173,12 @@ public class Messdaten {
         anzMessen = 0;
     }
 
-    private Date gettheNextDay(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.DATE, 1);
-        return cal.getTime();
+    private LocalDate gettheNextDay(LocalDate date) {
+        return date.plusDays(1);
     }
 
-    private Date getthepreviuosDay(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.DATE, -1);
-        return cal.getTime();
+    private LocalDate getthepreviuosDay(LocalDate date) {
+        return date.plusDays(-1);
     }
 
     @SuppressWarnings("unused")
