@@ -212,10 +212,12 @@ public class TestSelect extends ApplicationTest {
 
         Assertions.assertThat(scene.lookup("#" + Select.GENERIEREN_ID)).isInstanceOf(Button.class);
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);
+        var tmp = Locale.getDefault();
+        Locale.setDefault(Locale.GERMANY);
         Platform.runLater(() -> ((Button) scene.lookup("#" + Select.GENERIEREN_ID)).fire());
+        Locale.setDefault(tmp);
         WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
-
         Assertions.assertThat(scene.lookup("#remove")).isInstanceOf(Button.class);
         ((ListView<?>) scene.lookup("#list")).getSelectionModel().select(0);
         Mockito.when(dialog.frage(Mockito.any(), Mockito.any(), Mockito.eq("Löschen"))).thenReturn(true);
