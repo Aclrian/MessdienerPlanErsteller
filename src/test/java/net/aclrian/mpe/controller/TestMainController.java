@@ -409,7 +409,6 @@ public class TestMainController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> instance.editPfarrei(null));
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(stage.focusedProperty().getValue()).isFalse();
         final Node lookup = this.listWindows().get(1).getScene().lookup("#table");
         Assertions.assertThat(lookup).isInstanceOf(TableView.class);
         Assertions.assertThat(((TableView<?>) lookup).getItems().get(0).toString()).isEqualTo(pf.getStandardMessen().get(0).toString());
