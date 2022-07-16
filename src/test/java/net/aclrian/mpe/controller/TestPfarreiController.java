@@ -24,6 +24,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.file.*;
 import java.time.*;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class TestPfarreiController extends ApplicationTest {
 
@@ -187,6 +189,7 @@ public class TestPfarreiController extends ApplicationTest {
         File file = new File(System.getProperty("user.home"), "namesdfsdjklflös" + DateienVerwalter.PFARREDATEIENDUNG);
         Assertions.assertThat(file).exists();
         try {
+            String doW = DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault());
             Assertions.assertThat(Files.readString(file.toPath()).replace(System.getProperty("line.separator"), "\n")).isEqualTo("""
                     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                     <XML>
@@ -194,7 +197,9 @@ public class TestPfarreiController extends ApplicationTest {
                       <Body>
                         <Standartmessem>
                           <std_messe id="0">
-                            <tag>Mo</tag>
+                            <tag>""" +
+                    doW + """
+                    </tag>
                             <std>8</std>
                             <min>00</min>
                             <ort>o</ort>

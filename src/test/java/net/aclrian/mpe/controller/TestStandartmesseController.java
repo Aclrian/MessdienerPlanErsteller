@@ -27,8 +27,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.*;
+import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 
 public class TestStandartmesseController extends ApplicationTest {
 
@@ -115,8 +117,9 @@ public class TestStandartmesseController extends ApplicationTest {
         final File bFile = new File(f.getAbsolutePath(), "b.xml");
         Assertions.assertThat(bFile).exists();
         try {
-            Assertions.assertThat(Files.readString(aFile.toPath())).contains("<Mo-8-00-2>true</Mo-8-00-2>");
-            Assertions.assertThat(Files.readString(bFile.toPath())).contains("<Mo-8-00-2>false</Mo-8-00-2>");
+            String doW = DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault());
+            Assertions.assertThat(Files.readString(aFile.toPath())).contains("<" + doW + "-8-00-2>true</" + doW + "-8-00-2>");
+            Assertions.assertThat(Files.readString(bFile.toPath())).contains("<" + doW + "-8-00-2>false</" + doW + "-8-00-2>");
             Files.delete(aFile.toPath());
             Files.delete(bFile.toPath());
         } catch (IOException e) {

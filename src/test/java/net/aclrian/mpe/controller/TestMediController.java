@@ -22,6 +22,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.time.*;
+import java.time.format.TextStyle;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -267,6 +268,7 @@ public class TestMediController extends ApplicationTest {
         Assertions.assertThat(lea.exists()).isTrue();
 
         try {
+            String doW = DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault());
             Assertions.assertThat(Files.readString(lea.toPath())).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
                     "<XML>" + System.getProperty("line.separator") +
                     "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator") +
@@ -275,7 +277,7 @@ public class TestMediController extends ApplicationTest {
                     "    <Nachname>Tannenbusch</Nachname>" + System.getProperty("line.separator") +
                     "    <Email/>" + System.getProperty("line.separator") +
                     "    <Messverhalten>" + System.getProperty("line.separator") +
-                    "      <Mo-8-00-2>true</Mo-8-00-2>" + System.getProperty("line.separator") +
+                    "      <"+doW+"-8-00-2>true</"+doW+"-8-00-2>" + System.getProperty("line.separator") +
                     "    </Messverhalten>" + System.getProperty("line.separator") +
                     "    <Leiter>false</Leiter>" + System.getProperty("line.separator") +
                     "    <Eintritt>2019</Eintritt>" + System.getProperty("line.separator") +
