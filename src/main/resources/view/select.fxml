@@ -50,6 +50,9 @@
         <GridPane.margin>
           <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
         </GridPane.margin>
+        <selectionModel>
+            <SelectionMode fx:constant="SINGLE"/>
+        </selectionModel>
     </ListView>
     <FlowPane fx:id="pane" alignment="CENTER" hgap="50.0" maxHeight="1.7976931348623157E308"
               maxWidth="1.7976931348623157E308" GridPane.columnSpan="16" GridPane.halignment="CENTER"
