@@ -236,7 +236,6 @@ public class TestPfarreiController extends ApplicationTest {
         try {
             pfRead = ReadFilePfarrei.getPfarrei(file.getAbsolutePath());
         } catch (Exception e) {
-            e.printStackTrace();
             Assertions.fail(e.getMessage(), e);
         }
         Assertions.assertThat(pfRead).isNotNull();
