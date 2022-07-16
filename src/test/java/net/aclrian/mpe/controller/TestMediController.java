@@ -148,6 +148,7 @@ public class TestMediController extends ApplicationTest {
         Assertions.assertThat(((TextField) scene.lookup("#email")).getText().isEmpty()).isTrue();
         ((TextField) scene.lookup("#email")).setText("a@abc.de");
         Platform.runLater(() -> scene.lookup("#email").requestFocus());
+        WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(((TextField) scene.lookup("#email")).getText()).isEqualTo("a@abc.de");
         Assertions.assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
         TableView<?> table = (TableView<?>) scene.lookup("#table");

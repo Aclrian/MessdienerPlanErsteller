@@ -118,7 +118,7 @@ public class TestMainController extends ApplicationTest {
                 instance.changePaneMessdiener(messdiener);
 
                 Mockito.when(dv.getMessdiener()).thenReturn(Collections.singletonList(messdiener));
-                final Messdaten md = Mockito.mock(Messdaten.class);//new Messdaten(messdiener);
+                final Messdaten md = Mockito.mock(Messdaten.class);
                 Mockito.when(messdiener.getMessdaten()).thenReturn(md);
 
                 Assertions.assertThat(scene.lookup("#vorname")).isInstanceOf(TextField.class);
@@ -230,7 +230,7 @@ public class TestMainController extends ApplicationTest {
             instance.messe(null);
             Assertions.assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.SELECT_MESSE);
         });
-
+        WaitForAsyncUtils.waitForFxEvents();
         //Ferien
         Platform.runLater(() -> {
             instance.ferienplan(null);
@@ -274,7 +274,7 @@ public class TestMainController extends ApplicationTest {
         Mockito.when(pf.getSettings()).thenReturn(einstellungen);
 
         Platform.runLater(() -> instance.generieren(null));
-
+        WaitForAsyncUtils.waitForFxEvents();
         //Info
         Platform.runLater(() -> {
             instance.info(null);
@@ -356,6 +356,7 @@ public class TestMainController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         long first = System.currentTimeMillis();
         instance.speicherort(null);
+        WaitForAsyncUtils.waitForFxEvents();
         long sec = System.currentTimeMillis();
         Assertions.assertThat(sec - first).isLessThan(1000L);
         Platform.runLater(() -> {
@@ -399,8 +400,10 @@ public class TestMainController extends ApplicationTest {
             stage.setScene(scene);
             stage.setTitle("MessdienerplanErsteller");
         });
+        WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(stage.focusedProperty().getValue()).isTrue();
         Platform.runLater(() -> instance.changePane(MainController.EnumPane.START));
+        WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(stage.focusedProperty().getValue()).isTrue();
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> instance.editPfarrei(null));

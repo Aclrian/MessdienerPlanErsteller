@@ -96,6 +96,7 @@ public class TestPfarreiController extends ApplicationTest {
             stage.setResizable(false);
             stage.show();
         });
+        WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(root).isNotNull();
         Assertions.assertThat(scene).isNotNull();
         cont.afterstartup();

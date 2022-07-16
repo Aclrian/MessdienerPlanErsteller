@@ -210,6 +210,7 @@ public class TestSelect extends ApplicationTest {
         var tmp = Locale.getDefault();
         Locale.setDefault(Locale.GERMANY);
         Platform.runLater(() -> ((Button) scene.lookup("#" + Select.GENERIEREN_ID)).fire());
+        WaitForAsyncUtils.waitForFxEvents();
         Locale.setDefault(tmp);
         WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);

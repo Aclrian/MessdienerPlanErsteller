@@ -87,6 +87,7 @@ public class TestInfoController extends ApplicationTest {
                 Assertions.fail("table not found");
             }
         });
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     @Ignore("should not run on ci")
