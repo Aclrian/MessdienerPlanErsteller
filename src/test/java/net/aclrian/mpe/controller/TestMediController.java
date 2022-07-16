@@ -21,12 +21,13 @@ import org.testfx.util.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 
 public class TestMediController extends ApplicationTest {
 
-    private final StandartMesse standartMesse = new StandartMesse("Mo", 8, "00", "o", 2, "t");
+    private final StandartMesse standartMesse = new StandartMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
     private final String medi = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
             "<XML>" + System.getProperty("line.separator") +
             "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator") +

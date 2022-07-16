@@ -72,7 +72,7 @@ public class TestMesseController extends ApplicationTest {
         Mockito.when(messdiener.getMessdaten()).thenReturn(md);
         Mockito.when(md.einteilenVorzeitig(Mockito.any(), Mockito.anyBoolean())).thenReturn(true);
         Mockito.when(dv.getMessdiener()).thenReturn(Collections.singletonList(messdiener));
-        StandartMesse standartMesse = new StandartMesse("Mo", 8, "00", "o", 2, "t");
+        StandartMesse standartMesse = new StandartMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
         Mockito.when(mc.getMessen()).thenReturn(messen);
         Platform.runLater(() -> {
@@ -128,9 +128,9 @@ public class TestMesseController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         Mockito.verify(messen, Mockito.times(1)).add(Mockito.argThat(argument -> {
-            Date date = Date.from(now.atTime(time).atZone(ZoneId.systemDefault()).toInstant());
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-            Assertions.assertThat(dateS + " " + clock).isEqualTo(df.format(date));
+            LocalDateTime date = now.atTime(time);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            Assertions.assertThat(dateS + " " + clock).isEqualTo(formatter.format(date));
             Messe m = new Messe(true, 1, date, "ort", "title", standartMesse);
             return argument.equals(m);
         }));
@@ -143,10 +143,10 @@ public class TestMesseController extends ApplicationTest {
         });
         ((SplitMenuButton) scene.lookup("#button")).getItems().stream().filter(menuItem -> menuItem.getId().equals("saveNew")).findFirst().orElseThrow().fire();
         Mockito.verify(messen, Mockito.times(1)).add(Mockito.argThat(argument -> {
-            Date date = Date.from(now.atTime(time).atZone(ZoneId.systemDefault()).toInstant());
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-            Assertions.assertThat(dateS + " " + clock).isEqualTo(df.format(date));
-            Messe m = new Messe(true, 1, date, "ort", "title", standartMesse);
+            LocalDateTime date = now.atTime(time);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            Assertions.assertThat(dateS + " " + clock).isEqualTo(formatter.format(date));
+            Messe m = new Messe(true, 1, now.atTime(time), "ort", "title", standartMesse);
             m.vorzeitigEiteilen(messdiener);
             return argument.equals(m);
         }));

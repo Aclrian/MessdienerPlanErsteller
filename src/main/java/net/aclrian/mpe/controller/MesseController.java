@@ -13,10 +13,7 @@ import net.aclrian.mpe.messe.StandartMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Date;
+import java.time.*;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
 
@@ -129,15 +126,15 @@ public class MesseController implements Controller {
         slider.setValue(messe.getAnzMessdiener());
         hochamt.setSelected(messe.isHochamt());
         list.setSelected(messe.getEingeteilte());
-        LocalDate ld = messe.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate ld = messe.getDate().toLocalDate();
         datum.setValue(ld);
-        uhr.getValueFactory().setValue(LocalTime.ofInstant(messe.getDate().toInstant(), ZoneId.systemDefault()));
+        uhr.getValueFactory().setValue(messe.getDate().toLocalTime());
         list.setSelected(messe.getEingeteilte());
         getLogger().info("Messe wurde geladen");
     }
 
-    private Date getDate() {
-        return Date.from(datum.getValue().atTime(uhr.getValue()).atZone(ZoneId.systemDefault()).toInstant());
+    private LocalDateTime getDate() {
+        return LocalDateTime.of(datum.getValue(), uhr.getValue());
     }
 
     @FXML
@@ -148,5 +145,4 @@ public class MesseController implements Controller {
             this.standartMesse = s;
         }
     }
-
 }

@@ -26,12 +26,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.time.*;
 import java.util.Arrays;
 import java.util.Collections;
 
 public class TestStandartmesseController extends ApplicationTest {
 
-    private final StandartMesse standartMesse = new StandartMesse("Mo", 8, "00", "o", 2, "t");
+    private final StandartMesse standartMesse = new StandartMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
     @Mock
     private DateienVerwalter dv;
     @Mock

@@ -1,11 +1,13 @@
 package net.aclrian.mpe.messe;
 
+import java.time.*;
+
 public class Sonstiges extends StandartMesse {
 
 	public static final String SONSTIGES_STRING = "Sonstiges";
 
 	public Sonstiges() {
-		super("", -1, "", "", -1, "");
+		super(DayOfWeek.SUNDAY, -1, "", "", -1, "");
 	}
 
 	@Override

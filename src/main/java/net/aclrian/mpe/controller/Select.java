@@ -20,14 +20,8 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import static net.aclrian.mpe.utils.Log.getLogger;
+import java.time.*;
+import java.util.*;
 
 public class Select implements Controller {
     private final Selecter selecter;
@@ -56,13 +50,16 @@ public class Select implements Controller {
         this.mc = mc;
     }
 
-    public static List<Messe> generiereDefaultMessen(Date anfang, Date ende) {
+    public static List<Messe> generiereDefaultMessen(LocalDate anfang, LocalDate ende) {
         ArrayList<Messe> rtn = new ArrayList<>();
-        Calendar start = Calendar.getInstance();
         for (StandartMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
             if (!(sm instanceof Sonstiges)) {
-                start.setTime(anfang);
-                List<Messe> m = optimieren(start, sm, ende, new ArrayList<>());
+                // clone LocalDates
+                LocalDate start = LocalDate.now();
+                LocalDate end = LocalDate.now();
+                start = anfang;
+                end = ende;
+                List<Messe> m = optimieren(start, sm, end, new ArrayList<>());
                 rtn.addAll(m);
             }
         }
@@ -71,27 +68,17 @@ public class Select implements Controller {
         return rtn;
     }
 
-    public static List<Messe> optimieren(Calendar cal, StandartMesse sm, Date end, List<Messe> mes) {
-        if (cal.getTime().before(end) && !(sm instanceof Sonstiges)) {
-            SimpleDateFormat wochendagformat = new SimpleDateFormat("EEE");
-            String tag = wochendagformat.format(cal.getTime());
-            if (tag.startsWith(sm.getWochentag())) {
-                Date d = cal.getTime();
-                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-                SimpleDateFormat dfuhr = new SimpleDateFormat("dd-MM-yyyy-HH:mm");
-                try {
-                    Date frting = dfuhr
-                            .parse(df.format(d) + "-" + sm.getBeginnStundealsString() + ":" + sm.getBeginnMinuteString());
-                    Messe m = new Messe(frting, sm);
-                    mes.add(m);
-                } catch (ParseException e) {
-                    getLogger().info("Parse Exception");
-                }
-                cal.add(Calendar.DATE, 7);
+    public static List<Messe> optimieren(LocalDate start, StandartMesse sm, LocalDate end, List<Messe> mes) {
+        if (start.isBefore(end) && !(sm instanceof Sonstiges)) {
+            if (start.getDayOfWeek().compareTo(sm.getWochentag()) == 0) {
+                LocalDateTime messeTime = start.atTime(sm.getBeginnStunde(), sm.getBeginnMinute());
+                Messe m = new Messe(messeTime, sm);
+                mes.add(m);
+                start = start.plusDays(7);
             } else {
-                cal.add(Calendar.DATE, 1);
+                start = start.plusDays(1);
             }
-            mes = optimieren(cal, sm, end, mes);
+            mes = optimieren(start, sm, end, mes);
         }
         return mes;
     }
@@ -144,7 +131,7 @@ public class Select implements Controller {
 
     private EventHandler<ActionEvent> getEventHandlerGenerateForMesse(List<Messe> datam) {
         return arg0 -> {
-            List<Date> daten = Dialogs.getDialogs().getDates(ZEITRAUM_WAEHLEN,
+            List<LocalDate> daten = Dialogs.getDialogs().getDates(ZEITRAUM_WAEHLEN,
                     VON, BIS);
             if (!daten.isEmpty()) {
                 try {

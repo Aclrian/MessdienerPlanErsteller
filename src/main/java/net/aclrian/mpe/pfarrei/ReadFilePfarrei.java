@@ -16,7 +16,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.*;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class ReadFilePfarrei {
@@ -52,6 +55,9 @@ public class ReadFilePfarrei {
                     if (nsm.getNodeType() == 1) {
                         Element eElement = (Element) nsm;
                         String tag = eElement.getElementsByTagName("tag").item(0).getTextContent();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ccc", Locale.getDefault());
+                        TemporalAccessor accessor = formatter.parse(tag);
+                        DayOfWeek dow = DayOfWeek.from(accessor);
                         int std = Integer
                                 .parseInt(eElement.getElementsByTagName("std").item(0).getTextContent());
                         String min = eElement.getElementsByTagName("min").item(0).getTextContent();
@@ -59,7 +65,7 @@ public class ReadFilePfarrei {
                         int anz = Integer
                                 .parseInt(eElement.getElementsByTagName("anz").item(0).getTextContent());
                         String typ = eElement.getElementsByTagName("typ").item(0).getTextContent();
-                        StandartMesse stdm = new StandartMesse(tag, std, min, ort, anz, typ);
+                        StandartMesse stdm = new StandartMesse(dow, std, min, ort, anz, typ);
                         sm.add(stdm);
                     }
                 }
