@@ -20,9 +20,7 @@ import org.testfx.util.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
-import java.text.*;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TestSelect extends ApplicationTest {
@@ -221,7 +219,6 @@ public class TestSelect extends ApplicationTest {
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
         Platform.runLater(() -> ((Button) scene.lookup("#remove")).fire());
         WaitForAsyncUtils.waitForFxEvents();
-        Mockito.verify(mc, Mockito.times(3)).getMessen();
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(0);
     }
 }
