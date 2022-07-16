@@ -231,7 +231,7 @@ public class Dialogs {
     }
 
 
-    public List<Date> getDates(String string, String von, String bis) {
+    public List<LocalDate> getDates(String string, String von, String bis) {
         DatePicker d1 = new DatePicker();
         d1.setPromptText(von);
         DatePicker d2 = new DatePicker();
@@ -240,9 +240,7 @@ public class Dialogs {
         hb.setSpacing(20d);
         Alert a = alertbuilder(AlertType.INFORMATION, string, hb);
         ChangeListener<Object> e = (arg0, arg1, arg2) -> {
-            if (d1.getValue() != null && d2.getValue() != null &&
-                    (!Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
-                            .after(Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())))) {
+            if (d1.getValue() != null && d2.getValue() != null && (!d1.getValue().isAfter(d2.getValue()))) {
                 a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
                 return;
             }
@@ -254,9 +252,9 @@ public class Dialogs {
         d2.focusedProperty().addListener(e);
         Optional<ButtonType> o = a.showAndWait();
         if (o.isPresent() && o.get().equals(ButtonType.OK)) {
-            ArrayList<Date> rtn = new ArrayList<>();
-            rtn.add(0, Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            rtn.add(1, Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).plusDays(1).toInstant()));
+            ArrayList<LocalDate> rtn = new ArrayList<>();
+            rtn.add(0, d1.getValue());
+            rtn.add(1, d2.getValue().plusDays(1));
             return rtn;
         }
         return Collections.emptyList();

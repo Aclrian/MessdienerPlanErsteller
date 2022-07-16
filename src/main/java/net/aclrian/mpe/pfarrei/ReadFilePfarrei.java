@@ -55,7 +55,7 @@ public class ReadFilePfarrei {
                     if (nsm.getNodeType() == 1) {
                         Element eElement = (Element) nsm;
                         String tag = eElement.getElementsByTagName("tag").item(0).getTextContent();
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("CCC", Locale.getDefault());
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ccc", Locale.getDefault());
                         TemporalAccessor accessor = formatter.parse(tag);
                         DayOfWeek dow = DayOfWeek.from(accessor);
                         int std = Integer

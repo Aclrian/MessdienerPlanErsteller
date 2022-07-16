@@ -58,22 +58,22 @@ public class StandartMesse {
     @Override
     public String toString() {
         String s = beginnStunde < 10 ? "0" + beginnStunde : beginnStunde + "";
-        return wochentag + "_" + s + ":" + beginnMinute + "-" + ort + " " + typ + " "
+        return wochentag.getValue() + "_" + s + ":" + beginnMinute + "-" + ort + " " + typ + " "
                 + anzMessdiener;
     }
 
     public String tokurzerBenutzerfreundlichenString() {
-        return wochentag + ". " + beginnStunde + ":" + beginnMinute + ": " + ort + " " + typ + " (" + anzMessdiener
+        return wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + beginnStunde + ":" + beginnMinute + ": " + ort + " " + typ + " (" + anzMessdiener
                 + ")";
     }
 
     @SuppressWarnings("unused")
     public String toBenutzerfreundlichenString() {
-        return typ + " jeden " + wochentag + "., " + "um " + beginnStunde + ":" + beginnMinute + " in " + ort + " ("+ anzMessdiener+")";
+        return typ + " jeden " + wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + ", " + "um " + beginnStunde + ":" + beginnMinute + " in " + ort + " ("+ anzMessdiener+")";
     }
 
     public String toReduziertenString() {
-        return wochentag + "-" + beginnStunde + "-" + beginnMinute + // ort+ "-" + typ +
+        return wochentag.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()) + "-" + beginnStunde + "-" + beginnMinute + // ort+ "-" + typ +
                 "-" + anzMessdiener;
     }
 
@@ -101,13 +101,5 @@ public class StandartMesse {
     @Override
     public int hashCode() {
         return Objects.hash(beginnStunde, beginnMinute, ort, wochentag, anzMessdiener, typ);
-    }
-
-    public String getBeginnStundealsString() {
-        String rtn = String.valueOf(this.beginnStunde);
-        if (rtn.length() == 1) {
-            rtn = "0" + this.beginnStunde;
-        }
-        return rtn;
     }
 }

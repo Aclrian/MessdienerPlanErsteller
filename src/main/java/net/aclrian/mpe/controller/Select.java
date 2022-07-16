@@ -20,12 +20,8 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.*;
-
-import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class Select implements Controller {
     private final Selecter selecter;
@@ -54,16 +50,15 @@ public class Select implements Controller {
         this.mc = mc;
     }
 
-    public static List<Messe> generiereDefaultMessen(Date anfang, Date ende) {
+    public static List<Messe> generiereDefaultMessen(LocalDate anfang, LocalDate ende) {
         ArrayList<Messe> rtn = new ArrayList<>();
         for (StandartMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
             if (!(sm instanceof Sonstiges)) {
-                LocalDate start = Instant.ofEpochMilli(anfang.getTime())
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate();
-                LocalDate end = Instant.ofEpochMilli(ende.getTime())
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate();
+                // clone LocalDates
+                LocalDate start = LocalDate.now();
+                LocalDate end = LocalDate.now();
+                start = anfang;
+                end = ende;
                 List<Messe> m = optimieren(start, sm, end, new ArrayList<>());
                 rtn.addAll(m);
             }
@@ -136,7 +131,7 @@ public class Select implements Controller {
 
     private EventHandler<ActionEvent> getEventHandlerGenerateForMesse(List<Messe> datam) {
         return arg0 -> {
-            List<Date> daten = Dialogs.getDialogs().getDates(ZEITRAUM_WAEHLEN,
+            List<LocalDate> daten = Dialogs.getDialogs().getDates(ZEITRAUM_WAEHLEN,
                     VON, BIS);
             if (!daten.isEmpty()) {
                 try {

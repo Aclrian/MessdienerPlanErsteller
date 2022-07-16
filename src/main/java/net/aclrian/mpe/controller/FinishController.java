@@ -20,7 +20,6 @@ import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
-import java.text.*;
 import java.time.*;
 import java.time.format.*;
 import java.util.List;
@@ -63,8 +62,8 @@ public class FinishController implements Controller {
             if (i == 0) {
                 LocalDateTime start = messe.getDate();
                 LocalDateTime ende = messen.get(messen.size() - 1).getDate();
-                SimpleDateFormat df = new SimpleDateFormat("dd. MMMM", Locale.GERMAN);
-                titel = "Messdienerplan vom " + df.format(start) + " bis " + df.format(ende);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd. MMMM");
+                titel = "Messdienerplan vom " + formatter.format(start) + " bis " + formatter.format(ende);
                 s.append("<h1>").append(titel).append("</h1>");
             }
             s.append("<p>").append(m1).append("</p>");
@@ -318,10 +317,10 @@ public class FinishController implements Controller {
                     + "' dienen können, aber deren Anzahl schon zu hoch ist?")) {
                 zwang(m, false, true, " einteilen ohne Anzahl beachten");
             }
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyy");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyy");
             if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
                     + " werden benötigt.\nSollen Messdiener eingeteilt werden, die an dem Tag \n'"
-                    + df.format(m.getDate()) + "' dienen können?")) {
+                    + formatter.format(m.getDate()) + "' dienen können?")) {
                 zwang(m, false, false, " einteilen ohne Standardmesse beachten");
             }
         }
@@ -332,10 +331,10 @@ public class FinishController implements Controller {
                 + " werden benötigt.\nSollen Messdiener zwangsweise eingeteilt werden?")) {
             zwang(m, true, true, " einteilen ohne Standardmesse beachten");
         }
-        zuwenige(m);
+        zuWenige(m);
     }
 
-    private void zuwenige(Messe m) {
+    private void zuWenige(Messe m) {
         if (!m.istFertig())
             Dialogs.getDialogs().error("Die Messe" + m.getID().replace("\t", "   ") + " wird zu wenige Messdiener haben.");
     }

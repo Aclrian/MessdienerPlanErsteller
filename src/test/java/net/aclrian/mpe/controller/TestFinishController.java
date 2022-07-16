@@ -23,6 +23,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.time.*;
+import java.time.format.TextStyle;
 import java.util.*;
 
 public class TestFinishController extends ApplicationTest {
@@ -174,7 +175,7 @@ public class TestFinishController extends ApplicationTest {
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        StandartMesse standartMesse = new StandartMesse(DayOfWeek.SUNDAY, 8, "00", "o1", 2, "t1");
+        StandartMesse standartMesse = new StandartMesse(DayOfWeek.MONDAY, 8, "00", "o1", 2, "t1");
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
@@ -298,9 +299,12 @@ public class TestFinishController extends ApplicationTest {
         Assertions.assertThat(me2.getEingeteilte().size()).isEqualTo(0);
         Assertions.assertThat(me3.getEingeteilte().size()).isEqualTo(0);
 
+        int from = TestFerienplanController.getYesterday2().getDayOfMonth();
+        int to = TestFerienplanController.getTomorrow().getDayOfMonth();
+        String fromMonth = TestFerienplanController.getYesterday2().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+        String toMonth = TestFerienplanController.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        Assertions.assertThat(pair.getValue().toString()).matches("mailto:\\?bcc=a@w\\.de&subject=Messdienerplan%20vom%201[23].%20Juli%20bis%201[56]\\.%20Juli&body=%0D%0A");
-        try {
+        Assertions.assertThat(pair.getValue().toString()).isEqualTo("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20"+from+".%20"+fromMonth+"%20bis%20"+to+".%20"+toMonth+"&body=%0D%0A");        try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {
             Assertions.fail(e.getMessage(), e);
@@ -451,8 +455,12 @@ public class TestFinishController extends ApplicationTest {
         Assertions.assertThat(me2.getEingeteilte().size()).isEqualTo(0);
         Assertions.assertThat(me3.getEingeteilte().size()).isEqualTo(0);
 
+        int from = TestFerienplanController.getYesterday2().getDayOfMonth();
+        int to = TestFerienplanController.getTomorrow().getDayOfMonth();
+        String fromMonth = TestFerienplanController.getYesterday2().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+        String toMonth = TestFerienplanController.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        Assertions.assertThat(pair.getValue().toString()).isEqualTo("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%2012.%20Juli%20bis%2015.%20Juli&body=%0D%0A");
+        Assertions.assertThat(pair.getValue().toString()).isEqualTo("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20"+from+".%20"+fromMonth+"%20bis%20"+to+".%20"+toMonth+"&body=%0D%0A");
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {

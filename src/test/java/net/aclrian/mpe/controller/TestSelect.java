@@ -22,6 +22,7 @@ import java.net.*;
 import java.nio.file.*;
 import java.text.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TestSelect extends ApplicationTest {
@@ -171,14 +172,9 @@ public class TestSelect extends ApplicationTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         final StandartMesse standartMesse = new StandartMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-        try {
-            Date von = df.parse("1.10.2020");
-            Date bis = df.parse("15.10.2020");
-            Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        LocalDate von = LocalDate.of(2020, 10, 1);
+        LocalDate bis = LocalDate.of(2020, 10, 15);
+        Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
 
         ArrayList<Messe> messen = new ArrayList<>();
         final Messe m1 = new Messe(false, 1, LocalDateTime.now(), "o", "t");

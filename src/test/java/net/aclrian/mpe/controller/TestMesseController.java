@@ -128,10 +128,10 @@ public class TestMesseController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         Mockito.verify(messen, Mockito.times(1)).add(Mockito.argThat(argument -> {
-            Date date = Date.from(now.atTime(time).atZone(ZoneId.systemDefault()).toInstant());
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-            Assertions.assertThat(dateS + " " + clock).isEqualTo(df.format(date));
-            Messe m = new Messe(true, 1, now.atTime(time), "ort", "title", standartMesse);
+            LocalDateTime date = now.atTime(time);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            Assertions.assertThat(dateS + " " + clock).isEqualTo(formatter.format(date));
+            Messe m = new Messe(true, 1, date, "ort", "title", standartMesse);
             return argument.equals(m);
         }));
         Assertions.assertThat(((ATilePane) scene.lookup("#list")).getChildren()).anyMatch(node -> {
@@ -143,9 +143,9 @@ public class TestMesseController extends ApplicationTest {
         });
         ((SplitMenuButton) scene.lookup("#button")).getItems().stream().filter(menuItem -> menuItem.getId().equals("saveNew")).findFirst().orElseThrow().fire();
         Mockito.verify(messen, Mockito.times(1)).add(Mockito.argThat(argument -> {
-            Date date = Date.from(now.atTime(time).atZone(ZoneId.systemDefault()).toInstant());
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-            Assertions.assertThat(dateS + " " + clock).isEqualTo(df.format(date));
+            LocalDateTime date = now.atTime(time);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            Assertions.assertThat(dateS + " " + clock).isEqualTo(formatter.format(date));
             Messe m = new Messe(true, 1, now.atTime(time), "ort", "title", standartMesse);
             m.vorzeitigEiteilen(messdiener);
             return argument.equals(m);
