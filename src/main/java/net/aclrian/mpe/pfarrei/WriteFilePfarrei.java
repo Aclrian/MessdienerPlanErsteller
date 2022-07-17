@@ -114,7 +114,10 @@ public class WriteFilePfarrei {
                     .info("Pfarrei wird gespeichert in: {}", f);
             StreamResult streamResult = new StreamResult(f);
             c.getTransformer().transform(domSource, streamResult);
-            DateienVerwalter.getInstance().removeoldPfarrei(f);
+            boolean notYetStarted = DateienVerwalter.getInstance() != null;
+            if(notYetStarted) {
+                DateienVerwalter.getInstance().removeoldPfarrei(f);
+            }
         } catch (ParserConfigurationException | TransformerException exception) {
             Dialogs.getDialogs().error(exception, "Fehler bei Speichern der Pfarrei:");
         }

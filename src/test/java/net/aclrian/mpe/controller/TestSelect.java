@@ -218,21 +218,10 @@ public class TestSelect extends ApplicationTest {
         ((ListView<?>) scene.lookup("#list")).getSelectionModel().select(0);
         Mockito.when(dialog.frage(Mockito.any(), Mockito.any(), Mockito.eq("Löschen"))).thenReturn(true);
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
-        try {
-            Thread.sleep(10000);
-        } catch(InterruptedException e) {
-            e.printStackTrace();
-        }
-        Platform.runLater(() -> ((Button) scene.lookup("#remove")).fire());
-
-        try {
-            Thread.sleep(10000);
-        } catch(InterruptedException e) {
-            e.printStackTrace();
-        }
+        Platform.runLater(() -> {
+            ((Button) scene.lookup("#remove")).fire();
+        });
         WaitForAsyncUtils.waitForFxEvents();
-        List l = ((ListView<?>) scene.lookup("#list")).getItems();
-        l.forEach(Log.getLogger()::info);
-        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems().size()).isEqualTo(3);
+        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems().size()).isEqualTo(0);
     }
 }

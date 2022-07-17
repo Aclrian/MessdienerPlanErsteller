@@ -140,6 +140,8 @@ public class TestMediController extends ApplicationTest {
         ((TextField) scene.lookup("#email")).setText("lol");
         Platform.runLater(() -> scene.lookup("#email").requestFocus());
         WaitForAsyncUtils.waitForFxEvents();
+        Platform.runLater(() -> scene.lookup("#leiter").requestFocus());
+        WaitForAsyncUtils.waitForFxEvents();
         try {
             TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
@@ -250,7 +252,7 @@ public class TestMediController extends ApplicationTest {
         Mockito.verify(dialog, Mockito.times(1)).select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.eq(MediController.FREUNDE_AUSWAEHLEN));
         Mockito.verify(dialog, Mockito.times(1)).select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.eq(MediController.GESCHWISTER_AUSWAEHLEN));
 
-        Mockito.verify(mc, Mockito.times(1)).changePaneMessdiener(null);
+        Assertions.assertThat(((TextField) scene.lookup("#vorname")).getText()).isEmpty();
         Mockito.verify(m1).setFreunde(Mockito.argThat(argument -> argument.length == 5 && argument[0].equalsIgnoreCase("Tannenbusch, Lea") && argument[1] == null && argument[2] == null && argument[3] == null && argument[4] == null));
         Mockito.verify(m2).setGeschwister(Mockito.argThat(argument -> argument.length == 3 && argument[0].equalsIgnoreCase("Tannenbusch, Lea") && argument[1] == null && argument[2] == null));
 

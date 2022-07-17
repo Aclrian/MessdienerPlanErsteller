@@ -155,7 +155,7 @@ public class MediController implements Controller {
         saveNew.setOnAction(e -> {
             if (getMedi()) {
                 locked = false;
-                mc.changePaneMessdiener(null);
+                vorname.setText("");
             }
         });
         button.setOnAction(e -> {
@@ -166,8 +166,7 @@ public class MediController implements Controller {
         });
         // Email valid
         email.focusedProperty().addListener((arg0, oldValue, newValue) -> {
-            boolean neu = newValue;
-            if (neu) {
+            if (Boolean.FALSE.equals(newValue)) {
                 email.setText(Messdiener.EMAIL_PATTERN.matcher(email.getText()).matches() ? email.getText() : "");
             }
         });
@@ -306,19 +305,22 @@ public class MediController implements Controller {
     }
 
     public void setMedi(Messdiener messdiener) {
-        if (messdiener == null) return;
-        name.setText(messdiener.getNachnname());
-        vorname.setText(messdiener.getVorname());
-        email.setText(messdiener.getEmail());
-        leiter.setSelected(messdiener.istLeiter());
-        eintritt.setValue(messdiener.getEintritt());
-        table.setItems(FXCollections.observableList(messdiener.getDienverhalten().getKannWelcheMessen()));
-        updateFreunde(messdiener);
-        updateGeschwister(messdiener);
-        List<KannWelcheMesse> messen = messdiener.getDienverhalten().copy().getKannWelcheMessen();
-        setDienverhalten(messen);
-        moben = messdiener;
-        getLogger().info("Messdiener wurde geladen");
+        if (messdiener == null){
+            name.setText("");
+        } else {
+            name.setText(messdiener.getNachnname());
+            vorname.setText(messdiener.getVorname());
+            email.setText(messdiener.getEmail());
+            leiter.setSelected(messdiener.istLeiter());
+            eintritt.setValue(messdiener.getEintritt());
+            table.setItems(FXCollections.observableList(messdiener.getDienverhalten().getKannWelcheMessen()));
+            updateFreunde(messdiener);
+            updateGeschwister(messdiener);
+            List<KannWelcheMesse> messen = messdiener.getDienverhalten().copy().getKannWelcheMessen();
+            setDienverhalten(messen);
+            moben = messdiener;
+            getLogger().info("Messdiener wurde geladen");
+        }
     }
 
     private void checkForChangedName(Messdiener m) {
@@ -356,7 +358,7 @@ public class MediController implements Controller {
         bearbeitete.add(m);
         RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
         bearbeitete = rd.removeDuplicatedEntries(bearbeitete);
-        bearbeitete.removeIf(messdiener -> messdiener.hashCode() == moben.hashCode());
+        bearbeitete.removeIf(messdiener -> moben != null && messdiener.hashCode() == moben.hashCode());
         try {
             for (Messdiener messdiener : bearbeitete) {
                 WriteFile wf = new WriteFile(messdiener);

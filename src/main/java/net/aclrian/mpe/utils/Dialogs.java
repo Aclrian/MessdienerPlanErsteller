@@ -265,8 +265,9 @@ public class Dialogs {
         ort.setPromptText("Ort:");
         TextField typ = new TextField();
         typ.setPromptText("Typ:");
+        List<String> dayOfWeeks = Arrays.stream(DayOfWeek.values()).map(dow -> dow.getDisplayName(TextStyle.FULL, Locale.getDefault())).toList();
         ComboBox<String> wochentag = new ComboBox<>(
-                FXCollections.observableArrayList("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"));
+                FXCollections.observableArrayList(dayOfWeeks));
         wochentag.setPromptText("Wochentag:");
         Slider stunde = new Slider();
         stunde.setMin(0);

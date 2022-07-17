@@ -32,7 +32,7 @@ import net.aclrian.mpe.utils.Log;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.*;
 
 import static net.aclrian.mpe.utils.Log.getLogger;
 
@@ -94,7 +94,7 @@ public class PfarreiController {
         this.main = m;
         this.old = old;
         Pfarrei pf = DateienVerwalter.getInstance().getPfarrei();
-        stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
+        stage.getIcons().add(new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/title_32.png"))));
         ol = FXCollections.observableArrayList(pf.getStandardMessen());
         ol.removeIf(Sonstiges.class::isInstance);
         ol.sort(StandartMesse.STANDART_MESSE_COMPARATOR);
