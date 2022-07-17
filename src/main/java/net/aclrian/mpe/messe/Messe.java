@@ -1,11 +1,10 @@
 package net.aclrian.mpe.messe;
 
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
-import java.util.*;
+import net.aclrian.mpe.messdiener.*;
 
-import net.aclrian.mpe.messdiener.Messdiener;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
 
 /**
  * Klasse von Messen
@@ -13,12 +12,8 @@ import net.aclrian.mpe.messdiener.Messdiener;
  * @author Aclrian
  */
 public class Messe implements Comparable<Messe> {
-    @Override
-    public String toString() {
-        return getID();
-    }
-
     public static final Comparator<Messe> compForMessen = Comparator.comparing(Messe::getDate);
+    private final StandartMesse em;
     private boolean hochamt;
     private int anzMessdiener;
 
@@ -28,7 +23,6 @@ public class Messe implements Comparable<Messe> {
      */
     private LocalDateTime date;
     private String kirche;
-    private final StandartMesse em;
     private String typ;
     private ArrayList<Messdiener> medis = new ArrayList<>();
     private ArrayList<Messdiener> leiter = new ArrayList<>();
@@ -44,6 +38,11 @@ public class Messe implements Comparable<Messe> {
     public Messe(boolean hochamt, int anzMedis, LocalDateTime datummituhrzeit, String ort, String typ, StandartMesse sm) {
         bearbeiten(hochamt, anzMedis, datummituhrzeit, ort, typ);
         em = sm;
+    }
+
+    @Override
+    public String toString() {
+        return getID();
     }
 
     public void bearbeiten(boolean hochamt, int anzMessdiener, LocalDateTime date, String kirche, String type) {

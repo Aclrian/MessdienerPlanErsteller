@@ -1,37 +1,24 @@
 package net.aclrian.mpe.controller;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.stage.Window;
-import net.aclrian.fx.ASlider;
-import net.aclrian.mpe.controller.MainController.EnumPane;
-import net.aclrian.mpe.messdiener.KannWelcheMesse;
-import net.aclrian.mpe.messdiener.Messdaten;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messdiener.Messdiener.NotValidException;
-import net.aclrian.mpe.messdiener.WriteFile;
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import net.aclrian.mpe.utils.RemoveDoppelte;
+import javafx.scene.control.cell.*;
+import javafx.stage.*;
+import net.aclrian.fx.*;
+import net.aclrian.mpe.controller.MainController.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messdiener.Messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.Log.*;
 
 public class MediController implements Controller {
 
@@ -305,7 +292,7 @@ public class MediController implements Controller {
     }
 
     public void setMedi(Messdiener messdiener) {
-        if (messdiener == null){
+        if (messdiener == null) {
             name.setText("");
         } else {
             name.setText(messdiener.getNachnname());

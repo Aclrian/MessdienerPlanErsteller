@@ -13,7 +13,7 @@ import net.aclrian.mpe.pfarrei.*;
 import net.aclrian.mpe.utils.*;
 import org.junit.*;
 import org.mockito.*;
-import org.testfx.assertions.api.Assertions;
+import org.testfx.assertions.api.*;
 import org.testfx.framework.junit.*;
 import org.testfx.util.*;
 
@@ -21,7 +21,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.time.*;
-import java.time.format.TextStyle;
+import java.time.format.*;
 import java.util.*;
 
 public class TestFinishController extends ApplicationTest {
@@ -286,7 +286,7 @@ public class TestFinishController extends ApplicationTest {
             Log.getLogger().error(e.getMessage(), e);
             Assertions.fail(e.getMessage(), e);
         }
-        if(skipDOCX) {
+        if (skipDOCX) {
             out = new File(Log.getWorkingDir(), instance.getTitle() + ".docx");
             try {
                 if (out.exists()) {
@@ -326,7 +326,7 @@ public class TestFinishController extends ApplicationTest {
         String fromMonth = TestFerienplanController.getYesterday2().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         String toMonth = TestFerienplanController.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        Assertions.assertThat(pair.getValue().toString()).isEqualTo("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20"+from+".%20"+fromMonth+"%20bis%20"+to+".%20"+toMonth+"&body=%0D%0A");
+        Assertions.assertThat(pair.getValue().toString()).isEqualTo("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20" + from + ".%20" + fromMonth + "%20bis%20" + to + ".%20" + toMonth + "&body=%0D%0A");
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {

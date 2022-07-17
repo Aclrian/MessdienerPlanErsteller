@@ -18,7 +18,6 @@ import org.testfx.util.*;
 
 import java.io.*;
 import java.net.*;
-import java.text.*;
 import java.time.*;
 import java.time.format.*;
 import java.util.*;
@@ -76,7 +75,7 @@ public class TestFerienplanController extends ApplicationTest {
         final LocalDateTime today = getToday().atTime(0, 0);
         List<Messe> messen = Arrays.asList(
                 new Messe(false, 1, today, "ort1", "typ1"),
-                new Messe(false, 1, getToday().atTime(1,0), "ort1", "typ1"),
+                new Messe(false, 1, getToday().atTime(1, 0), "ort1", "typ1"),
                 new Messe(false, 2, tomorrow, "ort1", "typ1"),
                 new Messe(false, 2, yesterday, "ort1", "typ1"));
         Mockito.when(mc.getMessen()).thenReturn(messen);
@@ -132,9 +131,9 @@ public class TestFerienplanController extends ApplicationTest {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(FerienplanController.PATTERN);
 
         List<Messe> messen = Arrays.asList(
-                new Messe(false, 1, getToday().atTime(0,0), "ort1", "typ1"),
-                new Messe(false, 2, getTomorrow().atTime(0,0), "ort1", "typ1"),
-                new Messe(false, 2, getYesterday().atTime(0,0), "ort1", "typ1"));
+                new Messe(false, 1, getToday().atTime(0, 0), "ort1", "typ1"),
+                new Messe(false, 2, getTomorrow().atTime(0, 0), "ort1", "typ1"),
+                new Messe(false, 2, getYesterday().atTime(0, 0), "ort1", "typ1"));
         Mockito.when(medi1.toString()).thenReturn("a");
         Mockito.when(medi2.toString()).thenReturn("b");
         Mockito.when(medi3.toString()).thenReturn("c");

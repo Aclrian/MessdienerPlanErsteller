@@ -69,7 +69,7 @@ public class StandartMesse {
 
     @SuppressWarnings("unused")
     public String toBenutzerfreundlichenString() {
-        return typ + " jeden " + wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + ", " + "um " + beginnStunde + ":" + beginnMinute + " in " + ort + " ("+ anzMessdiener+")";
+        return typ + " jeden " + wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + ", " + "um " + beginnStunde + ":" + beginnMinute + " in " + ort + " (" + anzMessdiener + ")";
     }
 
     public String toReduziertenString() {

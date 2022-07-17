@@ -1,27 +1,24 @@
 package net.aclrian.mpe.controller;
 
 import javafx.application.*;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
-import net.aclrian.mpe.Main;
-import net.aclrian.mpe.controller.Select.Selecter;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.StandartMesse;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import net.aclrian.mpe.*;
+import net.aclrian.mpe.controller.Select.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
 import net.aclrian.mpe.utils.*;
 
 import java.awt.*;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.io.*;
+import java.net.*;
 import java.util.List;
+import java.util.*;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.Log.*;
 
 public class MainController {
     public static final String NO_ACCESS = " konnte nicht zugegriffen werden!";
@@ -181,7 +178,7 @@ public class MainController {
         Speicherort ort = new Speicherort(grid.getParent().getScene().getWindow());
         ort.changeDir();
         ((Stage) grid.getScene().getWindow()).close();
-        Platform.runLater(()-> m.main(new Stage()));
+        Platform.runLater(() -> m.main(new Stage()));
     }
 
     @FXML

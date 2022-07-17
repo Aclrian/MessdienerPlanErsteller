@@ -22,7 +22,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.time.*;
-import java.time.format.TextStyle;
+import java.time.format.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -280,7 +280,7 @@ public class TestMediController extends ApplicationTest {
                     "    <Nachname>Tannenbusch</Nachname>" + System.getProperty("line.separator") +
                     "    <Email/>" + System.getProperty("line.separator") +
                     "    <Messverhalten>" + System.getProperty("line.separator") +
-                    "      <"+doW+"-8-00-2>true</"+doW+"-8-00-2>" + System.getProperty("line.separator") +
+                    "      <" + doW + "-8-00-2>true</" + doW + "-8-00-2>" + System.getProperty("line.separator") +
                     "    </Messverhalten>" + System.getProperty("line.separator") +
                     "    <Leiter>false</Leiter>" + System.getProperty("line.separator") +
                     "    <Eintritt>2019</Eintritt>" + System.getProperty("line.separator") +

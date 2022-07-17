@@ -1,21 +1,15 @@
 package net.aclrian.mpe.controller;
 
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Window;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
 
 import java.time.*;
 import java.util.*;

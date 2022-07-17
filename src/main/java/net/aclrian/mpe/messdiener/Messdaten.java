@@ -1,12 +1,10 @@
 package net.aclrian.mpe.messdiener;
 
-import net.aclrian.mpe.controller.MediController;
-import net.aclrian.mpe.pfarrei.Einstellungen;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.RemoveDoppelte;
+import net.aclrian.mpe.controller.*;
+import net.aclrian.mpe.pfarrei.*;
+import net.aclrian.mpe.utils.*;
 
-import java.io.IOException;
+import java.io.*;
 import java.time.*;
 import java.util.*;
 
@@ -63,8 +61,8 @@ public class Messdaten {
     public boolean einteilen(LocalDate date, boolean hochamt, boolean datezwang, boolean anzzwang) {
         if (kann(date, datezwang, anzzwang)) {
             eingeteilt.add(date);
-            pause.add(gettheNextDay(date));
-            pause.add(getthepreviuosDay(date));
+            pause.add(getNextDay(date));
+            pause.add(getPreviuosDay(date));
             anzMessen++;
             insgesamtEingeteilt++;
             if (hochamt) {
@@ -77,11 +75,11 @@ public class Messdaten {
 
 
     public boolean einteilenVorzeitig(LocalDate date, boolean hochamt) {
-        if (kannvorzeitg(date)) {
+        if (kannVorzeitg(date)) {
             eingeteilt.add(date);
             insgesamtEingeteilt++;
             if (!hochamt) {
-                pause.add(gettheNextDay(date));
+                pause.add(getNextDay(date));
                 anzMessen++;
             }
             return true;
@@ -127,13 +125,14 @@ public class Messdaten {
         return maxMessen;
     }
 
-    public boolean kannvorzeitg(LocalDate date) {
-        return !contains(date, ausgeteilt);
+    public boolean kannVorzeitg(LocalDate date) {
+        return !ausgeteilt.contains(date);
     }
 
     public boolean kann(LocalDateTime date, boolean dateZwang, boolean zwang) {
         return kann(date.toLocalDate(), dateZwang, zwang);
     }
+
     public boolean kann(LocalDate date, boolean dateZwang, boolean zwang) {
         return kanndann(date, dateZwang) && (kannnoch() || (zwang && ((anzMessen - maxMessen) <= (int) (maxMessen * 0.2) + 1)));
     }
@@ -142,22 +141,18 @@ public class Messdaten {
         if (eingeteilt.isEmpty() && ausgeteilt.isEmpty() && (zwang || pause.isEmpty())) {
             return true;
         }
-        if (contains(date, ausgeteilt) || contains(gettheNextDay(date), ausgeteilt)
-                || contains(getthepreviuosDay(date), ausgeteilt)) {
+        if (ausgeteilt.contains(date) || ausgeteilt.contains(getNextDay(date))
+                || ausgeteilt.contains(getPreviuosDay(date))) {
             return false;
         }
         if (!zwang) {
-            if (contains(date, eingeteilt) || contains(gettheNextDay(date), eingeteilt)
-                    || contains(getthepreviuosDay(date), eingeteilt)) {
+            if (eingeteilt.contains(date) || eingeteilt.contains(getNextDay(date))
+                    || eingeteilt.contains(getPreviuosDay(date))) {
                 return false;
             }
-            return !contains(date, pause);
+            return !pause.contains(date);
         }
         return true;
-    }
-
-    private boolean contains(LocalDate date, ArrayList<LocalDate> array) {
-        return array.contains(date);
     }
 
     public boolean ausgeteilt(LocalDate date) {
@@ -172,11 +167,11 @@ public class Messdaten {
         anzMessen = 0;
     }
 
-    private LocalDate gettheNextDay(LocalDate date) {
+    private LocalDate getNextDay(LocalDate date) {
         return date.plusDays(1);
     }
 
-    private LocalDate getthepreviuosDay(LocalDate date) {
+    private LocalDate getPreviuosDay(LocalDate date) {
         return date.plusDays(-1);
     }
 

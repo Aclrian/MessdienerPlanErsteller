@@ -19,7 +19,6 @@ import org.testfx.util.*;
 
 import java.io.*;
 import java.net.*;
-import java.text.*;
 import java.time.*;
 import java.time.format.*;
 import java.util.*;

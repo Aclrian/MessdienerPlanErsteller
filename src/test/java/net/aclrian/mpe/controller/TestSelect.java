@@ -217,7 +217,7 @@ public class TestSelect extends ApplicationTest {
     }
 
     @Test
-    public void testeMesseRemove(){
+    public void testeMesseRemove() {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
