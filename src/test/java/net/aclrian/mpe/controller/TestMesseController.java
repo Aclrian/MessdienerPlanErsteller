@@ -1,40 +1,27 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import net.aclrian.fx.ATilePane;
-import net.aclrian.fx.TimeSpinner;
-import net.aclrian.mpe.messdiener.Messdaten;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import net.aclrian.fx.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.pfarrei.*;
+import net.aclrian.mpe.utils.*;
+import org.junit.*;
+import org.mockito.*;
+import org.testfx.assertions.api.*;
+import org.testfx.framework.junit.*;
+import org.testfx.util.*;
 
-import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
+import java.io.*;
+import java.net.*;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
 
 public class TestMesseController extends ApplicationTest {
 
@@ -49,6 +36,7 @@ public class TestMesseController extends ApplicationTest {
     private Pane pane;
     private MesseController instance;
     private Scene scene;
+    private AutoCloseable openMocks;
 
     @Override
     public void start(Stage stage) {
@@ -58,7 +46,12 @@ public class TestMesseController extends ApplicationTest {
         stage.setResizable(true);
         stage.show();
 
-        MockitoAnnotations.openMocks(this);
+        openMocks = MockitoAnnotations.openMocks(this);
+    }
+
+    @After
+    public void close() throws Exception {
+        openMocks.close();
     }
 
     @Test
@@ -78,7 +71,7 @@ public class TestMesseController extends ApplicationTest {
         Mockito.when(messdiener.getMessdaten()).thenReturn(md);
         Mockito.when(md.einteilenVorzeitig(Mockito.any(), Mockito.anyBoolean())).thenReturn(true);
         Mockito.when(dv.getMessdiener()).thenReturn(Collections.singletonList(messdiener));
-        StandartMesse standartMesse = new StandartMesse("Mo", 8, "00", "o", 2, "t");
+        StandartMesse standartMesse = new StandartMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
         Mockito.when(mc.getMessen()).thenReturn(messen);
         Platform.runLater(() -> {
@@ -134,9 +127,9 @@ public class TestMesseController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         Mockito.verify(messen, Mockito.times(1)).add(Mockito.argThat(argument -> {
-            Date date = Date.from(now.atTime(time).atZone(ZoneId.systemDefault()).toInstant());
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-            Assertions.assertThat(dateS + " " + clock).isEqualTo(df.format(date));
+            LocalDateTime date = now.atTime(time);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            Assertions.assertThat(dateS + " " + clock).isEqualTo(formatter.format(date));
             Messe m = new Messe(true, 1, date, "ort", "title", standartMesse);
             return argument.equals(m);
         }));
@@ -149,10 +142,10 @@ public class TestMesseController extends ApplicationTest {
         });
         ((SplitMenuButton) scene.lookup("#button")).getItems().stream().filter(menuItem -> menuItem.getId().equals("saveNew")).findFirst().orElseThrow().fire();
         Mockito.verify(messen, Mockito.times(1)).add(Mockito.argThat(argument -> {
-            Date date = Date.from(now.atTime(time).atZone(ZoneId.systemDefault()).toInstant());
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-            Assertions.assertThat(dateS + " " + clock).isEqualTo(df.format(date));
-            Messe m = new Messe(true, 1, date, "ort", "title", standartMesse);
+            LocalDateTime date = now.atTime(time);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            Assertions.assertThat(dateS + " " + clock).isEqualTo(formatter.format(date));
+            Messe m = new Messe(true, 1, now.atTime(time), "ort", "title", standartMesse);
             m.vorzeitigEiteilen(messdiener);
             return argument.equals(m);
         }));

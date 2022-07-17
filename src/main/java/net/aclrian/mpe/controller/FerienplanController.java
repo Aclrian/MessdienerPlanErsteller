@@ -1,29 +1,19 @@
 package net.aclrian.mpe.controller;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.input.KeyCode;
-import javafx.stage.Window;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.RemoveDoppelte;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
+import javafx.scene.input.*;
+import javafx.stage.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
 
 public class FerienplanController implements Controller {
     public static final String PATTERN = "dd.MM.yyyy";
@@ -50,17 +40,14 @@ public class FerienplanController implements Controller {
     @Override
     public void afterstartup(Window window, MainController mc) {
         List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN);
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN);
         ArrayList<Datentraeger> daten = new ArrayList<>();
         for (Messe messe : mc.getMessen()) {
-            dates.add(dateFormat.format(messe.getDate()));
+            dates.add(formatter.format(messe.getDate()));
         }
         RemoveDoppelte<String> rd = new RemoveDoppelte<>();
         dates = rd.removeDuplicatedEntries(dates);
-        dates.sort((o1, o2) -> {
-            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN);
-            return LocalDate.parse(o1, formatter).compareTo(LocalDate.parse(o2, formatter));
-        });
+        dates.sort(Comparator.comparing(o -> LocalDate.parse(o, formatter)));
         TableColumn<Datentraeger, String> column = new TableColumn<>();
         column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMessdiener()));
         column.setText("Messdiener");
@@ -81,7 +68,7 @@ public class FerienplanController implements Controller {
         table.setEditable(true);
         column.setEditable(false);
         for (Messdiener m : medis) {
-            daten.add(new Datentraeger(dateFormat, dates, m));
+            daten.add(new Datentraeger(formatter, dates, m));
         }
         table.setItems(FXCollections.observableArrayList(daten));
         fertig.setOnAction(event -> mc.changePane(MainController.EnumPane.PLAN));
@@ -120,22 +107,20 @@ public class FerienplanController implements Controller {
         private final HashMap<String, Available> stringDatumHashMap = new HashMap<>();
         private final Messdiener m;
 
-        public Datentraeger(SimpleDateFormat df, List<String> dates, Messdiener messdiener) {
+        public Datentraeger(DateTimeFormatter formatter, List<String> dates, Messdiener messdiener) {
             m = messdiener;
             for (String d : dates) {
-                Available available = new Available(new SimpleBooleanProperty(messdiener.getMessdaten().ausgeteilt(d)));
+                LocalDate date = LocalDate.parse(d, formatter);
+
+                Available available = new Available(new SimpleBooleanProperty(messdiener.getMessdaten().ausgeteilt(date)));
                 available.property().addListener((observable, oldValue, newValue) -> {
                     boolean old = oldValue;
                     boolean neu = newValue;
                     if (old != neu) {
-                        try {
-                            if (neu) {
-                                messdiener.getMessdaten().austeilen(df.parse(d));
-                            } else {
-                                messdiener.getMessdaten().ausausteilen(df.parse(d));
-                            }
-                        } catch (ParseException e) {
-                            Dialogs.getDialogs().error(e, "Konnte das Datum nicht bekommen.");
+                        if (neu) {
+                            messdiener.getMessdaten().austeilen(date);
+                        } else {
+                            messdiener.getMessdaten().ausausteilen(date);
                         }
                     }
                 });

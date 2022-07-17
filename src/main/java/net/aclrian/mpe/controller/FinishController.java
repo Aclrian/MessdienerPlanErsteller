@@ -1,40 +1,27 @@
 package net.aclrian.mpe.controller;
 
-import com.itextpdf.html2pdf.ConverterProperties;
-import com.itextpdf.html2pdf.HtmlConverter;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
+import com.itextpdf.html2pdf.*;
+import javafx.event.*;
+import javafx.fxml.*;
 import javafx.scene.control.Button;
-import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.*;
 import javafx.stage.Window;
-import javafx.util.Pair;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import net.aclrian.mpe.utils.RemoveDoppelte;
-import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
-import org.jodconverter.core.document.DocumentFormat;
-import org.jodconverter.core.office.OfficeException;
-import org.jodconverter.core.office.OfficeUtils;
-import org.jodconverter.local.JodConverter;
-import org.jodconverter.local.office.LocalOfficeManager;
-import org.jodconverter.local.office.LocalOfficeUtils;
-import org.springframework.web.util.UriUtils;
+import javafx.util.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
+import org.jodconverter.core.document.*;
+import org.jodconverter.core.office.*;
+import org.jodconverter.local.*;
+import org.jodconverter.local.office.*;
+import org.springframework.web.util.*;
 
 import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.*;
+import java.time.*;
+import java.time.format.*;
 import java.util.List;
 import java.util.*;
 
@@ -73,10 +60,10 @@ public class FinishController implements Controller {
             String m1 = messe.htmlAusgeben();
             m1 = m1.substring(6, m1.length() - 7);
             if (i == 0) {
-                Date start = messe.getDate();
-                Date ende = messen.get(messen.size() - 1).getDate();
-                SimpleDateFormat df = new SimpleDateFormat("dd. MMMM", Locale.GERMAN);
-                titel = "Messdienerplan vom " + df.format(start) + " bis " + df.format(ende);
+                LocalDateTime start = messe.getDate();
+                LocalDateTime ende = messen.get(messen.size() - 1).getDate();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd. MMMM");
+                titel = "Messdienerplan vom " + formatter.format(start) + " bis " + formatter.format(ende);
                 s.append("<h1>").append(titel).append("</h1>");
             }
             s.append("<p>").append(m1).append("</p>");
@@ -185,27 +172,29 @@ public class FinishController implements Controller {
 
     @FXML
     public void toPDF(ActionEvent actionEvent) {
-        if (LocalOfficeUtils.getDefaultOfficeHome() != null) {
-            Log.getLogger().info("Converting HTML to PDF with JODConverter");
-            convert(actionEvent, false);
-        }
-        Log.getLogger().info("Converting HTML to PDF with iText");
-        ConverterProperties converterProperties = new ConverterProperties();
-        converterProperties.setCharset("UTF-8");
         try {
-            File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + ".pdf");
-            HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8)),
-                    new FileOutputStream(out), converterProperties);
-            pdfgen = out;
+            if (LocalOfficeUtils.getDefaultOfficeHome() != null) {
+                Log.getLogger().info("Converting HTML to PDF with JODConverter");
+                convert(false);
+            } else {
+                Log.getLogger().info("Converting HTML to PDF with iText");
+                ConverterProperties converterProperties = new ConverterProperties();
+                converterProperties.setCharset("UTF-8");
+
+                File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + ".pdf");
+                HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8)),
+                        new FileOutputStream(out), converterProperties);
+                pdfgen = out;
+            }
             if (actionEvent != null) {
-                Desktop.getDesktop().open(out);
+                Desktop.getDesktop().open(pdfgen);
             }
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu PDF konvertieren.");
         }
     }
 
-    private void convert(ActionEvent actionEvent, boolean isToDocx) {
+    private void convert(boolean isToDocx) {
         String fileEnd = ".pdf";
         DocumentFormat format = DefaultDocumentFormatRegistry.HTML;
         if (isToDocx) {
@@ -218,21 +207,17 @@ public class FinishController implements Controller {
             officeManager.start();
         } catch (OfficeException e) {
             Dialogs.getDialogs().error(e, "Fehler beim Konvertieren");
-            return;
         }
         try (ByteArrayInputStream bais = new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "")
                 .replace("</br>", "")
                 .replace("<br>", "<br></br>")
                 .replace("</p><p><font></font></p><p><font><b>", "</p><br/><p><font></font></p><p><font><b>")
-                .replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8))){
+                .replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8))) {
             JodConverter.convert(bais).as(format).to(out).execute();
             if (isToDocx) {
                 wordgen = out;
             } else {
                 pdfgen = out;
-            }
-            if (actionEvent != null) {
-                Desktop.getDesktop().open(out);
             }
         } catch (Exception e) {
             Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu " + fileEnd + " konvertieren.");
@@ -243,12 +228,19 @@ public class FinishController implements Controller {
 
     @FXML
     public void toWORD(ActionEvent actionEvent) {
-        if (LocalOfficeUtils.getDefaultOfficeHome() == null) {
-            Dialogs.getDialogs().info("Für die Konvertierung wird LibreOffice (oder Openoffice) benötigt.", "Wenn es trotz Installation nicht erkannt wird, kann dafür eine Systemvariable OFFICE_HOME angelegt werden, die den Installationspfad von der Officeanwendung enthält.");
-            return;
+        try {
+            if (LocalOfficeUtils.getDefaultOfficeHome() == null) {
+                Dialogs.getDialogs().info("Für die Konvertierung wird LibreOffice (oder Openoffice) benötigt.", "Wenn es trotz Installation nicht erkannt wird, kann dafür eine Systemvariable OFFICE_HOME angelegt werden, die den Installationspfad von der Officeanwendung enthält.");
+                return;
+            }
+            Log.getLogger().info("Converting PDF to WORD with JODConverter");
+            convert(true);
+            if (actionEvent != null) {
+                Desktop.getDesktop().open(pdfgen);
+            }
+        } catch (IOException e) {
+            Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu DOCX konvertieren.");
         }
-        Log.getLogger().info("Converting HTML to PDF with JODConverter");
-        convert(actionEvent, true);
     }
 
     private void neuerAlgorythmus() {
@@ -257,19 +249,18 @@ public class FinishController implements Controller {
             return;
         }
         // neuer Monat:
-        Calendar start = Calendar.getInstance();
-        start.setTime(messen.get(0).getDate());
-        start.add(Calendar.MONTH, 1);
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        LocalDate nextMonth = messen.get(0).getDate().toLocalDate();
+        nextMonth = nextMonth.plusMonths(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         if (Log.getLogger().isDebugEnabled()) {
-            Log.getLogger().info("nächster Monat bei: {}", df.format(start.getTime()));
+            Log.getLogger().info("nächster Monat bei: {}", formatter.format(nextMonth));
         }
         // EIGENTLICHER ALGORYTHMUS
         for (Messe me : messen) {
-            if (me.getDate().after(start.getTime())) {
-                start.add(Calendar.MONTH, 1);
+            if (me.getDate().toLocalDate().isAfter(nextMonth)) {
+                nextMonth = nextMonth.plusMonths(1);
                 if (Log.getLogger().isDebugEnabled()) {
-                    Log.getLogger().info("nächster Monat: Es ist {}", df.format(me.getDate()));
+                    Log.getLogger().info("nächster Monat: Es ist {}", formatter.format(me.getDate().toLocalDate()));
                 }
                 for (Messdiener messdiener : hauptarray) {
                     messdiener.getMessdaten().naechsterMonat();
@@ -326,10 +317,10 @@ public class FinishController implements Controller {
                     + "' dienen können, aber deren Anzahl schon zu hoch ist?")) {
                 zwang(m, false, true, " einteilen ohne Anzahl beachten");
             }
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyy");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyy");
             if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
                     + " werden benötigt.\nSollen Messdiener eingeteilt werden, die an dem Tag \n'"
-                    + df.format(m.getDate()) + "' dienen können?")) {
+                    + formatter.format(m.getDate()) + "' dienen können?")) {
                 zwang(m, false, false, " einteilen ohne Standardmesse beachten");
             }
         }
@@ -340,10 +331,10 @@ public class FinishController implements Controller {
                 + " werden benötigt.\nSollen Messdiener zwangsweise eingeteilt werden?")) {
             zwang(m, true, true, " einteilen ohne Standardmesse beachten");
         }
-        zuwenige(m);
+        zuWenige(m);
     }
 
-    private void zuwenige(Messe m) {
+    private void zuWenige(Messe m) {
         if (!m.istFertig())
             Dialogs.getDialogs().error("Die Messe" + m.getID().replace("\t", "   ") + " wird zu wenige Messdiener haben.");
     }
@@ -364,7 +355,7 @@ public class FinishController implements Controller {
                 anv.sort(Messdiener.einteilen);
                 for (Messdiener messdiener : anv) {
                     boolean b = messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse());
-                    if (messdiener.getMessdaten().kann(m.getDate(), zwangdate, zwanganz) && b) {
+                    if (messdiener.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz) && b) {
                         Log.getLogger().info("{} dient mit {}?", messdiener, medi);
                         einteilen(m, messdiener, zwangdate, zwanganz);
                     }
@@ -379,7 +370,7 @@ public class FinishController implements Controller {
             int id = medi.istLeiter() ? 1 : 0;
             if (medi.getDienverhalten().getBestimmtes(sm)
                     && DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).getAnzDienen() != 0
-                    && medi.getMessdaten().kann(m.getDate(), zwangdate, zwanganz)) {
+                    && medi.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz)) {
                 allForSMesse.add(medi);
             }
         }

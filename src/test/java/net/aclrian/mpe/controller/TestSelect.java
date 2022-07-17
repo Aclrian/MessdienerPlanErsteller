@@ -1,42 +1,27 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import org.junit.AfterClass;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.pfarrei.*;
+import net.aclrian.mpe.utils.*;
+import org.junit.*;
+import org.mockito.*;
+import org.testfx.assertions.api.*;
+import org.testfx.framework.junit.*;
+import org.testfx.util.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
+import java.io.*;
+import java.net.*;
+import java.nio.file.*;
+import java.time.*;
+import java.util.*;
 
 public class TestSelect extends ApplicationTest {
 
@@ -49,6 +34,7 @@ public class TestSelect extends ApplicationTest {
     private Pane pane;
     private Select instance;
     private Scene scene;
+    private AutoCloseable openMocks;
 
     @AfterClass
     public static void removeFiles() {
@@ -63,12 +49,17 @@ public class TestSelect extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         pane = new Pane();
-        scene = new Scene(pane, 10, 10);
+        scene = new Scene(pane, 600, 400);
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();
 
-        MockitoAnnotations.openMocks(this);
+        openMocks = MockitoAnnotations.openMocks(this);
+    }
+
+    @After
+    public void close() throws Exception {
+        openMocks.close();
     }
 
     @SuppressWarnings("unchecked")
@@ -177,21 +168,16 @@ public class TestSelect extends ApplicationTest {
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        final StandartMesse standartMesse = new StandartMesse("Do", 10, "00", "o1", 20, "t1");
+        final StandartMesse standartMesse = new StandartMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-        try {
-            Date von = df.parse("1.10.2020");
-            Date bis = df.parse("15.10.2020");
-            Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        LocalDate von = LocalDate.of(2020, 10, 1);
+        LocalDate bis = LocalDate.of(2020, 10, 15);
+        Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
 
         ArrayList<Messe> messen = new ArrayList<>();
-        final Messe m1 = new Messe(false, 1, new Date(), "o", "t");
+        final Messe m1 = new Messe(false, 1, LocalDateTime.now(), "o", "t");
         messen.add(m1);
-        messen.add(new Messe(true, 10, new Date(), "o2", "t2"));
+        messen.add(new Messe(true, 10, LocalDateTime.now(), "o2", "t2"));
         Mockito.when(mc.getMessen()).thenReturn(messen, messen, Collections.emptyList());
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.SELECT_MESSE.getLocation());
@@ -221,17 +207,51 @@ public class TestSelect extends ApplicationTest {
 
         Assertions.assertThat(scene.lookup("#" + Select.GENERIEREN_ID)).isInstanceOf(Button.class);
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);
+        var tmp = Locale.getDefault();
+        Locale.setDefault(Locale.GERMANY);
         Platform.runLater(() -> ((Button) scene.lookup("#" + Select.GENERIEREN_ID)).fire());
         WaitForAsyncUtils.waitForFxEvents();
+        Locale.setDefault(tmp);
+        WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
+    }
 
+    @Test
+    public void testeMesseRemove() {
+        Dialogs.setDialogs(dialog);
+        DateienVerwalter.setInstance(dv);
+        Pfarrei pf = Mockito.mock(Pfarrei.class);
+        Mockito.when(dv.getPfarrei()).thenReturn(pf);
+        final StandartMesse standartMesse = new StandartMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
+        LocalDate von = LocalDate.of(2020, 10, 1);
+        LocalDate bis = LocalDate.of(2020, 10, 15);
+        Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
+
+        ArrayList<Messe> messen = new ArrayList<>();
+        final Messe m1 = new Messe(false, 1, LocalDateTime.now(), "o", "t");
+        messen.add(m1);
+        messen.add(new Messe(true, 10, LocalDateTime.now(), "o2", "t2"));
+        Mockito.when(mc.getMessen()).thenReturn(messen, messen, Collections.singletonList(m1));
+        Platform.runLater(() -> {
+            URL u = getClass().getResource(MainController.EnumPane.SELECT_MESSE.getLocation());
+            FXMLLoader fl = new FXMLLoader(u);
+            try {
+                instance = new Select(Select.Selecter.MESSE, mc);
+                fl.setController(instance);
+                pane.getChildren().add(fl.load());
+                instance.afterstartup(pane.getScene().getWindow(), mc);
+            } catch (IOException e) {
+                Log.getLogger().error(e.getMessage(), e);
+            }
+        });
+        WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(scene.lookup("#remove")).isInstanceOf(Button.class);
         ((ListView<?>) scene.lookup("#list")).getSelectionModel().select(0);
         Mockito.when(dialog.frage(Mockito.any(), Mockito.any(), Mockito.eq("Löschen"))).thenReturn(true);
-        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
-        Platform.runLater(() -> ((Button) scene.lookup("#remove")).fire());
+        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);
+        WaitForAsyncUtils.asyncFx(() -> ((Button) scene.lookup("#remove")).fire());
         WaitForAsyncUtils.waitForFxEvents();
-        Mockito.verify(mc, Mockito.times(3)).getMessen();
-        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(0);
+        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems().size()).isEqualTo(1);
     }
 }

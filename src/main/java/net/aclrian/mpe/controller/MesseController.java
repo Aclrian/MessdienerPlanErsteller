@@ -1,24 +1,16 @@
 package net.aclrian.mpe.controller;
 
-import javafx.fxml.FXML;
+import javafx.fxml.*;
 import javafx.scene.control.*;
-import javafx.stage.Window;
-import net.aclrian.fx.ASlider;
-import net.aclrian.fx.ATilePane;
-import net.aclrian.fx.TimeSpinner;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
+import javafx.stage.*;
+import net.aclrian.fx.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Date;
+import java.time.*;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.Log.*;
 
 public class MesseController implements Controller {
     public static final String STANDARTMESSE_AUSWAEHLEN = "Standartmesse ändern:";
@@ -129,15 +121,15 @@ public class MesseController implements Controller {
         slider.setValue(messe.getAnzMessdiener());
         hochamt.setSelected(messe.isHochamt());
         list.setSelected(messe.getEingeteilte());
-        LocalDate ld = messe.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate ld = messe.getDate().toLocalDate();
         datum.setValue(ld);
-        uhr.getValueFactory().setValue(LocalTime.ofInstant(messe.getDate().toInstant(), ZoneId.systemDefault()));
+        uhr.getValueFactory().setValue(messe.getDate().toLocalTime());
         list.setSelected(messe.getEingeteilte());
         getLogger().info("Messe wurde geladen");
     }
 
-    private Date getDate() {
-        return Date.from(datum.getValue().atTime(uhr.getValue()).atZone(ZoneId.systemDefault()).toInstant());
+    private LocalDateTime getDate() {
+        return LocalDateTime.of(datum.getValue(), uhr.getValue());
     }
 
     @FXML
@@ -148,5 +140,4 @@ public class MesseController implements Controller {
             this.standartMesse = s;
         }
     }
-
 }

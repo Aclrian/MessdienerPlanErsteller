@@ -1,40 +1,26 @@
 package net.aclrian.mpe.controller;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import net.aclrian.fx.ASlider;
-import net.aclrian.mpe.Main;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.pfarrei.Einstellungen;
-import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.pfarrei.Setting;
-import net.aclrian.mpe.pfarrei.WriteFilePfarrei;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.IDateienVerwalter;
-import net.aclrian.mpe.utils.Log;
+import javafx.scene.control.cell.*;
+import javafx.scene.image.*;
+import javafx.scene.input.*;
+import javafx.stage.*;
+import net.aclrian.fx.*;
+import net.aclrian.mpe.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.pfarrei.*;
+import net.aclrian.mpe.utils.*;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.Log.*;
 
 public class PfarreiController {
 
@@ -94,7 +80,7 @@ public class PfarreiController {
         this.main = m;
         this.old = old;
         Pfarrei pf = DateienVerwalter.getInstance().getPfarrei();
-        stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/title_32.png")));
+        stage.getIcons().add(new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/title_32.png"))));
         ol = FXCollections.observableArrayList(pf.getStandardMessen());
         ol.removeIf(Sonstiges.class::isInstance);
         ol.sort(StandartMesse.STANDART_MESSE_COMPARATOR);

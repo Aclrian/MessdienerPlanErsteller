@@ -1,23 +1,18 @@
 package net.aclrian.mpe.pfarrei;
 
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Log;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
+import org.w3c.dom.*;
+import org.xml.sax.*;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
+import javax.xml.*;
+import javax.xml.parsers.*;
+import java.io.*;
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.*;
+import java.util.*;
+import java.util.regex.*;
 
 public class ReadFilePfarrei {
 
@@ -52,6 +47,9 @@ public class ReadFilePfarrei {
                     if (nsm.getNodeType() == 1) {
                         Element eElement = (Element) nsm;
                         String tag = eElement.getElementsByTagName("tag").item(0).getTextContent();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ccc", Locale.getDefault());
+                        TemporalAccessor accessor = formatter.parse(tag);
+                        DayOfWeek dow = DayOfWeek.from(accessor);
                         int std = Integer
                                 .parseInt(eElement.getElementsByTagName("std").item(0).getTextContent());
                         String min = eElement.getElementsByTagName("min").item(0).getTextContent();
@@ -59,7 +57,7 @@ public class ReadFilePfarrei {
                         int anz = Integer
                                 .parseInt(eElement.getElementsByTagName("anz").item(0).getTextContent());
                         String typ = eElement.getElementsByTagName("typ").item(0).getTextContent();
-                        StandartMesse stdm = new StandartMesse(tag, std, min, ort, anz, typ);
+                        StandartMesse stdm = new StandartMesse(dow, std, min, ort, anz, typ);
                         sm.add(stdm);
                     }
                 }

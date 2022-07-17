@@ -1,37 +1,24 @@
 package net.aclrian.mpe.controller;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.stage.Window;
-import net.aclrian.fx.ASlider;
-import net.aclrian.mpe.controller.MainController.EnumPane;
-import net.aclrian.mpe.messdiener.KannWelcheMesse;
-import net.aclrian.mpe.messdiener.Messdaten;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messdiener.Messdiener.NotValidException;
-import net.aclrian.mpe.messdiener.WriteFile;
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import net.aclrian.mpe.utils.RemoveDoppelte;
+import javafx.scene.control.cell.*;
+import javafx.stage.*;
+import net.aclrian.fx.*;
+import net.aclrian.mpe.controller.MainController.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messdiener.Messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.Log.*;
 
 public class MediController implements Controller {
 
@@ -155,7 +142,7 @@ public class MediController implements Controller {
         saveNew.setOnAction(e -> {
             if (getMedi()) {
                 locked = false;
-                mc.changePaneMessdiener(null);
+                vorname.setText("");
             }
         });
         button.setOnAction(e -> {
@@ -166,8 +153,7 @@ public class MediController implements Controller {
         });
         // Email valid
         email.focusedProperty().addListener((arg0, oldValue, newValue) -> {
-            boolean neu = newValue;
-            if (neu) {
+            if (Boolean.FALSE.equals(newValue)) {
                 email.setText(Messdiener.EMAIL_PATTERN.matcher(email.getText()).matches() ? email.getText() : "");
             }
         });
@@ -306,19 +292,22 @@ public class MediController implements Controller {
     }
 
     public void setMedi(Messdiener messdiener) {
-        if (messdiener == null) return;
-        name.setText(messdiener.getNachnname());
-        vorname.setText(messdiener.getVorname());
-        email.setText(messdiener.getEmail());
-        leiter.setSelected(messdiener.istLeiter());
-        eintritt.setValue(messdiener.getEintritt());
-        table.setItems(FXCollections.observableList(messdiener.getDienverhalten().getKannWelcheMessen()));
-        updateFreunde(messdiener);
-        updateGeschwister(messdiener);
-        List<KannWelcheMesse> messen = messdiener.getDienverhalten().copy().getKannWelcheMessen();
-        setDienverhalten(messen);
-        moben = messdiener;
-        getLogger().info("Messdiener wurde geladen");
+        if (messdiener == null) {
+            name.setText("");
+        } else {
+            name.setText(messdiener.getNachnname());
+            vorname.setText(messdiener.getVorname());
+            email.setText(messdiener.getEmail());
+            leiter.setSelected(messdiener.istLeiter());
+            eintritt.setValue(messdiener.getEintritt());
+            table.setItems(FXCollections.observableList(messdiener.getDienverhalten().getKannWelcheMessen()));
+            updateFreunde(messdiener);
+            updateGeschwister(messdiener);
+            List<KannWelcheMesse> messen = messdiener.getDienverhalten().copy().getKannWelcheMessen();
+            setDienverhalten(messen);
+            moben = messdiener;
+            getLogger().info("Messdiener wurde geladen");
+        }
     }
 
     private void checkForChangedName(Messdiener m) {
@@ -356,7 +345,7 @@ public class MediController implements Controller {
         bearbeitete.add(m);
         RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
         bearbeitete = rd.removeDuplicatedEntries(bearbeitete);
-        bearbeitete.removeIf(messdiener -> messdiener.hashCode() == moben.hashCode());
+        bearbeitete.removeIf(messdiener -> moben != null && messdiener.hashCode() == moben.hashCode());
         try {
             for (Messdiener messdiener : bearbeitete) {
                 WriteFile wf = new WriteFile(messdiener);

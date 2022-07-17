@@ -1,45 +1,31 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.fxml.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import net.aclrian.fx.TimeSpinner;
-import net.aclrian.mpe.Main;
-import net.aclrian.mpe.messdiener.KannWelcheMesse;
-import net.aclrian.mpe.messdiener.Messdaten;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.pfarrei.Einstellungen;
-import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Speicherort;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.*;
+import javafx.stage.*;
+import net.aclrian.fx.*;
+import net.aclrian.mpe.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.pfarrei.*;
+import net.aclrian.mpe.utils.*;
+import org.junit.*;
+import org.mockito.*;
+import org.testfx.assertions.api.*;
+import org.testfx.framework.junit.*;
+import org.testfx.util.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
+import java.io.*;
+import java.nio.file.*;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
 
 public class TestMainController extends ApplicationTest {
 
@@ -54,7 +40,6 @@ public class TestMainController extends ApplicationTest {
     @Mock
     private Main main;
     private Stage stage;
-    private Thread thread;
 
     @Override
     public void start(Stage stage) {
@@ -63,11 +48,11 @@ public class TestMainController extends ApplicationTest {
         stage.setScene(scene);
         stage.setResizable(true);
         this.stage = stage;
+
         main = Mockito.mock(Main.class);
         dialogs = Mockito.mock(Dialogs.class);
         dv = Mockito.mock(DateienVerwalter.class);
         pf = Mockito.mock(Pfarrei.class);
-        thread = Thread.currentThread();
     }
 
     @Test
@@ -77,7 +62,7 @@ public class TestMainController extends ApplicationTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         String titel = "LOL ";
         Mockito.when(pf.getName()).thenReturn(titel);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse("Mo", 9, "00", "o", 0, "t")));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
         FXMLLoader loader = new FXMLLoader();
 
         loader.setController(new MainController(main, stage));
@@ -132,7 +117,7 @@ public class TestMainController extends ApplicationTest {
                 instance.changePaneMessdiener(messdiener);
 
                 Mockito.when(dv.getMessdiener()).thenReturn(Collections.singletonList(messdiener));
-                final Messdaten md = Mockito.mock(Messdaten.class);//new Messdaten(messdiener);
+                final Messdaten md = Mockito.mock(Messdaten.class);
                 Mockito.when(messdiener.getMessdaten()).thenReturn(md);
 
                 Assertions.assertThat(scene.lookup("#vorname")).isInstanceOf(TextField.class);
@@ -176,12 +161,7 @@ public class TestMainController extends ApplicationTest {
                 Mockito.when(m.getKirche()).thenReturn("ort");
                 Mockito.when(m.getID()).thenReturn("id");
 
-                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-                try {
-                    Mockito.when(m.getDate()).thenReturn(df.parse(date));
-                } catch (ParseException e) {
-                    Assertions.fail(e.getMessage(), e);
-                }
+                Mockito.when(m.getDate()).thenReturn(LocalDateTime.of(2020, 1, 1, 8, 0));
                 Mockito.when(m.getAnzMessdiener()).thenReturn(1);
                 Mockito.when(m.isHochamt()).thenReturn(true);
                 Mockito.when(m.getStandardMesse()).thenReturn(new Sonstiges());
@@ -249,7 +229,7 @@ public class TestMainController extends ApplicationTest {
             instance.messe(null);
             Assertions.assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.SELECT_MESSE);
         });
-
+        WaitForAsyncUtils.waitForFxEvents();
         //Ferien
         Platform.runLater(() -> {
             instance.ferienplan(null);
@@ -293,7 +273,7 @@ public class TestMainController extends ApplicationTest {
         Mockito.when(pf.getSettings()).thenReturn(einstellungen);
 
         Platform.runLater(() -> instance.generieren(null));
-
+        WaitForAsyncUtils.waitForFxEvents();
         //Info
         Platform.runLater(() -> {
             instance.info(null);
@@ -306,25 +286,55 @@ public class TestMainController extends ApplicationTest {
             Assertions.assertThat(this.listTargetWindows().size()).isGreaterThan(0);
         });
         WaitForAsyncUtils.waitForFxEvents();
+    }
 
-        //util
+    @Ignore("should not run on ci")
+    @Test
+    public void testAwtDesktop() {
+        DateienVerwalter.setInstance(dv);
         final File file = new File(System.getProperty("user.dir"));
         Mockito.when(dv.getSavepath()).thenReturn(file);
+
+        FXMLLoader loader = new FXMLLoader();
+        loader.setController(new MainController(main, stage));
+        instance = loader.getController();
+
         instance.log(null);
         instance.workingdir(null);
         instance.savepath(null);
         Assertions.assertThat(true).isTrue();
     }
 
+    @Ignore("Robotcontext should not run on ci")
     @Test
-    public void testSpeicherort() {
+    public void testChangeSpeicherort() {
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         String titel = "LOL ";
         Mockito.when(pf.getName()).thenReturn(titel);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse("Mo", 9, "00", "o", 0, "t")));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
+
         FXMLLoader loader = new FXMLLoader();
+        loader.setController(new MainController(main, stage));
+        instance = loader.getController();
+        loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
+        try {
+            pane = loader.load();
+            Platform.runLater(() -> stage.show());
+        } catch (IOException e) {
+            Assertions.fail(e.getMessage(), e);
+        }
+        WaitForAsyncUtils.waitForFxEvents();
+        Assertions.assertThat(System.getProperty("user.home").isEmpty()).isFalse();
+        File f = new File(System.getProperty("user.home"), Speicherort.TEXTDATEI);
+        final Path copy = Path.of(System.getProperty("user.home"), Speicherort.TEXTDATEI + "c");
+        try {
+            Files.copy(f.toPath(), copy, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            Assertions.fail(e.getMessage(), e);
+        }
+        Assertions.assertThat(stage.focusedProperty().getValue()).isTrue();
 
         loader.setController(new MainController(main, stage));
         instance = loader.getController();
@@ -337,15 +347,6 @@ public class TestMainController extends ApplicationTest {
         }
         WaitForAsyncUtils.waitForFxEvents();
         Scene scene = new Scene(pane);
-        Assertions.assertThat(System.getProperty("user.home").isEmpty()).isFalse();
-        File f = new File(System.getProperty("user.home"), Speicherort.TEXTDATEI);
-        final Path copy = Path.of(System.getProperty("user.home"), Speicherort.TEXTDATEI + "c");
-        try {
-            Files.copy(f.toPath(), copy, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            Assertions.fail(e.getMessage(), e);
-        }
-        Assertions.assertThat(stage.focusedProperty().getValue()).isTrue();
         Platform.runLater(() -> {
             stage.setScene(scene);
             stage.setTitle("MessdienerplanErsteller");
@@ -354,6 +355,7 @@ public class TestMainController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         long first = System.currentTimeMillis();
         instance.speicherort(null);
+        WaitForAsyncUtils.waitForFxEvents();
         long sec = System.currentTimeMillis();
         Assertions.assertThat(sec - first).isLessThan(1000L);
         Platform.runLater(() -> {
@@ -378,7 +380,7 @@ public class TestMainController extends ApplicationTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Einstellungen einstellungen = new Einstellungen();
         Mockito.when(pf.getSettings()).thenReturn(einstellungen);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse("Mo", 9, "00", "o", 0, "t")));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
         FXMLLoader loader = new FXMLLoader();
 
         loader.setController(new MainController(main, stage));
@@ -393,32 +395,20 @@ public class TestMainController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Scene scene = new Scene(pane);
         Assertions.assertThat(System.getProperty("user.home").isEmpty()).isFalse();
-        File f = new File(System.getProperty("user.home"), Speicherort.TEXTDATEI);
-        final Path copy = Path.of(System.getProperty("user.home"), Speicherort.TEXTDATEI + "c");
-        try {
-            Files.copy(f.toPath(), copy, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            Assertions.fail(e.getMessage(), e);
-        }
         Platform.runLater(() -> {
             stage.setScene(scene);
             stage.setTitle("MessdienerplanErsteller");
         });
+        WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(stage.focusedProperty().getValue()).isTrue();
         Platform.runLater(() -> instance.changePane(MainController.EnumPane.START));
+        WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(stage.focusedProperty().getValue()).isTrue();
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> instance.editPfarrei(null));
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(stage.focusedProperty().getValue()).isFalse();
         final Node lookup = this.listWindows().get(1).getScene().lookup("#table");
         Assertions.assertThat(lookup).isInstanceOf(TableView.class);
         Assertions.assertThat(((TableView<?>) lookup).getItems().get(0).toString()).isEqualTo(pf.getStandardMessen().get(0).toString());
-        try {
-            Files.copy(copy, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            Files.delete(copy);
-        } catch (IOException e) {
-            Assertions.fail(e.getMessage(), e);
-        }
     }
 }

@@ -1,11 +1,10 @@
 package net.aclrian.mpe.utils;
 
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Window;
+import javafx.stage.*;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.nio.charset.*;
+import java.nio.file.*;
 
 public class Speicherort {
 
@@ -20,10 +19,10 @@ public class Speicherort {
 
     public Speicherort(Window window) {
         this.window = window;
-        genaerateSpeicherort();
+        generateSpeicherort();
     }
 
-    private void genaerateSpeicherort() {
+    private void generateSpeicherort() {
         String homedir = System.getProperty("user.home");
         homedir = homedir + TEXTDATEI;
         Log.getLogger().info("Das Home-Verzeichniss wurde gefunden: {}", homedir);

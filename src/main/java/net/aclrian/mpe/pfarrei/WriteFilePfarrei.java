@@ -1,21 +1,18 @@
 package net.aclrian.mpe.pfarrei;
 
-import net.aclrian.mpe.messdiener.WriteFile;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.pfarrei.Setting.Attribut;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.pfarrei.Setting.*;
+import net.aclrian.mpe.utils.*;
+import org.w3c.dom.*;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.util.List;
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+import java.io.*;
+import java.time.format.*;
+import java.util.*;
 
 public class WriteFilePfarrei {
 
@@ -45,7 +42,7 @@ public class WriteFilePfarrei {
                 stdm.setAttribute("id", String.valueOf(i));
 
                 Element tag = doc.createElement("tag");
-                tag.appendChild(doc.createTextNode(m.getWochentag()));
+                tag.appendChild(doc.createTextNode(m.getWochentag().getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault())));
                 stdm.appendChild(tag);
 
                 Element std = doc.createElement("std");
@@ -113,7 +110,10 @@ public class WriteFilePfarrei {
                     .info("Pfarrei wird gespeichert in: {}", f);
             StreamResult streamResult = new StreamResult(f);
             c.getTransformer().transform(domSource, streamResult);
-            DateienVerwalter.getInstance().removeoldPfarrei(f);
+            boolean notYetStarted = DateienVerwalter.getInstance() != null;
+            if (notYetStarted) {
+                DateienVerwalter.getInstance().removeoldPfarrei(f);
+            }
         } catch (ParserConfigurationException | TransformerException exception) {
             Dialogs.getDialogs().error(exception, "Fehler bei Speichern der Pfarrei:");
         }

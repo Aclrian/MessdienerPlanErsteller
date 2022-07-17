@@ -1,37 +1,32 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import net.aclrian.fx.ATilePane;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import net.aclrian.fx.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.pfarrei.*;
+import net.aclrian.mpe.utils.*;
+import org.junit.*;
+import org.mockito.*;
+import org.testfx.assertions.api.*;
+import org.testfx.framework.junit.*;
+import org.testfx.util.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Collections;
+import java.io.*;
+import java.net.*;
+import java.nio.file.*;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
 
 public class TestStandartmesseController extends ApplicationTest {
 
-    private final StandartMesse standartMesse = new StandartMesse("Mo", 8, "00", "o", 2, "t");
+    private final StandartMesse standartMesse = new StandartMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
     @Mock
     private DateienVerwalter dv;
     @Mock
@@ -114,8 +109,9 @@ public class TestStandartmesseController extends ApplicationTest {
         final File bFile = new File(f.getAbsolutePath(), "b.xml");
         Assertions.assertThat(bFile).exists();
         try {
-            Assertions.assertThat(Files.readString(aFile.toPath())).contains("<Mo-8-00-2>true</Mo-8-00-2>");
-            Assertions.assertThat(Files.readString(bFile.toPath())).contains("<Mo-8-00-2>false</Mo-8-00-2>");
+            String doW = DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault());
+            Assertions.assertThat(Files.readString(aFile.toPath())).contains("<" + doW + "-8-00-2>true</" + doW + "-8-00-2>");
+            Assertions.assertThat(Files.readString(bFile.toPath())).contains("<" + doW + "-8-00-2>false</" + doW + "-8-00-2>");
             Files.delete(aFile.toPath());
             Files.delete(bFile.toPath());
         } catch (IOException e) {

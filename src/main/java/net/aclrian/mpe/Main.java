@@ -1,22 +1,17 @@
 package net.aclrian.mpe;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
-import net.aclrian.mpe.controller.MainController;
-import net.aclrian.mpe.controller.MainController.EnumPane;
-import net.aclrian.mpe.controller.PfarreiController;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.IDateienVerwalter;
-import net.aclrian.mpe.utils.VersionIDHandler;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.scene.*;
+import javafx.scene.image.*;
+import javafx.stage.*;
+import net.aclrian.mpe.controller.*;
+import net.aclrian.mpe.controller.MainController.*;
+import net.aclrian.mpe.utils.*;
 
-import java.util.Objects;
+import java.util.*;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.Log.*;
 
 public class Main extends Application {
     public static final String VERSION_ID = "1.0.2";

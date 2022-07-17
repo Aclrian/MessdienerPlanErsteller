@@ -200,7 +200,8 @@
                                 <exclude>META-INF/*.RSA</exclude>
                             </excludes>
                         </filter>
-                    </filters><artifactSet>
+                    </filters>
+                    <artifactSet>
                     </artifactSet>
                     <artifactSet>
                     </artifactSet>

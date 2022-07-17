@@ -1,31 +1,30 @@
 package net.aclrian.mpe.utils;
 
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
-import javafx.scene.Node;
+import javafx.application.*;
+import javafx.beans.value.*;
+import javafx.collections.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Alert.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import net.aclrian.fx.ASlider;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.pfarrei.Setting;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import net.aclrian.fx.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.pfarrei.*;
 
 import java.awt.*;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URI;
-import java.text.DecimalFormat;
-import java.time.ZoneId;
+import java.io.*;
+import java.net.*;
+import java.text.*;
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.*;
 import java.util.List;
 import java.util.*;
 
@@ -51,7 +50,7 @@ public class Dialogs {
     private Alert alertbuilder(AlertType type, String headertext) {
         Alert a = new Alert(type);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(headertext);
         a.setTitle("MessdienerplanErsteller");
 
@@ -135,7 +134,7 @@ public class Dialogs {
         ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
         Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(string);
         a.setTitle("MessdienerplanErsteller");
         Optional<ButtonType> res = a.showAndWait();
@@ -167,7 +166,7 @@ public class Dialogs {
         ButtonType nobtn = new ButtonType(no, ButtonBar.ButtonData.NO);
         Alert a = new Alert(AlertType.CONFIRMATION, "", yesbtn, cc, nobtn);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(string);
         Optional<ButtonType> res = a.showAndWait();
         if (res.isPresent() && res.get() == cc) return YesNoCancelEnum.CANCEL;
@@ -229,7 +228,7 @@ public class Dialogs {
     }
 
 
-    public List<Date> getDates(String string, String von, String bis) {
+    public List<LocalDate> getDates(String string, String von, String bis) {
         DatePicker d1 = new DatePicker();
         d1.setPromptText(von);
         DatePicker d2 = new DatePicker();
@@ -238,9 +237,7 @@ public class Dialogs {
         hb.setSpacing(20d);
         Alert a = alertbuilder(AlertType.INFORMATION, string, hb);
         ChangeListener<Object> e = (arg0, arg1, arg2) -> {
-            if (d1.getValue() != null && d2.getValue() != null &&
-                    (!Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
-                            .after(Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())))) {
+            if (d1.getValue() != null && d2.getValue() != null && (!d1.getValue().isAfter(d2.getValue()))) {
                 a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
                 return;
             }
@@ -252,9 +249,9 @@ public class Dialogs {
         d2.focusedProperty().addListener(e);
         Optional<ButtonType> o = a.showAndWait();
         if (o.isPresent() && o.get().equals(ButtonType.OK)) {
-            ArrayList<Date> rtn = new ArrayList<>();
-            rtn.add(0, Date.from(d1.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            rtn.add(1, Date.from(d2.getValue().atStartOfDay(ZoneId.systemDefault()).plusDays(1).toInstant()));
+            ArrayList<LocalDate> rtn = new ArrayList<>();
+            rtn.add(0, d1.getValue());
+            rtn.add(1, d2.getValue().plusDays(1));
             return rtn;
         }
         return Collections.emptyList();
@@ -265,8 +262,9 @@ public class Dialogs {
         ort.setPromptText("Ort:");
         TextField typ = new TextField();
         typ.setPromptText("Typ:");
+        List<String> dayOfWeeks = Arrays.stream(DayOfWeek.values()).map(dow -> dow.getDisplayName(TextStyle.FULL, Locale.getDefault())).toList();
         ComboBox<String> wochentag = new ComboBox<>(
-                FXCollections.observableArrayList("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"));
+                FXCollections.observableArrayList(dayOfWeeks));
         wochentag.setPromptText("Wochentag:");
         Slider stunde = new Slider();
         stunde.setMin(0);
@@ -319,7 +317,7 @@ public class Dialogs {
             if (sm != null) {
                 ort.setText(sm.getOrt());
                 typ.setText(sm.getTyp());
-                wochentag.setValue(sm.getWochentag());
+                wochentag.setValue(sm.getWochentag().getDisplayName(TextStyle.FULL, Locale.getDefault()));
                 stunde.setValue(sm.getBeginnStunde());
                 minute.setValue(1);
                 minute.setValue(sm.getBeginnMinute());
@@ -336,7 +334,9 @@ public class Dialogs {
             String min = String.valueOf((int) minute.getValue());
             if (((int) minute.getValue()) < 10)
                 min = "0" + min;
-            return new StandartMesse(wochentag.getValue(), (int) stunde.getValue(), min, ort.getText(),
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault());
+            TemporalAccessor accessor = formatter.parse(wochentag.getValue());
+            return new StandartMesse(DayOfWeek.from(accessor), (int) stunde.getValue(), min, ort.getText(),
                     (int) anz.getValue(), typ.getText());
         }
         return null;
@@ -345,7 +345,7 @@ public class Dialogs {
     public String text(String string, String kurz) {
         TextInputDialog dialog = new TextInputDialog();
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         dialog.setTitle("Eingabe");
         dialog.setHeaderText(string);
         dialog.setContentText(kurz + ":");
@@ -359,7 +359,7 @@ public class Dialogs {
     public Setting chance(Setting s) {
         TextInputDialog dialog = new TextInputDialog();
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         dialog.setTitle("Eingabe");
         dialog.setHeaderText("Anzahl für den " + s.getJahr() + "er Jahrgang ändern");
         dialog.setContentText("neue Anzahl: ");
