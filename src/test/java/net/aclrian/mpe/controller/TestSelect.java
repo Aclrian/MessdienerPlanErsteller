@@ -214,17 +214,44 @@ public class TestSelect extends ApplicationTest {
         Locale.setDefault(tmp);
         WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
+    }
+
+    @Test
+    public void testeMesseRemove(){
+        Dialogs.setDialogs(dialog);
+        DateienVerwalter.setInstance(dv);
+        Pfarrei pf = Mockito.mock(Pfarrei.class);
+        Mockito.when(dv.getPfarrei()).thenReturn(pf);
+        final StandartMesse standartMesse = new StandartMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
+        LocalDate von = LocalDate.of(2020, 10, 1);
+        LocalDate bis = LocalDate.of(2020, 10, 15);
+        Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
+
+        ArrayList<Messe> messen = new ArrayList<>();
+        final Messe m1 = new Messe(false, 1, LocalDateTime.now(), "o", "t");
+        messen.add(m1);
+        messen.add(new Messe(true, 10, LocalDateTime.now(), "o2", "t2"));
+        Mockito.when(mc.getMessen()).thenReturn(messen, messen, Collections.singletonList(m1));
+        Platform.runLater(() -> {
+            URL u = getClass().getResource(MainController.EnumPane.SELECT_MESSE.getLocation());
+            FXMLLoader fl = new FXMLLoader(u);
+            try {
+                instance = new Select(Select.Selecter.MESSE, mc);
+                fl.setController(instance);
+                pane.getChildren().add(fl.load());
+                instance.afterstartup(pane.getScene().getWindow(), mc);
+            } catch (IOException e) {
+                Log.getLogger().error(e.getMessage(), e);
+            }
+        });
+        WaitForAsyncUtils.waitForFxEvents();
         Assertions.assertThat(scene.lookup("#remove")).isInstanceOf(Button.class);
         ((ListView<?>) scene.lookup("#list")).getSelectionModel().select(0);
         Mockito.when(dialog.frage(Mockito.any(), Mockito.any(), Mockito.eq("Löschen"))).thenReturn(true);
-        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
+        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);
         WaitForAsyncUtils.asyncFx(() -> ((Button) scene.lookup("#remove")).fire());
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems().size()).isEqualTo(0);
+        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems().size()).isEqualTo(1);
     }
 }
