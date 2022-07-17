@@ -27,5 +27,4 @@ jobs:
     - name: Test with Maven
       run: xvfb-run mvn -B package --file pom.xml
       env:
-          JAVA_TOOL_OPTIONS: "-Djdk.gtk.version=2 -Duser.language=en -Duser.country=uk"
-          
+          JAVA_TOOL_OPTIONS: "-Duser.language=en -Duser.country=uk"
