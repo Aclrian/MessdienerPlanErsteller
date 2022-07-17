@@ -222,7 +222,11 @@ public class TestSelect extends ApplicationTest {
             ((Button) scene.lookup("#remove")).fire();
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Mockito.verify(mc, Mockito.times(0)).getMessen();
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems().size()).isEqualTo(0);
     }
 }
