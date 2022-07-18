@@ -25,12 +25,12 @@ public class RetryOnError implements TestRule {
             try {
                 base.evaluate();
                 if (currentTry > 0) {
-                    Log.getLogger().info(description.getDisplayName() + ": Success on " + currentTry + "st/nd/rd/th Try");
+                    Log.getLogger().info(description.getDisplayName() + ": Success on " + (currentTry + 1) + "st/nd/rd/th Try");
                 }
             } catch (Throwable t) {
                 if (t instanceof RuntimeException &&
                         t.getMessage().contains("Cannot invoke \"String.toString()\" because the return value of \"javafx.scene.control.ComboBox.getValue()\" is null")) {
-                    Log.getLogger().warn(description.getDisplayName() + ": Error on " + currentTry + "st/nd/rd/th Try: " + t.getMessage(), t);
+                    Log.getLogger().warn(description.getDisplayName() + ": Error on " + (currentTry + 1) + "st/nd/rd/th Try: " + t.getMessage(), t);
                     evaluate(base, description, ++currentTry);
                 } else {
                     throw t;
