@@ -1,5 +1,7 @@
 package net.aclrian.mpe;
 
+import net.aclrian.mpe.utils.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -13,6 +15,7 @@ public class ApplikationStarter {
             Class.forName("javafx.application.Application");
             Main.main(args);
         } catch (ClassNotFoundException e) {
+            Log.getLogger().error(e.getMessage(), e);
             int i = JOptionPane.showConfirmDialog(new JFrame(), "JAVAFX-Komponenten nicht gefunden!\nSoll die Hilfe-Website geöffnet werden?", "MessdienerplanErsteller", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
             if (i == 0) {
                 try {
