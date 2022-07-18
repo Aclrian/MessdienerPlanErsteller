@@ -159,7 +159,7 @@ public class PfarreiController {
             }
             eintritt.setCellValueFactory(new PropertyValueFactory<>("Jahr"));
             eintritt.setStyle(CENTERED);
-            anzahl.setCellValueFactory(new PropertyValueFactory<>("anzDienen"));
+            anzahl.setCellValueFactory(new PropertyValueFactory<>(Setting.ANZAHL_DIENEN_NAME));
             anzahl.setStyle(CENTERED);
             settingTableView.setItems(settings);
             settingTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);

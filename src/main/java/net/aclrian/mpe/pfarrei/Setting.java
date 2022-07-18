@@ -1,11 +1,19 @@
 package net.aclrian.mpe.pfarrei;
 
+import javafx.beans.property.*;
 import net.aclrian.mpe.messdiener.*;
 
 public record Setting(Attribut attribut, int id, int anzahlDienen) {
 
+    // If the Name of anzahlDienen is changed, change it here too!
+    public static final String ANZAHL_DIENEN_NAME = "anzahlDienen";
+
     public Integer getJahr() {
         return Messdaten.getMaxYear() - id;
+    }
+
+    public IntegerProperty anzahlDienenProperty() {
+        return new SimpleIntegerProperty(anzahlDienen);
     }
 
     @Override
