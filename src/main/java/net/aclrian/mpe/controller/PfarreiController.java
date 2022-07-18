@@ -24,8 +24,8 @@ import static net.aclrian.mpe.utils.Log.*;
 
 public class PfarreiController {
 
-    public static final String STANDARTMESSE_FXML = "/view/pfarrei/standardmesse.fxml";
-    public static final String NICHTS_AUSGEWAEHLT = "Bitte eine Standartmesse auswählen:";
+    public static final String STANDARDMESSE_FXML = "/view/pfarrei/standardmesse.fxml";
+    public static final String NICHTS_AUSGEWAEHLT = "Bitte eine Standardmesse auswählen:";
     public static final String MEHR_INFORMATIONEN = "Mehr Informationen";
     public static final String VERSTANDEN = "Verstanden";
     private static final String CENTERED = "-fx-alignment: CENTER;";
@@ -35,25 +35,25 @@ public class PfarreiController {
     @FXML
     private TableView<Setting> settingTableView = new TableView<>();
     @FXML
-    private /*NOT final!*/ TableView<StandartMesse> table = new TableView<>();
+    private /*NOT final!*/ TableView<StandardMesse> table = new TableView<>();
     private String nameS = null;
     private int mediI;
     private int leiterI;
     private boolean hochamtB;
     private String savepath;
-    private ObservableList<StandartMesse> ol = FXCollections.emptyObservableList();
+    private ObservableList<StandardMesse> ol = FXCollections.emptyObservableList();
     private boolean weiter = false;
     private Stage old;
     // ---------------------------------------
     private ObservableList<Setting> settings;
     @FXML
-    private TableColumn<StandartMesse, String> time;
+    private TableColumn<StandardMesse, String> time;
     @FXML
-    private TableColumn<StandartMesse, String> ort;
+    private TableColumn<StandardMesse, String> ort;
     @FXML
-    private TableColumn<StandartMesse, String> typ;
+    private TableColumn<StandardMesse, String> typ;
     @FXML
-    private TableColumn<StandartMesse, String> anz;
+    private TableColumn<StandardMesse, String> anz;
     @FXML
     private TableColumn<Setting, Integer> eintritt;
     @FXML
@@ -83,11 +83,11 @@ public class PfarreiController {
         stage.getIcons().add(new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/title_32.png"))));
         ol = FXCollections.observableArrayList(pf.getStandardMessen());
         ol.removeIf(Sonstiges.class::isInstance);
-        ol.sort(StandartMesse.STANDART_MESSE_COMPARATOR);
+        ol.sort(StandardMesse.STANDARD_MESSE_COMPARATOR);
         settings = FXCollections.observableArrayList(pf.getSettings().getSettings());
         nameS = pf.getName();
-        mediI = pf.getSettings().getDaten(0).getAnzDienen();
-        leiterI = pf.getSettings().getDaten(1).getAnzDienen();
+        mediI = pf.getSettings().getDaten(0).anzahlDienen();
+        leiterI = pf.getSettings().getDaten(1).anzahlDienen();
         hochamtB = pf.zaehlenHochaemterMit();
     }
 
@@ -100,7 +100,7 @@ public class PfarreiController {
     public static void start(Stage stage, String savepath, Main main) {
         FXMLLoader loader = new FXMLLoader();
         PfarreiController cont = new PfarreiController(stage, savepath, main);
-        loader.setLocation(cont.getClass().getResource(STANDARTMESSE_FXML));
+        loader.setLocation(cont.getClass().getResource(STANDARDMESSE_FXML));
         loader.setController(cont);
         Parent root;
         try {
@@ -110,7 +110,7 @@ public class PfarreiController {
             stage.setTitle(Log.PROGRAMM_NAME);
             stage.setResizable(false);
             stage.show();
-            cont.afterstartup();
+            cont.afterStartup();
             Dialogs.getDialogs().info("Willkommen beim MessdienerplanErsteller!", "Als Erstes werden eine Daten benötigt:"
                     + System.lineSeparator()
                     + "Zunächst werden Standardmessen erstellt. Das sind die Messen, die sich wöchentlich wiederholen."
@@ -125,7 +125,7 @@ public class PfarreiController {
     public static void start(Stage stage, Main m, Stage old) {
         FXMLLoader loader = new FXMLLoader();
         PfarreiController cont = new PfarreiController(stage, m, old);
-        loader.setLocation(cont.getClass().getResource(STANDARTMESSE_FXML));
+        loader.setLocation(cont.getClass().getResource(STANDARDMESSE_FXML));
         loader.setController(cont);
         Parent root;
         try {
@@ -136,14 +136,14 @@ public class PfarreiController {
             stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
-            cont.afterstartup();
+            cont.afterStartup();
             getLogger().info("neue Pfarrei erstellen...");
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Auf " + loader.getLocation() + MainController.NO_ACCESS);
         }
     }
 
-    public void afterstartup() {
+    public void afterStartup() {
         if (weiter) {
             ASlider.makeASlider("", leiter, null);
             leiter.setMax(30);
@@ -189,11 +189,11 @@ public class PfarreiController {
         return e -> {
             if (e.getClickCount() == 2 && e.getButton().equals(MouseButton.PRIMARY)) {
                 int i = table.getSelectionModel().getSelectedIndex();
-                StandartMesse standartMesse = Dialogs.getDialogs().standartmesse(ol.get(i));
-                if (standartMesse != null) {
+                StandardMesse standardMesse = Dialogs.getDialogs().standardmesse(ol.get(i));
+                if (standardMesse != null) {
                     ol.remove(i);
-                    ol.add(standartMesse);
-                    ol.sort(StandartMesse.STANDART_MESSE_COMPARATOR);
+                    ol.add(standardMesse);
+                    ol.sort(StandardMesse.STANDARD_MESSE_COMPARATOR);
                 }
             }
         };
@@ -201,7 +201,7 @@ public class PfarreiController {
 
     @FXML
     public void loeschen(ActionEvent e) {
-        StandartMesse a = table.getSelectionModel().getSelectedItem();
+        StandardMesse a = table.getSelectionModel().getSelectedItem();
         if (a != null) {
             ol.removeIf(sm -> sm.toString().equals(a.toString()));
         } else {
@@ -211,7 +211,7 @@ public class PfarreiController {
 
     @FXML
     public void neu(ActionEvent e) {
-        StandartMesse sm = Dialogs.getDialogs().standartmesse(null);
+        StandardMesse sm = Dialogs.getDialogs().standardmesse(null);
         if (ol.isEmpty()) {
             ol = FXCollections.observableArrayList(sm);
             table.setItems(ol);
@@ -229,10 +229,10 @@ public class PfarreiController {
         Einstellungen einst = new Einstellungen();
         einst.editMaxDienen(false, (int) medi.getValue());
         einst.editMaxDienen(true, (int) leiter.getValue());
-        for (int i = 0; i < Einstellungen.LENGHT - 2; i++) {
-            einst.editiereYear(settings.get(i).getId(), settings.get(i).getAnzDienen());
+        for (int i = 0; i < Einstellungen.LENGTH - 2; i++) {
+            einst.editiereYear(settings.get(i).id(), settings.get(i).anzahlDienen());
         }
-        ArrayList<StandartMesse> sm = new ArrayList<>(ol);
+        ArrayList<StandardMesse> sm = new ArrayList<>(ol);
         Pfarrei pf = new Pfarrei(einst, sm, name.getText(), hochamt.isSelected());
         Window s = ((Button) e.getSource()).getParent().getScene().getWindow();
         if (nameS != null)
@@ -269,7 +269,7 @@ public class PfarreiController {
             stage.setTitle("MessdienerplanErsteller");
             stage.setResizable(false);
             stage.show();
-            afterstartup();
+            afterStartup();
             getLogger().info("neue Pfarrei erstellen...weiter");
             if (nameS != null) {
                 name.setText(nameS);
@@ -286,8 +286,9 @@ public class PfarreiController {
     public void weiter(ActionEvent e) {
         weiter();
         Dialogs.getDialogs().open(URI.create(
-                "https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Was-wird-unter-'Anzahl'-verstanden%3F"),
-                "Nun geht es um die Anzahl, wie oft Messdiener eingeteilt werden sollen:" + System.lineSeparator()
+                        "https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Was-wird-unter-'Anzahl'-verstanden%3F"),
+                "Nun geht es um die Anzahl, wie oft Messdiener eingeteilt werden sollen:"
+                        + System.lineSeparator()
                         + "Hier gibt es die maximale Anzahl, bei der zwischen Leitern und normalen Messdienern unterschieden werden kann."
                         + System.lineSeparator()
                         + "Diese beschreibt die Anzahl an Messen, die Messdiener nicht mehr dienen kann, weil dieser schon an genug Messen gedient hat."
@@ -307,7 +308,7 @@ public class PfarreiController {
             hochamtB = hochamt.isSelected();
         }
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource(STANDARTMESSE_FXML));
+        loader.setLocation(getClass().getResource(STANDARDMESSE_FXML));
         loader.setController(this);
         weiter = false;
         Parent root;
@@ -318,7 +319,7 @@ public class PfarreiController {
             stage.setTitle("MessdienerplanErsteller");
             stage.setResizable(false);
             stage.show();
-            afterstartup();
+            afterStartup();
             getLogger().info("neue Pfarrei erstellen...zurück");
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Auf " + loader.getLocation() + MainController.NO_ACCESS);

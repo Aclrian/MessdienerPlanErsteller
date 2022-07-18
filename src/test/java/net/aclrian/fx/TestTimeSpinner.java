@@ -1,30 +1,28 @@
 package net.aclrian.fx;
 
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import org.junit.Test;
-import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
+import javafx.scene.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import net.aclrian.mpe.utils.*;
+import org.junit.*;
+import org.testfx.assertions.api.*;
+import org.testfx.framework.junit.*;
+import org.testfx.util.*;
 
-import java.time.DateTimeException;
-import java.time.LocalTime;
+import java.time.*;
 
 public class TestTimeSpinner extends ApplicationTest {
 
-    private Pane pane;
-
     @Override
     public void start(Stage stage) {
-        pane = new Pane();
+        Pane pane = new Pane();
         Scene scene = new Scene(pane, 10, 10);
         stage.setScene(scene);
         stage.show();
     }
 
     @Test
-    public void testConvertion() {
+    public void testConversion() {
         LocalTime time = LocalTime.of(12, 59);
         Assertions.assertThat(TimeSpinner.converter.toString(time)).isEqualTo("12:59");
         Assertions.assertThat(TimeSpinner.converter.toString(LocalTime.of(0, 0, 0))).isEqualTo("00:00");
@@ -40,8 +38,8 @@ public class TestTimeSpinner extends ApplicationTest {
 
     @Test
     public void testFromString() {
-        Assertions.assertThat(TimeSpinner.converter.fromString("").format(TimeSpinner.dtf)).isEqualTo("00:00");
-        Assertions.assertThat(TimeSpinner.converter.fromString("13:50").format(TimeSpinner.dtf)).isEqualTo("13:50");
+        Assertions.assertThat(TimeSpinner.converter.fromString("").format(DateUtil.TIME)).isEqualTo("00:00");
+        Assertions.assertThat(TimeSpinner.converter.fromString("13:50").format(DateUtil.TIME)).isEqualTo("13:50");
     }
 
     @Test
@@ -50,9 +48,9 @@ public class TestTimeSpinner extends ApplicationTest {
         spinner.getValueFactory().setValue(LocalTime.of(12, 0));
         spinner.increment(2);
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(TimeSpinner.dtf.format(spinner.getValue())).isEqualTo("12:30");
+        Assertions.assertThat(DateUtil.TIME.format(spinner.getValue())).isEqualTo("12:30");
         spinner.decrement();
-        Assertions.assertThat(TimeSpinner.dtf.format(spinner.getValue())).isEqualTo("12:15");
+        Assertions.assertThat(DateUtil.TIME.format(spinner.getValue())).isEqualTo("12:15");
     }
 
 

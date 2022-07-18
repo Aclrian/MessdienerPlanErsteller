@@ -47,7 +47,7 @@ public class Dialogs {
         Dialogs.dialogs = dialogs;
     }
 
-    private Alert alertbuilder(AlertType type, String headertext) {
+    private Alert alertBuilder(AlertType type, String headertext) {
         Alert a = new Alert(type);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
@@ -57,8 +57,8 @@ public class Dialogs {
         return a;
     }
 
-    private Alert alertbuilder(AlertType type, String headertext, Node n) {
-        Alert a = alertbuilder(type, headertext);
+    private Alert alertBuilder(AlertType type, String header, Node n) {
+        Alert a = alertBuilder(type, header);
         a.getDialogPane().setExpandableContent(n);
         a.getDialogPane().setExpanded(true);
 
@@ -67,27 +67,27 @@ public class Dialogs {
 
     public void info(String string) {
         Log.getLogger().info(string);
-        alertbuilder(AlertType.INFORMATION, string).showAndWait();
+        alertBuilder(AlertType.INFORMATION, string).showAndWait();
     }
 
     public void info(String header, String string) {
         Log.getLogger().info(string);
-        Alert a = alertbuilder(AlertType.INFORMATION, header);
+        Alert a = alertBuilder(AlertType.INFORMATION, header);
         a.setContentText(string);
         a.showAndWait();
     }
 
     public void warn(String string) {
         Log.getLogger().warn(string);
-        alertbuilder(AlertType.WARNING, string).showAndWait();
+        alertBuilder(AlertType.WARNING, string).showAndWait();
     }
 
     public void error(String string) {
         Log.getLogger().error(string);
         if (Platform.isFxApplicationThread()) {
-            alertbuilder(AlertType.ERROR, string).showAndWait();
+            alertBuilder(AlertType.ERROR, string).showAndWait();
         } else {
-            Platform.runLater(() -> alertbuilder(AlertType.INFORMATION, string).showAndWait());
+            Platform.runLater(() -> alertBuilder(AlertType.INFORMATION, string).showAndWait());
         }
     }
 
@@ -114,15 +114,15 @@ public class Dialogs {
         vb.getChildren().addAll(l, ta);
 
         if (Platform.isFxApplicationThread()) {
-            alertbuilder(AlertType.ERROR, header, vb).showAndWait();
+            alertBuilder(AlertType.ERROR, header, vb).showAndWait();
 
         } else {
-            Platform.runLater(() -> alertbuilder(AlertType.INFORMATION, string).showAndWait());
+            Platform.runLater(() -> alertBuilder(AlertType.INFORMATION, string).showAndWait());
         }
     }
 
     public void open(URI open, String string) throws IOException {
-        Alert a = alertbuilder(AlertType.CONFIRMATION, string);
+        Alert a = alertBuilder(AlertType.CONFIRMATION, string);
         Optional<ButtonType> res = a.showAndWait();
         if (res.isPresent() && (res.get() == ButtonType.OK)) {
             Desktop.getDesktop().browse(open);
@@ -148,12 +148,12 @@ public class Dialogs {
     }
 
     public boolean frage(String string) {
-        Optional<ButtonType> res = alertbuilder(AlertType.CONFIRMATION, string).showAndWait();
+        Optional<ButtonType> res = alertBuilder(AlertType.CONFIRMATION, string).showAndWait();
         return res.isPresent() && (res.get() == ButtonType.OK);
     }
 
     public boolean frage(String string, String cancel, String ok) {
-        Alert a = alertbuilder(AlertType.CONFIRMATION, string);
+        Alert a = alertBuilder(AlertType.CONFIRMATION, string);
         ((Button) a.getDialogPane().lookupButton(ButtonType.CANCEL)).setText(cancel);
         ((Button) a.getDialogPane().lookupButton(ButtonType.OK)).setText(ok);
         Optional<ButtonType> res = a.showAndWait();
@@ -187,7 +187,7 @@ public class Dialogs {
             b.setToggleGroup(g);
             v.getChildren().add(b);
         }
-        alertbuilder(AlertType.INFORMATION, s, v).showAndWait();
+        alertBuilder(AlertType.INFORMATION, s, v).showAndWait();
         if (g.getSelectedToggle() instanceof ARadioButton) {
             return ((ARadioButton<?>) g.getSelectedToggle()).getI();
         }
@@ -195,7 +195,7 @@ public class Dialogs {
     }
 
     public <I> List<I> select(List<I> dataAmBestenSortiert, List<I> selected, String string) {
-        Alert a = alertbuilder(AlertType.INFORMATION, string);
+        Alert a = alertBuilder(AlertType.INFORMATION, string);
         ListView<CheckBox> lw = new ListView<>();
         ArrayList<I> rtn = new ArrayList<>();
         for (I item : dataAmBestenSortiert) {
@@ -207,7 +207,7 @@ public class Dialogs {
                     break;
                 }
             }
-            String s = item instanceof StandartMesse sm ? sm.tolangerBenutzerfreundlichenString() : item.toString();
+            String s = item instanceof StandardMesse sm ? sm.toLangerBenutzerfreundlichenString() : item.toString();
             CheckBox ch = new CheckBox(s);
             ch.setSelected(b);
             ch.selectedProperty().addListener((arg0, oldB, neuB) -> {
@@ -235,7 +235,7 @@ public class Dialogs {
         d2.setPromptText(bis);
         HBox hb = new HBox(d1, d2);
         hb.setSpacing(20d);
-        Alert a = alertbuilder(AlertType.INFORMATION, string, hb);
+        Alert a = alertBuilder(AlertType.INFORMATION, string, hb);
         ChangeListener<Object> e = (arg0, arg1, arg2) -> {
             if (d1.getValue() != null && d2.getValue() != null && (!d1.getValue().isAfter(d2.getValue()))) {
                 a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
@@ -257,7 +257,7 @@ public class Dialogs {
         return Collections.emptyList();
     }
 
-    public StandartMesse standartmesse(StandartMesse sm) {
+    public StandardMesse standardmesse(StandardMesse sm) {
         TextField ort = new TextField();
         ort.setPromptText("Ort:");
         TextField typ = new TextField();
@@ -283,7 +283,7 @@ public class Dialogs {
 
         VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz);
         v.setSpacing(20);
-        Alert a = alertbuilder(AlertType.INFORMATION, "Neue Standartmesse erstellen:");
+        Alert a = alertBuilder(AlertType.INFORMATION, "Neue Standardmesse erstellen:");
 
         ChangeListener<Object> e = (arg0, arg1, arg2) -> {
             try {
@@ -334,9 +334,8 @@ public class Dialogs {
             String min = String.valueOf((int) minute.getValue());
             if (((int) minute.getValue()) < 10)
                 min = "0" + min;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault());
-            TemporalAccessor accessor = formatter.parse(wochentag.getValue());
-            return new StandartMesse(DayOfWeek.from(accessor), (int) stunde.getValue(), min, ort.getText(),
+            TemporalAccessor accessor = DateUtil.DAY_OF_WEEK_LONG.parse(wochentag.getValue());
+            return new StandardMesse(DayOfWeek.from(accessor), (int) stunde.getValue(), min, ort.getText(),
                     (int) anz.getValue(), typ.getText());
         }
         return null;
@@ -373,7 +372,7 @@ public class Dialogs {
                 Dialogs.getDialogs().warn("Bitte eine Zahl zwischen 0 und 31 eingeben.");
                 return Dialogs.getDialogs().chance(s);
             }
-            return new Setting(s.getAttribut(), s.getId(), anz);
+            return new Setting(s.attribut(), s.id(), anz);
         } catch (Exception e) {
             Dialogs.getDialogs().warn(result.get() + " ist keine gültige Ganzzahl");
             return s;
@@ -383,7 +382,7 @@ public class Dialogs {
     public void show(List<?> list, String string) {
         ListView<?> lv = new ListView<>(FXCollections.observableArrayList(list));
         lv.setId("list");
-        alertbuilder(AlertType.INFORMATION, string, lv).showAndWait();
+        alertBuilder(AlertType.INFORMATION, string, lv).showAndWait();
     }
 
     public List<Messdiener> select(List<Messdiener> data, Messdiener without, List<Messdiener> freund, String s) {
@@ -399,7 +398,7 @@ public class Dialogs {
         private final I i;
 
         private ARadioButton(I i) {
-            super(i instanceof StandartMesse sm ? sm.tolangerBenutzerfreundlichenString() : i.toString());
+            super(i instanceof StandardMesse sm ? sm.toLangerBenutzerfreundlichenString() : i.toString());
             this.i = i;
         }
 

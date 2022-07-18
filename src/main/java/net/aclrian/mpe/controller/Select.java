@@ -15,7 +15,7 @@ import java.time.*;
 import java.util.*;
 
 public class Select implements Controller {
-    private final Selecter selecter;
+    private final Selector selector;
     private final MainController mc;
     public static final String GENERIEREN_ID = "generierenID";
     public static final String ZEITRAUM_WAEHLEN = "Für welchen Zeitraum sollen Messen generiert werden?";
@@ -36,14 +36,14 @@ public class Select implements Controller {
     @FXML
     private Button remove;
 
-    public Select(Selecter selecter, MainController mc) {
-        this.selecter = selecter;
+    public Select(Selector selector, MainController mc) {
+        this.selector = selector;
         this.mc = mc;
     }
 
     public static List<Messe> generiereDefaultMessen(LocalDate anfang, LocalDate ende) {
         ArrayList<Messe> rtn = new ArrayList<>();
-        for (StandartMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
+        for (StandardMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
             if (!(sm instanceof Sonstiges)) {
                 // clone LocalDates
                 LocalDate start = LocalDate.now();
@@ -54,12 +54,12 @@ public class Select implements Controller {
                 rtn.addAll(m);
             }
         }
-        rtn.sort(Messe.compForMessen);
+        rtn.sort(Messe.MESSE_COMPARATOR);
         Log.getLogger().info("DefaultMessen generiert");
         return rtn;
     }
 
-    public static List<Messe> optimieren(LocalDate start, StandartMesse sm, LocalDate end, List<Messe> mes) {
+    public static List<Messe> optimieren(LocalDate start, StandardMesse sm, LocalDate end, List<Messe> mes) {
         if (start.isBefore(end) && !(sm instanceof Sonstiges)) {
             if (start.getDayOfWeek().compareTo(sm.getWochentag()) == 0) {
                 LocalDateTime messeTime = start.atTime(sm.getBeginnStunde(), sm.getBeginnMinute());
@@ -80,13 +80,13 @@ public class Select implements Controller {
     }
 
     @Override
-    public void afterstartup(Window window, MainController mc) {
+    public void afterStartup(Window window, MainController mc) {
         neu.setOnAction(e -> neu());
-        if (selecter == Selecter.MESSDIENER) {
+        if (selector == Selector.MESSDIENER) {
             text.setText("Messdiener anzeigen & bearbeiten");
             list.getItems().removeIf(t -> true);
             messdiener(window, mc);
-        } else if (selecter == Selecter.MESSE) {
+        } else if (selector == Selector.MESSE) {
             Button generieren = new Button();
             generieren.setId(GENERIEREN_ID);
             generieren.setText("Messen generieren");
@@ -96,40 +96,40 @@ public class Select implements Controller {
     }
 
     private void messe(MainController mc, Button generieren) {
-        List<Messe> datam = mc.getMessen();
-        generieren.setOnAction(getEventHandlerGenerateForMesse(datam));
+        List<Messe> messen = mc.getMessen();
+        generieren.setOnAction(getEventHandlerGenerateForMesse(messen));
         pane.getChildren().add(generieren);
 
         updateMesse(mc.getMessen());
         list.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && (mouseEvent.getClickCount() == 2)) {
                 int i = list.getSelectionModel().getSelectedIndex();
-                if (i >= 0 && i < datam.size()) mc.changePaneMesse(datam.get(i));
+                if (i >= 0 && i < messen.size()) mc.changePaneMesse(messen.get(i));
             }
         });
         bearbeiten.setOnAction(e -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && i < datam.size()) mc.changePaneMesse(datam.get(i));
+            if (i >= 0 && i < messen.size()) mc.changePaneMesse(messen.get(i));
         });
         remove.setOnAction(arg0 -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && (list.getSelectionModel().getSelectedItem().getText().replace("\t\t", "\t").equals(datam.get(i).toString()))) {
-                datam.remove(i);
+            if (i >= 0 && (list.getSelectionModel().getSelectedItem().getText().replace("\t\t", "\t").equals(messen.get(i).toString()))) {
+                messen.remove(i);
                 updateMesse(mc.getMessen());
             }
         });
     }
 
-    private EventHandler<ActionEvent> getEventHandlerGenerateForMesse(List<Messe> datam) {
+    private EventHandler<ActionEvent> getEventHandlerGenerateForMesse(List<Messe> messen) {
         return arg0 -> {
             List<LocalDate> daten = Dialogs.getDialogs().getDates(ZEITRAUM_WAEHLEN,
                     VON, BIS);
             if (!daten.isEmpty()) {
                 try {
-                    datam.addAll(Select.generiereDefaultMessen(daten.get(0), daten.get(1)));
-                    datam.sort(Messe.compForMessen);
+                    messen.addAll(Select.generiereDefaultMessen(daten.get(0), daten.get(1)));
+                    messen.sort(Messe.MESSE_COMPARATOR);
                     ArrayList<Label> l = new ArrayList<>();
-                    for (Messe m : datam) {
+                    for (Messe m : messen) {
                         l.add(new Label(m.getID().replace("\t", "\t\t")));
                     }
                     list.getItems().removeIf(p -> true);
@@ -143,7 +143,7 @@ public class Select implements Controller {
 
     private void messdiener(Window window, MainController mc) {
         List<Messdiener> data = DateienVerwalter.getInstance().getMessdiener();
-        data.sort(Messdiener.compForMedis);
+        data.sort(Messdiener.MESSDIENER_COMPARATOR);
         for (Messdiener datum : data) {
             list.getItems().add(new Label(datum.toString()));
         }
@@ -163,23 +163,23 @@ public class Select implements Controller {
             if (i >= 0 && (list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString()))
                     && MediController.remove(data.get(i))) {
                 DateienVerwalter.getInstance().reloadMessdiener();
-                afterstartup(window, mc);
+                afterStartup(window, mc);
             }
         });
     }
 
-    private void updateMesse(List<Messe> datam) {
+    private void updateMesse(List<Messe> messen) {
         list.getItems().removeIf(t -> true);
-        datam.sort(Messe.compForMessen);
-        for (Messe messe : datam) {
+        messen.sort(Messe.MESSE_COMPARATOR);
+        for (Messe messe : messen) {
             list.getItems().add(new Label(messe.getID().replace("\t", "\t\t")));
         }
     }
 
     public void neu() {
-        if (selecter == Selecter.MESSDIENER)
+        if (selector == Selector.MESSDIENER)
             mc.changePaneMessdiener(null);
-        else if (selecter == Selecter.MESSE) mc.changePaneMesse(null);
+        else if (selector == Selector.MESSE) mc.changePaneMesse(null);
     }
 
     @Override
@@ -187,7 +187,7 @@ public class Select implements Controller {
         return false;
     }
 
-    public enum Selecter {
+    public enum Selector {
         MESSDIENER, MESSE
     }
 }

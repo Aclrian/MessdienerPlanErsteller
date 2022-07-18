@@ -21,7 +21,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
 import java.time.*;
-import java.time.format.*;
 import java.util.List;
 import java.util.*;
 
@@ -62,8 +61,8 @@ public class FinishController implements Controller {
             if (i == 0) {
                 LocalDateTime start = messe.getDate();
                 LocalDateTime ende = messen.get(messen.size() - 1).getDate();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd. MMMM");
-                titel = "Messdienerplan vom " + formatter.format(start) + " bis " + formatter.format(ende);
+
+                titel = "Messdienerplan vom " + DateUtil.DATE_SHORT.format(start) + " bis " + DateUtil.DATE_SHORT.format(ende);
                 s.append("<h1>").append(titel).append("</h1>");
             }
             s.append("<p>").append(m1).append("</p>");
@@ -76,7 +75,7 @@ public class FinishController implements Controller {
                 nichtEingeteile.add(medi);
             }
         }
-        nichtEingeteile.sort(Messdiener.compForMedis);
+        nichtEingeteile.sort(Messdiener.MESSDIENER_COMPARATOR);
 
         final String office_home = System.getenv("OFFICE_HOME");
         if (office_home != null && !office_home.isEmpty()) {
@@ -91,8 +90,8 @@ public class FinishController implements Controller {
     }
 
     @Override
-    public void afterstartup(Window window, MainController mc) {
-        nichteingeteilte.setOnAction(event -> nichteingeteilte());
+    public void afterStartup(Window window, MainController mc) {
+        nichteingeteilte.setOnAction(event -> openNichtEingeteilteMessdiener());
         editor.setHtmlText(fertig);
         zurueck.setOnAction(p -> zurueck(mc));
     }
@@ -120,11 +119,11 @@ public class FinishController implements Controller {
         mc.setMesse(messen, pane);
     }
 
-    private void nichteingeteilte() {
+    private void openNichtEingeteilteMessdiener() {
         Dialogs.getDialogs().show(nichtEingeteile, NICHT_EINGETEILTE_MESSDIENER);
     }
 
-    public List<Messdiener> getNichtEingeteile() {
+    public List<Messdiener> getNichtEingeteilteMessdiener() {
         return nichtEingeteile;
     }
 
@@ -251,16 +250,15 @@ public class FinishController implements Controller {
         // neuer Monat:
         LocalDate nextMonth = messen.get(0).getDate().toLocalDate();
         nextMonth = nextMonth.plusMonths(1);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         if (Log.getLogger().isDebugEnabled()) {
-            Log.getLogger().info("nächster Monat bei: {}", formatter.format(nextMonth));
+            Log.getLogger().info("nächster Monat bei: {}", DateUtil.DATE.format(nextMonth));
         }
         // EIGENTLICHER ALGORYTHMUS
         for (Messe me : messen) {
             if (me.getDate().toLocalDate().isAfter(nextMonth)) {
                 nextMonth = nextMonth.plusMonths(1);
                 if (Log.getLogger().isDebugEnabled()) {
-                    Log.getLogger().info("nächster Monat: Es ist {}", formatter.format(me.getDate().toLocalDate()));
+                    Log.getLogger().info("nächster Monat: Es ist {}", DateUtil.DATE.format(me.getDate().toLocalDate()));
                 }
                 for (Messdiener messdiener : hauptarray) {
                     messdiener.getMessdaten().naechsterMonat();
@@ -312,15 +310,15 @@ public class FinishController implements Controller {
 
         if (!(m.getStandardMesse() instanceof Sonstiges)) {
             if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
-                    + " werden benötigt.\nSollen Messdiener eingeteilt werden, die standartmäßig die Messe \n'"
-                    + m.getStandardMesse().tokurzerBenutzerfreundlichenString()
+                    + " werden benötigt.\nSollen Messdiener eingeteilt werden, die standardmäßig die Messe \n'"
+                    + m.getStandardMesse().toKurzerBenutzerfreundlichenString()
                     + "' dienen können, aber deren Anzahl schon zu hoch ist?")) {
                 zwang(m, false, true, " einteilen ohne Anzahl beachten");
             }
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyy");
+
             if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
                     + " werden benötigt.\nSollen Messdiener eingeteilt werden, die an dem Tag \n'"
-                    + formatter.format(m.getDate()) + "' dienen können?")) {
+                    + DateUtil.DATE.format(m.getDate()) + "' dienen können?")) {
                 zwang(m, false, false, " einteilen ohne Standardmesse beachten");
             }
         }
@@ -364,12 +362,12 @@ public class FinishController implements Controller {
         }
     }
 
-    public List<Messdiener> get(StandartMesse sm, Messe m, boolean zwangdate, boolean zwanganz) {
+    public List<Messdiener> get(StandardMesse sm, Messe m, boolean zwangdate, boolean zwanganz) {
         ArrayList<Messdiener> allForSMesse = new ArrayList<>();
         for (Messdiener medi : hauptarray) {
             int id = medi.istLeiter() ? 1 : 0;
             if (medi.getDienverhalten().getBestimmtes(sm)
-                    && DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).getAnzDienen() != 0
+                    && DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).anzahlDienen() != 0
                     && medi.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz)) {
                 allForSMesse.add(medi);
             }

@@ -1,52 +1,50 @@
 package net.aclrian.mpe.messdiener;
 
-import java.util.Comparator;
+import net.aclrian.mpe.messe.*;
 
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.messe.StandartMesse;
+import java.util.*;
 
 /**
  * Klasse fuer das {@link Messverhalten}
- * 
- * @author Aclrian
  *
+ * @author Aclrian
  */
 public class KannWelcheMesse {
-	public static final Comparator<KannWelcheMesse> sort = (o1, o2) -> {
-		StandartMesse sm1 = o1.messe;
-		StandartMesse sm2 = o2.messe;
-		return sm1.toString().compareToIgnoreCase(sm2.toString());
-	};
-	private StandartMesse messe;
-	private boolean kanndann;
+    public static final Comparator<KannWelcheMesse> sort = (o1, o2) -> {
+        StandardMesse sm1 = o1.messe;
+        StandardMesse sm2 = o2.messe;
+        return sm1.toString().compareToIgnoreCase(sm2.toString());
+    };
+    private StandardMesse messe;
+    private boolean kannDann;
 
-	public StandartMesse getMesse() {
-		return this.messe;
-	}
+    public KannWelcheMesse(StandardMesse messe, boolean kann) {
+        setMesse(messe);
+        setKannDann(kann);
+    }
 
-	public void setMesse(StandartMesse messe) {
-		this.messe = messe;
-	}
+    public StandardMesse getMesse() {
+        return this.messe;
+    }
 
-	public boolean isKanndann() {
-		return kanndann;
-	}
+    public void setMesse(StandardMesse messe) {
+        this.messe = messe;
+    }
 
-	public void setKanndann(boolean kanndann) {
-		this.kanndann = kanndann;
-	}
+    public boolean kannDann() {
+        return kannDann;
+    }
 
-	public KannWelcheMesse(StandartMesse messe, boolean kann) {
-		setMesse(messe);
-		setKanndann(kann);
-	}
+    public void setKannDann(boolean kannDann) {
+        this.kannDann = kannDann;
+    }
 
-	@Override
-	public String toString() {
-		return messe.toString() + ":" + kanndann;
-	}
+    @Override
+    public String toString() {
+        return messe.toString() + ":" + kannDann;
+    }
 
-	public String getString() {
-		return messe.tokurzerBenutzerfreundlichenString();
-	}
+    public String getString() {
+        return messe.toKurzerBenutzerfreundlichenString();
+    }
 }

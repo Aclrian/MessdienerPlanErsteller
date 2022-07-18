@@ -2,7 +2,7 @@ package net.aclrian.mpe.messe;
 
 import java.time.*;
 
-public class Sonstiges extends StandartMesse {
+public class Sonstiges extends StandardMesse {
 
     public static final String SONSTIGES_STRING = "Sonstiges";
 
@@ -16,12 +16,12 @@ public class Sonstiges extends StandartMesse {
     }
 
     @Override
-    public String tolangerBenutzerfreundlichenString() {
+    public String toLangerBenutzerfreundlichenString() {
         return SONSTIGES_STRING;
     }
 
     @Override
-    public String tokurzerBenutzerfreundlichenString() {
+    public String toKurzerBenutzerfreundlichenString() {
         return SONSTIGES_STRING;
     }
 }

@@ -1,63 +1,75 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-	<meta name="description" content="Eine kurze Begriffserklärung zum Messdienerplan erstellen"/>
-	<meta name="keywords" content="Messdienerplan, erstellen, generieren, Plan, Messdiener, Kaarst"/>
-	<meta charset="utf-8"/>
-	<meta name="language" content="German, de, deutsch"/>
-	<meta name="robots" content="index, follow"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<link rel="icon"
-		  href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/resources/images/title_32.png"/>
-	<link rel="stylesheet" href="./css/styles.css">
-	<script src="./js/main.js"></script>
-	<title>Erklärung zu Messdienerplan erstellen</title>
+    <meta content="Eine kurze Begriffserklärung zum Messdienerplan erstellen" name="description"/>
+    <meta content="Messdienerplan, erstellen, generieren, Plan, Messdiener, Kaarst" name="keywords"/>
+    <meta charset="utf-8"/>
+    <meta content="German, de, deutsch" name="language"/>
+    <meta content="index, follow" name="robots"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/resources/images/title_32.png"
+          rel="icon"/>
+    <link href="./css/styles.css" rel="stylesheet">
+    <script src="./js/main.js"></script>
+    <title>Erklärung zu Messdienerplan erstellen</title>
 </head>
 <body onLoad="append()">
-	<div id="main">
-		<div id="head3">
-			<a href="./index.html"><h1>MessdienerplanErsteller</h1></a>
-			<div id="uheader3">
-				<a href="./download.html" class="btn ni left"><span>Download</span></a>
-				<h2 class="center">Begriffserklärung</h2>
-				<a href="https://github.com/Aclrian/MessdienerPlanErsteller/" class="btn ni right"><span>Source-Code</span></a>
-			</div>
-		</div><!--Begriffserklärung Standartmesse, Anzahl-->
-		<div id="inhalt">
-			<div id="anzahl">
-				<h3>Anzahl</h3>
-				<p>Dies Anzahl an gedienten Messen wird zwischen 2 Arten dieser unterschieden:</p>
-    			<ul>
-					<li><h4>maximale Anzahl:</h4>
-					<p>Diese Anzahl kommt nur dann zu Gewicht, wenn es ein einem Monat<br/>Sie kann zwischen Leitern und normalen Messdienern unterschieden werden, sodass bspw. Leiter nicht automatisch eingeteilt werden, wenn deren Wert auf 0 liegt. Wenn der Wert vom Eintrittsjahr höher als gespeichert werden kann (aktuell 18 Jahre), wird das älteste, mögliche Eintrittsjahr genommen.</p>
-					</li>
-    				<li><h4>Anzahl nach Eintrittsjahr:</h4>
-					<p>Die Anzahl nach Eintrittsjahr gibt, an wie häufig Messdiener des jeweiligen Jahrgangs generell eingeteilt werden. Dabei ist zu beachten, dass jedes Jahr ein Messdiener in die nächst-höhere Gruppe kommt. So wird es möglich neuere Messdiener häufiger einzuteilen, um ihnen die nötige Ehrfahrung zu geben.<br/>
-					Wenn nun Messdiener in Messen eingeteilt werden, wird bei jedem Mal, wenn ein Messdiener eingeteilt wird, die Anzahl, wie oft dieser im Monat schon gedient hat, um 1 erhöht. Diese wird auf 0 gesetzt, wenn der Monat endet.</p>
-					</li>
-				</ul>
-			</div>
-			<div id="standartmesse">
-				<h3>Standartmesse</h3>
-				<p>Dies sind Messen, die sich wöchentlich in einer Pfarrei wiederholen und von denen Messdienern ihre
-					Vorlieben angeben können. Sie können selber eingegeben werden und werden in der Datei mit der Endung
-					<em>.xml.pfarrei</em> gespeichert. Darin steht die Uhrzeit, Wochentag, Ort, Typ und die Anzahl der
-					Messdiener.<br/>
-					Bei Messen, die keine Standartmesse haben, steht als Platzhalter <em>Sonstiges</em>. Bei solchen
-					Messen gibt es keine Messdiener, die wegen dieser nicht vorhandenen Standartmesse nicht dienen
-					können. Anders formuliert: Jeder favorisiert die sonstigen Messen.</p>
-			</div>
-		</div>
-		<div id="footer">
-			<a href="./index.html">Startseite</a>
-			<a href="./galerie.html">Galerie</a>
-			<div><p style="font-size: min(2vw, 20px)">Diese Website und das gesamte Projekt steht unter der <a href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/LICENSE">MIT-Lizenz:</a><br>
-			Daher gilt u.a. für die Benutzung: "THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND" (dt. "Die Software wird "so wie sie ist" bereitgestellt, ohne jeglicher Art der Garantie / ohne Gewähr" [gültig ist nur die englische Version]).</p>
-			<style type="text/css"></style>
-			<p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p></div>
-			<p class="email">info@MessdienerplanErsteller.com</p>
-		</div>
-			</div>
-	</div>
+<div id="main">
+    <div id="head3">
+        <a href="./index.html"><h1>MessdienerplanErsteller</h1></a>
+        <div id="uheader3">
+            <a class="btn ni left" href="./download.html"><span>Download</span></a>
+            <h2 class="center">Begriffserklärung</h2>
+            <a class="btn ni right"
+               href="https://github.com/Aclrian/MessdienerPlanErsteller/"><span>Source-Code</span></a>
+        </div>
+    </div><!--Begriffserklärung Standardmesse, Anzahl-->
+    <div id="inhalt">
+        <div id="anzahl">
+            <h3>Anzahl</h3>
+            <p>Dies Anzahl an gedienten Messen wird zwischen 2 Arten dieser unterschieden:</p>
+            <ul>
+                <li><h4>maximale Anzahl:</h4>
+                    <p>Diese Anzahl kommt nur dann zu Gewicht, wenn es ein einem Monat<br/>Sie kann zwischen Leitern
+                        und normalen Messdienern unterschieden werden, sodass bspw. Leiter nicht automatisch
+                        eingeteilt werden, wenn deren Wert auf 0 liegt. Wenn der Wert vom Eintrittsjahr höher als
+                        gespeichert werden kann (aktuell 18 Jahre), wird das älteste, mögliche Eintrittsjahr
+                        genommen.</p>
+                </li>
+                <li><h4>Anzahl nach Eintrittsjahr:</h4>
+                    <p>Die Anzahl nach Eintrittsjahr gibt, an wie häufig Messdiener des jeweiligen Jahrgangs
+                        generell eingeteilt werden. Dabei ist zu beachten, dass jedes Jahr ein Messdiener in die
+                        nächst-höhere Gruppe kommt. So wird es möglich neuere Messdiener häufiger einzuteilen, um
+                        ihnen die nötige Ehrfahrung zu geben.<br/>
+                        Wenn nun Messdiener in Messen eingeteilt werden, wird bei jedem Mal, wenn ein Messdiener
+                        eingeteilt wird, die Anzahl, wie oft dieser im Monat schon gedient hat, um 1 erhöht. Diese
+                        wird auf 0 gesetzt, wenn der Monat endet.</p>
+                </li>
+            </ul>
+        </div>
+        <div id="Standardmesse">
+            <h3>Standardmesse</h3>
+            <p>Dies sind Messen, die sich wöchentlich in einer Pfarrei wiederholen und von denen Messdienern ihre
+                Vorlieben angeben können. Sie können selber eingegeben werden und werden in der Datei mit der Endung
+                <em>.xml.pfarrei</em> gespeichert. Darin steht die Uhrzeit, Wochentag, Ort, Typ und die Anzahl der
+                Messdiener.<br/>
+                Bei Messen, die keine Standardmesse haben, steht als Platzhalter <em>Sonstiges</em>. Bei solchen
+                Messen gibt es keine Messdiener, die wegen dieser nicht vorhandenen Standardmesse nicht dienen
+                können. Anders formuliert: Jeder favorisiert die sonstigen Messen.</p>
+        </div>
+    </div>
+    <div id="footer">
+        <a href="./index.html">Startseite</a>
+        <a href="./galerie.html">Galerie</a>
+        <div><p style="font-size: min(2vw, 20px)">Diese Website und das gesamte Projekt steht unter der <a
+                href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/LICENSE">MIT-Lizenz:</a><br>
+            Daher gilt u.a. für die Benutzung: "THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND" (dt.
+            "Die Software wird "so wie sie ist" bereitgestellt, ohne jeglicher Art der Garantie / ohne Gewähr"
+            [gültig ist nur die englische Version]).</p>
+            <p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p>
+        </div>
+        <p class="email">info@MessdienerplanErsteller.com</p>
+    </div>
+</div>
 </body>
 </html>

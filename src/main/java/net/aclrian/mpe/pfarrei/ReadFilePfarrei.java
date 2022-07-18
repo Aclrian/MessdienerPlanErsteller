@@ -9,7 +9,6 @@ import javax.xml.*;
 import javax.xml.parsers.*;
 import java.io.*;
 import java.time.*;
-import java.time.format.*;
 import java.time.temporal.*;
 import java.util.*;
 import java.util.regex.*;
@@ -23,7 +22,7 @@ public class ReadFilePfarrei {
         Pfarrei pf = null;
         File fXmlFile = new File(pfadMitDateiundmitEndung);
         String s = fXmlFile.getAbsolutePath();
-        if (s.endsWith(DateienVerwalter.PFARREDATEIENDUNG)) {
+        if (s.endsWith(DateienVerwalter.PFARREI_DATEIENDUNG)) {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newDefaultInstance();
             dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
@@ -37,18 +36,18 @@ public class ReadFilePfarrei {
 
                 String name;
                 boolean hochaemter;
-                ArrayList<StandartMesse> sm = new ArrayList<>();
+                ArrayList<StandardMesse> sm = new ArrayList<>();
                 Einstellungen einst = new Einstellungen();
 
-                // Standartmessen
+                // Standardmessen
                 NodeList nL = doc.getElementsByTagName("std_messe");
                 for (int j = 0; j < nL.getLength(); j++) {
                     Node nsm = nL.item(j);
                     if (nsm.getNodeType() == 1) {
                         Element eElement = (Element) nsm;
                         String tag = eElement.getElementsByTagName("tag").item(0).getTextContent();
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ccc", Locale.getDefault());
-                        TemporalAccessor accessor = formatter.parse(tag);
+
+                        TemporalAccessor accessor = DateUtil.SHORT_STANDALONE.parse(tag);
                         DayOfWeek dow = DayOfWeek.from(accessor);
                         int std = Integer
                                 .parseInt(eElement.getElementsByTagName("std").item(0).getTextContent());
@@ -57,14 +56,14 @@ public class ReadFilePfarrei {
                         int anz = Integer
                                 .parseInt(eElement.getElementsByTagName("anz").item(0).getTextContent());
                         String typ = eElement.getElementsByTagName("typ").item(0).getTextContent();
-                        StandartMesse stdm = new StandartMesse(dow, std, min, ort, anz, typ);
+                        StandardMesse stdm = new StandardMesse(dow, std, min, ort, anz, typ);
                         sm.add(stdm);
                     }
                 }
                 hochaemter = readEinstellungen(einst, doc);
                 String[] s2 = pfadMitDateiundmitEndung.split(Pattern.quote(File.separator));
                 name = s2[s2.length - 1];
-                name = name.substring(0, name.length() - DateienVerwalter.PFARREDATEIENDUNG.length());
+                name = name.substring(0, name.length() - DateienVerwalter.PFARREI_DATEIENDUNG.length());
                 name = name.replace("_", " ");
                 sm.add(new Sonstiges());
                 pf = new Pfarrei(einst, sm, name, hochaemter);
@@ -101,7 +100,7 @@ public class ReadFilePfarrei {
         if (eE.hasAttribute("year")) {
             String id = eE.getAttribute("year");
             int i = Integer.parseInt(id);
-            if (i < Einstellungen.LENGHT && i > -1) {
+            if (i < Einstellungen.LENGTH && i > -1) {
                 einst.editiereYear(i, anz);
             } else
                 Log.getLogger().info("id ist zu groß!");

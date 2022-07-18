@@ -1,12 +1,9 @@
 package net.aclrian.mpe.messe;
 
-import net.aclrian.mpe.messdiener.KannWelcheMesse;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.utils.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Speicher das Messverhalten eines Messdieners
@@ -17,9 +14,9 @@ public class Messverhalten {
     private ArrayList<KannWelcheMesse> messen = new ArrayList<>();
 
     public Messverhalten() {
-        for (StandartMesse standartMesse : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
-            if (!(standartMesse instanceof Sonstiges)) {
-                this.messen.add(new KannWelcheMesse(standartMesse, false));
+        for (StandardMesse StandardMesse : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
+            if (!(StandardMesse instanceof Sonstiges)) {
+                this.messen.add(new KannWelcheMesse(StandardMesse, false));
             }
         }
     }
@@ -36,35 +33,35 @@ public class Messverhalten {
         return messen;
     }
 
-    public void editiereBestimmteMesse(StandartMesse messe, boolean kann) {
+    public void editiereBestimmteMesse(StandardMesse messe, boolean kann) {
         if (messe instanceof Sonstiges || getBestimmtes(messe) == kann) {
             return;
         }
-        int gefundenbei;
+        int gefundenBei;
         for (int i = 0; i < messen.size(); i++) {
-            StandartMesse sm = messen.get(i).getMesse();
+            StandardMesse sm = messen.get(i).getMesse();
             if (messe.toString().equals(sm.toString())) {
-                gefundenbei = i;
-                messen.remove(gefundenbei);
+                gefundenBei = i;
+                messen.remove(gefundenBei);
                 messen.add(new KannWelcheMesse(messe, kann));
                 return;
             }
         }
-        Log.getLogger().warn("Standartmesse nicht gefunden: {}", messe);
+        Log.getLogger().warn("Standardmesse nicht gefunden: {}", messe);
     }
 
     /**
      * @param messe EnumdeafualtMesse
-     * @return ob der Messdiener zu der standart Messe kann
+     * @return ob der Messdiener zu der Standard Messe kann
      */
-    public boolean getBestimmtes(StandartMesse messe) {
+    public boolean getBestimmtes(StandardMesse messe) {
         if (messe instanceof Sonstiges) {
             return true;
         }
         for (KannWelcheMesse kwm : messen) {
-            StandartMesse sm = kwm.getMesse();
+            StandardMesse sm = kwm.getMesse();
             if (sm.toString().equals(messe.toString())) {
-                return kwm.isKanndann();
+                return kwm.kannDann();
             }
         }
         return true;
@@ -79,7 +76,7 @@ public class Messverhalten {
         Messverhalten mv = new Messverhalten();
         for (KannWelcheMesse kwm : messen) {
             if (this.getBestimmtes(kwm.getMesse())) {
-                kwm.setKanndann(true);
+                kwm.setKannDann(true);
             }
         }
         return mv;

@@ -25,7 +25,7 @@ public class Speicherort {
     private void generateSpeicherort() {
         String homedir = System.getProperty("user.home");
         homedir = homedir + TEXTDATEI;
-        Log.getLogger().info("Das Home-Verzeichniss wurde gefunden: {}", homedir);
+        Log.getLogger().info("Das Home-Verzeichnis wurde gefunden: {}", homedir);
         File f = new File(homedir);
         if (!f.exists()) {
             createSaveFile(homedir);
@@ -100,7 +100,7 @@ public class Speicherort {
     }
 
     /**
-     * @return Ausgewaehlten Ordnerpfad
+     * @return Ausgewählten Ordnerpfad
      */
     private String waehleOrdner() {
         DirectoryChooser f = new DirectoryChooser();

@@ -1,16 +1,14 @@
 package net.aclrian.mpe.utils;
 
-import com.google.gson.Gson;
-import net.aclrian.mpe.Main;
+import com.google.gson.*;
+import net.aclrian.mpe.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.util.regex.Pattern;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.*;
+import java.util.regex.*;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.Log.*;
 
 public class VersionIDHandler {
     private static final URI urlToLatestReleaseJsonFile = URI.create("https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest");
@@ -58,7 +56,7 @@ public class VersionIDHandler {
         return internettid;
     }
 
-    public static void versioncheck(boolean showall) {
+    public static void versionCheck(boolean showAll) {
         EnumHandling eh = rankingVersionID();
         switch (eh) {
             case IS_OLD:
@@ -75,10 +73,10 @@ public class VersionIDHandler {
                 }
                 break;
             case ERROR:
-                if (showall) Dialogs.getDialogs().error(eh.getMessage());
+                if (showAll) Dialogs.getDialogs().error(eh.getMessage());
                 break;
             default:
-                if (showall) Dialogs.getDialogs().info("Versionsüberprüfung", eh.getMessage());
+                if (showAll) Dialogs.getDialogs().info("Versionsüberprüfung", eh.getMessage());
                 break;
         }
         getLogger().info(eh.getMessage());

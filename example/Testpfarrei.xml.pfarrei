@@ -2,40 +2,40 @@
 <XML>
   <MpE-Creator LICENSE="MIT">Aclrian</MpE-Creator>
   <Body>
-    <Standartmessem>
-      <std_messe id="0">
-        <tag>Mi</tag>
-        <std>18</std>
-        <min>00</min>
-        <ort>St. Marien</ort>
-        <anz>4</anz>
-        <typ>Abendmesse</typ>
-      </std_messe>
-      <std_messe id="1">
-        <tag>Sa</tag>
-        <std>15</std>
-        <min>00</min>
-        <ort>Kapelle</ort>
-        <anz>2</anz>
-        <typ>Taufe</typ>
-      </std_messe>
-      <std_messe id="2">
-        <tag>Sa</tag>
-        <std>17</std>
-        <min>30</min>
-        <ort>St. Marien</ort>
-        <anz>3</anz>
-        <typ>Abendmesse</typ>
-      </std_messe>
-      <std_messe id="3">
-        <tag>So</tag>
-        <std>10</std>
-        <min>00</min>
-        <ort>St. Marien</ort>
-        <anz>6</anz>
-        <typ>Hl. Messe</typ>
-      </std_messe>
-    </Standartmessem>
+      <Standardmessem>
+          <std_messe id="0">
+              <tag>Mi</tag>
+              <std>18</std>
+              <min>00</min>
+              <ort>St. Marien</ort>
+              <anz>4</anz>
+              <typ>Abendmesse</typ>
+          </std_messe>
+          <std_messe id="1">
+              <tag>Sa</tag>
+              <std>15</std>
+              <min>00</min>
+              <ort>Kapelle</ort>
+              <anz>2</anz>
+              <typ>Taufe</typ>
+          </std_messe>
+          <std_messe id="2">
+              <tag>Sa</tag>
+              <std>17</std>
+              <min>30</min>
+              <ort>St. Marien</ort>
+              <anz>3</anz>
+              <typ>Abendmesse</typ>
+          </std_messe>
+          <std_messe id="3">
+              <tag>So</tag>
+              <std>10</std>
+              <min>00</min>
+              <ort>St. Marien</ort>
+              <anz>6</anz>
+              <typ>Hl. Messe</typ>
+          </std_messe>
+      </Standardmessem>
   </Body>
   <Einstellungen>
     <hochaemter>0</hochaemter>

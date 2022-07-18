@@ -1,16 +1,14 @@
 package net.aclrian.mpe.messdiener;
 
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.regex.Pattern;
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
 
 /**
- * Klasse, mit der Messdiener digital gespeichert werden koennen
+ * Klasse, mit der Messdiener digital gespeichert werden können
  *
  * @author Aclrian
  */
@@ -23,7 +21,7 @@ public class Messdiener {
      * Dies ist die Anzahl, wie viele Freunde ein Messdiener haben kann.
      */
     public static final int LENGHT_FREUNDE = 5;
-    public static final Comparator<Messdiener> compForMedis = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
+    public static final Comparator<Messdiener> MESSDIENER_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
     public static final Comparator<? super Messdiener> einteilen = (Comparator<Messdiener>) (o1, o2) -> {
         double d1 = o1.getMessdaten().getSortierenDouble();// anz/max 0 kommt zuerst dann 0,5 --> 1
         double d2 = o2.getMessdaten().getSortierenDouble();
@@ -43,7 +41,7 @@ public class Messdiener {
     private String[] geschwister = new String[LENGHT_GESCHWISTER];
     private Messverhalten dienverhalten;
     private int eintritt = 2000;
-    private boolean istLeiter = false;
+    private boolean leiter = false;
     private Messdaten daten;
     private File file;
 
@@ -51,7 +49,7 @@ public class Messdiener {
      * Konstruktor
      */
     public Messdiener(File f) {
-        setDeafault();
+        setDefault();
         this.file = f;
     }
 
@@ -61,24 +59,24 @@ public class Messdiener {
     }
 
     /**
-     * @param vname         Vorname
-     * @param nname         Nachname
+     * @param vorname       Vorname
+     * @param nachname      Nachname
      * @param eintritt      Jahr des Einfuehrung Ist davon abhaengig, wie oft der
      *                      Messdiener eingeteilt werden soll
      * @param istLeiter     Leiter, Ist davon abhaengig, wie oft der Messdiener
      *                      eingeteilt werden soll
-     * @param dienverhalten Wann kann er zu welchen Standart Messen (bspw. Sontag
+     * @param dienverhalten Wann kann er zu welchen Standard Messen (bspw. Sontag
      *                      Morgen oder Dienstag Abend) dienen
      * @param email         eine gültige Email-Addresse
      * @throws NotValidException Wenn email nicht valid ist
      */
-    public void setzeAllesNeu(String vname, String nname, int eintritt, boolean istLeiter,
+    public void setzeAllesNeu(String vorname, String nachname, int eintritt, boolean istLeiter,
                               Messverhalten dienverhalten, String email) throws NotValidException {
-        setVorname(vname);
-        setNachnname(nname);
-        setEintritt(eintritt);
-        setIstLeiter(istLeiter);
-        setDienverhalten(dienverhalten);
+        this.vorname = vorname;
+        this.nachname = nachname;
+        this.eintritt = eintritt;
+        this.leiter = istLeiter;
+        this.dienverhalten = dienverhalten;
         setEmail(email);
     }
 
@@ -89,25 +87,25 @@ public class Messdiener {
      *                      Messdiener eingeteilt werden soll
      * @param istLeiter     Leiter, Ist davon abhaengig, wie oft der Messdiener
      *                      eingeteilt werden soll
-     * @param dienverhalten Wann kann er zu welchen Standart Messen (bspw. Sontag
+     * @param dienverhalten Wann kann er zu welchen Standard Messen (bspw. Sontag
      *                      Morgen oder Dienstag Abend) dienen
      */
     public void setzeAllesNeuUndMailLeer(String vname, String nname, int eintritt, boolean istLeiter,
                                          Messverhalten dienverhalten) {
-        setVorname(vname);
-        setNachnname(nname);
-        setEintritt(eintritt);
-        setIstLeiter(istLeiter);
-        setDienverhalten(dienverhalten);
-        setEmailEmpty();
+        this.vorname = vname;
+        this.nachname = nname;
+        this.eintritt = eintritt;
+        this.leiter = istLeiter;
+        this.dienverhalten = dienverhalten;
+        email = "";
     }
 
     /**
-     * setzt Standart Werte
+     * setzt Standard Werte
      */
-    private void setDeafault() {
+    private void setDefault() {
         try {
-            setzeAllesNeu("Vorname", "Nachname", 2000, this.istLeiter, new Messverhalten(), "");
+            setzeAllesNeu("Vorname", "Nachname", 2000, this.leiter, new Messverhalten(), "");
         } catch (NotValidException e) {
             e.printStackTrace();
         }
@@ -143,16 +141,16 @@ public class Messdiener {
         try {
             wf.toXML();
         } catch (Exception e) {
-            Dialogs.getDialogs().error(e, "Der Messdiener '" + toString() + "' konnte nicht gespeichert werden.");
+            Dialogs.getDialogs().error(e, "Der Messdiener '" + this + "' konnte nicht gespeichert werden.");
         }
     }
 
     public boolean istLeiter() {
-        return this.istLeiter;
+        return this.leiter;
     }
 
-    public void setIstLeiter(boolean istLeiter) {
-        this.istLeiter = istLeiter;
+    public void setLeiter(boolean leiter) {
+        this.leiter = leiter;
     }
 
     public String getVorname() {
@@ -229,7 +227,7 @@ public class Messdiener {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(vorname, nachname, email, dienverhalten, eintritt, istLeiter, daten, file);
+        int result = Objects.hash(vorname, nachname, email, dienverhalten, eintritt, leiter, daten, file);
         result = 31 * result + Arrays.hashCode(freunde);
         result = 31 * result + Arrays.hashCode(geschwister);
         return result;

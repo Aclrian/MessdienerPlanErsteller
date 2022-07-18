@@ -8,7 +8,7 @@ module MessdienerplanErsteller.main {
     requires javafx.fxml;
     requires javafx.web;
 
-    requires html2pdf;//this is the only direct dependency that is nonmodular
+    requires html2pdf;//this is the only direct dependency that is non-modular
     requires jodconverter.local;
     requires jodconverter.core;
     requires org.apache.commons.io;

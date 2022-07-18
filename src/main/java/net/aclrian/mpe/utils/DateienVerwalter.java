@@ -1,27 +1,18 @@
 package net.aclrian.mpe.utils;
 
-import javafx.stage.Stage;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messdiener.ReadFile;
-import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.pfarrei.ReadFilePfarrei;
-import org.apache.commons.io.FileUtils;
+import javafx.stage.*;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.pfarrei.*;
+import org.apache.commons.io.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.nio.file.Files;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.nio.channels.*;
+import java.nio.file.*;
+import java.util.*;
 
 public class DateienVerwalter implements IDateienVerwalter {
-    public static final String PFARREDATEIENDUNG = ".xml.pfarrei";
-    public static final String MESSDIENERDATEIENDUNG = ".xml";
+    public static final String PFARREI_DATEIENDUNG = ".xml.pfarrei";
+    public static final String MESSDIENER_DATEIENDUNG = ".xml";
     private static IDateienVerwalter instance;
     private final File dir;
     private Pfarrei pf;
@@ -71,7 +62,7 @@ public class DateienVerwalter implements IDateienVerwalter {
     }
 
     @Override
-    public File getSavepath() {
+    public File getSavePath() {
         return dir;
     }
 
@@ -83,7 +74,7 @@ public class DateienVerwalter implements IDateienVerwalter {
     @Override
     public List<Messdiener> getMessdiener() {
         if (medis == null) {
-            ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{MESSDIENERDATEIENDUNG.substring(1)}, true));
+            ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{MESSDIENER_DATEIENDUNG.substring(1)}, true));
             medis = new ArrayList<>();
             files.forEach(file -> {
                 ReadFile rf = new ReadFile();
@@ -97,11 +88,11 @@ public class DateienVerwalter implements IDateienVerwalter {
 
     //Pfarrei
     private void lookForPfarreiFile() throws NoSuchPfarrei {
-        ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREDATEIENDUNG.substring(1)}, true));
+        ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREI_DATEIENDUNG.substring(1)}, true));
         File pfarreiFile;
         if (files.size() != 1) {
             if (files.size() > 1) {
-                Dialogs.getDialogs().warn("Es darf nur eine Datei mit der Endung: '" + PFARREDATEIENDUNG + "' in dem Ordner: "
+                Dialogs.getDialogs().warn("Es darf nur eine Datei mit der Endung: '" + PFARREI_DATEIENDUNG + "' in dem Ordner: "
                         + dir + " vorhanden sein.");
                 pfarreiFile = files.get(0);
             } else {
@@ -132,19 +123,19 @@ public class DateienVerwalter implements IDateienVerwalter {
     }
 
     @Override
-    public void removeoldPfarrei(File neuePfarrei) {
-        ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREDATEIENDUNG.substring(1)}, true));
-        ArrayList<File> todel = new ArrayList<>();
+    public void removeOldPfarrei(File neuePfarrei) {
+        ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREI_DATEIENDUNG.substring(1)}, true));
+        ArrayList<File> toDel = new ArrayList<>();
         boolean candel = false;
         for (File f : files) {
             if (!f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())) {
-                todel.add(f);
+                toDel.add(f);
             } else {
                 candel = true;
             }
         }
         if (candel)
-            todel.forEach(file -> {
+            toDel.forEach(file -> {
                 try {
                     Files.delete(file.toPath());
                 } catch (IOException e) {
