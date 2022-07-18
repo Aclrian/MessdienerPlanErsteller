@@ -16,7 +16,6 @@ import java.time.format.*;
 import java.util.*;
 
 public class FerienplanController implements Controller {
-    public static final String PATTERN = "dd.MM.yyyy";
 
     private List<String> dates = new ArrayList<>();
     @FXML
@@ -38,16 +37,15 @@ public class FerienplanController implements Controller {
     }
 
     @Override
-    public void afterstartup(Window window, MainController mc) {
+    public void afterStartup(Window window, MainController mc) {
         List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN);
         ArrayList<Datentraeger> daten = new ArrayList<>();
         for (Messe messe : mc.getMessen()) {
-            dates.add(formatter.format(messe.getDate()));
+            dates.add(DateUtil.DATE.format(messe.getDate()));
         }
         RemoveDoppelte<String> rd = new RemoveDoppelte<>();
         dates = rd.removeDuplicatedEntries(dates);
-        dates.sort(Comparator.comparing(o -> LocalDate.parse(o, formatter)));
+        dates.sort(Comparator.comparing(o -> LocalDate.parse(o, DateUtil.DATE)));
         TableColumn<Datentraeger, String> column = new TableColumn<>();
         column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMessdiener()));
         column.setText("Messdiener");
@@ -68,7 +66,7 @@ public class FerienplanController implements Controller {
         table.setEditable(true);
         column.setEditable(false);
         for (Messdiener m : medis) {
-            daten.add(new Datentraeger(formatter, dates, m));
+            daten.add(new Datentraeger(DateUtil.DATE, dates, m));
         }
         table.setItems(FXCollections.observableArrayList(daten));
         fertig.setOnAction(event -> mc.changePane(MainController.EnumPane.PLAN));

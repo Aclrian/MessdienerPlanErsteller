@@ -1,31 +1,18 @@
 package net.aclrian.mpe.messdiener;
 
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
+import org.w3c.dom.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+import java.io.*;
+import java.nio.charset.*;
 
 /**
- * Mit dieser Klasse werden Mesdiener in xml-Dateien gespeichert
+ * Mit dieser Klasse werden Messdiener in xml-Dateien gespeichert
  *
  * @author Aclrain
  */
@@ -53,19 +40,14 @@ public class WriteFile {
         security.setAttribute("LICENSE", "MIT");
         security.appendChild(doc.createTextNode("Aclrian"));
         xml.appendChild(security);
-        return new Container(transformer, doc, xml);
+        return new Container(doc, xml, transformer);
     }
 
-    /**
-     * speichert den Messdiener
-     *
-     * @throws IOException wirft IOException bei bspw. zu wenig Rechten
-     */
     public void toXML() throws IOException {
         try {
             Container c = writeXMLFile();
-            Document doc = c.getDocument();
-            Element xml = c.getElement();
+            Document doc = c.document();
+            Element xml = c.element();
             Element body = doc.createElement("Body");
             xml.appendChild(body);
 
@@ -85,7 +67,7 @@ public class WriteFile {
             Messverhalten dv = me.getDienverhalten();
 
             for (int i = 0; i < DateienVerwalter.getInstance().getPfarrei().getStandardMessen().size(); i++) {
-                StandartMesse messe = DateienVerwalter.getInstance().getPfarrei().getStandardMessen().get(i);
+                StandardMesse messe = DateienVerwalter.getInstance().getPfarrei().getStandardMessen().get(i);
                 if (messe instanceof Sonstiges) {
                     continue;
                 }
@@ -117,12 +99,12 @@ public class WriteFile {
             body.appendChild(anvertraute);
 
             DOMSource domSource = new DOMSource(doc);
-            File path = DateienVerwalter.getInstance().getSavepath();
+            File path = DateienVerwalter.getInstance().getSavePath();
 
             File file = new File(path, me + ".xml");
             OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
             StreamResult result = new StreamResult(out);
-            c.getTransformer().transform(domSource, result);
+            c.transformer().transform(domSource, result);
             out.close();
             Log.getLogger().info("Datei wird gespeichert in: {}", file);
             me.setFile(file);
@@ -165,27 +147,6 @@ public class WriteFile {
         }
     }
 
-    public static class Container {
-        private final Document doc;
-        private final Element e;
-        private final Transformer transformer;
-
-        public Container(Transformer transformer, Document doc, Element e) {
-            this.transformer = transformer;
-            this.doc = doc;
-            this.e = e;
-        }
-
-        public Document getDocument() {
-            return doc;
-        }
-
-        public Element getElement() {
-            return e;
-        }
-
-        public Transformer getTransformer() {
-            return transformer;
-        }
+    public record Container(Document document, Element element, Transformer transformer) {
     }
 }

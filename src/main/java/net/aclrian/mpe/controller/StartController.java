@@ -1,11 +1,10 @@
 package net.aclrian.mpe.controller;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.stage.Window;
-import net.aclrian.mpe.Main;
-import net.aclrian.mpe.utils.DateienVerwalter;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.stage.*;
+import net.aclrian.mpe.*;
+import net.aclrian.mpe.utils.*;
 
 public class StartController implements Controller {
     @FXML
@@ -21,7 +20,7 @@ public class StartController implements Controller {
     }
 
     @Override
-    public void afterstartup(Window window, MainController mc) {
+    public void afterStartup(Window window, MainController mc) {
         //no operation
     }
 

@@ -9,6 +9,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.stage.*;
+import net.aclrian.*;
 import net.aclrian.fx.*;
 import net.aclrian.mpe.*;
 import net.aclrian.mpe.messdiener.*;
@@ -24,7 +25,6 @@ import org.testfx.util.*;
 import java.io.*;
 import java.nio.file.*;
 import java.time.*;
-import java.time.format.*;
 import java.util.*;
 
 public class TestMainController extends ApplicationTest {
@@ -55,6 +55,8 @@ public class TestMainController extends ApplicationTest {
         pf = Mockito.mock(Pfarrei.class);
     }
 
+    @Rule
+    public RetryOnError retry = new RetryOnError();
     @Test
     public void testEachEnumPane() {
         Dialogs.setDialogs(dialogs);
@@ -62,7 +64,7 @@ public class TestMainController extends ApplicationTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         String titel = "LOL ";
         Mockito.when(pf.getName()).thenReturn(titel);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandardMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
         FXMLLoader loader = new FXMLLoader();
 
         loader.setController(new MainController(main, stage));
@@ -137,7 +139,7 @@ public class TestMainController extends ApplicationTest {
                 Assertions.assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
                 final TableView<?> table = (TableView<?>) scene.lookup("#table");
                 Assertions.assertThat(table.getItems()).hasSize(1);
-                Assertions.assertThat(((KannWelcheMesse) table.getItems().get(0)).isKanndann()).isFalse();
+                Assertions.assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
 
                 Assertions.assertThat(instance.getControl().isLocked()).isTrue();
 
@@ -147,7 +149,6 @@ public class TestMainController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         //Messe
-        final String date = "01-01-2020 08:00";
         Platform.runLater(() -> {
             instance.changePane(MainController.EnumPane.MESSE);
             Mockito.verify(dialogs, Mockito.times(2)).warn(MainController.GESPERRT);
@@ -181,10 +182,11 @@ public class TestMainController extends ApplicationTest {
             Assertions.assertThat(((TextField) scene.lookup("#ort")).getText()).isEqualTo("ort");
 
             Assertions.assertThat(scene.lookup("#datum")).isInstanceOf(DatePicker.class);
-            Assertions.assertThat(((DatePicker) scene.lookup("#datum")).getValue().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))).contains(date.substring(0, 6));
+            LocalDateTime date = LocalDate.of(2020, 1, 1).atTime(8, 0);
+            Assertions.assertThat(((DatePicker) scene.lookup("#datum")).getValue()).isEqualTo(date.toLocalDate());
 
             Assertions.assertThat(scene.lookup("#uhr")).isInstanceOf(TimeSpinner.class);
-            Assertions.assertThat(((TimeSpinner) scene.lookup("#uhr")).getValue().format(DateTimeFormatter.ofPattern("HH:mm"))).contains(date.substring(11));
+            Assertions.assertThat(((TimeSpinner) scene.lookup("#uhr")).getValue()).isEqualTo(date.toLocalTime());
 
             Assertions.assertThat(scene.lookup("#slider")).isInstanceOf(Slider.class);
             Assertions.assertThat(((Slider) scene.lookup("#slider")).getValue()).isEqualTo(1);
@@ -247,7 +249,7 @@ public class TestMainController extends ApplicationTest {
             } else {
                 Assertions.fail("could not find zurueck");
             }
-            Mockito.when(dialogs.singleSelect(Mockito.anyList(), Mockito.contains(MainController.STANDARTMESSE_AUSWAEHLEN))).thenReturn(new Sonstiges());
+            Mockito.when(dialogs.singleSelect(Mockito.anyList(), Mockito.contains(MainController.STANDARDMESSE_AUSWAEHLEN))).thenReturn(new Sonstiges());
             instance.standardmesse(null);
         });
         WaitForAsyncUtils.waitForFxEvents();
@@ -293,7 +295,7 @@ public class TestMainController extends ApplicationTest {
     public void testAwtDesktop() {
         DateienVerwalter.setInstance(dv);
         final File file = new File(System.getProperty("user.dir"));
-        Mockito.when(dv.getSavepath()).thenReturn(file);
+        Mockito.when(dv.getSavePath()).thenReturn(file);
 
         FXMLLoader loader = new FXMLLoader();
         loader.setController(new MainController(main, stage));
@@ -313,7 +315,7 @@ public class TestMainController extends ApplicationTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         String titel = "LOL ";
         Mockito.when(pf.getName()).thenReturn(titel);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandardMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
 
         FXMLLoader loader = new FXMLLoader();
         loader.setController(new MainController(main, stage));
@@ -380,7 +382,7 @@ public class TestMainController extends ApplicationTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Einstellungen einstellungen = new Einstellungen();
         Mockito.when(pf.getSettings()).thenReturn(einstellungen);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandartMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandardMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
         FXMLLoader loader = new FXMLLoader();
 
         loader.setController(new MainController(main, stage));

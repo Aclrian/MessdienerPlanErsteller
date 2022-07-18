@@ -1,9 +1,11 @@
 package net.aclrian.mpe.controller;
 
-import javafx.stage.Window;
+import javafx.stage.*;
 
 public interface Controller {
 	void initialize();
-	void afterstartup(Window window, MainController mc);
+
+	void afterStartup(Window window, MainController mc);
+
 	boolean isLocked();
 }

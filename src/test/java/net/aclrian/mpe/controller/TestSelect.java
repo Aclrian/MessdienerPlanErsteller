@@ -69,7 +69,7 @@ public class TestSelect extends ApplicationTest {
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        Mockito.when(dv.getSavepath()).thenReturn(new File(System.getProperty("user.home")));
+        Mockito.when(dv.getSavePath()).thenReturn(new File(System.getProperty("user.home")));
         Messdiener m1 = Mockito.mock(Messdiener.class);
         Messdiener m2 = Mockito.mock(Messdiener.class);
         File f1 = new File(System.getProperty("user.home"), "cdajklsdfkldjoa.xml");
@@ -95,10 +95,10 @@ public class TestSelect extends ApplicationTest {
             URL u = getClass().getResource(MainController.EnumPane.SELECT_MEDI.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
             try {
-                instance = new Select(Select.Selecter.MESSDIENER, mc);
+                instance = new Select(Select.Selector.MESSDIENER, mc);
                 fl.setController(instance);
                 pane.getChildren().add(fl.load());
-                instance.afterstartup(pane.getScene().getWindow(), mc);
+                instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
                 Log.getLogger().error(e.getMessage(), e);
             }
@@ -168,8 +168,8 @@ public class TestSelect extends ApplicationTest {
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        final StandartMesse standartMesse = new StandartMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
+        final StandardMesse StandardMesse = new StandardMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
         LocalDate von = LocalDate.of(2020, 10, 1);
         LocalDate bis = LocalDate.of(2020, 10, 15);
         Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
@@ -183,10 +183,10 @@ public class TestSelect extends ApplicationTest {
             URL u = getClass().getResource(MainController.EnumPane.SELECT_MESSE.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
             try {
-                instance = new Select(Select.Selecter.MESSE, mc);
+                instance = new Select(Select.Selector.MESSE, mc);
                 fl.setController(instance);
                 pane.getChildren().add(fl.load());
-                instance.afterstartup(pane.getScene().getWindow(), mc);
+                instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
                 Log.getLogger().error(e.getMessage(), e);
             }
@@ -216,14 +216,15 @@ public class TestSelect extends ApplicationTest {
         Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testeMesseRemove() {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        final StandartMesse standartMesse = new StandartMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
+        final StandardMesse StandardMesse = new StandardMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
         LocalDate von = LocalDate.of(2020, 10, 1);
         LocalDate bis = LocalDate.of(2020, 10, 15);
         Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
@@ -237,10 +238,10 @@ public class TestSelect extends ApplicationTest {
             URL u = getClass().getResource(MainController.EnumPane.SELECT_MESSE.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
             try {
-                instance = new Select(Select.Selecter.MESSE, mc);
+                instance = new Select(Select.Selector.MESSE, mc);
                 fl.setController(instance);
                 pane.getChildren().add(fl.load());
-                instance.afterstartup(pane.getScene().getWindow(), mc);
+                instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
                 Log.getLogger().error(e.getMessage(), e);
             }

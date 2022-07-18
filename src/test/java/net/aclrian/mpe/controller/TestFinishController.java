@@ -104,7 +104,7 @@ public class TestFinishController extends ApplicationTest {
                 instance = new FinishController(null, Collections.emptyList());
                 fl.setController(instance);
                 pane.getChildren().add(fl.load());
-                instance.afterstartup(pane.getScene().getWindow(), mc);
+                instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
                 Log.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
@@ -112,7 +112,7 @@ public class TestFinishController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
 
-        LocalDate date = TestFerienplanController.getToday();
+        LocalDate date = DateUtil.getToday();
         m1.getMessdaten().einteilenVorzeitig(date, false);
 
 
@@ -140,9 +140,9 @@ public class TestFinishController extends ApplicationTest {
             }
         }
         Assertions.assertThat(m1.getMessdaten().kanndann(date, false)).isTrue();
-        Assertions.assertThat(instance.getNichtEingeteile()).contains(m1);
-        Assertions.assertThat(instance.getNichtEingeteile()).contains(m2);
-        Assertions.assertThat(instance.getNichtEingeteile()).contains(m3);
+        Assertions.assertThat(instance.getNichtEingeteilteMessdiener()).contains(m1);
+        Assertions.assertThat(instance.getNichtEingeteilteMessdiener()).contains(m2);
+        Assertions.assertThat(instance.getNichtEingeteilteMessdiener()).contains(m3);
 
         Platform.runLater(() -> {
             if (pane.lookup("#nichteingeteilte") instanceof Button nichteingeteilte) {
@@ -183,8 +183,8 @@ public class TestFinishController extends ApplicationTest {
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        StandartMesse standartMesse = new StandartMesse(DayOfWeek.MONDAY, 8, "00", "o1", 2, "t1");
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
+        StandardMesse StandardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o1", 2, "t1");
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
         einst.editMaxDienen(true, 10);
@@ -232,19 +232,19 @@ public class TestFinishController extends ApplicationTest {
         Messverhalten mv3 = new Messverhalten();
         Messverhalten mv1F = new Messverhalten();
 
-        mv1.editiereBestimmteMesse(standartMesse, true);
-        md1.austeilen(TestFerienplanController.getYesterday2());
-        mv1F.editiereBestimmteMesse(standartMesse, true);
-        md1F.austeilen(TestFerienplanController.getYesterday2());
+        mv1.editiereBestimmteMesse(StandardMesse, true);
+        md1.austeilen(DateUtil.getYesterdaysYesterday());
+        mv1F.editiereBestimmteMesse(StandardMesse, true);
+        md1F.austeilen(DateUtil.getYesterdaysYesterday());
 
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
         Mockito.when(m2.getDienverhalten()).thenReturn(mv2);
         Mockito.when(m3.getDienverhalten()).thenReturn(mv3);
         Mockito.when(m1Freund.getDienverhalten()).thenReturn(mv1F);
 
-        Messe me1 = new Messe(false, 1, TestFerienplanController.getYesterday2().atTime(0, 0), "o1", "t1");
-        Messe me2 = new Messe(TestFerienplanController.getToday().atTime(0, 0), standartMesse);
-        Messe me3 = new Messe(false, 1, TestFerienplanController.getTomorrow().atTime(0, 0), "o3", "t3");
+        Messe me1 = new Messe(false, 1, DateUtil.getYesterdaysYesterday().atTime(0, 0), "o1", "t1");
+        Messe me2 = new Messe(DateUtil.getToday().atTime(0, 0), StandardMesse);
+        Messe me3 = new Messe(false, 1, DateUtil.getTomorrow().atTime(0, 0), "o3", "t3");
 
         Mockito.doCallRealMethod().when(dialogs).show(Mockito.anyList(), Mockito.eq(FinishController.NICHT_EINGETEILTE_MESSDIENER));
 
@@ -260,7 +260,7 @@ public class TestFinishController extends ApplicationTest {
                 instance = new FinishController(null, messes);
                 fl.setController(instance);
                 pane.getChildren().add(fl.load());
-                instance.afterstartup(pane.getScene().getWindow(), mc);
+                instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
                 Log.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
@@ -270,8 +270,8 @@ public class TestFinishController extends ApplicationTest {
         Assertions.assertThat(me1.istFertig() && me2.istFertig() && me3.istFertig()).isTrue();
         Assertions.assertThat(!me1.getEingeteilte().contains(m1) && !me1.getEingeteilte().contains(m1Freund)).isTrue();
         Assertions.assertThat(!me3.getEingeteilte().contains(m1) && !me3.getEingeteilte().contains(m1Freund)).isTrue();
-        Assertions.assertThat(md1.kanndann(TestFerienplanController.getToday(), false)).isFalse();
-        Assertions.assertThat(md1F.kanndann(TestFerienplanController.getToday(), false)).isFalse();
+        Assertions.assertThat(md1.kanndann(DateUtil.getToday(), false)).isFalse();
+        Assertions.assertThat(md1F.kanndann(DateUtil.getToday(), false)).isFalse();
         Assertions.assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
 
         File out = new File(Log.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");
@@ -321,10 +321,10 @@ public class TestFinishController extends ApplicationTest {
         Assertions.assertThat(me2.getEingeteilte().size()).isEqualTo(0);
         Assertions.assertThat(me3.getEingeteilte().size()).isEqualTo(0);
 
-        int from = TestFerienplanController.getYesterday2().getDayOfMonth();
-        int to = TestFerienplanController.getTomorrow().getDayOfMonth();
-        String fromMonth = TestFerienplanController.getYesterday2().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
-        String toMonth = TestFerienplanController.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+        int from = DateUtil.getYesterdaysYesterday().getDayOfMonth();
+        int to = DateUtil.getTomorrow().getDayOfMonth();
+        String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+        String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
         Assertions.assertThat(pair.getValue().toString()).isEqualTo("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20" + from + ".%20" + fromMonth + "%20bis%20" + to + ".%20" + toMonth + "&body=%0D%0A");
         try {

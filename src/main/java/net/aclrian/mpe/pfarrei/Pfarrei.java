@@ -1,23 +1,23 @@
 package net.aclrian.mpe.pfarrei;
 
-import net.aclrian.mpe.messe.StandartMesse;
+import net.aclrian.mpe.messe.*;
 
-import java.util.List;
+import java.util.*;
 
 public class Pfarrei {
     private final String name;
-    private final List<StandartMesse> sm;
+    private final List<StandardMesse> sm;
     private final Einstellungen settings;
-    private final boolean hochaemter;
+    private final boolean hochamt;
 
-    public Pfarrei(Einstellungen settings, List<StandartMesse> sm, String name, boolean hochaemterzaelenmit) {
+    public Pfarrei(Einstellungen settings, List<StandardMesse> sm, String name, boolean hochamtZaehltMit) {
         this.settings = settings;
         this.sm = sm;
         this.name = name;
-        this.hochaemter = hochaemterzaelenmit;
+        this.hochamt = hochamtZaehltMit;
     }
 
-    public List<StandartMesse> getStandardMessen() {
+    public List<StandardMesse> getStandardMessen() {
         return sm;
     }
 
@@ -30,7 +30,7 @@ public class Pfarrei {
     }
 
     public boolean zaehlenHochaemterMit() {
-        return hochaemter;
+        return hochamt;
     }
 
 }

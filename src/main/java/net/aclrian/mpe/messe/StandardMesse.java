@@ -4,8 +4,8 @@ import java.time.*;
 import java.time.format.*;
 import java.util.*;
 
-public class StandartMesse {
-    public static final Comparator<StandartMesse> STANDART_MESSE_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
+public class StandardMesse {
+    public static final Comparator<StandardMesse> STANDARD_MESSE_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
     private final int beginnStunde;
     private final String beginnMinute;
     private final String ort;
@@ -13,7 +13,7 @@ public class StandartMesse {
     private final int anzMessdiener;
     private final String typ;
 
-    public StandartMesse(DayOfWeek wochentag, int beginnH, String beginnMin, String ort, int anzMessdiener,
+    public StandardMesse(DayOfWeek wochentag, int beginnH, String beginnMin, String ort, int anzMessdiener,
                          String typ) {
         this.ort = ort;
         this.anzMessdiener = anzMessdiener;
@@ -52,7 +52,7 @@ public class StandartMesse {
     }
 
     public String getString() {
-        return tokurzerBenutzerfreundlichenString();
+        return toKurzerBenutzerfreundlichenString();
     }
 
     @Override
@@ -62,7 +62,7 @@ public class StandartMesse {
                 + anzMessdiener;
     }
 
-    public String tokurzerBenutzerfreundlichenString() {
+    public String toKurzerBenutzerfreundlichenString() {
         return wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + beginnStunde + ":" + beginnMinute + ": " + ort + " " + typ + " (" + anzMessdiener
                 + ")";
     }
@@ -77,7 +77,7 @@ public class StandartMesse {
                 "-" + anzMessdiener;
     }
 
-    public String tolangerBenutzerfreundlichenString() {
+    public String toLangerBenutzerfreundlichenString() {
         return wochentag.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " um " + beginnStunde + ":" + beginnMinute + " Uhr in " + ort + " als " + typ + " mit " + anzMessdiener
                 + " Messdienern";
     }
@@ -92,8 +92,8 @@ public class StandartMesse {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof StandartMesse sm) {
-            return this.tolangerBenutzerfreundlichenString().equals(sm.tolangerBenutzerfreundlichenString());
+        if (obj instanceof StandardMesse sm) {
+            return this.toLangerBenutzerfreundlichenString().equals(sm.toLangerBenutzerfreundlichenString());
         }
         return false;
     }

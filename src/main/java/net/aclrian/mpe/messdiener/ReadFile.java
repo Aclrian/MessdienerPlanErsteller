@@ -1,25 +1,17 @@
 package net.aclrian.mpe.messdiener;
 
-import net.aclrian.mpe.messdiener.Messdiener.NotValidException;
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandartMesse;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+import net.aclrian.mpe.messdiener.Messdiener.*;
+import net.aclrian.mpe.messe.*;
+import net.aclrian.mpe.utils.*;
+import org.w3c.dom.*;
+import org.xml.sax.*;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
+import javax.xml.*;
+import javax.xml.parsers.*;
+import java.io.*;
 
 /**
- * liesst aus einer xml-Datei den Messdiener und gibt diesen zurueck
+ * liest aus einer xml-Datei den Messdiener und gibt diesen zurück
  *
  * @author Aclrian
  */
@@ -36,7 +28,7 @@ public class ReadFile {
             dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             DocumentBuilder dbuilder = dbFactory.newDocumentBuilder();
             Document doc = dbuilder.parse(new InputSource(String.valueOf(xmlFile.toURI())));
-            if (doc != null && xmlFile.getAbsolutePath().endsWith(DateienVerwalter.MESSDIENERDATEIENDUNG)) {
+            if (doc != null && xmlFile.getAbsolutePath().endsWith(DateienVerwalter.MESSDIENER_DATEIENDUNG)) {
                 doc.getDocumentElement().normalize();
                 NodeList nList = doc.getElementsByTagName("XML");
                 for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -103,7 +95,7 @@ public class ReadFile {
 
     private Messverhalten readMessverhalten(Element eElement) {
         Messverhalten dienverhalten = new Messverhalten();
-        for (StandartMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
+        for (StandardMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
             if (sm instanceof Sonstiges) {
                 continue;
             }
@@ -113,7 +105,7 @@ public class ReadFile {
                 String value = eElement.getElementsByTagName(sname).item(0).getTextContent();
                 kann = value.equals("true");
             } catch (Exception e) {
-                //Node not found
+                Log.getLogger().warn(e.getMessage(), e);
             }
             dienverhalten.editiereBestimmteMesse(sm, kann);
         }
@@ -190,15 +182,15 @@ public class ReadFile {
         }
     }
 
-    private void fixEmail(Messdiener me, String mail, String vname, String nname, int eintritt, boolean istLeiter, Messverhalten dienverhalten) {
+    private void fixEmail(Messdiener me, String mail, String vorname, String nachname, int eintritt, boolean leiter, Messverhalten dienverhalten) {
         if (Dialogs.getDialogs().frage("Die E-Mail-Addresse '" + mail + "' von " + me + " ist ungültig und wird gelöscht.\nSoll eine neue eingegeben werden?")) {
             String s = Dialogs.getDialogs().text("Neue E-Mail-Adresse von " + me + " eingeben:\nWenn keine vorhanden ist, soll das Feld leer bleiben.", "E-Mail:");
             if (!s.equals("")) me.setEmailEmpty();
             try {
                 me.setEmail(s);
             } catch (NotValidException e) {
-                fixEmail(me, s + "' bzw. '" + mail, vname, nname, eintritt, istLeiter, dienverhalten);
+                fixEmail(me, s + "' bzw. '" + mail, vorname, nachname, eintritt, leiter, dienverhalten);
             }
-        } else me.setzeAllesNeuUndMailLeer(vname, nname, eintritt, istLeiter, dienverhalten);
+        } else me.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, dienverhalten);
     }
 }

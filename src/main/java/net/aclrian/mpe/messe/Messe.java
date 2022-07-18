@@ -1,42 +1,35 @@
 package net.aclrian.mpe.messe;
 
 import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.utils.*;
 
 import java.time.*;
 import java.time.format.*;
 import java.util.*;
 
-/**
- * Klasse von Messen
- *
- * @author Aclrian
- */
 public class Messe implements Comparable<Messe> {
-    public static final Comparator<Messe> compForMessen = Comparator.comparing(Messe::getDate);
-    private final StandartMesse em;
+    public static final Comparator<Messe> MESSE_COMPARATOR = Comparator.comparing(Messe::getDate);
+    private final StandardMesse em;
     private boolean hochamt;
     private int anzMessdiener;
 
-    /**
-     * Format: "eee" or TextStyle.SHORT: Mo. in german Locale
-     * "ccc" or SHORT_STANDALONE: Mo in german Locale
-     */
+
     private LocalDateTime date;
     private String kirche;
     private String typ;
     private ArrayList<Messdiener> medis = new ArrayList<>();
     private ArrayList<Messdiener> leiter = new ArrayList<>();
 
-    public Messe(LocalDateTime d, StandartMesse sm) {
+    public Messe(LocalDateTime d, StandardMesse sm) {
         this(false, sm.getAnzMessdiener(), d, sm.getOrt(), sm.getTyp(), sm);
     }
 
-    public Messe(boolean hochamt, int anzMedis, LocalDateTime datummituhrzeit, String ort, String typ) {
-        this(hochamt, anzMedis, datummituhrzeit, ort, typ, new Sonstiges());
+    public Messe(boolean hochamt, int anzMedis, LocalDateTime date, String ort, String typ) {
+        this(hochamt, anzMedis, date, ort, typ, new Sonstiges());
     }
 
-    public Messe(boolean hochamt, int anzMedis, LocalDateTime datummituhrzeit, String ort, String typ, StandartMesse sm) {
-        bearbeiten(hochamt, anzMedis, datummituhrzeit, ort, typ);
+    public Messe(boolean hochamt, int anzMedis, LocalDateTime date, String ort, String typ, StandardMesse sm) {
+        bearbeiten(hochamt, anzMedis, date, ort, typ);
         em = sm;
     }
 
@@ -57,10 +50,10 @@ public class Messe implements Comparable<Messe> {
         if (medi.getMessdaten().einteilen(date.toLocalDate(), hochamt, zwangdate, zwanganz)) {
             if (medi.istLeiter()) {
                 leiter.add(medi);
-                leiter.sort(Messdiener.compForMedis);
+                leiter.sort(Messdiener.MESSDIENER_COMPARATOR);
             } else {
                 medis.add(medi);
-                medis.sort(Messdiener.compForMedis);
+                medis.sort(Messdiener.MESSDIENER_COMPARATOR);
             }
             return true;
         }
@@ -82,7 +75,7 @@ public class Messe implements Comparable<Messe> {
         return rtn;
     }
 
-    public StandartMesse getStandardMesse() {
+    public StandardMesse getStandardMesse() {
         try {
             return em;
         } catch (NullPointerException e) {
@@ -96,11 +89,9 @@ public class Messe implements Comparable<Messe> {
     }
 
     public String getIDHTML() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         return "<html><font><p><b>" +
                 date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " " +
-                formatter.format(date) + "&emsp;" + timeFormatter.format(date) + " Uhr " +
+                DateUtil.DATE.format(date) + "&emsp;" + DateUtil.TIME.format(date) + " Uhr " +
                 typ + " " + kirche + "</p></b></font></html>";
     }
 
@@ -115,8 +106,8 @@ public class Messe implements Comparable<Messe> {
     public String htmlAusgeben() {
         StringBuilder rtn = new StringBuilder(getIDHTML());
         rtn = new StringBuilder(rtn.substring(0, rtn.length() - 7));
-        medis.sort(Messdiener.compForMedis);
-        leiter.sort(Messdiener.compForMedis);
+        medis.sort(Messdiener.MESSDIENER_COMPARATOR);
+        leiter.sort(Messdiener.MESSDIENER_COMPARATOR);
         ArrayList<Messdiener> out = medis;
         out.addAll(leiter);
         rtn.append("<p>");
@@ -146,14 +137,14 @@ public class Messe implements Comparable<Messe> {
         leiter = new ArrayList<>();
     }
 
-    public boolean vorzeitigEiteilen(Messdiener medi) {
+    public boolean vorzeitigEinteilen(Messdiener medi) {
         if (medi.getMessdaten().einteilenVorzeitig(date.toLocalDate(), hochamt)) {
             if (medi.istLeiter()) {
                 leiter.add(medi);
             } else {
                 medis.add(medi);
             }
-            medis.sort(Messdiener.compForMedis);
+            medis.sort(Messdiener.MESSDIENER_COMPARATOR);
             return true;
         }
         return false;

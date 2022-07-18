@@ -25,7 +25,7 @@ public class Main extends Application {
             getLogger().info("MpE: Version: " + VERSION_ID);
             getLogger().info("MpE-fx is starting");
             stage.getIcons().add(new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/title_32.png"))));
-            VersionIDHandler.versioncheck(false);
+            VersionIDHandler.versionCheck(false);
             if (startPfarrei(stage)) return;
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));

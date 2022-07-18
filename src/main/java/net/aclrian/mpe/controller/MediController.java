@@ -75,21 +75,21 @@ public class MediController implements Controller {
         return s;
     }
 
-    private static Messdiener alteloeschen(Messdiener todel, Messdiener tosearchin) {
-        if(todel.equals(tosearchin)){
-            return todel;
+    private static Messdiener alteloeschen(Messdiener toDel, Messdiener toSearchIn) {
+        if (toDel.equals(toSearchIn)) {
+            return toDel;
         }
         Messdiener medi = null;
-        for (int i = 0; i < tosearchin.getGeschwister().length; i++) {
-            if (tosearchin.getGeschwister()[i].compareTo(todel.toString()) == 0) {
-                tosearchin.getGeschwister()[i] = "";
-                medi = tosearchin;
+        for (int i = 0; i < toSearchIn.getGeschwister().length; i++) {
+            if (toSearchIn.getGeschwister()[i].compareTo(toDel.toString()) == 0) {
+                toSearchIn.getGeschwister()[i] = "";
+                medi = toSearchIn;
             }
         }
-        for (int i = 0; i < tosearchin.getFreunde().length; i++) {
-            if (tosearchin.getFreunde()[i].compareTo(todel.toString()) == 0) {
-                tosearchin.getFreunde()[i] = "";
-                medi = tosearchin;
+        for (int i = 0; i < toSearchIn.getFreunde().length; i++) {
+            if (toSearchIn.getFreunde()[i].compareTo(toDel.toString()) == 0) {
+                toSearchIn.getFreunde()[i] = "";
+                medi = toSearchIn;
             }
         }
         return medi;
@@ -134,7 +134,7 @@ public class MediController implements Controller {
     }
 
     @Override
-    public void afterstartup(Window window, MainController mc) {
+    public void afterStartup(Window window, MainController mc) {
         cancel.setOnAction(e -> {
             locked = false;
             mc.changePane(EnumPane.SELECT_MEDI);
@@ -200,13 +200,13 @@ public class MediController implements Controller {
         });
         geschwie.getItems().add(bearbeitenGeschwister);
 
-        stdm.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMesse().tokurzerBenutzerfreundlichenString()));
+        stdm.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMesse().toKurzerBenutzerfreundlichenString()));
         kann.setCellFactory(CheckBoxTableCell.forTableColumn(kann));
         kann.setCellValueFactory(celldata -> {
             KannWelcheMesse cellValue = celldata.getValue();
-            SimpleBooleanProperty property = new SimpleBooleanProperty(cellValue.isKanndann());
+            SimpleBooleanProperty property = new SimpleBooleanProperty(cellValue.kannDann());
             // Add listener to handler change
-            property.addListener((observable, oldValue, newValue) -> cellValue.setKanndann(newValue));
+            property.addListener((observable, oldValue, newValue) -> cellValue.setKannDann(newValue));
             return property;
         });
         kann.setCellFactory(tc -> new CheckBoxTableCell<>());
@@ -259,8 +259,8 @@ public class MediController implements Controller {
         for (KannWelcheMesse kwm : ol) {
             for (KannWelcheMesse kwm2 : o) {
                 if (kwm.getMesse().toString().equals(kwm2.getMesse().toString())
-                        && (kwm.isKanndann() != kwm2.isKanndann())) {
-                    kwm.setKanndann(!kwm.isKanndann());
+                        && (kwm.kannDann() != kwm2.kannDann())) {
+                    kwm.setKannDann(!kwm.kannDann());
                 }
             }
         }
@@ -419,7 +419,7 @@ public class MediController implements Controller {
             if (searchForMessdiener(arrayList, alle, al, i)) continue;
             boolean beheben = Dialogs.getDialogs().frage(
                     KONNTE + arrayList.get(i) + "' als Geschwister von '" + medi + "' nicht finden!",
-                    "ignorieren", "beheben");
+                    "ignorieren", "Beheben");
             if (beheben) {
                 arrayList.remove(i);
                 String[] gew = arrayList.toArray(new String[0]);

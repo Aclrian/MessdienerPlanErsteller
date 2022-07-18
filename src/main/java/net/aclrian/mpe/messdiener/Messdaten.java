@@ -49,9 +49,9 @@ public class Messdaten {
     public int berecheMax(int eintritt, int aktdatum, boolean leiter, Einstellungen einstellungen) {
         int id = leiter ? 1 : 0;
 
-        int zwei = einstellungen.getDaten(id).getAnzDienen();
-        int abstand = Integer.min(Integer.max(aktdatum - eintritt, 0), Einstellungen.LENGHT - 3);
-        int eins = einstellungen.getDaten(abstand + 2).getAnzDienen();
+        int zwei = einstellungen.getDaten(id).anzahlDienen();
+        int abstand = Integer.min(Integer.max(aktdatum - eintritt, 0), Einstellungen.LENGTH - 3);
+        int eins = einstellungen.getDaten(abstand + 2).anzahlDienen();
         if (zwei < eins) {
             eins = zwei;
         }
@@ -61,8 +61,8 @@ public class Messdaten {
     public boolean einteilen(LocalDate date, boolean hochamt, boolean datezwang, boolean anzzwang) {
         if (kann(date, datezwang, anzzwang)) {
             eingeteilt.add(date);
-            pause.add(getNextDay(date));
-            pause.add(getPreviuosDay(date));
+            pause.add(DateUtil.getNextDay(date));
+            pause.add(DateUtil.getPreviousDay(date));
             anzMessen++;
             insgesamtEingeteilt++;
             if (hochamt) {
@@ -75,11 +75,11 @@ public class Messdaten {
 
 
     public boolean einteilenVorzeitig(LocalDate date, boolean hochamt) {
-        if (kannVorzeitg(date)) {
+        if (kannVorzeitig(date)) {
             eingeteilt.add(date);
             insgesamtEingeteilt++;
             if (!hochamt) {
-                pause.add(getNextDay(date));
+                pause.add(DateUtil.getNextDay(date));
                 anzMessen++;
             }
             return true;
@@ -125,7 +125,7 @@ public class Messdaten {
         return maxMessen;
     }
 
-    public boolean kannVorzeitg(LocalDate date) {
+    public boolean kannVorzeitig(LocalDate date) {
         return !ausgeteilt.contains(date);
     }
 
@@ -141,13 +141,13 @@ public class Messdaten {
         if (eingeteilt.isEmpty() && ausgeteilt.isEmpty() && (zwang || pause.isEmpty())) {
             return true;
         }
-        if (ausgeteilt.contains(date) || ausgeteilt.contains(getNextDay(date))
-                || ausgeteilt.contains(getPreviuosDay(date))) {
+        if (ausgeteilt.contains(date) || ausgeteilt.contains(DateUtil.getNextDay(date))
+                || ausgeteilt.contains(DateUtil.getPreviousDay(date))) {
             return false;
         }
         if (!zwang) {
-            if (eingeteilt.contains(date) || eingeteilt.contains(getNextDay(date))
-                    || eingeteilt.contains(getPreviuosDay(date))) {
+            if (eingeteilt.contains(date) || eingeteilt.contains(DateUtil.getNextDay(date))
+                    || eingeteilt.contains(DateUtil.getPreviousDay(date))) {
                 return false;
             }
             return !pause.contains(date);
@@ -165,14 +165,6 @@ public class Messdaten {
 
     public void naechsterMonat() {
         anzMessen = 0;
-    }
-
-    private LocalDate getNextDay(LocalDate date) {
-        return date.plusDays(1);
-    }
-
-    private LocalDate getPreviuosDay(LocalDate date) {
-        return date.plusDays(-1);
     }
 
     @SuppressWarnings("unused")
@@ -193,7 +185,7 @@ public class Messdaten {
         update(true, m.getFreunde(), m);
     }
 
-    private void update(boolean isfreund, String[] s, Messdiener m) {
+    private void update(boolean isFreund, String[] s, Messdiener m) {
         for (String value : s) {
             Messdiener medi;
             if (!value.equals("") && !value.equals("LEER") && !value.equals("Vorname, Nachname")) {
@@ -204,20 +196,20 @@ public class Messdaten {
                         geschwister = rd.removeDuplicatedEntries(this.geschwister);
                     }
                 } catch (CouldnotFindMedi e) {
-                    if (messdienerrNotFound(isfreund, s, m, value, e)) return;
+                    if (messdienerNotFound(isFreund, s, m, value, e)) return;
                 }
             }
         }
     }
 
-    private boolean messdienerrNotFound(boolean isfreund, String[] s, Messdiener m, String value, CouldnotFindMedi e) {
+    private boolean messdienerNotFound(boolean isFreund, String[] s, Messdiener m, String value, CouldnotFindMedi e) {
         boolean beheben = Dialogs.getDialogs().frage(e.getMessage(),
                 "ignorieren", "beheben");
         if (beheben) {
             ArrayList<String> list = new ArrayList<>(Arrays.asList(s));
             list.remove(value);
-            String[] gew = MediController.getArrayString(list, isfreund ? Messdiener.LENGHT_FREUNDE : Messdiener.LENGHT_GESCHWISTER);
-            if (isfreund) m.setFreunde(gew);
+            String[] gew = MediController.getArrayString(list, isFreund ? Messdiener.LENGHT_FREUNDE : Messdiener.LENGHT_GESCHWISTER);
+            if (isFreund) m.setFreunde(gew);
             else m.setGeschwister(gew);
             WriteFile wf = new WriteFile(m);
             try {
@@ -225,7 +217,7 @@ public class Messdaten {
             } catch (IOException ex) {
                 Dialogs.getDialogs().error(ex, "Konnte es nicht beheben.");
             }
-            update(isfreund, gew, m);
+            update(isFreund, gew, m);
             return true;
         }
         return false;

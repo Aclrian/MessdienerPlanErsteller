@@ -23,7 +23,7 @@ import static net.aclrian.mpe.utils.Log.*;
 public class MainController {
     public static final String NO_ACCESS = " konnte nicht zugegriffen werden!";
     public static final String GESPERRT = "Der Fensterbereich ist durch die Bearbeitung gesperrt!";
-    public static final String STANDARTMESSE_AUSWAEHLEN = "Bitte Standartmesse auswählen:";
+    public static final String STANDARDMESSE_AUSWAEHLEN = "Bitte Standardmesse auswählen:";
     private final Stage stage;
     private final Main m;
     private List<Messe> messen = new ArrayList<>();
@@ -82,14 +82,14 @@ public class MainController {
         }
     }
 
-    private void changePane(StandartMesse sm) {
+    private void changePane(StandardMesse sm) {
         if ((control == null || !control.isLocked()) && (ep != EnumPane.STDMESSE)) {
             this.ep = EnumPane.STDMESSE;
             apane.getChildren().removeIf(p -> true);
 
             URL u = getClass().getResource(ep.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
-            fl.setController(new StandartmesseController(sm));
+            fl.setController(new StandardmesseController(sm));
             load(fl);
         } else {
             Dialogs.getDialogs().warn(GESPERRT);
@@ -106,7 +106,7 @@ public class MainController {
             AnchorPane.setTopAnchor(p, 0d);
             apane.getChildren().add(p);
             control = fl.getController();
-            control.afterstartup(p.getScene().getWindow(), this);
+            control.afterStartup(p.getScene().getWindow(), this);
         } catch (IOException e) {
             Dialogs.getDialogs().fatal(e, "Auf " + ep.getLocation() + NO_ACCESS);
         }
@@ -123,10 +123,10 @@ public class MainController {
             URL u = getClass().getResource(ep.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
             if (ep == EnumPane.SELECT_MEDI) {
-                control = new Select(Selecter.MESSDIENER, this);
+                control = new Select(Selector.MESSDIENER, this);
                 fl.setController(control);
             } else if (ep == EnumPane.SELECT_MESSE) {
-                control = new Select(Selecter.MESSE, this);
+                control = new Select(Selector.MESSE, this);
                 fl.setController(control);
             } else if (ep == EnumPane.PLAN) {
                 control = new FinishController(old, messen);
@@ -202,7 +202,7 @@ public class MainController {
 
     @FXML
     public void smesse(ActionEvent actionEvent) {
-        StandartMesse sm = (StandartMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), STANDARTMESSE_AUSWAEHLEN);
+        StandardMesse sm = (StandardMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), STANDARDMESSE_AUSWAEHLEN);
         if (sm != null) {
             changePane(sm);
         }
@@ -230,7 +230,7 @@ public class MainController {
     @FXML
     public void savepath(ActionEvent event) {
         try {
-            Desktop.getDesktop().open(DateienVerwalter.getInstance().getSavepath());
+            Desktop.getDesktop().open(DateienVerwalter.getInstance().getSavePath());
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Konnte den Ordner nicht öffnen:");
         }
@@ -238,7 +238,7 @@ public class MainController {
 
     @FXML
     public void version(ActionEvent event) {
-        VersionIDHandler.versioncheck(true);
+        VersionIDHandler.versionCheck(true);
     }
 
     @FXML

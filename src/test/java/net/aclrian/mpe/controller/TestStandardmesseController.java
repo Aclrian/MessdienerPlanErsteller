@@ -24,9 +24,9 @@ import java.time.*;
 import java.time.format.*;
 import java.util.*;
 
-public class TestStandartmesseController extends ApplicationTest {
+public class TestStandardmesseController extends ApplicationTest {
 
-    private final StandartMesse standartMesse = new StandartMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
+    private final StandardMesse StandardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
     @Mock
     private DateienVerwalter dv;
     @Mock
@@ -34,7 +34,7 @@ public class TestStandartmesseController extends ApplicationTest {
     @Mock
     private Dialogs dialog;
     private Pane pane;
-    private StandartmesseController instance;
+    private StandardmesseController instance;
     private Scene scene;
 
     @Override
@@ -57,15 +57,15 @@ public class TestStandartmesseController extends ApplicationTest {
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         File f = new File(System.getProperty("user.home"));
-        Mockito.when(dv.getSavepath()).thenReturn(f);
+        Mockito.when(dv.getSavePath()).thenReturn(f);
         Messdiener m1 = Mockito.mock(Messdiener.class);
         Messdiener m2 = Mockito.mock(Messdiener.class);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standartMesse));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
         final Messverhalten mv1 = new Messverhalten();
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
         Mockito.when(m1.toString()).thenReturn("a");
         final Messverhalten mv2 = new Messverhalten();
-        mv2.editiereBestimmteMesse(standartMesse, true);
+        mv2.editiereBestimmteMesse(StandardMesse, true);
         Mockito.when(m2.getDienverhalten()).thenReturn(mv2);
         Mockito.when(m2.toString()).thenReturn("b");
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2));
@@ -77,10 +77,10 @@ public class TestStandartmesseController extends ApplicationTest {
             URL u = getClass().getResource(MainController.EnumPane.STDMESSE.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
             try {
-                fl.setController(new StandartmesseController(standartMesse));
+                fl.setController(new StandardmesseController(StandardMesse));
                 pane.getChildren().add(fl.load());
                 instance = fl.getController();
-                instance.afterstartup(pane.getScene().getWindow(), mc);
+                instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
                 Log.getLogger().error(e.getMessage(), e);
             }

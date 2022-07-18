@@ -1,16 +1,16 @@
 package net.aclrian.mpe.utils;
 
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.pfarrei.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.channels.FileLock;
-import java.util.List;
+import java.io.*;
+import java.nio.channels.*;
+import java.util.*;
 
 public interface IDateienVerwalter {
 
-    File getSavepath();
+    File getSavePath();
+
     void reloadMessdiener();
 
     List<Messdiener> getMessdiener();
@@ -19,7 +19,7 @@ public interface IDateienVerwalter {
 
     FileOutputStream getPfarreiFileOutputStream();
 
-    void removeoldPfarrei(File neuePfarrei);
+    void removeOldPfarrei(File neuePfarrei);
 
     Pfarrei getPfarrei();
 

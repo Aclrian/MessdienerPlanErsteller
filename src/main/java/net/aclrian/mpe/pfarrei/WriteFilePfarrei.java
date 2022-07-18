@@ -21,19 +21,19 @@ public class WriteFilePfarrei {
 
     public static void writeFile(Pfarrei pf, String savepath) {
         try {
-            List<StandartMesse> wsm = pf.getStandardMessen();
+            List<StandardMesse> wsm = pf.getStandardMessen();
 
             WriteFile.Container c = WriteFile.writeXMLFile();
-            Document doc = c.getDocument();
-            Element xml = c.getElement();
+            Document doc = c.document();
+            Element xml = c.element();
 
             Element body = doc.createElement("Body");
             xml.appendChild(body);
 
-            Element standartmessen = doc.createElement("Standartmessem");
-            body.appendChild(standartmessen);
+            Element standardmessen = doc.createElement("Standardmessen");
+            body.appendChild(standardmessen);
             for (int i = 0; i < wsm.size(); i++) {
-                StandartMesse m = wsm.get(i);
+                StandardMesse m = wsm.get(i);
                 if (m instanceof Sonstiges) {
                     continue;
                 }
@@ -65,7 +65,7 @@ public class WriteFilePfarrei {
                 typ.appendChild(doc.createTextNode(m.getTyp()));
                 stdm.appendChild(typ);
 
-                standartmessen.appendChild(stdm);
+                standardmessen.appendChild(stdm);
             }
 
             // Einstellungen
@@ -81,12 +81,12 @@ public class WriteFilePfarrei {
             einst.appendChild(hochamt);
 
             // Settings
-            for (int i = 0; i < Einstellungen.LENGHT; i++) {
+            for (int i = 0; i < Einstellungen.LENGTH; i++) {
                 Setting s = pf.getSettings().getDaten(i);
-                Attribut a = s.getAttribut();
-                int anz = s.getAnzDienen();
+                Attribut a = s.attribut();
+                int anz = s.anzahlDienen();
                 String val = String.valueOf(anz);
-                int id = s.getId();
+                int id = s.id();
                 String idS = String.valueOf(id);
                 if (a == Attribut.YEAR) {
                     Element year = doc.createElement("setting");
@@ -104,15 +104,15 @@ public class WriteFilePfarrei {
             DOMSource domSource = new DOMSource(doc);
             String datei = pf.getName();
             datei = datei.replace(" ", "_");
-            savepath = savepath == null ? DateienVerwalter.getInstance().getSavepath().getAbsolutePath() : savepath;
-            File f = new File(savepath, datei + DateienVerwalter.PFARREDATEIENDUNG);
+            savepath = savepath == null ? DateienVerwalter.getInstance().getSavePath().getAbsolutePath() : savepath;
+            File f = new File(savepath, datei + DateienVerwalter.PFARREI_DATEIENDUNG);
             Log.getLogger()
                     .info("Pfarrei wird gespeichert in: {}", f);
             StreamResult streamResult = new StreamResult(f);
-            c.getTransformer().transform(domSource, streamResult);
+            c.transformer().transform(domSource, streamResult);
             boolean notYetStarted = DateienVerwalter.getInstance() != null;
             if (notYetStarted) {
-                DateienVerwalter.getInstance().removeoldPfarrei(f);
+                DateienVerwalter.getInstance().removeOldPfarrei(f);
             }
         } catch (ParserConfigurationException | TransformerException exception) {
             Dialogs.getDialogs().error(exception, "Fehler bei Speichern der Pfarrei:");
@@ -120,6 +120,6 @@ public class WriteFilePfarrei {
     }
 
     public static void writeFile(Pfarrei pf) {
-        writeFile(pf, DateienVerwalter.getInstance().getSavepath().getAbsolutePath());
+        writeFile(pf, DateienVerwalter.getInstance().getSavePath().getAbsolutePath());
     }
 }

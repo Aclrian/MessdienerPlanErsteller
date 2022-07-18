@@ -13,10 +13,10 @@ import java.time.*;
 import static net.aclrian.mpe.utils.Log.*;
 
 public class MesseController implements Controller {
-    public static final String STANDARTMESSE_AUSWAEHLEN = "Standartmesse ändern:";
+    public static final String STANDARDMESSE_AUSWAEHLEN = "Standardmesse ändern:";
     private boolean locked = true;
     private Messe moben = null;
-    private StandartMesse standartMesse = null;
+    private StandardMesse standardMesse = null;
 
     @FXML
     private TextField titel;
@@ -55,7 +55,7 @@ public class MesseController implements Controller {
     private Button smbearbeiten;
 
     @Override
-    public void afterstartup(Window window, MainController mc) {
+    public void afterStartup(Window window, MainController mc) {
         ASlider.makeASlider("Messdiener", slider, null);
         slider.setValue(6d);
         slider.setMax(30);
@@ -70,7 +70,7 @@ public class MesseController implements Controller {
                 locked = false;
                 mc.changePaneMesse(null);
             } else {
-                Dialogs.getDialogs().warn("Bitte einen Titel, Ort, Datum und Uhrzeit eigeben.");
+                Dialogs.getDialogs().warn("Bitte einen Titel, Ort, Datum und Uhrzeit eingeben.");
             }
         });
         button.setOnAction(e -> {
@@ -78,7 +78,7 @@ public class MesseController implements Controller {
                 locked = false;
                 mc.changePane(MainController.EnumPane.SELECT_MESSE);
             } else {
-                Dialogs.getDialogs().warn("Bitte einen Titel, Ort, Datum und Uhrzeit eigeben.");
+                Dialogs.getDialogs().warn("Bitte einen Titel, Ort, Datum und Uhrzeit eingeben.");
             }
         });
         uhr.getValueFactory().setValue(null);
@@ -86,14 +86,14 @@ public class MesseController implements Controller {
 
     private boolean saveMesse(MainController mc) {
         if (datum.getValue() != null && uhr.getValue() != null && !ort.getText().equals("") && !titel.getText().equals("")) {
-            Messe m = new Messe(hochamt.isSelected(), (int) slider.getValue(), getDate(), ort.getText(), titel.getText(), standartMesse);
+            Messe m = new Messe(hochamt.isSelected(), (int) slider.getValue(), getDate(), ort.getText(), titel.getText(), standardMesse);
             for (Messdiener medi : list.getSelected()) {
-                if (!m.vorzeitigEiteilen(medi)) {
+                if (!m.vorzeitigEinteilen(medi)) {
                     Dialogs.getDialogs().warn(medi + "{} konnte nicht vorzeitig eingeteilt werden.");
                 }
             }
             mc.getMessen().add(m);
-            mc.getMessen().sort(Messe.compForMessen);
+            mc.getMessen().sort(Messe.MESSE_COMPARATOR);
             return true;
         }
         return false;
@@ -101,8 +101,8 @@ public class MesseController implements Controller {
 
     @Override
     public void initialize() {
-        standartMesse = new Sonstiges();
-        smesse.setText(standartMesse.tolangerBenutzerfreundlichenString());
+        standardMesse = new Sonstiges();
+        smesse.setText(standardMesse.toLangerBenutzerfreundlichenString());
         smesse.setDisable(true);
     }
 
@@ -113,8 +113,8 @@ public class MesseController implements Controller {
 
     public void setMesse(Messe messe) {
         if (messe == null) return;
-        standartMesse = messe.getStandardMesse();
-        smesse.setText(messe.getStandardMesse().tolangerBenutzerfreundlichenString());
+        standardMesse = messe.getStandardMesse();
+        smesse.setText(messe.getStandardMesse().toLangerBenutzerfreundlichenString());
         moben = messe;
         titel.setText(messe.getMesseTyp());
         ort.setText(messe.getKirche());
@@ -134,10 +134,10 @@ public class MesseController implements Controller {
 
     @FXML
     private void standardmesseBearbeiten() {
-        StandartMesse s = (StandartMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), STANDARTMESSE_AUSWAEHLEN);
+        StandardMesse s = (StandardMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), STANDARDMESSE_AUSWAEHLEN);
         if (s != null) {
-            smesse.setText(s.tolangerBenutzerfreundlichenString());
-            this.standartMesse = s;
+            smesse.setText(s.toLangerBenutzerfreundlichenString());
+            this.standardMesse = s;
         }
     }
 }
