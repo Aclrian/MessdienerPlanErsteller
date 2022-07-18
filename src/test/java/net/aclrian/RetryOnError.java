@@ -25,7 +25,7 @@ public class RetryOnError implements TestRule {
             try {
                 base.evaluate();
             } catch (Throwable t) {
-                if (t instanceof NullPointerException &&
+                if (t instanceof RuntimeException &&
                         t.getMessage().contains("Cannot invoke \"String.toString()\" because the return value of \"javafx.scene.control.ComboBox.getValue()\" is null")) {
                     Log.getLogger().warn(description.getDisplayName() + ": Error on " + currentTry + "st/nd/rd/th Try: " + t.getMessage(), t);
                     evaluate(base, description, ++currentTry);
