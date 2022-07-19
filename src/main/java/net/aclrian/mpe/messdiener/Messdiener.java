@@ -174,7 +174,7 @@ public class Messdiener {
     }
 
     public void setGeschwister(String[] geschwister) {
-        this.geschwister = geschwister;
+        this.geschwister = Arrays.stream(geschwister).limit(LENGHT_GESCHWISTER).toArray(String[]::new);;
     }
 
     public String[] getFreunde() {
@@ -182,7 +182,7 @@ public class Messdiener {
     }
 
     public void setFreunde(String[] freunde) {
-        this.freunde = freunde;
+        this.freunde = Arrays.stream(freunde).limit(LENGHT_FREUNDE).toArray(String[]::new);;
     }
 
     public String getNachnname() {

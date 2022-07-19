@@ -110,6 +110,14 @@ public class Speicherort {
         return file == null ? null : file.getPath();
     }
 
+    public static File waehleDatei(Window window, FileChooser.ExtensionFilter filter, String title) {
+        FileChooser f = new FileChooser();
+        f.getExtensionFilters().add(filter);
+        f.setTitle(title);
+        File file = f.showOpenDialog(window);
+        return file;
+    }
+
     public String getSpeicherortString() {
         if (speicherortString == null || speicherortString.isEmpty()) {
             speicherortString = waehleOrdner();

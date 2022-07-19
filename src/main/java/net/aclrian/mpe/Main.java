@@ -46,7 +46,7 @@ public class Main extends Application {
     private boolean startPfarrei(Stage stage) {
         try {
             DateienVerwalter.reStart(stage);
-        } catch (IDateienVerwalter.NoSuchPfarrei e) {
+        } catch (DateienVerwalter.NoSuchPfarrei e) {
             PfarreiController.start(stage, e.getSavepath().getAbsolutePath(), this);
             return true;
         }

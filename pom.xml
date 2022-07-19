@@ -153,7 +153,7 @@
                                 <option>javafx.base/com.sun.javafx.event=ALL-UNNAMED</option>
                                 <option>--add-opens</option>
                                 <option>javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED</option>
-                                <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</option>
+                                <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:80</option>
                             </options>
                         </configuration>
                     </execution>

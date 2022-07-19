@@ -6,8 +6,10 @@ import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import javafx.util.*;
 import net.aclrian.mpe.*;
 import net.aclrian.mpe.controller.Select.*;
+import net.aclrian.mpe.converter.*;
 import net.aclrian.mpe.messdiener.*;
 import net.aclrian.mpe.messe.*;
 import net.aclrian.mpe.utils.*;
@@ -247,6 +249,23 @@ public class MainController {
             Desktop.getDesktop().open(Log.getWorkingDir());
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Konnte den Ordner nicht öffnen:");
+        }
+    }
+
+    @FXML
+    public void importCSV(ActionEvent event){
+        ConvertCSV.ConvertData data = null;
+        try {
+            data = Dialogs.getDialogs().importDialog(stage.getScene().getWindow());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        //switch pfarrei and savepath
+        // don't overwrite existing file
+        try {
+            ConvertCSV csv = new ConvertCSV(data);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

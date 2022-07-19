@@ -3,6 +3,8 @@ package net.aclrian.mpe.utils;
 import javafx.application.*;
 import javafx.beans.value.*;
 import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -13,7 +15,10 @@ import javafx.scene.control.Alert.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import javafx.stage.Window;
 import net.aclrian.fx.*;
+import net.aclrian.mpe.controller.*;
+import net.aclrian.mpe.converter.*;
 import net.aclrian.mpe.messdiener.*;
 import net.aclrian.mpe.messe.*;
 import net.aclrian.mpe.pfarrei.*;
@@ -21,6 +26,7 @@ import net.aclrian.mpe.pfarrei.*;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.*;
 import java.text.*;
 import java.time.*;
 import java.time.format.*;
@@ -388,6 +394,28 @@ public class Dialogs {
     public List<Messdiener> select(List<Messdiener> data, Messdiener without, List<Messdiener> freund, String s) {
         data.remove(without);
         return select(data, freund, s);
+    }
+
+    public ConvertCSV.ConvertData importDialog(Window window) {
+        File file = Speicherort.waehleDatei(window, new FileChooser.ExtensionFilter("CSV-Datei", "*.csv"), "Datei zum Importieren auswählen");
+        URL u = getClass().getResource("/view/converter.fxml");
+        FXMLLoader fl = new FXMLLoader(u);
+        Parent p = null;
+        try {
+            p = fl.load();
+        } catch (IOException e) {
+            Log.getLogger().error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        ConverterController controller = fl.getController();
+        controller.afterStartup(null, null);
+
+        Alert a = alertBuilder(AlertType.INFORMATION, "Spalten zuordnen", p);
+        do{
+            a.showAndWait();
+        } while(!controller.isValid());
+
+        return controller.getData(file);
     }
 
     public enum YesNoCancelEnum {
