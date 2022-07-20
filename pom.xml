@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>11.0.1</version>
+            <version>11.0.2</version>
 
         </dependency>
         <!--Zum Lesen der Version von Github https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
