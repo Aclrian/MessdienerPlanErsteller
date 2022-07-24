@@ -65,7 +65,7 @@ public class TestFinishController extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void cleanTest() {
+    public void cleanTest() throws Messdaten.CouldFindMedi {
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Mockito.when(pf.getSettings()).thenReturn(einst);
@@ -169,17 +169,17 @@ public class TestFinishController extends ApplicationTest {
     }
 
     @Test
-    public void testEinteilungWithoutDOCX() {
+    public void testEinteilungWithoutDOCX() throws Messdaten.CouldFindMedi {
         testEinteilung(false);
     }
 
     @Ignore("Run Test with conversion to docx")
     @Test
-    public void testEinteilungWithDOCX() {
+    public void testEinteilungWithDOCX() throws Messdaten.CouldFindMedi {
         testEinteilung(true);
     }
 
-    private void testEinteilung(boolean skipDOCX) {
+    private void testEinteilung(boolean skipDOCX) throws Messdaten.CouldFindMedi {
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);

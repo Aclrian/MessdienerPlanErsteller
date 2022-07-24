@@ -20,7 +20,7 @@ public class Messdaten {
     private ArrayList<LocalDate> ausgeteilt = new ArrayList<>();
     private ArrayList<LocalDate> pause = new ArrayList<>();
 
-    public Messdaten(Messdiener m) {
+    public Messdaten(Messdiener m) throws CouldFindMedi {
         geschwister = new ArrayList<>();
         freunde = new ArrayList<>();
         update(m);
@@ -180,23 +180,29 @@ public class Messdaten {
         return insgesamtEingeteilt;
     }
 
-    public void update(Messdiener m) {
+    public void update(Messdiener m) throws CouldFindMedi {
         update(false, m.getGeschwister(), m);
         update(true, m.getFreunde(), m);
     }
 
-    private void update(boolean isFreund, String[] s, Messdiener m) {
-        for (String value : s) {
-            Messdiener medi;
+    private void update(boolean isFreund, String[] s, Messdiener m) throws CouldFindMedi {
+        for (int i = 0; i < s.length; i++) {
+            String value = s[i];
+            Messdiener medi = null;
             if (!value.equals("") && !value.equals("LEER") && !value.equals("Vorname, Nachname")) {
                 try {
                     medi = sucheMessdiener(value, m, DateienVerwalter.getInstance().getMessdiener());
-                    if (medi != null) {
+                } catch (CouldnotFindMedi e) {
+                    if (messdienerNotFound(isFreund, s, m, value, e)) return;
+                }
+                if (medi != null) {
+                    if (isFreund) {
+                        this.freunde.add(medi);
+                        freunde = rd.removeDuplicatedEntries(this.freunde);
+                    } else {
                         this.geschwister.add(medi);
                         geschwister = rd.removeDuplicatedEntries(this.geschwister);
                     }
-                } catch (CouldnotFindMedi e) {
-                    if (messdienerNotFound(isFreund, s, m, value, e)) return;
                 }
             }
         }
@@ -217,18 +223,28 @@ public class Messdaten {
             } catch (IOException ex) {
                 Dialogs.getDialogs().error(ex, "Konnte es nicht beheben.");
             }
-            update(isFreund, gew, m);
+            DateienVerwalter.getInstance().reloadMessdiener();
             return true;
         }
         return false;
     }
 
-    public Messdiener sucheMessdiener(String geschwi, Messdiener akt, List<Messdiener> medis) throws CouldnotFindMedi {
+    public Messdiener sucheMessdiener(String geschwi, Messdiener akt, List<Messdiener> medis) throws CouldnotFindMedi, CouldFindMedi {
         for (Messdiener messdiener : medis) {
             if (messdiener.toString().equals(geschwi)) {
                 return messdiener;
             }
         }
+        // additional Search for Vorname and Nachname
+        String replaceSeparators = geschwi.replace(", ", " ")
+                .replace("-", " ").replace("; ", " ");
+        String[] parts = replaceSeparators.split(" ");
+        for (Messdiener messdiener : medis) {
+            if (Arrays.stream(parts).allMatch(part -> messdiener.toString().toLowerCase(Locale.getDefault()).contains(part.toLowerCase(Locale.getDefault())))) {
+                throw new CouldFindMedi(messdiener.toString(), geschwi, "Konnte für " + akt.toString() + " : " + geschwi + " finden");
+            }
+        }
+
         throw new CouldnotFindMedi("Konnte für " + akt.toString() + " : " + geschwi + " nicht finden");
     }
 
@@ -239,6 +255,25 @@ public class Messdaten {
     public static class CouldnotFindMedi extends Exception {
         public CouldnotFindMedi(String message) {
             super(message);
+        }
+    }
+
+    public static class CouldFindMedi extends Exception {
+        private final String messdienerID;
+        private final String string;
+
+        public CouldFindMedi(String foundID, String string, String message) {
+            super(message);
+            this.messdienerID = foundID;
+            this.string = string;
+        }
+
+        public String getMessdienerID() {
+            return messdienerID;
+        }
+
+        public String getString() {
+            return string;
         }
     }
 }

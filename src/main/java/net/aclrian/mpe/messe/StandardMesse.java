@@ -1,10 +1,7 @@
 package net.aclrian.mpe.messe;
 
-import net.aclrian.mpe.utils.*;
-
 import java.time.*;
 import java.time.format.*;
-import java.time.temporal.*;
 import java.util.*;
 
 public class StandardMesse {
@@ -68,31 +65,6 @@ public class StandardMesse {
     public String toKurzerBenutzerfreundlichenString() {
         return wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + beginnStunde + ":" + beginnMinute + ": " + ort + " " + typ + " (" + anzMessdiener
                 + ")";
-    }
-
-    public static StandardMesse fromBenutzerfreundlichenString(String s) {
-        String[] split = s.split(" jeden ");
-        if (split.length != 2) throw new IllegalArgumentException(s);
-        String typ = split[0];
-        split = split[1].split(", um");
-        if (split.length != 2) throw new IllegalArgumentException(s);
-        TemporalAccessor accessor = DateUtil.SHORT_STANDALONE.parse(split[0]);
-        DayOfWeek dow = DayOfWeek.from(accessor);
-        split = split[1].split(":");
-        if (split.length != 2) throw new IllegalArgumentException(s);
-        int stunde = Integer.parseInt(split[0]);
-        split = split[1].split(" in ");
-        if (split.length != 2) throw new IllegalArgumentException(s);
-        String minute = split[0];
-        split = split[1].split(" \\(");
-        if (split.length != 2) throw new IllegalArgumentException(s);
-        String ort = split[0];
-        int anz = Integer.parseInt(split[1].substring(0, split[1].length() - 1));
-
-        if (minute.length() == 1) {
-            minute = "0" + minute;
-        }
-        return new StandardMesse(dow, stunde, minute, ort, anz, typ);
     }
 
     public String toBenutzerfreundlichenString() {

@@ -1,6 +1,7 @@
 package net.aclrian.mpe.controller;
 
 import javafx.collections.*;
+import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
@@ -16,6 +17,7 @@ import java.util.*;
 
 public class ConverterController implements Controller {
 
+    private final File file;
     @FXML
     private ListView<ConvertCSV.Sortierung> reihenfolge;
     @FXML
@@ -49,9 +51,13 @@ public class ConverterController implements Controller {
     private Button smreset;
     @FXML
     private ChoiceBox<Charset> charset;
+    @FXML
+    private Accordion accordion;
+    @FXML
+    private CheckBox gegenseitgEintragen;
 
-    public ConverterController() {
-
+    public ConverterController(File file) {
+        this.file = file;
     }
 
     @Override
@@ -65,6 +71,14 @@ public class ConverterController implements Controller {
             cell.setConverter(new StandardMesseConverter());
             return cell;
         });
+        reihenfolge.setCellFactory(sm -> {
+            TextFieldListCell<ConvertCSV.Sortierung> cell = new TextFieldListCell<>();
+            cell.setConverter(new SortierungConverter());
+            return cell;
+        });
+        smReihenfolge.setEditable(false);
+        reihenfolge.setEditable(false);
+        accordion.setExpandedPane(accordion.getPanes().get(0));
     }
 
     @Override
@@ -124,12 +138,25 @@ public class ConverterController implements Controller {
         });
     }
 
-    public boolean isValid() {
-        return !delimiter.getText().isEmpty() && !subdelimiter.getText().isEmpty() && !reihenfolge.getItems().isEmpty() && !smReihenfolge.getItems().isEmpty();
+    @FXML
+    public void help(ActionEvent e) {
+        Dialogs.getDialogs().info("Informationen zum Importieren", """
+                Freunde und Geschwister: Bei diesem Eintrag wird eine Liste erwartet, die mit dem Trennzeichen für Listen die einzelnen Einträge aufspaltet.
+                Ein jeder Eintrag steht für einen Messdiener.
+                Dieser wird im System gesucht und mittels genauer Übereinstimmung nach dem Muster "Nachname, Vorname" gefunden.
+                Falls nicht wird der Messdiener gesucht, der alle Einzelteile enthält.
+                So wird "Heinz-Karl Rüdiger" mit dem Messdiener der Datei "Rüdiger, Karl-Heinz.xml" zugeordnet.
+                                
+                Standardmesse: Die Reihenfolge der Standardmesse Einträge im Reihenfolge-Abschnitt entsprechen der Reihenfolge der spezifischen Standardmesse im Standardmesse-Abschnitt
+                und dient zur Identifizierung, welche Standartmesse zu welcher Spalte gehört.
+                                
+                Ein "(umgekehrt)" am Ende eines Eintrags bedeutet, dass der Messdiener ein Leiter ist oder zu dieser Standardmesse kann, wenn die entsprechende Zelle leer ist.
+                Beim Gegenpart ist der entsprechende Eintrag wahr, wenn dort etwas steht wie bspw "x".
+                """);
     }
 
-    public ConvertCSV.ConvertData getData(File f){
-        return new ConvertCSV.ConvertData(f, new ArrayList<>(reihenfolge.getItems()), new ArrayList<>(smReihenfolge.getItems()), delimiter.getText(), subdelimiter.getText(), charset.getValue());
+    public ConvertCSV.ConvertData getData() {
+        return new ConvertCSV.ConvertData(file, new ArrayList<>(reihenfolge.getItems()), new ArrayList<>(smReihenfolge.getItems()), delimiter.getText(), subdelimiter.getText(), charset.getValue(), gegenseitgEintragen.isSelected());
     }
 
     @Override
@@ -146,7 +173,20 @@ public class ConverterController implements Controller {
 
         @Override
         public StandardMesse fromString(String s) {
-            return StandardMesse.fromBenutzerfreundlichenString(s);
+            throw new UnsupportedOperationException("Cannot get Standardmesse from String");
+        }
+    }
+
+    private static class SortierungConverter extends StringConverter<ConvertCSV.Sortierung> {
+
+        @Override
+        public String toString(ConvertCSV.Sortierung sortierung) {
+            return sortierung.getName();
+        }
+
+        @Override
+        public ConvertCSV.Sortierung fromString(String s) {
+            throw new UnsupportedOperationException("Cannot get Sortierung from String");
         }
     }
 }

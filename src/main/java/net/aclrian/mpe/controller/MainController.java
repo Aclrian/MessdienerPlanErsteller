@@ -6,7 +6,6 @@ import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.util.*;
 import net.aclrian.mpe.*;
 import net.aclrian.mpe.controller.Select.*;
 import net.aclrian.mpe.converter.*;
@@ -111,6 +110,8 @@ public class MainController {
             control.afterStartup(p.getScene().getWindow(), this);
         } catch (IOException e) {
             Dialogs.getDialogs().fatal(e, "Auf " + ep.getLocation() + NO_ACCESS);
+        } catch (Exception ex) {
+            changePane(EnumPane.START);
         }
     }
 
@@ -254,18 +255,14 @@ public class MainController {
 
     @FXML
     public void importCSV(ActionEvent event){
-        ConvertCSV.ConvertData data = null;
-        try {
-            data = Dialogs.getDialogs().importDialog(stage.getScene().getWindow());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        //switch pfarrei and savepath
-        // don't overwrite existing file
+        ConvertCSV.ConvertData data;
+        data = Dialogs.getDialogs().importDialog(stage.getScene().getWindow());
+        if (data == null) return;
         try {
             ConvertCSV csv = new ConvertCSV(data);
+            csv.start();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Dialogs.getDialogs().error(e, e.getMessage());
         }
     }
 

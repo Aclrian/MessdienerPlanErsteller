@@ -11,44 +11,51 @@ import java.time.*;
 import java.util.*;
 
 public class ConvertCSV {
-    public enum Sortierung {
-        VORNAME(0),
-        NACHNAME(1),
-        EINTRITT(2),
-        LEITER(3),
-        NICHT_LEITER(4),
-        NACHNAME_KOMMA_VORNAME(5),
-        VORNAME_LEERZEICHEN_NACHNAME(6),
-        EMAIL(7),
-        FREUNDE(8),
-        GESCHWISTER(9),
-        STANDARD_MESSE(10),
-        NICHT_STANDARD_MESSE(11),
-        IGNORIEREN(12);
+    private final ConvertData convertData;
+    private final ArrayList<Messdiener> importedMessdiener = new ArrayList<>();
 
-        private final int number;
-
-        Sortierung(int number) {
-            this.number = number;
-        }
-
-        public int getNumber() {
-            return number;
-        }
+    public ConvertCSV(ConvertData convertData) {
+        this.convertData = convertData;
     }
 
-    public ConvertCSV(ConvertData convertData) throws IOException {
-        Log.getLogger().warn("Das Unter-Programm unterstützt die Vorlieben von Messdienern nicht!\n-Also wann sie dienen können");
-        if (convertData.file().exists() && convertData.file().getName().endsWith(".csv")) {
+    public void start() throws IOException {
+        if (convertData.file().exists()) {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(convertData.file()), convertData.charset()))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     parseLineToMessdiener(line, convertData);
                 }
             }
+            DateienVerwalter.getInstance().reloadMessdiener();
+            // Round 1: replace ID
+            for (Messdiener m : importedMessdiener) {
+                try {
+                    m.setNewMessdatenDaten();
+                } catch (Messdaten.CouldFindMedi e) {
+                    for (int i = 0; i < Messdiener.LENGHT_FREUNDE; i++) {
+                        if (m.getFreunde()[i].equalsIgnoreCase(e.getString())) {
+                            m.getFreunde()[i] = e.getMessdienerID();
+                        }
+                    }
+                    for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
+                        if (m.getGeschwister()[i].equalsIgnoreCase(e.getString())) {
+                            m.getGeschwister()[i] = e.getMessdienerID();
+                        }
+                    }
+                }
+                m.makeXML();
+            }
+
+            // Round 2: add missing back references
+            List<Messdiener> allMessdiener = DateienVerwalter.getInstance().getMessdiener();
+            if (convertData.gegenseitgEintragen()) {
+                DateienVerwalter.getInstance().reloadMessdiener();
+                //TODO
+            }
         }
     }
-//TODO make sure that dv has the right pfarrei selected so that Dienverhalten has the correct StandardMesse
+
+    //TODO make sure that dv has the right pfarrei selected so that Dienverhalten has the correct StandardMesse
     private void parseLineToMessdiener(String line, ConvertData convertData) {
         String[] elemente = line.split(convertData.delimiter());
         String vorname = "Vorname";
@@ -77,10 +84,10 @@ public class ConvertCSV {
                     eintritt = Integer.parseInt(elemente[j]);
                     break;
                 case LEITER:
-                    leiter = elemente[j].equals("");
+                    leiter = !elemente[j].equals("");
                     break;
                 case NICHT_LEITER:
-                    leiter = !elemente[j].equals("");
+                    leiter = elemente[j].equals("");
                     break;
                 case NACHNAME_KOMMA_VORNAME:
                     String[] array2 = elemente[j].split(", ");
@@ -97,14 +104,14 @@ public class ConvertCSV {
                     break;
                 case VORNAME_LEERZEICHEN_NACHNAME:
                     String[] name = elemente[j].split(" ");
-                    if(name.length == 2){
+                    if (name.length == 2) {
                         vorname = name[0];
                         nachname = name[1];
-                    } else if( name.length > 2){
+                    } else if (name.length > 2) {
                         vorname = name[0];
-                        nachname = elemente[j].substring(name[0].length()+1);
-                    } else{
-                        Log.getLogger().warn("Import: Line {}: Name konnte nicht geparst werden: {}", (j+1), Sortierung.VORNAME_LEERZEICHEN_NACHNAME);
+                        nachname = elemente[j].substring(name[0].length() + 1);
+                    } else {
+                        Log.getLogger().warn("Import: Line {}: Name konnte nicht geparst werden: {}", (j + 1), Sortierung.VORNAME_LEERZEICHEN_NACHNAME);
                     }
                     break;
                 case NICHT_STANDARD_MESSE:
@@ -117,19 +124,18 @@ public class ConvertCSV {
                     break;
                 case FREUNDE:
                     String[] split = elemente[j].split(convertData.subdelimiter(), freunde.length);
-                    if(split.length>freunde.length){
-                        freunde = Arrays.copyOfRange(split,0, freunde.length);
-                    } else if(split.length < freunde.length){
-                        freunde = Arrays.copyOfRange(split, 0, split.length);
+                    if (split.length < freunde.length) {
+                        freunde = new String[Messdiener.LENGHT_FREUNDE];
+                        System.arraycopy(split, 0, freunde, 0, split.length);
                     } else {
                         freunde = split;
                     }
                     break;
                 case GESCHWISTER:
                     String[] splitter = elemente[j].split(convertData.subdelimiter(), freunde.length);
-                    if(splitter.length>freunde.length){
-                        geschwister = Arrays.copyOfRange(splitter,0, freunde.length);
-                    } else if(splitter.length < freunde.length){
+                    if (splitter.length > freunde.length) {
+                        geschwister = Arrays.copyOfRange(splitter, 0, freunde.length);
+                    } else if (splitter.length < freunde.length) {
                         geschwister = Arrays.copyOfRange(splitter, 0, splitter.length);
                     } else {
                         geschwister = splitter;
@@ -151,9 +157,36 @@ public class ConvertCSV {
             m.setEmailEmpty();
         }
         m.makeXML();
+        importedMessdiener.add(m);
+    }
+
+    public enum Sortierung {
+        VORNAME("Vorname"),
+        NACHNAME("Nachname"),
+        EINTRITT("Eintritt"),
+        LEITER("Leiter"),
+        NICHT_LEITER("Leiter (umgekehrt)"),
+        NACHNAME_KOMMA_VORNAME("Name mit der Form  \"Nachname, Vorname\""),
+        VORNAME_LEERZEICHEN_NACHNAME("Name mit der Form  \"Vorname Nachname\""),
+        EMAIL("E-Mail"),
+        FREUNDE("Liste der Freunde"),
+        GESCHWISTER("Liste der Geschwister"),
+        STANDARD_MESSE("Standardmesse"),
+        NICHT_STANDARD_MESSE("Standardmesse (umgekehrt)"),
+        IGNORIEREN("Spalte ignorieren");
+
+        private final String name;
+
+        Sortierung(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
     public record ConvertData(File file, List<Sortierung> sortierung, List<StandardMesse> standardMesse,
-                              String delimiter, String subdelimiter, Charset charset) {
+                              String delimiter, String subdelimiter, Charset charset, boolean gegenseitgEintragen) {
     }
 }

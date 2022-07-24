@@ -19,6 +19,7 @@ public class DateienVerwalter {
     private List<Messdiener> medis;
     private FileOutputStream pfarreiFos;
     private FileLock lock;
+    private boolean messdienerAlreadyNull = false;
 
     public DateienVerwalter(String path) throws NoSuchPfarrei {
         this.dir = new File(path);
@@ -30,7 +31,7 @@ public class DateienVerwalter {
                     useKey(service);
                 }
             } catch (IOException e) {
-                Dialogs.getDialogs().warn("");
+                Log.getLogger().error(e.getMessage(), e);
             }
         });
         thread.setDaemon(true);
@@ -55,7 +56,7 @@ public class DateienVerwalter {
         try {
             key = service.take();
             key.pollEvents();
-            reloadMessdiener();
+            if (!messdienerAlreadyNull) reloadMessdiener();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -66,6 +67,7 @@ public class DateienVerwalter {
     }
 
     public void reloadMessdiener() {
+        messdienerAlreadyNull = true;
         medis = null;
     }
 
@@ -77,11 +79,28 @@ public class DateienVerwalter {
                 ReadFile rf = new ReadFile();
                 medis.add(rf.getMessdiener(file));
             });
-            medis.forEach(Messdiener::setnewMessdatenDaten);
+            for (Messdiener m : medis) {
+                try {
+                    m.setNewMessdatenDaten();
+                } catch (Messdaten.CouldFindMedi e) {
+                    for (int i = 0; i < Messdiener.LENGHT_FREUNDE; i++) {
+                        if (m.getFreunde()[i].equalsIgnoreCase(e.getString())) {
+                            m.getFreunde()[i] = e.getMessdienerID();
+                        }
+                    }
+                    for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
+                        if (m.getGeschwister()[i].equalsIgnoreCase(e.getString())) {
+                            m.getGeschwister()[i] = e.getMessdienerID();
+                        }
+                    }
+                    m.makeXML();
+                    return getMessdiener();
+                }
+            }
+            messdienerAlreadyNull = false;
         }
         return medis;
     }
-
 
     //Pfarrei
     private void lookForPfarreiFile() throws NoSuchPfarrei {

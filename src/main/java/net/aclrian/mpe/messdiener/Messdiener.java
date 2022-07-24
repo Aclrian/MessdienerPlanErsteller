@@ -1,5 +1,6 @@
 package net.aclrian.mpe.messdiener;
 
+import javafx.application.*;
 import net.aclrian.mpe.messe.*;
 import net.aclrian.mpe.utils.*;
 
@@ -141,7 +142,7 @@ public class Messdiener {
         try {
             wf.toXML();
         } catch (Exception e) {
-            Dialogs.getDialogs().error(e, "Der Messdiener '" + this + "' konnte nicht gespeichert werden.");
+            Platform.runLater(() -> Dialogs.getDialogs().error(e, "Der Messdiener '" + this + "' konnte nicht gespeichert werden."));
         }
     }
 
@@ -174,7 +175,7 @@ public class Messdiener {
     }
 
     public void setGeschwister(String[] geschwister) {
-        this.geschwister = Arrays.stream(geschwister).limit(LENGHT_GESCHWISTER).toArray(String[]::new);;
+        this.geschwister = Arrays.stream(geschwister).limit(LENGHT_GESCHWISTER).toArray(String[]::new);
     }
 
     public String[] getFreunde() {
@@ -182,7 +183,7 @@ public class Messdiener {
     }
 
     public void setFreunde(String[] freunde) {
-        this.freunde = Arrays.stream(freunde).limit(LENGHT_FREUNDE).toArray(String[]::new);;
+        this.freunde = Arrays.stream(freunde).limit(LENGHT_FREUNDE).toArray(String[]::new);
     }
 
     public String getNachnname() {
@@ -205,7 +206,7 @@ public class Messdiener {
         return daten;
     }
 
-    public void setnewMessdatenDaten() {
+    public void setNewMessdatenDaten() throws Messdaten.CouldFindMedi {
         this.daten = new Messdaten(this);
     }
 
