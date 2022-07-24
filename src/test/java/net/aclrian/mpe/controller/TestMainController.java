@@ -9,6 +9,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.stage.*;
+import net.aclrian.*;
 import net.aclrian.fx.*;
 import net.aclrian.mpe.*;
 import net.aclrian.mpe.messdiener.*;
@@ -54,6 +55,8 @@ public class TestMainController extends ApplicationTest {
         pf = Mockito.mock(Pfarrei.class);
     }
 
+    @Rule
+    public RetryOnError retry = new RetryOnError();
     @Test
     public void testEachEnumPane() {
         Dialogs.setDialogs(dialogs);
