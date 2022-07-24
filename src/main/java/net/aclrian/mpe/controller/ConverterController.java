@@ -146,6 +146,8 @@ public class ConverterController implements Controller {
                 Dieser wird im System gesucht und mittels genauer Übereinstimmung nach dem Muster "Nachname, Vorname" gefunden.
                 Falls nicht wird der Messdiener gesucht, der alle Einzelteile enthält.
                 So wird "Heinz-Karl Rüdiger" mit dem Messdiener der Datei "Rüdiger, Karl-Heinz.xml" zugeordnet.
+                Es ist auch möglich, die Listen mit den Zeilennummern der entsprechenden Messdienern zu füllen.
+                Enthält eine Liste also "1,2,3" so wird die Liste die ersten drei Messdiener enthalten.
                                 
                 Standardmesse: Die Reihenfolge der Standardmesse Einträge im Reihenfolge-Abschnitt entsprechen der Reihenfolge der spezifischen Standardmesse im Standardmesse-Abschnitt
                 und dient zur Identifizierung, welche Standartmesse zu welcher Spalte gehört.

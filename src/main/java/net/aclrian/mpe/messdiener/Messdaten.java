@@ -155,6 +155,14 @@ public class Messdaten {
         return true;
     }
 
+    public List<Messdiener> getFreunde() {
+        return freunde;
+    }
+
+    public List<Messdiener> getGeschwister() {
+        return geschwister;
+    }
+
     public boolean ausgeteilt(LocalDate date) {
         return ausgeteilt.contains(date);
     }
@@ -186,8 +194,7 @@ public class Messdaten {
     }
 
     private void update(boolean isFreund, String[] s, Messdiener m) throws CouldFindMedi {
-        for (int i = 0; i < s.length; i++) {
-            String value = s[i];
+        for (String value : s) {
             Messdiener medi = null;
             if (!value.equals("") && !value.equals("LEER") && !value.equals("Vorname, Nachname")) {
                 try {
