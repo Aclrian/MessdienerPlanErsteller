@@ -4,5 +4,5 @@
     "config:base"
   ],
   "stabilityDays": 30,
-  "baseBranches": ["develop", "doc4j"]
+  "baseBranches": ["develop"]
 }
