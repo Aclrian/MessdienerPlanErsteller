@@ -321,12 +321,19 @@ public class TestFinishController extends ApplicationTest {
         Assertions.assertThat(me2.getEingeteilte().size()).isEqualTo(0);
         Assertions.assertThat(me3.getEingeteilte().size()).isEqualTo(0);
 
-        int from = DateUtil.getYesterdaysYesterday().getDayOfMonth();
+        var from = DateUtil.getYesterdaysYesterday().getDayOfMonth();
         int to = DateUtil.getTomorrow().getDayOfMonth();
         String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        Assertions.assertThat(pair.getValue().toString()).isEqualTo("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20" + from + ".%20" + fromMonth + "%20bis%20" + to + ".%20" + toMonth + "&body=%0D%0A");
+        Assertions.assertThat(pair.getValue().toString()).isEqualTo(
+                String.format("mailto:?bcc=a@w.de&subject=Messdienerplan%%20vom%%20%02d.%%20%s%%20bis%%20%02d.%%20%s&body=%%0D%%0A",
+                        from,
+                        fromMonth,
+                        to,
+                        toMonth
+                )
+        );
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {
