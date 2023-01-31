@@ -65,7 +65,7 @@ public class TestFinishController extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void cleanTest() {
+    public void cleanTest() throws Messdaten.CouldnotFindMedi {
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Mockito.when(pf.getSettings()).thenReturn(einst);
@@ -169,17 +169,17 @@ public class TestFinishController extends ApplicationTest {
     }
 
     @Test
-    public void testEinteilungWithoutDOCX() {
+    public void testEinteilungWithoutDOCX() throws Messdaten.CouldnotFindMedi {
         testEinteilung(false);
     }
 
     @Ignore("Run Test with conversion to docx")
     @Test
-    public void testEinteilungWithDOCX() {
+    public void testEinteilungWithDOCX() throws Messdaten.CouldnotFindMedi {
         testEinteilung(true);
     }
 
-    private void testEinteilung(boolean skipDOCX) {
+    private void testEinteilung(boolean skipDOCX) throws Messdaten.CouldnotFindMedi {
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -323,7 +323,6 @@ public class TestFinishController extends ApplicationTest {
 
         String from = String.format("%02d", DateUtil.getYesterdaysYesterday().getDayOfMonth());
         String to = String.format("%02d", DateUtil.getTomorrow().getDayOfMonth());
-        System.out.println(from+"->"+to);
         String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
