@@ -13,12 +13,14 @@ import net.aclrian.mpe.pfarrei.*;
 import net.aclrian.mpe.utils.*;
 import org.junit.*;
 import org.mockito.*;
+import org.springframework.web.util.UriUtils;
 import org.testfx.assertions.api.*;
 import org.testfx.framework.junit.*;
 import org.testfx.util.*;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.*;
 import java.time.format.*;
@@ -326,7 +328,7 @@ public class TestFinishController extends ApplicationTest {
         String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        Assertions.assertThat(pair.getValue().toString()).isEqualTo("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20" + from + ".%20" + fromMonth + "%20bis%20" + to + ".%20" + toMonth + "&body=%0D%0A");
+        Assertions.assertThat(pair.getValue().toString()).isEqualTo("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20" + from + ".%20" + UriUtils.encode(fromMonth, StandardCharsets.UTF_8) + "%20bis%20" + to + ".%20" + UriUtils.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {
