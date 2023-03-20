@@ -262,7 +262,16 @@ public class Dialogs {
         ort.setPromptText("Ort:");
         TextField typ = new TextField();
         typ.setPromptText("Typ:");
-        List<String> dayOfWeeks = Arrays.stream(DayOfWeek.values()).map(dow -> dow.getDisplayName(TextStyle.FULL, Locale.getDefault())).toList();
+        List<String> dayOfWeeks = Arrays.stream(DayOfWeek.values())
+                .map(dow -> dow.getDisplayName(TextStyle.FULL, Locale.getDefault()))
+                .map(dow -> {
+                    // fix ci error
+                    if (dow == null) {
+                        return "";
+                    } else {
+                        return dow;
+                    }
+                }).toList();
         ComboBox<String> wochentag = new ComboBox<>(
                 FXCollections.observableArrayList(dayOfWeeks));
         wochentag.setPromptText("Wochentag:");
