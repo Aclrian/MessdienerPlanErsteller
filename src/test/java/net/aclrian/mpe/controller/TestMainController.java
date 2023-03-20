@@ -9,6 +9,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.stage.*;
+import net.aclrian.Retrying;
 import net.aclrian.fx.*;
 import net.aclrian.mpe.*;
 import net.aclrian.mpe.messdiener.*;
@@ -39,6 +40,8 @@ public class TestMainController extends ApplicationTest {
     @Mock
     private Main main;
     private Stage stage;
+    @Rule
+    public Retrying retryrule = new Retrying(5);
 
     @Override
     public void start(Stage stage) {
