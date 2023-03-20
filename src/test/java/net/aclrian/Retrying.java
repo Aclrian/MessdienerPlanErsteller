@@ -22,8 +22,8 @@ public class Retrying implements TestRule{
                         WaitForAsyncUtils.waitForFxEvents();
                         WaitForAsyncUtils.checkException();
                         break;
-                    } catch (NullPointerException e){
-                        if ((i+1)==retryCount){
+                    } catch (RuntimeException e){
+                        if (!(e.getCause() instanceof NullPointerException) || (i+1)==retryCount){
                             throw e;
                         }
                         System.out.println("Caught Exception:");
