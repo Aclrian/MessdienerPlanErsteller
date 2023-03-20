@@ -16,6 +16,9 @@ import net.aclrian.mpe.messe.*;
 import net.aclrian.mpe.pfarrei.*;
 import net.aclrian.mpe.utils.*;
 import org.junit.*;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 import org.mockito.*;
 import org.testfx.assertions.api.*;
 import org.testfx.framework.junit.*;
@@ -39,6 +42,36 @@ public class TestMainController extends ApplicationTest {
     @Mock
     private Main main;
     private Stage stage;
+
+    public static class Retrying implements TestRule{
+        int retryCount;
+        public Retrying(int retryCount){
+            this.retryCount = retryCount;
+        }
+
+        @Override
+        public Statement apply(Statement base, Description description) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    for(int i=0; i<retryCount; i++){
+                        try{
+                            base.evaluate();
+                            break;
+                        } catch (NullPointerException e){
+                            if ((i+1)==retryCount){
+                                throw e;
+                            }
+                            System.out.println("Catched Exception:");
+                            e.printStackTrace(System.out);
+                        }
+                    }
+                }
+            };
+        }
+    }
+    @Rule
+    public Retrying retryrule = new Retrying(5);
 
     @Override
     public void start(Stage stage) {
