@@ -11,7 +11,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
-        <javafx.version>17.0.6</javafx.version>
+        <javafx.version>17.0.7-ea+1</javafx.version>
         <log4j.version>2.20.0</log4j.version>
     </properties>
 
