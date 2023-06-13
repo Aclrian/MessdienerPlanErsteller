@@ -20,13 +20,18 @@ public class ConvertCSV {
 
     public void start() throws IOException {
         if (convertData.file().exists()) {
+            int success = 0;
+            int error = 0;
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(convertData.file()), convertData.charset()))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     Messdiener m = parseLineToMessdiener(line, convertData);
                     if (m != null) {
+                        success++;
                         m.makeXML();
                         importedMessdiener.add(m);
+                    } else {
+                        error++;
                     }
                 }
             }
@@ -36,6 +41,9 @@ public class ConvertCSV {
             List<Messdiener> allMessdiener = DateienVerwalter.getInstance().getMessdiener();
             if (convertData.gegenseitigEintragen()) {
                 createMissingBackReferences(allMessdiener);
+            }
+            if (error > 0) {
+                Dialogs.getDialogs().info("Es wurden " + success + " Messdiener erzeugt. " + error + " Zeilen wurden ignoriert.");
             }
         }
     }
@@ -75,8 +83,7 @@ public class ConvertCSV {
                 case NACHNAME_KOMMA_VORNAME -> {
                     String[] array2 = elemente[j].split(", ");
                     if (array2.length != 2) {
-                        vorname = elemente[j];
-                        nachname = elemente[j];
+                        return null;
                     } else {
                         nachname = array2[0];
                         vorname = array2[1];
@@ -92,7 +99,7 @@ public class ConvertCSV {
                         vorname = name[0];
                         nachname = elemente[j].substring(name[0].length() + 1);
                     } else {
-                        Log.getLogger().warn("Import: Line {}: Name konnte nicht geparst werden: {}", (j + 1), Sortierung.VORNAME_LEERZEICHEN_NACHNAME);
+                        return null;
                     }
                 }
                 case NICHT_STANDARD_MESSE -> {
@@ -190,7 +197,7 @@ public class ConvertCSV {
     }
 
     private void replaceLineNumberWithMessdiener() {
-        final String pattern = " ?\\d{1," + (Math.log10(importedMessdiener.size()) + 1) + "} ?";
+        final String pattern = " ?\\d{1," + (int) (Math.log10(importedMessdiener.size()) + 1) + "} ?";
         for (Messdiener m : importedMessdiener) {
             for (int i = 0; i < m.getFreunde().length; i++) {
                 if (m.getFreunde()[i].matches(pattern)) {

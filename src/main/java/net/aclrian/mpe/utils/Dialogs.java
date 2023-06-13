@@ -17,6 +17,7 @@ import javafx.stage.Window;
 import javafx.stage.*;
 import net.aclrian.fx.*;
 import net.aclrian.mpe.controller.*;
+import net.aclrian.mpe.controller.converter.*;
 import net.aclrian.mpe.converter.*;
 import net.aclrian.mpe.messdiener.*;
 import net.aclrian.mpe.messe.*;
@@ -91,7 +92,7 @@ public class Dialogs {
         if (Platform.isFxApplicationThread()) {
             alertBuilder(AlertType.ERROR, string).showAndWait();
         } else {
-            Platform.runLater(() -> alertBuilder(AlertType.INFORMATION, string).showAndWait());
+            Platform.runLater(() -> alertBuilder(AlertType.ERROR, string).showAndWait());
         }
     }
 
@@ -400,7 +401,7 @@ public class Dialogs {
         URL u = getClass().getResource("/view/converter.fxml");
         FXMLLoader fl = new FXMLLoader(u);
         Parent p;
-        ConverterController controller = new ConverterController(file);
+        ConvertController controller = new ConvertController(file);
         try {
             fl.setController(controller);
             p = fl.load();
@@ -412,6 +413,10 @@ public class Dialogs {
 
         Alert a = alertBuilder(AlertType.INFORMATION, "Spalten zuordnen", p);
         Optional<ButtonType> res = a.showAndWait();
+        if(!controller.isValid()){
+            Dialogs.getDialogs().error("Ein Eingabefeld ist leer oder es sind mehr Standartmessen angegeben als im System sind");
+            return  importDialog(window);
+        }
         if (res.isEmpty() || res.get() != ButtonType.OK) return null;
         return controller.getData();
     }

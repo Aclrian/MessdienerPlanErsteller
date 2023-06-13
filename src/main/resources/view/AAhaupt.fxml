@@ -27,6 +27,11 @@
                     <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                 </accelerator>
             </MenuItem>
+            <MenuItem mnemonicParsing="false" onAction="#importCSV" text="Importieren">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" code="I" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                </accelerator>
+            </MenuItem>
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#ferienplan" text="Ferienplan erstellen">
                 <accelerator>
@@ -38,11 +43,6 @@
                     <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="ANY" />
                 </accelerator>
             </MenuItem>
-         <MenuItem mnemonicParsing="false" onAction="#importCSV" text="Importieren">
-            <accelerator>
-               <KeyCodeCombination alt="UP" code="P" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
-            </accelerator>
-         </MenuItem>
         </Menu>
         <Menu mnemonicParsing="false" text="Ansicht">
             <MenuItem mnemonicParsing="false" onAction="#hauptbildschirm" text="Hauptbildschirm">

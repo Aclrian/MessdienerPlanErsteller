@@ -261,7 +261,7 @@ public class MainController {
         try {
             ConvertCSV csv = new ConvertCSV(data);
             csv.start();
-        } catch (IOException e) {
+        } catch (Exception e) {
             Dialogs.getDialogs().error(e, e.getMessage());
         }
     }
