@@ -23,7 +23,11 @@ public class ConvertCSV {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(convertData.file()), convertData.charset()))) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    parseLineToMessdiener(line, convertData);
+                    Messdiener m = parseLineToMessdiener(line, convertData);
+                    if (m != null) {
+                        m.makeXML();
+                        importedMessdiener.add(m);
+                    }
                 }
             }
             replaceLineNumberWithMessdiener();
@@ -36,7 +40,7 @@ public class ConvertCSV {
         }
     }
 
-    private void parseLineToMessdiener(String line, ConvertData convertData) {
+    public static Messdiener parseLineToMessdiener(String line, ConvertData convertData) {
         String[] elemente = line.split(convertData.delimiter());
         String vorname = "Vorname";
         String nachname = "Nachname";
@@ -51,12 +55,21 @@ public class ConvertCSV {
 
         for (int j = 0; j < elemente.length; j++) {
             if (elemente.length < 2) {
-                break;
+                return null;
+            }
+            if (convertData.sortierung.size() < elemente.length){
+                return null;
             }
             switch (convertData.sortierung().get(j)) {
                 case VORNAME -> vorname = elemente[j];
                 case NACHNAME -> nachname = elemente[j];
-                case EINTRITT -> eintritt = Integer.parseInt(elemente[j]);
+                case EINTRITT -> {
+                        try {
+                            eintritt = Integer.parseInt(elemente[j]);
+                        } catch (NumberFormatException e){
+                            eintritt = LocalDate.now().getYear();
+                        }
+                }
                 case LEITER -> leiter = !elemente[j].equals("");
                 case NICHT_LEITER -> leiter = elemente[j].equals("");
                 case NACHNAME_KOMMA_VORNAME -> {
@@ -109,7 +122,7 @@ public class ConvertCSV {
                         geschwister = splitter;
                     }
                 }
-                default -> {
+                case IGNORIEREN -> {
                     //Ignored
                 }
             }
@@ -124,8 +137,7 @@ public class ConvertCSV {
             Log.getLogger().info("{} von {} ist nicht gültig", email, m);
             m.setEmailEmpty();
         }
-        m.makeXML();
-        importedMessdiener.add(m);
+        return m;
     }
 
     private void createMissingBackReferences(List<Messdiener> allMessdiener) {
