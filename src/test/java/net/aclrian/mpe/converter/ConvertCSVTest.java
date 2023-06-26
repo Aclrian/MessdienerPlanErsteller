@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -51,5 +50,15 @@ public class ConvertCSVTest {
         convertdata = new ConvertData(null, List.of(Sortierung.NACHNAME), Collections.singletonList(new Sonstiges()), ";", ",", Charset.defaultCharset(), true);
         m = parseLineToMessdiener("b", convertdata);
         assertThat(m, nullValue());
+
+        convertdata = new ConvertData(null, List.of(Sortierung.VORNAME_LEERZEICHEN_NACHNAME, Sortierung.EINTRITT, Sortierung.LEITER), Collections.singletonList(new Sonstiges()), ";", ",", Charset.defaultCharset(), true);
+        m = parseLineToMessdiener("a b c;2023;x;", convertdata);
+        assertThat(m.getVorname(), is("a"));
+        assertThat(m.getNachnname(), is("b c"));
+
+        convertdata = new ConvertData(null, List.of(Sortierung.VORNAME_LEERZEICHEN_NACHNAME, Sortierung.EINTRITT, Sortierung.LEITER), Collections.singletonList(new Sonstiges()), ";", ",", Charset.defaultCharset(), true);
+        m = parseLineToMessdiener("a b;2023;x;", convertdata);
+        assertThat(m.getVorname(), is("a"));
+        assertThat(m.getNachnname(), is("b"));
     }
 }
