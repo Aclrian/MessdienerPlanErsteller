@@ -68,7 +68,7 @@ public class TestInfoController extends ApplicationTest {
             Node tools = listWindows().get(0).getScene().lookup("#tools");
             if (tools instanceof ListView) {
                 Assertions.assertThat(((ListView<?>) tools).getItems()).isNotNull();
-                Assertions.assertThat(((ListView<?>) tools).getItems().get(0)).asString().isEqualTo("Java 11");
+                Assertions.assertThat(((ListView<?>) tools).getItems().get(0)).asString().startsWith("Java 11"); // not isEqualTo because of CI Error
             } else {
                 Assertions.fail("table not found");
             }

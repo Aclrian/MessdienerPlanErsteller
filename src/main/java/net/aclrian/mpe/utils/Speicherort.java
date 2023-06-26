@@ -30,35 +30,32 @@ public class Speicherort {
         if (!f.exists()) {
             createSaveFile(homedir);
         } else {
-            if (readSaveFile(homedir, f))
-                return;
+            readSaveFile(homedir, f);
         }
         Log.getLogger().info("Der Speicherort liegt in: {}", speicherortString);
     }
 
-    private boolean readSaveFile(String homedir, File f) {
+    private void readSaveFile(String homedir, File f) {
+        String line = "";
         try (BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(homedir), StandardCharsets.UTF_8))) {
-            String line = bufferedReader.readLine();
-            if (line == null) {
-                speicherortNotFound(f, null);
-                return true;
+            line = bufferedReader.readLine();
+            if (line == null){
+                line = "";
             }
-            File saveFile = new File(line);
-            if (saveFile.exists()) {
-                setSpeicherortString(line);
-            } else {
-                speicherortNotFound(f, line);
-            }
-            if (this.speicherortString == null || this.speicherortString.equals("")) {
+        } catch (IOException ignored) {}
+        File saveFile = new File(line);
+        if (!saveFile.exists()) {
+            Log.getLogger().info("Der Speicherort aus '{}' ('{}') existiert nicht!", f, line);
+            try {
                 Files.delete(f.toPath());
-                getSpeicherortString();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(-1);
             }
-        } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Die Datei '" + homedir + "' konnte nicht gelesen werden.");
-        }
-        if (speicherortString == null) {
-            speicherortString = waehleOrdner();
+            do {
+                speicherortString = waehleOrdner();
+            } while (!new File(speicherortString).exists());
             try (FileWriter fileWriter = new FileWriter(homedir);
                  BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
                 if (speicherortString != null) {
@@ -73,7 +70,6 @@ public class Speicherort {
                 getSpeicherortString();
             }
         }
-        return false;
     }
 
     private void createSaveFile(String homedir) {
@@ -127,17 +123,6 @@ public class Speicherort {
 
     private void setSpeicherortString(String speicherortString) {
         this.speicherortString = speicherortString;
-    }
-
-    private void speicherortNotFound(File f, String line) {
-        Log.getLogger().info("Der Speicherort aus '{}' ('{}') existiert nicht!", f, line);
-        try {
-            Files.delete(f.toPath());
-            getSpeicherortString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
     }
 
     public void changeDir() {
