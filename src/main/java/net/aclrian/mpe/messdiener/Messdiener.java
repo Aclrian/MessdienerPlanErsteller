@@ -206,7 +206,7 @@ public class Messdiener {
         return daten;
     }
 
-    public void setNewMessdatenDaten() throws Messdaten.CouldFindMedi {
+    public void setNewMessdatenDaten() throws Messdaten.CouldFindMessdiener {
         this.daten = new Messdaten(this);
     }
 

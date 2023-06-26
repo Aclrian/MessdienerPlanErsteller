@@ -180,7 +180,7 @@ public class ConvertCSV {
         for (Messdiener m : importedMessdiener) {
             try {
                 m.setNewMessdatenDaten();
-            } catch (Messdaten.CouldFindMedi e) {
+            } catch (Messdaten.CouldFindMessdiener e) {
                 for (int i = 0; i < Messdiener.LENGHT_FREUNDE; i++) {
                     if (m.getFreunde()[i].equalsIgnoreCase(e.getString())) {
                         m.getFreunde()[i] = e.getMessdienerID();

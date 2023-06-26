@@ -20,7 +20,7 @@ public class Messdaten {
     private ArrayList<LocalDate> ausgeteilt = new ArrayList<>();
     private ArrayList<LocalDate> pause = new ArrayList<>();
 
-    public Messdaten(Messdiener m) throws CouldFindMedi {
+    public Messdaten(Messdiener m) throws CouldFindMessdiener {
         geschwister = new ArrayList<>();
         freunde = new ArrayList<>();
         update(m);
@@ -188,18 +188,18 @@ public class Messdaten {
         return insgesamtEingeteilt;
     }
 
-    public void update(Messdiener m) throws CouldFindMedi {
+    public void update(Messdiener m) throws CouldFindMessdiener {
         update(false, m.getGeschwister(), m);
         update(true, m.getFreunde(), m);
     }
 
-    private void update(boolean isFreund, String[] s, Messdiener m) throws CouldFindMedi {
+    private void update(boolean isFreund, String[] s, Messdiener m) throws CouldFindMessdiener {
         for (String value : s) {
             Messdiener medi = null;
             if (!value.equals("") && !value.equals("LEER") && !value.equals("Vorname, Nachname")) {
                 try {
                     medi = sucheMessdiener(value, m, DateienVerwalter.getInstance().getMessdiener());
-                } catch (CouldnotFindMedi e) {
+                } catch (CouldNotFindMessdiener e) {
                     if (messdienerNotFound(isFreund, s, m, value, e)) return;
                 }
                 if (medi != null) {
@@ -215,7 +215,7 @@ public class Messdaten {
         }
     }
 
-    private boolean messdienerNotFound(boolean isFreund, String[] s, Messdiener m, String value, CouldnotFindMedi e) {
+    private boolean messdienerNotFound(boolean isFreund, String[] s, Messdiener m, String value, CouldNotFindMessdiener e) {
         boolean beheben = Dialogs.getDialogs().frage(e.getMessage(),
                 "ignorieren", "beheben");
         if (beheben) {
@@ -236,7 +236,7 @@ public class Messdaten {
         return false;
     }
 
-    public Messdiener sucheMessdiener(String geschwi, Messdiener akt, List<Messdiener> medis) throws CouldnotFindMedi, CouldFindMedi {
+    public Messdiener sucheMessdiener(String geschwi, Messdiener akt, List<Messdiener> medis) throws CouldNotFindMessdiener, CouldFindMessdiener {
         for (Messdiener messdiener : medis) {
             if (messdiener.toString().equals(geschwi)) {
                 return messdiener;
@@ -248,28 +248,28 @@ public class Messdaten {
         String[] parts = replaceSeparators.split(" ");
         for (Messdiener messdiener : medis) {
             if (Arrays.stream(parts).allMatch(part -> messdiener.toString().toLowerCase(Locale.getDefault()).contains(part.toLowerCase(Locale.getDefault())))) {
-                throw new CouldFindMedi(messdiener.toString(), geschwi, "Konnte für " + akt.toString() + " : " + geschwi + " finden");
+                throw new CouldFindMessdiener(messdiener.toString(), geschwi, "Konnte für " + akt.toString() + " : " + geschwi + " finden");
             }
         }
 
-        throw new CouldnotFindMedi("Konnte für " + akt.toString() + " : " + geschwi + " nicht finden");
+        throw new CouldNotFindMessdiener("Konnte für " + akt.toString() + " : " + geschwi + " nicht finden");
     }
 
     public int getAnzMessen() {
         return anzMessen;
     }
 
-    public static class CouldnotFindMedi extends Exception {
-        public CouldnotFindMedi(String message) {
+    public static class CouldNotFindMessdiener extends Exception {
+        public CouldNotFindMessdiener(String message) {
             super(message);
         }
     }
 
-    public static class CouldFindMedi extends Exception {
+    public static class CouldFindMessdiener extends Exception {
         private final String messdienerID;
         private final String string;
 
-        public CouldFindMedi(String foundID, String string, String message) {
+        public CouldFindMessdiener(String foundID, String string, String message) {
             super(message);
             this.messdienerID = foundID;
             this.string = string;
