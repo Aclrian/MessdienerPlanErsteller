@@ -308,7 +308,7 @@ class TestMainController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
     }
 
-    @DisabledIfEnvironmentVariable(named = "Djdk.gtk.verbose", matches = "true", disabledReason = "should not run on ci")
+    @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "should not run on ci")
     @Test
     void testAwtDesktop() throws IOException {
         DateienVerwalter.setInstance(dv);
@@ -330,7 +330,7 @@ class TestMainController extends ApplicationTest {
         assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.START);
     }
 
-    @DisabledIfEnvironmentVariable(named = "Djdk.gtk.verbose", matches = "true", disabledReason = "Robotcontext should not run on ci")
+    @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "Robotcontext should not run on ci")
     @Test
     void testChangeSpeicherort() {
         Dialogs.setDialogs(dialogs);

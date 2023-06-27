@@ -17,6 +17,7 @@ import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Log;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testfx.assertions.api.Assertions;
@@ -101,7 +102,7 @@ class TestInfoController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
     }
 
-    @DisabledIfEnvironmentVariable(named = "Djdk.gtk.verbose", matches = "true", disabledReason = "should not run on ci")
+    @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "should not run on ci")
     @Test
     void testAwtDesktop() {
         Platform.runLater(() -> {
