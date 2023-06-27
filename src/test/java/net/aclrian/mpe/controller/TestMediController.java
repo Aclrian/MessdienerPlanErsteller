@@ -1,30 +1,45 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.*;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.scene.*;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.pfarrei.*;
-import net.aclrian.mpe.utils.*;
-import org.junit.*;
-import org.mockito.*;
-import org.testfx.assertions.api.*;
-import org.testfx.framework.junit.*;
-import org.testfx.util.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import net.aclrian.mpe.messdiener.KannWelcheMesse;
+import net.aclrian.mpe.messdiener.Messdaten;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.ReadFile;
+import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Log;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.time.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+import static org.testfx.assertions.api.Assertions.assertThat;
 
 public class TestMediController extends ApplicationTest {
 
@@ -63,7 +78,7 @@ public class TestMediController extends ApplicationTest {
     private MediController instance;
     private Scene scene;
 
-    @AfterClass
+    @AfterAll
     public static void removeFiles() {
         try {
             final File nora = new File(System.getProperty("user.home"), "Tannenbusch, Nora.xml");
@@ -91,7 +106,7 @@ public class TestMediController extends ApplicationTest {
     }
 
     @Test
-    public void testReadAndSave() {
+    void testReadAndSave() {
         File f = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
         try {
             Files.writeString(f.toPath(), medi);
@@ -119,66 +134,66 @@ public class TestMediController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(scene.lookup("#vorname")).isInstanceOf(TextField.class);
-        Assertions.assertThat(((TextField) scene.lookup("#vorname")).getText()).isEqualTo("Lea");
+        assertThat(scene.lookup("#vorname")).isInstanceOf(TextField.class);
+        assertThat(((TextField) scene.lookup("#vorname")).getText()).isEqualTo("Lea");
         ((TextField) scene.lookup("#vorname")).setText("Luisa");
-        Assertions.assertThat(scene.lookup("#name")).isInstanceOf(TextField.class);
-        Assertions.assertThat(((TextField) scene.lookup("#name")).getText()).isEqualTo("Tannenbusch");
-        Assertions.assertThat(scene.lookup("#geschwie")).isInstanceOf(ListView.class);
-        Assertions.assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems().size()).isEqualTo(1);
-        Assertions.assertThat(scene.lookup("#freunde")).isInstanceOf(ListView.class);
-        Assertions.assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
-        Assertions.assertThat(scene.lookup("#eintritt")).isInstanceOf(Slider.class);
-        Assertions.assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(2019);
+        assertThat(scene.lookup("#name")).isInstanceOf(TextField.class);
+        assertThat(((TextField) scene.lookup("#name")).getText()).isEqualTo("Tannenbusch");
+        assertThat(scene.lookup("#geschwie")).isInstanceOf(ListView.class);
+        assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems()).hasSize(1);
+        assertThat(scene.lookup("#freunde")).isInstanceOf(ListView.class);
+        assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
+        assertThat(scene.lookup("#eintritt")).isInstanceOf(Slider.class);
+        assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(2019);
         Platform.runLater(() -> ((Slider) scene.lookup("#eintritt")).setValue(Messdaten.getMaxYear()));
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(scene.lookup("#leiter")).isInstanceOf(CheckBox.class);
-        Assertions.assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isFalse();
+        assertThat(scene.lookup("#leiter")).isInstanceOf(CheckBox.class);
+        assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isFalse();
         ((CheckBox) scene.lookup("#leiter")).setSelected(true);
-        Assertions.assertThat(scene.lookup("#email")).isInstanceOf(TextField.class);
-        Assertions.assertThat(((TextField) scene.lookup("#email")).getText().isEmpty()).isTrue();
+        assertThat(scene.lookup("#email")).isInstanceOf(TextField.class);
+        assertThat(((TextField) scene.lookup("#email")).getText()).isEmpty();
         ((TextField) scene.lookup("#email")).setText("lol");
         Platform.runLater(() -> scene.lookup("#email").requestFocus());
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> scene.lookup("#leiter").requestFocus());
         WaitForAsyncUtils.waitForFxEvents();
         try {
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Assertions.assertThat(((TextField) scene.lookup("#email")).getText().isEmpty()).isTrue();
+        assertThat(((TextField) scene.lookup("#email")).getText()).isEmpty();
         ((TextField) scene.lookup("#email")).setText("a@abc.de");
         Platform.runLater(() -> scene.lookup("#email").requestFocus());
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(((TextField) scene.lookup("#email")).getText()).isEqualTo("a@abc.de");
-        Assertions.assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
+        assertThat(((TextField) scene.lookup("#email")).getText()).isEqualTo("a@abc.de");
+        assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
         TableView<?> table = (TableView<?>) scene.lookup("#table");
-        Assertions.assertThat(table.getItems()).hasSize(1);
-        Assertions.assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isTrue();
-        Assertions.assertThat(((KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(StandardMesse);
+        assertThat(table.getItems()).hasSize(1);
+        assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isTrue();
+        assertThat(((KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(StandardMesse);
         ((KannWelcheMesse) table.getItems().get(0)).setKannDann(false);
         Platform.runLater(() -> ((SplitMenuButton) scene.lookup("#button")).fire());
         WaitForAsyncUtils.waitForFxEvents();
         final File newFile = new File(System.getProperty("user.home"), "Tannenbusch, Luisa.xml");
-        Assertions.assertThat(newFile).exists();
+        assertThat(newFile).exists();
         Platform.runLater(() -> {
             final Messdiener messdiener = new ReadFile().getMessdiener(newFile);
             instance.setMedi(messdiener);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(((TextField) scene.lookup("#vorname")).getText()).isEqualTo("Luisa");
+        assertThat(((TextField) scene.lookup("#vorname")).getText()).isEqualTo("Luisa");
         ((TextField) scene.lookup("#vorname")).setText("Luisa");
-        Assertions.assertThat(((TextField) scene.lookup("#name")).getText()).isEqualTo("Tannenbusch");
-        Assertions.assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems().size()).isEqualTo(1);
-        Assertions.assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
-        Assertions.assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(Messdaten.getMaxYear());
-        Assertions.assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isTrue();
-        Assertions.assertThat(((TextField) scene.lookup("#email")).getText()).isEqualTo("a@abc.de");
-        Assertions.assertThat(table.getItems()).hasSize(1);
-        Assertions.assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
-        Assertions.assertThat(((KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(StandardMesse);
-        Assertions.assertThat(f).doesNotExist();
+        assertThat(((TextField) scene.lookup("#name")).getText()).isEqualTo("Tannenbusch");
+        assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems()).hasSize(1);
+        assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
+        assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(Messdaten.getMaxYear());
+        assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isTrue();
+        assertThat(((TextField) scene.lookup("#email")).getText()).isEqualTo("a@abc.de");
+        assertThat(table.getItems()).hasSize(1);
+        assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
+        assertThat(((KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(StandardMesse);
+        assertThat(f).doesNotExist();
         try {
             Files.delete(newFile.toPath());
         } catch (IOException e) {
@@ -188,7 +203,7 @@ public class TestMediController extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGeschwister() {
+    void testGeschwister() {
         File f = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
         try {
             Files.writeString(f.toPath(), medi);
@@ -233,8 +248,8 @@ public class TestMediController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(scene.lookup("#geschwie")).isInstanceOf(ListView.class);
-        Assertions.assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems().size()).isEqualTo(2);
+        assertThat(scene.lookup("#geschwie")).isInstanceOf(ListView.class);
+        assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems()).hasSize(2);
 
         Platform.runLater(() -> {
             scene.lookup("#" + MediController.GESCHWISTER_BEARBEITEN_ID).fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0d, 0d, 0d, 0d, MouseButton.PRIMARY, 1, false, false, false, false, false, false, false, false, false, false, null));
@@ -252,7 +267,7 @@ public class TestMediController extends ApplicationTest {
         Mockito.verify(dialog, Mockito.times(1)).select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.eq(MediController.FREUNDE_AUSWAEHLEN));
         Mockito.verify(dialog, Mockito.times(1)).select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.eq(MediController.GESCHWISTER_AUSWAEHLEN));
 
-        Assertions.assertThat(((TextField) scene.lookup("#vorname")).getText()).isEmpty();
+        assertThat(((TextField) scene.lookup("#vorname")).getText()).isEmpty();
         Mockito.verify(m1).setFreunde(Mockito.argThat(argument -> argument.length == 5 && argument[0].equalsIgnoreCase("Tannenbusch, Lea") && argument[1] == null && argument[2] == null && argument[3] == null && argument[4] == null));
         Mockito.verify(m2).setGeschwister(Mockito.argThat(argument -> argument.length == 3 && argument[0].equalsIgnoreCase("Tannenbusch, Lea") && argument[1] == null && argument[2] == null));
 
@@ -266,13 +281,13 @@ public class TestMediController extends ApplicationTest {
         final File lea = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
         final File liesch = new File(System.getProperty("user.home"), "Müller, Lieschen.xml");
 
-        Assertions.assertThat(nora.exists()).isTrue();
-        Assertions.assertThat(liesch.exists()).isTrue();
-        Assertions.assertThat(lea.exists()).isTrue();
+        assertThat(nora).exists();
+        assertThat(liesch).exists();
+        assertThat(lea).exists();
 
         try {
             String doW = DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault());
-            Assertions.assertThat(Files.readString(lea.toPath())).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
+            assertThat(Files.readString(lea.toPath())).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
                     "<XML>" + System.getProperty("line.separator") +
                     "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator") +
                     "  <Body>" + System.getProperty("line.separator") +

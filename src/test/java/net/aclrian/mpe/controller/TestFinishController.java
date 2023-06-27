@@ -1,32 +1,53 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.*;
-import javafx.fxml.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import javafx.util.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.pfarrei.*;
-import net.aclrian.mpe.utils.*;
-import org.junit.*;
-import org.mockito.*;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+import javafx.util.Pair;
+import net.aclrian.mpe.messdiener.Messdaten;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messe.Messe;
+import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.pfarrei.Einstellungen;
+import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.utils.DateUtil;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Log;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.web.util.UriUtils;
-import org.testfx.assertions.api.*;
-import org.testfx.framework.junit.*;
-import org.testfx.util.*;
+import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.time.*;
-import java.time.format.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
-public class TestFinishController extends ApplicationTest {
+import static org.testfx.assertions.api.Assertions.assertThat;
+
+class TestFinishController extends ApplicationTest {
 
     @Mock
     MainController mc;
@@ -67,7 +88,7 @@ public class TestFinishController extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void cleanTest() throws Messdaten.CouldFindMessdiener {
+    void cleanTest() throws Messdaten.CouldFindMessdiener {
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Mockito.when(pf.getSettings()).thenReturn(einst);
@@ -127,7 +148,7 @@ public class TestFinishController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(m1.getMessdaten().kanndann(date, false)).isFalse();
+        assertThat(m1.getMessdaten().kanndann(date, false)).isFalse();
         Platform.runLater(() -> {
             if (pane.lookup("#zurueck") instanceof Button zurueck) {
                 zurueck.fire();
@@ -141,10 +162,10 @@ public class TestFinishController extends ApplicationTest {
                 Assertions.fail("Not all Messdaten are zero");
             }
         }
-        Assertions.assertThat(m1.getMessdaten().kanndann(date, false)).isTrue();
-        Assertions.assertThat(instance.getNichtEingeteilteMessdiener()).contains(m1);
-        Assertions.assertThat(instance.getNichtEingeteilteMessdiener()).contains(m2);
-        Assertions.assertThat(instance.getNichtEingeteilteMessdiener()).contains(m3);
+        assertThat(m1.getMessdaten().kanndann(date, false)).isTrue();
+        assertThat(instance.getNichtEingeteilteMessdiener()).contains(m1);
+        assertThat(instance.getNichtEingeteilteMessdiener()).contains(m2);
+        assertThat(instance.getNichtEingeteilteMessdiener()).contains(m3);
 
         Platform.runLater(() -> {
             if (pane.lookup("#nichteingeteilte") instanceof Button nichteingeteilte) {
@@ -157,12 +178,12 @@ public class TestFinishController extends ApplicationTest {
 
 
         Platform.runLater(() -> {
-            Assertions.assertThat(listWindows().size()).isEqualTo(2);
+            assertThat(listWindows()).hasSize(2);
             Window w = listWindows().get(1);
             assert w != null;
             Node list = w.getScene().lookup("#list");
             if (list instanceof ListView) {
-                Assertions.assertThat(((ListView<Messdiener>) list).getItems()).contains(m1, m2, m3);
+                assertThat(((ListView<Messdiener>) list).getItems()).contains(m1, m2, m3);
             } else {
                 Assertions.fail("Could not find ListView from Dialogs.show");
             }
@@ -171,13 +192,13 @@ public class TestFinishController extends ApplicationTest {
     }
 
     @Test
-    public void testEinteilungWithoutDOCX() throws Messdaten.CouldFindMessdiener {
+    void testEinteilungWithoutDOCX() throws Messdaten.CouldFindMessdiener {
         testEinteilung(false);
     }
 
-    @Ignore("Run Test with conversion to docx")
+    @Disabled(value = "Run Test with conversion to docx")
     @Test
-    public void testEinteilungWithDOCX() throws Messdaten.CouldFindMessdiener {
+    void testEinteilungWithDOCX() throws Messdaten.CouldFindMessdiener {
         testEinteilung(true);
     }
 
@@ -250,10 +271,10 @@ public class TestFinishController extends ApplicationTest {
 
         Mockito.doCallRealMethod().when(dialogs).show(Mockito.anyList(), Mockito.eq(FinishController.NICHT_EINGETEILTE_MESSDIENER));
 
-        Assertions.assertThat(m1.getMessdaten().kann(me1.getDate(), false, false)).isFalse();
-        Assertions.assertThat(m1Freund.getMessdaten().kann(me1.getDate(), false, false)).isFalse();
-        Assertions.assertThat(m1.getMessdaten().kann(me2.getDate(), false, false)).isTrue();
-        Assertions.assertThat(m1Freund.getMessdaten().kann(me2.getDate(), false, false)).isTrue();
+        assertThat(m1.getMessdaten().kann(me1.getDate(), false, false)).isFalse();
+        assertThat(m1Freund.getMessdaten().kann(me1.getDate(), false, false)).isFalse();
+        assertThat(m1.getMessdaten().kann(me2.getDate(), false, false)).isTrue();
+        assertThat(m1Freund.getMessdaten().kann(me2.getDate(), false, false)).isTrue();
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.PLAN.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
@@ -269,12 +290,12 @@ public class TestFinishController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(me1.istFertig() && me2.istFertig() && me3.istFertig()).isTrue();
-        Assertions.assertThat(!me1.getEingeteilte().contains(m1) && !me1.getEingeteilte().contains(m1Freund)).isTrue();
-        Assertions.assertThat(!me3.getEingeteilte().contains(m1) && !me3.getEingeteilte().contains(m1Freund)).isTrue();
-        Assertions.assertThat(md1.kanndann(DateUtil.getToday(), false)).isFalse();
-        Assertions.assertThat(md1F.kanndann(DateUtil.getToday(), false)).isFalse();
-        Assertions.assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
+        assertThat(me1.istFertig() && me2.istFertig() && me3.istFertig()).isTrue();
+        assertThat(!me1.getEingeteilte().contains(m1) && !me1.getEingeteilte().contains(m1Freund)).isTrue();
+        assertThat(!me3.getEingeteilte().contains(m1) && !me3.getEingeteilte().contains(m1Freund)).isTrue();
+        assertThat(md1.kanndann(DateUtil.getToday(), false)).isFalse();
+        assertThat(md1F.kanndann(DateUtil.getToday(), false)).isFalse();
+        assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
 
         File out = new File(Log.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");
         try {
@@ -282,7 +303,7 @@ public class TestFinishController extends ApplicationTest {
                 Files.delete(out.toPath());
             }
             instance.toPDF(null);
-            Assertions.assertThat(out.exists()).isTrue();
+            assertThat(out).exists();
             Files.delete(out.toPath());
         } catch (IOException e) {
             Log.getLogger().error(e.getMessage(), e);
@@ -295,7 +316,7 @@ public class TestFinishController extends ApplicationTest {
                     Files.delete(out.toPath());
                 }
                 instance.toWORD(null);
-                Assertions.assertThat(out.exists()).isTrue();
+                assertThat(out).exists();
                 Files.delete(out.toPath());
             } catch (IOException e) {
                 Log.getLogger().error(e.getMessage(), e);
@@ -319,22 +340,22 @@ public class TestFinishController extends ApplicationTest {
                 Assertions.fail("Not all Messdaten are zero");
             }
         }
-        Assertions.assertThat(me1.getEingeteilte().size()).isEqualTo(0);
-        Assertions.assertThat(me2.getEingeteilte().size()).isEqualTo(0);
-        Assertions.assertThat(me3.getEingeteilte().size()).isEqualTo(0);
+        assertThat(me1.getEingeteilte()).isEmpty();
+        assertThat(me2.getEingeteilte()).isEmpty();
+        assertThat(me3.getEingeteilte()).isEmpty();
 
         String from = String.format("%02d", DateUtil.getYesterdaysYesterday().getDayOfMonth());
         String to = String.format("%02d", DateUtil.getTomorrow().getDayOfMonth());
         String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        Assertions.assertThat(pair.getValue().toString()).isEqualTo("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20" + from + ".%20" + UriUtils.encode(fromMonth, StandardCharsets.UTF_8) + "%20bis%20" + to + ".%20" + UriUtils.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
+        assertThat(pair.getValue()).hasToString("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20" + from + ".%20" + UriUtils.encode(fromMonth, StandardCharsets.UTF_8) + "%20bis%20" + to + ".%20" + UriUtils.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {
             Assertions.fail(e.getMessage(), e);
         }
 
-        Assertions.assertThat(pair.getKey()).hasSize(3).containsAll(Arrays.asList(m1, m2, m1Freund));
+        assertThat(pair.getKey()).hasSize(3).containsAll(Arrays.asList(m1, m2, m1Freund));
     }
 }

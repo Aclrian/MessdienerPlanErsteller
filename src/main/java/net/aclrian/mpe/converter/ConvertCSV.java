@@ -1,14 +1,20 @@
 package net.aclrian.mpe.converter;
 
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messdiener.Messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.utils.*;
+import net.aclrian.mpe.messdiener.Messdaten;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.Messdiener.NotValidException;
+import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Log;
 
 import java.io.*;
-import java.nio.charset.*;
-import java.time.*;
-import java.util.*;
+import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ConvertCSV {
     private final ConvertData convertData;
@@ -104,29 +110,32 @@ public class ConvertCSV {
                 }
                 case NICHT_STANDARD_MESSE -> {
                     int i = (int) convertData.sortierung().subList(0, j).stream().filter(s -> s == Sortierung.NICHT_STANDARD_MESSE || s == Sortierung.STANDARD_MESSE).count();
-                    dienverhalten.editiereBestimmteMesse(convertData.standardMesse().get(i), elemente[j].isEmpty());
+                    StandardMesse messe = convertData.standardMesse().get(i);
+                    String s = elemente[j];
+                    dienverhalten.editiereBestimmteMesse(messe, s.isEmpty());
                 }
                 case STANDARD_MESSE -> {
                     int k = (int) convertData.sortierung().subList(0, j).stream().filter(s -> s == Sortierung.NICHT_STANDARD_MESSE || s == Sortierung.STANDARD_MESSE).count();
-                    dienverhalten.editiereBestimmteMesse(convertData.standardMesse().get(k), !elemente[j].isEmpty());
+                    StandardMesse messe = convertData.standardMesse().get(k);
+                    String s = elemente[j];
+                    dienverhalten.editiereBestimmteMesse(messe, !s.isEmpty());
                 }
                 case FREUNDE -> {
-                    String[] split = elemente[j].split(convertData.subdelimiter(), freunde.length);
-                    if (split.length < freunde.length) {
-                        freunde = new String[Messdiener.LENGHT_FREUNDE];
-                        System.arraycopy(split, 0, freunde, 0, split.length);
-                    } else {
-                        freunde = split;
+                    String[] split = elemente[j].split(convertData.subdelimiter());
+                    freunde = new String[Messdiener.LENGHT_FREUNDE];
+                    Arrays.fill(freunde, "");
+                    System.arraycopy(split, 0, freunde, 0, split.length);
+                    for (int i = Math.min(split.length, Messdiener.LENGHT_FREUNDE); i < Messdiener.LENGHT_FREUNDE; i++) {
+                        freunde[i] = "";
                     }
                 }
                 case GESCHWISTER -> {
-                    String[] splitter = elemente[j].split(convertData.subdelimiter(), freunde.length);
-                    if (splitter.length > freunde.length) {
-                        geschwister = Arrays.copyOfRange(splitter, 0, freunde.length);
-                    } else if (splitter.length < freunde.length) {
-                        geschwister = Arrays.copyOfRange(splitter, 0, splitter.length);
-                    } else {
-                        geschwister = splitter;
+                    String[] split = elemente[j].split(convertData.subdelimiter());
+                    geschwister = new String[Messdiener.LENGHT_GESCHWISTER];
+                    Arrays.fill(geschwister, "");
+                    System.arraycopy(split, 0, geschwister, 0, split.length);
+                    for (int i = Math.min(split.length, Messdiener.LENGHT_GESCHWISTER); i < Messdiener.LENGHT_GESCHWISTER; i++) {
+                        geschwister[i] = "";
                     }
                 }
                 case IGNORIEREN -> {
@@ -197,13 +206,12 @@ public class ConvertCSV {
     }
 
     private void replaceLineNumberWithMessdiener() {
-        final String pattern = " ?\\d{1," + (int) (Math.log10(importedMessdiener.size()) + 1) + "} ?";
+        final String pattern = " ?\\d{1," + (importedMessdiener.size() - 1) + "} ?";
         for (Messdiener m : importedMessdiener) {
             for (int i = 0; i < m.getFreunde().length; i++) {
                 if (m.getFreunde()[i].matches(pattern)) {
                     try {
                         m.getFreunde()[i] = importedMessdiener.get(Integer.parseInt(m.getFreunde()[i])).toString();
-                        DateienVerwalter.getInstance().reloadMessdiener();
                     } catch (IndexOutOfBoundsException e) {
                         final String message = String.format("%s: %s in %s could not parsed as an valid Integer %s", e.getMessage(), m.getFreunde()[i], m, e.getCause());
                         Log.getLogger().warn(message, e);
@@ -221,6 +229,7 @@ public class ConvertCSV {
                     }
                 }
             }
+            m.makeXML();
         }
         DateienVerwalter.getInstance().getMessdiener();
     }

@@ -1,27 +1,46 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.*;
-import javafx.fxml.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.pfarrei.*;
-import net.aclrian.mpe.utils.*;
-import org.junit.*;
-import org.mockito.*;
-import org.testfx.assertions.api.*;
-import org.testfx.framework.junit.*;
-import org.testfx.util.*;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messe.Messe;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Log;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.time.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Locale;
+
+import static org.testfx.assertions.api.Assertions.assertThat;
 
 public class TestSelect extends ApplicationTest {
 
@@ -36,7 +55,7 @@ public class TestSelect extends ApplicationTest {
     private Scene scene;
     private AutoCloseable openMocks;
 
-    @AfterClass
+    @AfterAll
     public static void removeFiles() {
         try {
             Files.deleteIfExists(new File(System.getProperty("user.home"), "cdajklsdfkldjoa.xml").toPath());
@@ -57,14 +76,14 @@ public class TestSelect extends ApplicationTest {
         openMocks = MockitoAnnotations.openMocks(this);
     }
 
-    @After
+    @AfterEach
     public void close() throws Exception {
         openMocks.close();
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testMedi() {
+    void testMedi() {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -105,34 +124,34 @@ public class TestSelect extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         final Node list = scene.lookup("#list");
-        Assertions.assertThat(list).isInstanceOf(ListView.class);
-        Assertions.assertThat(((ListView<?>) list).getItems()).anyMatch(o -> o instanceof Label && ((Label) o).getText().equalsIgnoreCase(m1.toString()));
-        Assertions.assertThat(((ListView<?>) list).getItems()).anyMatch(o -> o instanceof Label && ((Label) o).getText().equalsIgnoreCase(m2.toString()));
+        assertThat(list).isInstanceOf(ListView.class);
+        assertThat(((ListView<?>) list).getItems()).anyMatch(o -> o instanceof Label && ((Label) o).getText().equalsIgnoreCase(m1.toString()));
+        assertThat(((ListView<?>) list).getItems()).anyMatch(o -> o instanceof Label && ((Label) o).getText().equalsIgnoreCase(m2.toString()));
 
         ((ListView<?>) list).getSelectionModel().select(0);
         list.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, false, false, false, false, false, false, false, false, false, false, null));
         Mockito.verify(mc, Mockito.times(1)).changePaneMessdiener(m1);
 
-        Assertions.assertThat(scene.lookup("#bearbeiten")).isInstanceOf(Button.class);
+        assertThat(scene.lookup("#bearbeiten")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#bearbeiten")).fire();
         Mockito.verify(mc, Mockito.times(2)).changePaneMessdiener(m1);
 
-        Assertions.assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
+        assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#neu")).fire();
         Mockito.verify(mc, Mockito.times(1)).changePaneMessdiener(Mockito.isNull());
 
-        Assertions.assertThat(scene.lookup("#remove")).isInstanceOf(Button.class);
+        assertThat(scene.lookup("#remove")).isInstanceOf(Button.class);
         Mockito.when(dialog.frage(Mockito.any(), Mockito.any(), Mockito.eq("Löschen"))).thenReturn(true);
-        Assertions.assertThat(((ListView<?>) list).getItems()).hasSize(2);
+        assertThat(((ListView<?>) list).getItems()).hasSize(2);
         Platform.runLater(() -> ((Button) scene.lookup("#remove")).fire());
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(((ListView<?>) list).getItems()).hasSize(1);
+        assertThat(((ListView<?>) list).getItems()).hasSize(1);
 
-        Assertions.assertThat(f1).doesNotExist();
-        Assertions.assertThat(f2).exists();
+        assertThat(f1).doesNotExist();
+        assertThat(f2).exists();
         try {
             final String actual = Files.readString(f2.toPath());
-            Assertions.assertThat(actual).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
+            assertThat(actual).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
                     "<XML>" + System.getProperty("line.separator") +
                     "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator") +
                     "  <Body>" + System.getProperty("line.separator") +
@@ -163,7 +182,7 @@ public class TestSelect extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testMesse() {
+    void testMesse() {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -193,7 +212,7 @@ public class TestSelect extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assertions.assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
+        assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#neu")).fire();
         Mockito.verify(mc, Mockito.times(1)).changePaneMesse(Mockito.isNull());
 
@@ -201,24 +220,24 @@ public class TestSelect extends ApplicationTest {
         scene.lookup("#list").fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, false, false, false, false, false, false, false, false, false, false, null));
         Mockito.verify(mc, Mockito.times(1)).changePaneMesse(m1);
 
-        Assertions.assertThat(scene.lookup("#bearbeiten")).isInstanceOf(Button.class);
+        assertThat(scene.lookup("#bearbeiten")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#bearbeiten")).fire();
         Mockito.verify(mc, Mockito.times(2)).changePaneMesse(m1);
 
-        Assertions.assertThat(scene.lookup("#" + Select.GENERIEREN_ID)).isInstanceOf(Button.class);
-        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);
+        assertThat(scene.lookup("#" + Select.GENERIEREN_ID)).isInstanceOf(Button.class);
+        assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);
         var tmp = Locale.getDefault();
         Locale.setDefault(Locale.GERMANY);
         Platform.runLater(() -> ((Button) scene.lookup("#" + Select.GENERIEREN_ID)).fire());
         WaitForAsyncUtils.waitForFxEvents();
         Locale.setDefault(tmp);
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
+        assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testeMesseRemove() {
+    void testeMesseRemove() {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -247,12 +266,12 @@ public class TestSelect extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(scene.lookup("#remove")).isInstanceOf(Button.class);
+        assertThat(scene.lookup("#remove")).isInstanceOf(Button.class);
         ((ListView<?>) scene.lookup("#list")).getSelectionModel().select(0);
         Mockito.when(dialog.frage(Mockito.any(), Mockito.any(), Mockito.eq("Löschen"))).thenReturn(true);
-        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);
+        assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);
         WaitForAsyncUtils.asyncFx(() -> ((Button) scene.lookup("#remove")).fire());
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems().size()).isEqualTo(1);
+        assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(1);
     }
 }
