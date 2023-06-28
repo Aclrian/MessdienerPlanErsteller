@@ -45,7 +45,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static org.testfx.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TestFinishController extends ApplicationTest {
 

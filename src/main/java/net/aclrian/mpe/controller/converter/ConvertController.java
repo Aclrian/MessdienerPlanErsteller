@@ -57,6 +57,8 @@ public class ConvertController implements Controller {
     private Accordion accordion;
     @FXML
     private CheckBox gegenseitgEintragen;
+    @FXML
+    private CheckBox chbox1statt0;
 
     public ConvertController(File file) {
         this.file = file;
@@ -155,7 +157,6 @@ public class ConvertController implements Controller {
 
     @FXML
     public void help(ActionEvent e) {
-        //TODO better format
         Dialogs.getDialogs().info("Informationen zum Importieren", """
                 Freunde und Geschwister: Bei diesem Eintrag wird eine Liste erwartet, die mit dem Trennzeichen für Listen die einzelnen Einträge aufspaltet.
                 Ein jeder Eintrag steht für einen Messdiener.
@@ -163,18 +164,19 @@ public class ConvertController implements Controller {
                 Falls nicht wird der Messdiener gesucht, der alle Einzelteile enthält.
                 So wird "Heinz-Karl Rüdiger" mit dem Messdiener der Datei "Rüdiger, Karl-Heinz.xml" zugeordnet.
                 Es ist auch möglich, die Listen mit den Zeilennummern der entsprechenden Messdienern zu füllen.
-                Enthält eine Liste also "1;2;3" so wird die Liste die ersten drei Messdiener enthalten.
+                Enthält eine Liste also "0;1;2" so wird die Liste die Messdiener enthalten, die in den ersten drei Zeilen stehen.
+                Wenn die Zeilen mit 1 bei der Nummerierung starten kann das Häckchen bei der entsprechenden Option gesetzt werden, sodass die ersten drei Zeilen mit "1;2;3" aufgeführt werden können.
                                 
                 Standardmesse: Die Reihenfolge der Standardmesse Einträge im Reihenfolge-Abschnitt entsprechen der Reihenfolge der spezifischen Standardmesse im Standardmesse-Abschnitt
                 und dient zur Identifizierung, welche Standartmesse zu welcher Spalte gehört.
                                 
-                Ein "(umgekehrt)" am Ende eines Eintrags bedeutet, dass der Messdiener ein Leiter ist oder zu dieser Standardmesse kann, wenn die entsprechende Zelle leer ist.
-                Beim Gegenpart ist der entsprechende Eintrag wahr, wenn dort etwas steht wie "x".
+                Ein "(falls leer)" am Ende eines Eintrags bedeutet, dass der Messdiener ein Leiter ist oder zu dieser Standardmesse kann, wenn die entsprechende Zelle leer ist.
+                Beim anderen Fall ist der entsprechende Eintrag wahr, wenn dort etwas steht, wie beispielsweise "x".
                 """);
     }
 
     public ConvertCSV.ConvertData getData() {
-        return new ConvertCSV.ConvertData(file, new ArrayList<>(reihenfolge.getItems()), new ArrayList<>(smReihenfolge.getItems()), delimiter.getText(), subdelimiter.getText(), charset.getValue(), gegenseitgEintragen.isSelected());
+        return new ConvertCSV.ConvertData(file, new ArrayList<>(reihenfolge.getItems()), new ArrayList<>(smReihenfolge.getItems()), delimiter.getText(), subdelimiter.getText(), charset.getValue(), gegenseitgEintragen.isSelected(), chbox1statt0.isSelected());
     }
 
     @Override

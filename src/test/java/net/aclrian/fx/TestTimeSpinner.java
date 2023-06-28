@@ -12,7 +12,7 @@ import java.time.DateTimeException;
 import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.testfx.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TestTimeSpinner extends ApplicationTest {
 

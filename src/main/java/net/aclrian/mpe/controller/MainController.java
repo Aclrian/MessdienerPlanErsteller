@@ -264,6 +264,9 @@ public class MainController {
         } catch (Exception e) {
             Dialogs.getDialogs().error(e, e.getMessage());
         }
+        if (ep==EnumPane.SELECT_MEDI){
+            control.afterStartup(stage, this);
+        }
     }
 
     public List<Messe> getMessen() {

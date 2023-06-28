@@ -40,7 +40,7 @@ import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
-import static org.testfx.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPfarreiController extends ApplicationTest {
 

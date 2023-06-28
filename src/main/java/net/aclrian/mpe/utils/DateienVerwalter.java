@@ -80,22 +80,7 @@ public class DateienVerwalter {
                 medis.add(rf.getMessdiener(file));
             });
             for (Messdiener m : medis) {
-                try {
                     m.setNewMessdatenDaten();
-                } catch (Messdaten.CouldFindMessdiener e) {
-                    for (int i = 0; i < Messdiener.LENGHT_FREUNDE; i++) {
-                        if (m.getFreunde()[i].equalsIgnoreCase(e.getString())) {
-                            m.getFreunde()[i] = e.getMessdienerID();
-                        }
-                    }
-                    for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
-                        if (m.getGeschwister()[i].equalsIgnoreCase(e.getString())) {
-                            m.getGeschwister()[i] = e.getMessdienerID();
-                        }
-                    }
-                    m.makeXML();
-                    return getMessdiener();
-                }
             }
             messdienerAlreadyNull = false;
         }

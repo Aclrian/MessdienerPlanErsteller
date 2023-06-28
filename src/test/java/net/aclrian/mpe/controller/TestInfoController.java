@@ -26,7 +26,7 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.IOException;
 
-import static org.testfx.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TestInfoController extends ApplicationTest {
 

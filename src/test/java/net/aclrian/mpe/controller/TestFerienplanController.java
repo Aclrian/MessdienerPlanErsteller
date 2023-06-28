@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static net.aclrian.mpe.utils.DateUtil.*;
-import static org.testfx.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TestFerienplanController extends ApplicationTest {
 

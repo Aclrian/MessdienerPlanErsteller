@@ -41,23 +41,21 @@ public class ConvertCSV {
                     }
                 }
             }
-            replaceLineNumberWithMessdiener();
-            DateienVerwalter.getInstance().reloadMessdiener();
-            replaceNameWithID();
-            List<Messdiener> allMessdiener = DateienVerwalter.getInstance().getMessdiener();
-            if (convertData.gegenseitigEintragen()) {
-                createMissingBackReferences(allMessdiener);
+            if (importedMessdiener.size() > 1) {
+                replaceLineNumberWithMessdiener();
+                DateienVerwalter.getInstance().reloadMessdiener();
+                if (convertData.gegenseitigEintragen()) {
+                    createMissingBackReferences();
+                }
             }
-            if (error > 0) {
-                Dialogs.getDialogs().info("Es wurden " + success + " Messdiener erzeugt. " + error + " Zeilen wurden ignoriert.");
-            }
+            Dialogs.getDialogs().info("Es wurden " + success + " Messdiener erzeugt. " + error + " Zeilen wurden ignoriert.");
         }
     }
 
     public static Messdiener parseLineToMessdiener(String line, ConvertData convertData) {
         String[] elemente = line.split(convertData.delimiter());
-        String vorname = "Vorname";
-        String nachname = "Nachname";
+        String vorname = "";
+        String nachname = "";
         String email = "";
         int eintritt = LocalDate.now().getYear();
         Messverhalten dienverhalten = new Messverhalten();
@@ -67,22 +65,22 @@ public class ConvertCSV {
         Arrays.fill(freunde, "");
         Arrays.fill(geschwister, "");
 
+        if (elemente.length < 2) {
+            return null;
+        }
+        if (convertData.sortierung.size() < elemente.length) {
+            return null;
+        }
         for (int j = 0; j < elemente.length; j++) {
-            if (elemente.length < 2) {
-                return null;
-            }
-            if (convertData.sortierung.size() < elemente.length){
-                return null;
-            }
             switch (convertData.sortierung().get(j)) {
                 case VORNAME -> vorname = elemente[j];
                 case NACHNAME -> nachname = elemente[j];
                 case EINTRITT -> {
-                        try {
-                            eintritt = Integer.parseInt(elemente[j]);
-                        } catch (NumberFormatException e){
-                            eintritt = LocalDate.now().getYear();
-                        }
+                    try {
+                        eintritt = Integer.parseInt(elemente[j]);
+                    } catch (NumberFormatException e) {
+                        eintritt = LocalDate.now().getYear();
+                    }
                 }
                 case LEITER -> leiter = !elemente[j].equals("");
                 case NICHT_LEITER -> leiter = elemente[j].equals("");
@@ -143,6 +141,7 @@ public class ConvertCSV {
                 }
             }
         }
+        if (vorname.isEmpty() || nachname.isEmpty()) return null;
         Messdiener m = new Messdiener(new File(DateienVerwalter.getInstance().getSavePath(), nachname + ", " + vorname + ".xml"));
         m.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, dienverhalten);
         m.setFreunde(freunde);
@@ -156,62 +155,44 @@ public class ConvertCSV {
         return m;
     }
 
-    private void createMissingBackReferences(List<Messdiener> allMessdiener) {
+    private void createMissingBackReferences() {
         DateienVerwalter.getInstance().reloadMessdiener();
         for (Messdiener m : importedMessdiener) {
-            List<Messdiener> anvertraute = m.getMessdaten().getAnvertraute(allMessdiener);
-            for (Messdiener anvertraut : anvertraute) {
-                if (!anvertraut.getMessdaten().getAnvertraute(allMessdiener).contains(m)) {
-                    if (m.getMessdaten().getFreunde().contains(anvertraut)) {
-                        for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
-                            if (m.getFreunde()[i].equals("") || m.getFreunde()[i].equals("LEER") || m.getFreunde()[i].equals("Vorname, Nachname")) {
-                                m.getFreunde()[i] = anvertraut.toString();
-                                DateienVerwalter.getInstance().reloadMessdiener();
-                                m.makeXML();
-                            }
-                        }
-                    } else {
-                        for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
-                            if (m.getGeschwister()[i].equals("") || m.getGeschwister()[i].equals("LEER") || m.getGeschwister()[i].equals("Vorname, Nachname")) {
-                                m.getGeschwister()[i] = anvertraut.toString();
-                                DateienVerwalter.getInstance().reloadMessdiener();
-                                m.makeXML();
-                            }
+            for (Messdiener freund : m.getMessdaten().getFreunde()) {
+                if (!freund.getMessdaten().getFreunde().contains(m)) {
+                    for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
+                        if (freund.getFreunde()[i].equals("") || freund.getFreunde()[i].equals("LEER") || freund.getFreunde()[i].equals("Vorname, Nachname")) {
+                            freund.getFreunde()[i] = m.toString();
+                            DateienVerwalter.getInstance().reloadMessdiener();
+                            freund.makeXML();
+                            break;
                         }
                     }
                 }
             }
-        }
-        DateienVerwalter.getInstance().getMessdiener();
-    }
-
-    private void replaceNameWithID() {
-        for (Messdiener m : importedMessdiener) {
-            try {
-                m.setNewMessdatenDaten();
-            } catch (Messdaten.CouldFindMessdiener e) {
-                for (int i = 0; i < Messdiener.LENGHT_FREUNDE; i++) {
-                    if (m.getFreunde()[i].equalsIgnoreCase(e.getString())) {
-                        m.getFreunde()[i] = e.getMessdienerID();
-                    }
-                }
-                for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
-                    if (m.getGeschwister()[i].equalsIgnoreCase(e.getString())) {
-                        m.getGeschwister()[i] = e.getMessdienerID();
+            for (Messdiener geschwi : m.getMessdaten().getGeschwister()) {
+                if (!geschwi.getMessdaten().getGeschwister().contains(m)) {
+                    for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
+                        if (geschwi.getGeschwister()[i].equals("") || geschwi.getGeschwister()[i].equals("LEER") || geschwi.getGeschwister()[i].equals("Vorname, Nachname")) {
+                            geschwi.getGeschwister()[i] = m.toString();
+                            geschwi.makeXML();
+                            DateienVerwalter.getInstance().reloadMessdiener();
+                            break;
+                        }
                     }
                 }
             }
-            m.makeXML();
         }
     }
 
     private void replaceLineNumberWithMessdiener() {
+        int offset = convertData.lineStartetMit1 ? -1 : 0;
         final String pattern = " ?\\d{1," + (importedMessdiener.size() - 1) + "} ?";
         for (Messdiener m : importedMessdiener) {
             for (int i = 0; i < m.getFreunde().length; i++) {
                 if (m.getFreunde()[i].matches(pattern)) {
                     try {
-                        m.getFreunde()[i] = importedMessdiener.get(Integer.parseInt(m.getFreunde()[i])).toString();
+                        m.getFreunde()[i] = importedMessdiener.get(Integer.parseInt(m.getFreunde()[i])+offset).toString();
                     } catch (IndexOutOfBoundsException e) {
                         final String message = String.format("%s: %s in %s could not parsed as an valid Integer %s", e.getMessage(), m.getFreunde()[i], m, e.getCause());
                         Log.getLogger().warn(message, e);
@@ -221,7 +202,7 @@ public class ConvertCSV {
             for (int i = 0; i < m.getGeschwister().length; i++) {
                 if (m.getGeschwister()[i].matches(pattern)) {
                     try {
-                        m.getGeschwister()[i] = importedMessdiener.get(Integer.parseInt(m.getGeschwister()[i])).toString();
+                        m.getGeschwister()[i] = importedMessdiener.get(Integer.parseInt(m.getGeschwister()[i])+offset).toString();
                         DateienVerwalter.getInstance().reloadMessdiener();
                     } catch (IndexOutOfBoundsException e) {
                         final String message = String.format("%s: %s in %s could not parsed as an valid Integer %s", e.getMessage(), m.getFreunde()[i], m, e.getCause());
@@ -231,6 +212,7 @@ public class ConvertCSV {
             }
             m.makeXML();
         }
+        importedMessdiener.forEach(Messdiener::setNewMessdatenDaten);
         DateienVerwalter.getInstance().getMessdiener();
     }
 
@@ -241,12 +223,12 @@ public class ConvertCSV {
         NACHNAME("Nachname"),
         EINTRITT("Eintritt"),
         LEITER("Leiter"),
-        NICHT_LEITER("Leiter (umgekehrt)"),
+        NICHT_LEITER("Leiter (falls leer)"),
         EMAIL("E-Mail"),
         FREUNDE("Liste der Freunde"),
         GESCHWISTER("Liste der Geschwister"),
         STANDARD_MESSE("Standardmesse"),
-        NICHT_STANDARD_MESSE("Standardmesse (umgekehrt)"),
+        NICHT_STANDARD_MESSE("Standardmesse (falls leer)"),
         IGNORIEREN("Spalte ignorieren");
 
         private final String name;
@@ -261,6 +243,6 @@ public class ConvertCSV {
     }
 
     public record ConvertData(File file, List<Sortierung> sortierung, List<StandardMesse> standardMesse,
-                              String delimiter, String subdelimiter, Charset charset, boolean gegenseitigEintragen) {
+                              String delimiter, String subdelimiter, Charset charset, boolean gegenseitigEintragen, boolean lineStartetMit1) {
     }
 }

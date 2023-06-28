@@ -81,6 +81,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <ChoiceBox fx:id="charset" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -91,11 +92,13 @@
                         <Label text="Zeichenkodierung" GridPane.rowIndex="2" />
                         <Label text="Freunde / Geschwister gegenseitig eintragen" GridPane.rowIndex="3" />
                         <CheckBox fx:id="gegenseitgEintragen" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Button mnemonicParsing="false" onAction="#help" text="Hilfe" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+                        <Button mnemonicParsing="false" onAction="#help" text="Hilfe" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets right="20.0" />
                            </GridPane.margin>
                         </Button>
+                        <Label text="Zeilennummern starten mit 1 statt 0" GridPane.rowIndex="4" />
+                        <CheckBox fx:id="chbox1statt0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                      </children>
                   </GridPane>
                </content>

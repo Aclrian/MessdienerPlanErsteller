@@ -209,8 +209,23 @@ public class Messdiener {
         return daten;
     }
 
-    public void setNewMessdatenDaten() throws Messdaten.CouldFindMessdiener {
-        this.daten = new Messdaten(this);
+    public void setNewMessdatenDaten() {
+        try {
+            this.daten = new Messdaten(this);
+        } catch (Messdaten.CouldFindMessdiener e){
+            for (int i=0; i<freunde.length;i++){
+                if (freunde[i].equalsIgnoreCase(e.getString())){
+                    freunde[i] = e.getString();
+                }
+            }
+            for (int i=0; i<geschwister.length;i++){
+                if (geschwister[i].equalsIgnoreCase(e.getString())){
+                    geschwister[i] = e.getString();
+                }
+            }
+            makeXML();
+            setNewMessdatenDaten();
+        }
     }
 
     public File getFile() {

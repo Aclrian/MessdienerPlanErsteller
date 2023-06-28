@@ -198,9 +198,9 @@ public class Messdaten {
             Messdiener medi = null;
             if (!value.equals("") && !value.equals("LEER") && !value.equals("Vorname, Nachname")) {
                 try {
-                    medi = sucheMessdiener(value, m, DateienVerwalter.getInstance().getMessdiener());
+                    medi = sucheMessdiener(value, m);
                 } catch (CouldNotFindMessdiener e) {
-                    if (messdienerNotFound(isFreund, s, m, value, e)) return;
+                    messdienerNotFound(isFreund, s, m, value, e);
                 }
                 if (medi != null) {
                     if (isFreund) {
@@ -215,7 +215,7 @@ public class Messdaten {
         }
     }
 
-    private boolean messdienerNotFound(boolean isFreund, String[] s, Messdiener m, String value, CouldNotFindMessdiener e) {
+    private void messdienerNotFound(boolean isFreund, String[] s, Messdiener m, String value, CouldNotFindMessdiener e) {
         boolean beheben = Dialogs.getDialogs().frage(e.getMessage(),
                 "ignorieren", "beheben");
         if (beheben) {
@@ -231,24 +231,28 @@ public class Messdaten {
                 Dialogs.getDialogs().error(ex, "Konnte es nicht beheben.");
             }
             DateienVerwalter.getInstance().reloadMessdiener();
-            return true;
         }
-        return false;
     }
 
-    public Messdiener sucheMessdiener(String geschwi, Messdiener akt, List<Messdiener> medis) throws CouldNotFindMessdiener, CouldFindMessdiener {
-        for (Messdiener messdiener : medis) {
+    public Messdiener sucheMessdiener(String geschwi, Messdiener akt) throws CouldNotFindMessdiener, CouldFindMessdiener {
+        for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
             if (messdiener.toString().equals(geschwi)) {
                 return messdiener;
             }
         }
         // additional Search for Vorname and Nachname
         String replaceSeparators = geschwi.replace(", ", " ")
-                .replace("-", " ").replace("; ", " ");
+                .replace("-", " ").replace("; ", " ").toLowerCase(Locale.getDefault());
         String[] parts = replaceSeparators.split(" ");
-        for (Messdiener messdiener : medis) {
-            if (Arrays.stream(parts).allMatch(part -> messdiener.toString().toLowerCase(Locale.getDefault()).contains(part.toLowerCase(Locale.getDefault())))) {
-                throw new CouldFindMessdiener(messdiener.toString(), geschwi, "Konnte für " + akt.toString() + " : " + geschwi + " finden");
+        Arrays.sort(parts);
+        for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
+            String[] parts2 = messdiener.toString().replace(", ", " ")
+                    .replace("-", " ").replace("; ", " ").toLowerCase(Locale.getDefault()).split(" ");
+            Arrays.sort(parts2);
+            if (Arrays.equals(parts, parts2)) {
+                String message = "Konnte für " + akt.toString() + " : " + geschwi + " finden";
+                Log.getLogger().info(message);
+                throw new CouldFindMessdiener(messdiener.toString(), geschwi, message);
             }
         }
 
@@ -275,7 +279,7 @@ public class Messdaten {
             this.string = string;
         }
 
-        public String getMessdienerID() {
+        public String getFoundMessdienerID() {
             return messdienerID;
         }
 

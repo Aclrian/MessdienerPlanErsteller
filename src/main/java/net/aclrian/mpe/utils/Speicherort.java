@@ -69,6 +69,8 @@ public class Speicherort {
                 Log.getLogger().info("Auf den Speicherort '{}' kann nicht zugegriffen werden!", f);
                 getSpeicherortString();
             }
+        } else {
+            speicherortString = line;
         }
     }
 
@@ -103,15 +105,14 @@ public class Speicherort {
         String s = "Ordner wählen, in dem alles gespeichert werden soll:";
         f.setTitle(s);
         File file = f.showDialog(window);
-        return file == null ? null : file.getPath();
+        return file == null ? "" : file.getPath();
     }
 
     public static File waehleDatei(Window window, FileChooser.ExtensionFilter filter, String title) {
         FileChooser f = new FileChooser();
         f.getExtensionFilters().add(filter);
         f.setTitle(title);
-        File file = f.showOpenDialog(window);
-        return file;
+        return f.showOpenDialog(window);
     }
 
     public String getSpeicherortString() {

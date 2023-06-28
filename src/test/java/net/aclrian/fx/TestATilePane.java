@@ -16,7 +16,7 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import java.util.Arrays;
 
-import static org.testfx.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TestATilePane extends ApplicationTest {
 
