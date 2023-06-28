@@ -1,13 +1,16 @@
 package net.aclrian.fx;
 
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.utils.*;
 
-import java.util.*;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
+import javafx.scene.layout.TilePane;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.utils.DateienVerwalter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ATilePane extends TilePane {
 
@@ -17,14 +20,14 @@ public class ATilePane extends TilePane {
         setMaxHeight(Double.MAX_VALUE);
         setMaxWidth(Double.MAX_VALUE);
         setVgap(5d);
-            List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
+        List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
         medis.sort(Messdiener.MESSDIENER_COMPARATOR);
-            for (Messdiener messdiener : medis) {
-                ACheckBox cb = new ACheckBox(messdiener);
-                cb.setMaxWidth(Double.MAX_VALUE);
-                cb.setStyle("-fx-padding: 0 0 0 10");
-                getChildren().add(cb);
-            }
+        for (Messdiener messdiener : medis) {
+            ACheckBox cb = new ACheckBox(messdiener);
+            cb.setMaxWidth(Double.MAX_VALUE);
+            cb.setStyle("-fx-padding: 0 0 0 10");
+            getChildren().add(cb);
+        }
     }
 
     public List<Messdiener> getSelected() {

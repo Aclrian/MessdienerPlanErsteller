@@ -1,28 +1,41 @@
 package net.aclrian.mpe.controller;
 
-import com.itextpdf.html2pdf.*;
-import javafx.event.*;
-import javafx.fxml.*;
+import com.itextpdf.html2pdf.ConverterProperties;
+import com.itextpdf.html2pdf.HtmlConverter;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.web.*;
+import javafx.scene.web.HTMLEditor;
 import javafx.stage.Window;
-import javafx.util.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
+import javafx.util.Pair;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messe.Messe;
+import net.aclrian.mpe.messe.Sonstiges;
+import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.*;
-import org.jodconverter.core.document.*;
-import org.jodconverter.core.office.*;
-import org.jodconverter.local.*;
-import org.jodconverter.local.office.*;
-import org.springframework.web.util.*;
+import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
+import org.jodconverter.core.document.DocumentFormat;
+import org.jodconverter.core.office.OfficeException;
+import org.jodconverter.core.office.OfficeUtils;
+import org.jodconverter.local.JodConverter;
+import org.jodconverter.local.office.LocalOfficeManager;
+import org.jodconverter.local.office.LocalOfficeUtils;
+import org.springframework.web.util.UriUtils;
 
 import java.awt.*;
-import java.io.*;
-import java.net.*;
-import java.nio.charset.*;
-import java.time.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.*;
 
 public class FinishController implements Controller {
 

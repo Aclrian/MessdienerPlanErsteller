@@ -1,14 +1,17 @@
 package net.aclrian.mpe.utils;
 
-import com.google.gson.*;
-import net.aclrian.mpe.*;
 
-import java.io.*;
-import java.net.*;
-import java.nio.charset.*;
-import java.util.regex.*;
+import com.google.gson.Gson;
+import net.aclrian.mpe.Main;
 
-import static net.aclrian.mpe.utils.Log.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
+
+import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class VersionIDHandler {
     private static final URI urlToLatestReleaseJsonFile = URI.create("https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest");
@@ -20,12 +23,12 @@ public class VersionIDHandler {
         try (InputStream is = urlToLatestReleaseJsonFile.toURL().openStream()) {
             Gson gson = new Gson();
             internettid = gson.fromJson(new String(is.readAllBytes(), StandardCharsets.UTF_8), Version.class).getVersion();
-            Log.getLogger().info("Running with: {} found: {}", Main.VERSION_ID, internettid);
+            getLogger().info("Running with: {} found: {}", Main.VERSION_ID, internettid);
             if (!internettid.contains(".")) return EnumHandling.IS_TOO_NEW;
             if (internettid.equals(Main.VERSION_ID)) return EnumHandling.IS_THE_LATEST;
             return oldNewOrLatest();
         } catch (Exception e) {
-            Log.getLogger().error(e);
+            getLogger().error(e);
             return EnumHandling.ERROR;
         }
     }

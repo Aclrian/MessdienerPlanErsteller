@@ -1,14 +1,22 @@
 package net.aclrian.mpe.messdiener;
 
-import net.aclrian.mpe.messdiener.Messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.utils.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
 
-import javax.xml.*;
-import javax.xml.parsers.*;
-import java.io.*;
+import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messe.Sonstiges;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Log;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 
 /**
  * liest aus einer xml-Datei den Messdiener und gibt diesen zurück
@@ -188,7 +196,7 @@ public class ReadFile {
             if (!s.equals("")) me.setEmailEmpty();
             try {
                 me.setEmail(s);
-            } catch (NotValidException e) {
+            } catch (Messdiener.NotValidException e) {
                 fixEmail(me, s + "' bzw. '" + mail, vorname, nachname, eintritt, leiter, dienverhalten);
             }
         } else me.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, dienverhalten);

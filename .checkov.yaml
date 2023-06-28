@@ -1,2 +1,4 @@
+quiet: true
 skip-check:
   - CKV2_GHA_1
+  - CKV_DOCKER_2

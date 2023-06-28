@@ -1,10 +1,13 @@
 package net.aclrian.mpe.utils;
 
-import javafx.stage.*;
+
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
 import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public class Speicherort {
 

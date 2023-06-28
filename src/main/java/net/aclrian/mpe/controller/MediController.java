@@ -1,24 +1,36 @@
 package net.aclrian.mpe.controller;
 
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.fxml.*;
+
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.stage.*;
-import net.aclrian.fx.*;
-import net.aclrian.mpe.controller.MainController.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messdiener.Messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.utils.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.stage.Window;
+import net.aclrian.fx.ASlider;
+import net.aclrian.mpe.messdiener.KannWelcheMesse;
+import net.aclrian.mpe.messdiener.Messdaten;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.WriteFile;
+import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.RemoveDoppelte;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
-import static net.aclrian.mpe.utils.Log.*;
+import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class MediController implements Controller {
 
@@ -137,7 +149,7 @@ public class MediController implements Controller {
     public void afterStartup(Window window, MainController mc) {
         cancel.setOnAction(e -> {
             locked = false;
-            mc.changePane(EnumPane.SELECT_MEDI);
+            mc.changePane(MainController.EnumPane.SELECT_MEDI);
         });
         saveNew.setOnAction(e -> {
             if (getMedi()) {
@@ -148,7 +160,7 @@ public class MediController implements Controller {
         button.setOnAction(e -> {
             if (getMedi()) {
                 locked = false;
-                mc.changePane(EnumPane.SELECT_MEDI);
+                mc.changePane(MainController.EnumPane.SELECT_MEDI);
             }
         });
         // Email valid
@@ -282,7 +294,7 @@ public class MediController implements Controller {
                 }
                 setAndUpdateAnvertraute(m);
                 return true;
-            } catch (NotValidException e) {
+            } catch (Messdiener.NotValidException e) {
                 Dialogs.getDialogs().warn("Bitte eine richtige E-Mail oder nichts angeben!");
             }
         } else {
@@ -351,7 +363,7 @@ public class MediController implements Controller {
                 WriteFile wf = new WriteFile(messdiener);
                 wf.toXML();
             }
-            if (Log.getLogger().isDebugEnabled()) {
+            if (getLogger().isDebugEnabled()) {
                 getLogger().info("Messdiener {} wurde gespeichert!", m);
             }
             DateienVerwalter.getInstance().reloadMessdiener();

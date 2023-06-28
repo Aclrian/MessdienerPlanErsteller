@@ -1,6 +1,5 @@
 package net.aclrian.mpe.converter;
 
-import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.Messdiener.NotValidException;
 import net.aclrian.mpe.messe.Messverhalten;

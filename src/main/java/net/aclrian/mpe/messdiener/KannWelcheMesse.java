@@ -1,8 +1,10 @@
 package net.aclrian.mpe.messdiener;
 
-import net.aclrian.mpe.messe.*;
 
-import java.util.*;
+import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messe.StandardMesse;
+
+import java.util.Comparator;
 
 /**
  * Klasse fuer das {@link Messverhalten}

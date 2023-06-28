@@ -1,8 +1,11 @@
 package net.aclrian.mpe.messe;
 
-import java.time.*;
-import java.time.format.*;
-import java.util.*;
+
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.Comparator;
+import java.util.Locale;
+import java.util.Objects;
 
 public class StandardMesse {
     public static final Comparator<StandardMesse> STANDARD_MESSE_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());

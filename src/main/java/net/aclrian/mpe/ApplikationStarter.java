@@ -1,6 +1,7 @@
 package net.aclrian.mpe;
 
-import net.aclrian.mpe.utils.*;
+
+import net.aclrian.mpe.utils.Log;
 
 import javax.swing.*;
 import java.awt.*;

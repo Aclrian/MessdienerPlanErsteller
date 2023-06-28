@@ -1,17 +1,20 @@
 package net.aclrian.mpe;
 
-import javafx.application.*;
-import javafx.fxml.*;
-import javafx.scene.*;
-import javafx.scene.image.*;
-import javafx.stage.*;
-import net.aclrian.mpe.controller.*;
-import net.aclrian.mpe.controller.MainController.*;
-import net.aclrian.mpe.utils.*;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+import net.aclrian.mpe.controller.MainController;
+import net.aclrian.mpe.controller.PfarreiController;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.VersionIDHandler;
 
-import java.util.*;
+import java.util.Objects;
 
-import static net.aclrian.mpe.utils.Log.*;
+import static net.aclrian.mpe.utils.Log.getLogger;
 
 public class Main extends Application {
     public static final String VERSION_ID = "1.0.2";
@@ -36,7 +39,7 @@ public class Main extends Application {
 
             stage.setTitle("MessdienerplanErsteller");
             stage.show();
-            ((MainController) loader.getController()).changePane(EnumPane.START);
+            ((MainController) loader.getController()).changePane(MainController.EnumPane.START);
             getLogger().info("Startbildschirm geladen");
         } catch (Exception e) {
             Dialogs.getDialogs().error(e, "Es ist ein unerwarteter Fehler aufgetreten:");

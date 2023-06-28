@@ -1,21 +1,28 @@
 package net.aclrian.mpe.controller.converter;
 
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.text.*;
-import javafx.stage.*;
-import javafx.util.*;
-import net.aclrian.mpe.controller.*;
-import net.aclrian.mpe.converter.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.utils.*;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.util.*;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldListCell;
+import javafx.stage.Window;
+import javafx.util.StringConverter;
+import net.aclrian.mpe.controller.Controller;
+import net.aclrian.mpe.controller.MainController;
+import net.aclrian.mpe.converter.ConvertCSV;
+import net.aclrian.mpe.messe.Sonstiges;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+
+import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class ConvertController implements Controller {
 

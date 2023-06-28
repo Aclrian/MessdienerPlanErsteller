@@ -1,10 +1,12 @@
 package net.aclrian.mpe.controller;
 
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import javafx.stage.*;
-import net.aclrian.mpe.*;
-import net.aclrian.mpe.utils.*;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
+import javafx.stage.Window;
+import javafx.scene.control.Label;
+import net.aclrian.mpe.Main;
+import net.aclrian.mpe.utils.DateienVerwalter;
 
 public class StartController implements Controller {
     @FXML

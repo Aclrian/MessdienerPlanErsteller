@@ -1,7 +1,9 @@
 package net.aclrian.mpe.pfarrei;
 
-import javafx.beans.property.*;
-import net.aclrian.mpe.messdiener.*;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import net.aclrian.mpe.messdiener.Messdaten;
 
 public record Setting(Attribut attribut, int id, int anzahlDienen) {
 

@@ -1,10 +1,12 @@
 package net.aclrian.fx;
 
-import javafx.scene.control.*;
-import javafx.util.*;
-import net.aclrian.mpe.utils.*;
 
-import java.time.*;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.util.StringConverter;
+import net.aclrian.mpe.utils.DateUtil;
+
+import java.time.LocalTime;
 
 //exists because Spinner(@NamedArg("min") LocalTime min, @NamedArg("max") LocalTime max, @NamedArg("initialValue") LocalTime initialValue) is package private
 public class TimeSpinner extends Spinner<LocalTime> {

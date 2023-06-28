@@ -1,37 +1,43 @@
 package net.aclrian.mpe.utils;
 
-import javafx.application.*;
-import javafx.beans.value.*;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.scene.*;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.stage.*;
-import net.aclrian.fx.*;
-import net.aclrian.mpe.controller.*;
-import net.aclrian.mpe.controller.converter.*;
-import net.aclrian.mpe.converter.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.pfarrei.*;
+import net.aclrian.fx.ASlider;
+import net.aclrian.mpe.controller.converter.ConvertController;
+import net.aclrian.mpe.converter.ConvertCSV;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.pfarrei.Setting;
 
 import java.awt.*;
-import java.io.*;
-import java.net.*;
-import java.text.*;
-import java.time.*;
-import java.time.format.*;
-import java.time.temporal.*;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
+import java.util.List;
 
 public class Dialogs {
 
@@ -52,7 +58,7 @@ public class Dialogs {
         Dialogs.dialogs = dialogs;
     }
 
-    private Alert alertBuilder(AlertType type, String headertext) {
+    private Alert alertBuilder(Alert.AlertType type, String headertext) {
         Alert a = new Alert(type);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
@@ -62,7 +68,7 @@ public class Dialogs {
         return a;
     }
 
-    private Alert alertBuilder(AlertType type, String header, Node n) {
+    private Alert alertBuilder(Alert.AlertType type, String header, Node n) {
         Alert a = alertBuilder(type, header);
         a.getDialogPane().setExpandableContent(n);
         a.getDialogPane().setExpanded(true);
@@ -72,27 +78,27 @@ public class Dialogs {
 
     public void info(String string) {
         Log.getLogger().info(string);
-        alertBuilder(AlertType.INFORMATION, string).showAndWait();
+        alertBuilder(Alert.AlertType.INFORMATION, string).showAndWait();
     }
 
     public void info(String header, String string) {
         Log.getLogger().info(string);
-        Alert a = alertBuilder(AlertType.INFORMATION, header);
+        Alert a = alertBuilder(Alert.AlertType.INFORMATION, header);
         a.setContentText(string);
         a.showAndWait();
     }
 
     public void warn(String string) {
         Log.getLogger().warn(string);
-        alertBuilder(AlertType.WARNING, string).showAndWait();
+        alertBuilder(Alert.AlertType.WARNING, string).showAndWait();
     }
 
     public void error(String string) {
         Log.getLogger().error(string);
         if (Platform.isFxApplicationThread()) {
-            alertBuilder(AlertType.ERROR, string).showAndWait();
+            alertBuilder(Alert.AlertType.ERROR, string).showAndWait();
         } else {
-            Platform.runLater(() -> alertBuilder(AlertType.ERROR, string).showAndWait());
+            Platform.runLater(() -> alertBuilder(Alert.AlertType.ERROR, string).showAndWait());
         }
     }
 
@@ -119,15 +125,15 @@ public class Dialogs {
         vb.getChildren().addAll(l, ta);
 
         if (Platform.isFxApplicationThread()) {
-            alertBuilder(AlertType.ERROR, header, vb).showAndWait();
+            alertBuilder(Alert.AlertType.ERROR, header, vb).showAndWait();
 
         } else {
-            Platform.runLater(() -> alertBuilder(AlertType.INFORMATION, string).showAndWait());
+            Platform.runLater(() -> alertBuilder(Alert.AlertType.INFORMATION, string).showAndWait());
         }
     }
 
     public void open(URI open, String string) throws IOException {
-        Alert a = alertBuilder(AlertType.CONFIRMATION, string);
+        Alert a = alertBuilder(Alert.AlertType.CONFIRMATION, string);
         Optional<ButtonType> res = a.showAndWait();
         if (res.isPresent() && (res.get() == ButtonType.OK)) {
             Desktop.getDesktop().browse(open);
@@ -137,7 +143,7 @@ public class Dialogs {
     public void open(URI open, String string, String ok, String close) {
         ButtonType od = new ButtonType(ok, ButtonBar.ButtonData.OK_DONE);
         ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
-        Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION, "", od, cc);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(string);
@@ -153,12 +159,12 @@ public class Dialogs {
     }
 
     public boolean frage(String string) {
-        Optional<ButtonType> res = alertBuilder(AlertType.CONFIRMATION, string).showAndWait();
+        Optional<ButtonType> res = alertBuilder(Alert.AlertType.CONFIRMATION, string).showAndWait();
         return res.isPresent() && (res.get() == ButtonType.OK);
     }
 
     public boolean frage(String string, String cancel, String ok) {
-        Alert a = alertBuilder(AlertType.CONFIRMATION, string);
+        Alert a = alertBuilder(Alert.AlertType.CONFIRMATION, string);
         ((Button) a.getDialogPane().lookupButton(ButtonType.CANCEL)).setText(cancel);
         ((Button) a.getDialogPane().lookupButton(ButtonType.OK)).setText(ok);
         Optional<ButtonType> res = a.showAndWait();
@@ -169,7 +175,7 @@ public class Dialogs {
         ButtonType yesbtn = new ButtonType(yes, ButtonBar.ButtonData.YES);
         ButtonType cc = new ButtonType(cancel, ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType nobtn = new ButtonType(no, ButtonBar.ButtonData.NO);
-        Alert a = new Alert(AlertType.CONFIRMATION, "", yesbtn, cc, nobtn);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION, "", yesbtn, cc, nobtn);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(string);
@@ -192,7 +198,7 @@ public class Dialogs {
             b.setToggleGroup(g);
             v.getChildren().add(b);
         }
-        alertBuilder(AlertType.INFORMATION, s, v).showAndWait();
+        alertBuilder(Alert.AlertType.INFORMATION, s, v).showAndWait();
         if (g.getSelectedToggle() instanceof ARadioButton) {
             return ((ARadioButton<?>) g.getSelectedToggle()).getI();
         }
@@ -200,7 +206,7 @@ public class Dialogs {
     }
 
     public <I> List<I> select(List<I> dataAmBestenSortiert, List<I> selected, String string) {
-        Alert a = alertBuilder(AlertType.INFORMATION, string);
+        Alert a = alertBuilder(Alert.AlertType.INFORMATION, string);
         ListView<CheckBox> lw = new ListView<>();
         ArrayList<I> rtn = new ArrayList<>();
         for (I item : dataAmBestenSortiert) {
@@ -240,7 +246,7 @@ public class Dialogs {
         d2.setPromptText(bis);
         HBox hb = new HBox(d1, d2);
         hb.setSpacing(20d);
-        Alert a = alertBuilder(AlertType.INFORMATION, string, hb);
+        Alert a = alertBuilder(Alert.AlertType.INFORMATION, string, hb);
         ChangeListener<Object> e = (arg0, arg1, arg2) -> {
             if (d1.getValue() != null && d2.getValue() != null && (!d1.getValue().isAfter(d2.getValue()))) {
                 a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
@@ -297,7 +303,7 @@ public class Dialogs {
 
         VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz);
         v.setSpacing(20);
-        Alert a = alertBuilder(AlertType.INFORMATION, "Neue Standardmesse erstellen:");
+        Alert a = alertBuilder(Alert.AlertType.INFORMATION, "Neue Standardmesse erstellen:");
 
         ChangeListener<Object> e = (arg0, arg1, arg2) -> {
             try {
@@ -396,7 +402,7 @@ public class Dialogs {
     public void show(List<?> list, String string) {
         ListView<?> lv = new ListView<>(FXCollections.observableArrayList(list));
         lv.setId("list");
-        alertBuilder(AlertType.INFORMATION, string, lv).showAndWait();
+        alertBuilder(Alert.AlertType.INFORMATION, string, lv).showAndWait();
     }
 
     public List<Messdiener> select(List<Messdiener> data, Messdiener without, List<Messdiener> freund, String s) {
@@ -420,7 +426,7 @@ public class Dialogs {
         }
         controller.afterStartup(null, null);
 
-        Alert a = alertBuilder(AlertType.INFORMATION, "Spalten zuordnen", p);
+        Alert a = alertBuilder(Alert.AlertType.INFORMATION, "Spalten zuordnen", p);
         Optional<ButtonType> res = a.showAndWait();
         if(!controller.isValid()){
             Dialogs.getDialogs().error("Ein Eingabefeld ist leer oder es sind mehr Standartmessen angegeben als im System sind");

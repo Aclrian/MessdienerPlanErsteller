@@ -9,6 +9,13 @@ on:
   pull_request:
     branches: [ "main", "develop" ]
 
+permissions:
+  actions: write
+  checks: write
+  contents: read
+  pull-request: write
+  statuses: write
+
 jobs:
   build:
 

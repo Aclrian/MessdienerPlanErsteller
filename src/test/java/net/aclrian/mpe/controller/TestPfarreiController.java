@@ -100,7 +100,7 @@ public class TestPfarreiController extends ApplicationTest {
         Parent root = null;
         try {
             root = loader.load();
-            scene = new Scene(root);
+            scene = new Scene(root, 10, 10);
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
