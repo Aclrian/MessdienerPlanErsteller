@@ -75,7 +75,6 @@ class TestMainController extends ApplicationTest {
 
     @Test
     @RetryingTest(value = 5)
-//needs to be put on the right method
     void testEachEnumPane() {
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
