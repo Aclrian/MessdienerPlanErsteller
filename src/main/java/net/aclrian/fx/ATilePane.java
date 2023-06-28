@@ -14,12 +14,14 @@ import java.util.List;
 
 public class ATilePane extends TilePane {
 
+    public static final double VGAP = 5d;
+
     public ATilePane() {
         setAlignment(Pos.CENTER);
         setOrientation(Orientation.VERTICAL);
         setMaxHeight(Double.MAX_VALUE);
         setMaxWidth(Double.MAX_VALUE);
-        setVgap(5d);
+        setVgap(VGAP);
         List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
         medis.sort(Messdiener.MESSDIENER_COMPARATOR);
         for (Messdiener messdiener : medis) {
