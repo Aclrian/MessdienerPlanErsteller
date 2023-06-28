@@ -119,6 +119,8 @@ class ConvertCSVTest {
 
     @Test
     void testIO(@TempDir Path tempDir) throws IOException {
+        Locale locale = Locale.getDefault();
+        Locale.setDefault(Locale.GERMANY);
         DateienVerwalter dv = Mockito.mock(DateienVerwalter.class);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -157,6 +159,7 @@ class ConvertCSVTest {
         assertThat(tim).exists().hasSameContentAs(Paths.get(convert_file.getParent().toString(), tim_string));
         assertThat(anna).exists().hasSameContentAs(Paths.get(convert_file.getParent().toString(), anna_string));
         Mockito.verify(dialog, Mockito.times(1)).info(Mockito.anyString());
+        Locale.setDefault(locale);
     }
 
     private List<Messdiener> getMessdiener(Path tempDir) {
