@@ -7,6 +7,7 @@ import javafx.util.StringConverter;
 import net.aclrian.mpe.utils.DateUtil;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 //exists because Spinner(@NamedArg("min") LocalTime min, @NamedArg("max") LocalTime max, @NamedArg("initialValue") LocalTime initialValue) is package private
 public class TimeSpinner extends Spinner<LocalTime> {
@@ -14,9 +15,11 @@ public class TimeSpinner extends Spinner<LocalTime> {
 
     public static final StringConverter<LocalTime> converter = new StringConverter<>() {
 
+        private final DateTimeFormatter time_format = DateUtil.TIME;
+
         @Override
         public String toString(LocalTime time) {
-            return DateUtil.TIME.format(time);
+            return this.time_format.format(time);
         }
 
         @Override
