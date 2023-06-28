@@ -1,29 +1,46 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.*;
-import javafx.fxml.*;
-import javafx.scene.*;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.robot.*;
-import javafx.stage.*;
-import net.aclrian.mpe.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.pfarrei.*;
-import net.aclrian.mpe.utils.*;
-import org.junit.*;
-import org.mockito.*;
-import org.testfx.assertions.api.*;
-import org.testfx.framework.junit.*;
-import org.testfx.util.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.robot.Robot;
+import javafx.stage.Stage;
+import net.aclrian.mpe.Main;
+import net.aclrian.mpe.messdiener.Messdaten;
+import net.aclrian.mpe.messe.Sonstiges;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.pfarrei.Einstellungen;
+import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.pfarrei.ReadFilePfarrei;
+import net.aclrian.mpe.pfarrei.Setting;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Log;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
-import java.io.*;
-import java.nio.file.*;
-import java.time.*;
-import java.time.format.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.Locale;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPfarreiController extends ApplicationTest {
 
@@ -38,7 +55,7 @@ public class TestPfarreiController extends ApplicationTest {
     private Stage stage;
     private AutoCloseable openMocks;
 
-    @AfterClass
+    @AfterAll
     public static void deleteFile() {
         File file = new File(System.getProperty("user.home"), "name" + DateienVerwalter.PFARREI_DATEIENDUNG);
         try {
@@ -60,14 +77,14 @@ public class TestPfarreiController extends ApplicationTest {
         openMocks = MockitoAnnotations.openMocks(this);
     }
 
-    @After
+    @AfterEach
     public void close() throws Exception {
         openMocks.close();
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void test() {
+    void test() {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -95,65 +112,65 @@ public class TestPfarreiController extends ApplicationTest {
             stage.show();
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(root).isNotNull();
-        Assertions.assertThat(scene).isNotNull();
+        assertThat(root).isNotNull();
+        assertThat(scene).isNotNull();
         cont.afterStartup();
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(root.lookup("#table")).isInstanceOf(TableView.class);
-        Assertions.assertThat(((TableView<?>) root.lookup("#table")).getItems()).hasSize(0);
+        assertThat(root.lookup("#table")).isInstanceOf(TableView.class);
+        assertThat(((TableView<?>) root.lookup("#table")).getItems()).isEmpty();
         final Node neu = root.lookup("#neu");
         Platform.runLater(() -> {
-            Assertions.assertThat(neu).isInstanceOf(Button.class);
+            assertThat(neu).isInstanceOf(Button.class);
             ((Button) neu).fire();
             ((Button) neu).fire();
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).contains(Standardmesse, Standardmesse1);
-        Assertions.assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).hasSize(2);
+        assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).contains(Standardmesse, Standardmesse1);
+        assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).hasSize(2);
         final Node rm = root.lookup("#loeschen");
         Platform.runLater(() -> {
-            Assertions.assertThat(rm).isInstanceOf(Button.class);
+            assertThat(rm).isInstanceOf(Button.class);
             ((Button) rm).fire();
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).hasSize(2);
+        assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).hasSize(2);
         Mockito.verify(dialog, Mockito.times(1)).warn(PfarreiController.NICHTS_AUSGEWAEHLT);
         ((TableView<?>) root.lookup("#table")).getSelectionModel().select(1);
 
         Platform.runLater(() -> {
-            Assertions.assertThat(rm).isInstanceOf(Button.class);
+            assertThat(rm).isInstanceOf(Button.class);
             ((Button) rm).fire();
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).hasSize(1);
-        Assertions.assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).contains(Standardmesse);
+        assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).hasSize(1);
+        assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).contains(Standardmesse);
 
         final Node weiter = root.lookup("#weiterbtn");
         Platform.runLater(() -> {
-            Assertions.assertThat(weiter).isInstanceOf(Button.class);
+            assertThat(weiter).isInstanceOf(Button.class);
             ((Button) weiter).fire();
         });
         WaitForAsyncUtils.waitForFxEvents();
 
         scene = stage.getScene();
-        Assertions.assertThat(scene.lookup("#table")).isNull();
+        assertThat(scene.lookup("#table")).isNull();
         final Node zurueck = scene.lookup("#zurueckbtn");
         Platform.runLater(() -> {
-            Assertions.assertThat(zurueck).isInstanceOf(Button.class);
+            assertThat(zurueck).isInstanceOf(Button.class);
             ((Button) zurueck).fire();
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(scene.lookup("#table")).isNull();
+        assertThat(scene.lookup("#table")).isNull();
         Platform.runLater(() -> {
-            Assertions.assertThat(weiter).isInstanceOf(Button.class);
+            assertThat(weiter).isInstanceOf(Button.class);
             ((Button) weiter).fire();
         });
         WaitForAsyncUtils.waitForFxEvents();
         scene = stage.getScene();
-        Assertions.assertThat(scene.lookup("#settingTableView")).isInstanceOf(TableView.class);
-        Assertions.assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems()).allMatch(setting ->
+        assertThat(scene.lookup("#settingTableView")).isInstanceOf(TableView.class);
+        assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems()).allMatch(setting ->
                 setting.anzahlDienen() == 0 && setting.getJahr() <= Messdaten.getMaxYear() && setting.getJahr() >= Messdaten.getMinYear());
-        Assertions.assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems()).hasSize(Einstellungen.LENGTH - 2);
+        assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems()).hasSize(Einstellungen.LENGTH - 2);
         Mockito.verify(dialog, Mockito.times(2)).open(Mockito.any(), Mockito.anyString(), Mockito.eq(PfarreiController.MEHR_INFORMATIONEN), Mockito.eq(PfarreiController.VERSTANDEN));
         final Setting setting = ((TableView<Setting>) scene.lookup("#settingTableView")).getItems().get(0);
         final Setting newSetting = new Setting(setting.attribut(), setting.id(), 2);
@@ -170,26 +187,26 @@ public class TestPfarreiController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> scene.lookup("#settingTableView").fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, false, false, false, false, false, false, false, false, false, false, null)));
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems().get(0)).isEqualTo(newSetting);
+        assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems().get(0)).isEqualTo(newSetting);
         Platform.runLater(() -> {
-            Assertions.assertThat(scene.lookup("#medi")).isInstanceOf(Slider.class);
+            assertThat(scene.lookup("#medi")).isInstanceOf(Slider.class);
             ((Slider) scene.lookup("#medi")).setValue(2);
-            Assertions.assertThat(scene.lookup("#leiter")).isInstanceOf(Slider.class);
+            assertThat(scene.lookup("#leiter")).isInstanceOf(Slider.class);
             ((Slider) scene.lookup("#leiter")).setValue(4);
-            Assertions.assertThat(scene.lookup("#name")).isInstanceOf(TextField.class);
+            assertThat(scene.lookup("#name")).isInstanceOf(TextField.class);
             TextField nameFiled = (TextField) scene.lookup("#name");
             nameFiled.setText("namesdfsdjklflös");
-            Assertions.assertThat(scene.lookup("#hochamt")).isInstanceOf(CheckBox.class);
+            assertThat(scene.lookup("#hochamt")).isInstanceOf(CheckBox.class);
             ((CheckBox) scene.lookup("#hochamt")).setSelected(true);
-            Assertions.assertThat(scene.lookup("#save")).isInstanceOf(Button.class);
+            assertThat(scene.lookup("#save")).isInstanceOf(Button.class);
             ((Button) scene.lookup("#save")).fire();
         });
         WaitForAsyncUtils.waitForFxEvents();
         File file = new File(System.getProperty("user.home"), "namesdfsdjklflös" + DateienVerwalter.PFARREI_DATEIENDUNG);
-        Assertions.assertThat(file).exists();
+        assertThat(file).exists();
         try {
             String doW = DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault());
-            Assertions.assertThat(Files.readString(file.toPath()).replace(System.getProperty("line.separator"), "\n")).isEqualTo("""
+            assertThat(Files.readString(file.toPath()).replace(System.getProperty("line.separator"), "\n")).isEqualTo("""
                     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                     <XML>
                       <MpE-Creator LICENSE="MIT">Aclrian</MpE-Creator>
@@ -242,19 +259,19 @@ public class TestPfarreiController extends ApplicationTest {
         } catch (Exception e) {
             Assertions.fail(e.getMessage(), e);
         }
-        Assertions.assertThat(pfRead).isNotNull();
-        Assertions.assertThat(pfRead.getStandardMessen()).containsExactlyInAnyOrder(Standardmesse, new Sonstiges());
-        Assertions.assertThat(pfRead.zaehlenHochaemterMit()).isTrue();
-        Assertions.assertThat(pfRead.getName()).isEqualTo("namesdfsdjklflös");
-        Assertions.assertThat(pfRead.getSettings().getSettings()).hasSize(Einstellungen.LENGTH - 2);
+        assertThat(pfRead).isNotNull();
+        assertThat(pfRead.getStandardMessen()).containsExactlyInAnyOrder(Standardmesse, new Sonstiges());
+        assertThat(pfRead.zaehlenHochaemterMit()).isTrue();
+        assertThat(pfRead.getName()).isEqualTo("namesdfsdjklflös");
+        assertThat(pfRead.getSettings().getSettings()).hasSize(Einstellungen.LENGTH - 2);
         Einstellungen einst = new Einstellungen();
         einst.editMaxDienen(false, 2);
         einst.editMaxDienen(true, 4);
         einst.editiereYear(0, 2);
-        Assertions.assertThat(pfRead.getSettings().getDaten(0).toString()).isEqualTo("MAX 0 2");
-        Assertions.assertThat(pfRead.getSettings().getDaten(1).toString()).isEqualTo("MAX 1 4");
-        Assertions.assertThat(pfRead.getSettings().getSettings()).containsOnlyOnce(newSetting);
-        Assertions.assertThat(pfRead.getSettings().getSettings()).allMatch(s -> s.equals(newSetting) || s.anzahlDienen() == 0);
+        assertThat(pfRead.getSettings().getDaten(0)).hasToString("MAX 0 2");
+        assertThat(pfRead.getSettings().getDaten(1)).hasToString("MAX 1 4");
+        assertThat(pfRead.getSettings().getSettings()).containsOnlyOnce(newSetting);
+        assertThat(pfRead.getSettings().getSettings()).allMatch(s -> s.equals(newSetting) || s.anzahlDienen() == 0);
         try {
             Files.delete(file.toPath());
         } catch (IOException e) {

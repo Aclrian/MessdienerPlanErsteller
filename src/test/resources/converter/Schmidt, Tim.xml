@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<XML>
+  <MpE-Creator LICENSE="MIT">Aclrian</MpE-Creator>
+  <Body>
+    <Vorname>Tim</Vorname>
+    <Nachname>Schmidt</Nachname>
+    <Email>tim.schmidt@de.de</Email>
+    <Messverhalten>
+      <Mo-8-00-1>true</Mo-8-00-1>
+      <Di-8-00-1>true</Di-8-00-1>
+      <Mi-8-00-1>true</Mi-8-00-1>
+      <Do-8-00-1>true</Do-8-00-1>
+      <Sa-8-00-1>true</Sa-8-00-1>
+      <So-8-00-1>true</So-8-00-1>
+    </Messverhalten>
+    <Leiter>false</Leiter>
+    <Eintritt>2023</Eintritt>
+    <Anvertraute>
+      <F1>LEER</F1>
+      <F2>LEER</F2>
+      <F3>LEER</F3>
+      <F4>LEER</F4>
+      <F5>LEER</F5>
+      <g1>Schmidt, Tom</g1>
+      <g2>LEER</g2>
+      <g3>LEER</g3>
+    </Anvertraute>
+  </Body>
+</XML>

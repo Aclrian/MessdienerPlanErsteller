@@ -1,33 +1,51 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.*;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.scene.*;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import javafx.stage.*;
-import net.aclrian.Retrying;
-import net.aclrian.fx.*;
-import net.aclrian.mpe.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.pfarrei.*;
-import net.aclrian.mpe.utils.*;
-import org.junit.*;
-import org.mockito.*;
-import org.testfx.assertions.api.*;
-import org.testfx.framework.junit.*;
-import org.testfx.util.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import net.aclrian.fx.TimeSpinner;
+import net.aclrian.mpe.Main;
+import net.aclrian.mpe.messdiener.KannWelcheMesse;
+import net.aclrian.mpe.messdiener.Messdaten;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messe.Messe;
+import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messe.Sonstiges;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.pfarrei.Einstellungen;
+import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Speicherort;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+import org.junitpioneer.jupiter.RetryingTest;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
-import java.io.*;
-import java.nio.file.*;
-import java.time.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
 
-public class TestMainController extends ApplicationTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class TestMainController extends ApplicationTest {
 
     @Mock
     Dialogs dialogs;
@@ -40,8 +58,6 @@ public class TestMainController extends ApplicationTest {
     @Mock
     private Main main;
     private Stage stage;
-    @Rule
-    public Retrying retryrule = new Retrying(5);
 
     @Override
     public void start(Stage stage) {
@@ -58,7 +74,8 @@ public class TestMainController extends ApplicationTest {
     }
 
     @Test
-    public void testEachEnumPane() {
+    @RetryingTest(value = 5)
+    void testEachEnumPane() {
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -85,18 +102,18 @@ public class TestMainController extends ApplicationTest {
             instance.changePane(MainController.EnumPane.START);
             Node name = scene.lookup("#name");
             if (name instanceof Label) {
-                Assertions.assertThat(((Label) name).getText().equalsIgnoreCase(titel)).isTrue();
+                assertThat(((Label) name).getText()).isEqualToIgnoringCase(titel);
             } else {
                 Assertions.fail("name not found");
             }
             instance.changePane(MainController.EnumPane.START);
-            Assertions.assertThat(name.isVisible()).isTrue();
+            assertThat(name.isVisible()).isTrue();
         });
         WaitForAsyncUtils.waitForFxEvents();
         //Messdiener
         Platform.runLater(() -> {
             instance.changePane(MainController.EnumPane.MESSDIENER);
-            Assertions.assertThat(stage.getScene().lookup("#name")).isNotNull();
+            assertThat(stage.getScene().lookup("#name")).isNotNull();
         });
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> {
@@ -122,26 +139,26 @@ public class TestMainController extends ApplicationTest {
                 final Messdaten md = Mockito.mock(Messdaten.class);
                 Mockito.when(messdiener.getMessdaten()).thenReturn(md);
 
-                Assertions.assertThat(scene.lookup("#vorname")).isInstanceOf(TextField.class);
-                Assertions.assertThat(((TextField) scene.lookup("#vorname")).getText()).isEqualTo("v");
-                Assertions.assertThat(scene.lookup("#name")).isInstanceOf(TextField.class);
-                Assertions.assertThat(((TextField) scene.lookup("#name")).getText()).isEqualTo("n");
-                Assertions.assertThat(scene.lookup("#geschwie")).isInstanceOf(ListView.class);
-                Assertions.assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems().size()).isEqualTo(1);
-                Assertions.assertThat(scene.lookup("#freunde")).isInstanceOf(ListView.class);
-                Assertions.assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
-                Assertions.assertThat(scene.lookup("#eintritt")).isInstanceOf(Slider.class);
-                Assertions.assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(Messdaten.getMaxYear());
-                Assertions.assertThat(scene.lookup("#leiter")).isInstanceOf(CheckBox.class);
-                Assertions.assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isFalse();
-                Assertions.assertThat(scene.lookup("#email")).isInstanceOf(TextField.class);
-                Assertions.assertThat(((TextField) scene.lookup("#email")).getText()).isEqualTo("a@a.de");
-                Assertions.assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
+                assertThat(scene.lookup("#vorname")).isInstanceOf(TextField.class);
+                assertThat(((TextField) scene.lookup("#vorname")).getText()).isEqualTo("v");
+                assertThat(scene.lookup("#name")).isInstanceOf(TextField.class);
+                assertThat(((TextField) scene.lookup("#name")).getText()).isEqualTo("n");
+                assertThat(scene.lookup("#geschwie")).isInstanceOf(ListView.class);
+                assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems()).hasSize(1);
+                assertThat(scene.lookup("#freunde")).isInstanceOf(ListView.class);
+                assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
+                assertThat(scene.lookup("#eintritt")).isInstanceOf(Slider.class);
+                assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(Messdaten.getMaxYear());
+                assertThat(scene.lookup("#leiter")).isInstanceOf(CheckBox.class);
+                assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isFalse();
+                assertThat(scene.lookup("#email")).isInstanceOf(TextField.class);
+                assertThat(((TextField) scene.lookup("#email")).getText()).isEqualTo("a@a.de");
+                assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
                 final TableView<?> table = (TableView<?>) scene.lookup("#table");
-                Assertions.assertThat(table.getItems()).hasSize(1);
-                Assertions.assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
+                assertThat(table.getItems()).hasSize(1);
+                assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
 
-                Assertions.assertThat(instance.getControl().isLocked()).isTrue();
+                assertThat(instance.getControl().isLocked()).isTrue();
 
             } else {
                 Assertions.fail("could not find cancel");
@@ -175,40 +192,40 @@ public class TestMainController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> {
-            Assertions.assertThat(scene.lookup("#titel")).isInstanceOf(TextField.class);
-            Assertions.assertThat(((TextField) scene.lookup("#titel")).getText()).isEqualTo("typ");
+            assertThat(scene.lookup("#titel")).isInstanceOf(TextField.class);
+            assertThat(((TextField) scene.lookup("#titel")).getText()).isEqualTo("typ");
 
-            Assertions.assertThat(scene.lookup("#ort")).isInstanceOf(TextField.class);
-            Assertions.assertThat(((TextField) scene.lookup("#ort")).getText()).isEqualTo("ort");
+            assertThat(scene.lookup("#ort")).isInstanceOf(TextField.class);
+            assertThat(((TextField) scene.lookup("#ort")).getText()).isEqualTo("ort");
 
-            Assertions.assertThat(scene.lookup("#datum")).isInstanceOf(DatePicker.class);
+            assertThat(scene.lookup("#datum")).isInstanceOf(DatePicker.class);
             LocalDateTime date = LocalDate.of(2020, 1, 1).atTime(8, 0);
-            Assertions.assertThat(((DatePicker) scene.lookup("#datum")).getValue()).isEqualTo(date.toLocalDate());
+            assertThat(((DatePicker) scene.lookup("#datum")).getValue()).isEqualTo(date.toLocalDate());
 
-            Assertions.assertThat(scene.lookup("#uhr")).isInstanceOf(TimeSpinner.class);
-            Assertions.assertThat(((TimeSpinner) scene.lookup("#uhr")).getValue()).isEqualTo(date.toLocalTime());
+            assertThat(scene.lookup("#uhr")).isInstanceOf(TimeSpinner.class);
+            assertThat(((TimeSpinner) scene.lookup("#uhr")).getValue()).isEqualTo(date.toLocalTime());
 
-            Assertions.assertThat(scene.lookup("#slider")).isInstanceOf(Slider.class);
-            Assertions.assertThat(((Slider) scene.lookup("#slider")).getValue()).isEqualTo(1);
+            assertThat(scene.lookup("#slider")).isInstanceOf(Slider.class);
+            assertThat(((Slider) scene.lookup("#slider")).getValue()).isEqualTo(1);
 
-            Assertions.assertThat(scene.lookup("#hochamt")).isInstanceOf(CheckBox.class);
-            Assertions.assertThat(((CheckBox) scene.lookup("#hochamt")).isSelected()).isTrue();
+            assertThat(scene.lookup("#hochamt")).isInstanceOf(CheckBox.class);
+            assertThat(((CheckBox) scene.lookup("#hochamt")).isSelected()).isTrue();
 
-            Assertions.assertThat(scene.lookup("#smesse")).isInstanceOf(Label.class);
-            Assertions.assertThat(((Label) scene.lookup("#smesse")).getText()).isEqualTo(Sonstiges.SONSTIGES_STRING);
+            assertThat(scene.lookup("#smesse")).isInstanceOf(Label.class);
+            assertThat(((Label) scene.lookup("#smesse")).getText()).isEqualTo(Sonstiges.SONSTIGES_STRING);
 
-            Assertions.assertThat(instance.getControl().isLocked()).isTrue();
+            assertThat(instance.getControl().isLocked()).isTrue();
 
             instance.hauptbildschirm(null);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.MESSE);
+        assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.MESSE);
         Platform.runLater(() -> {
             instance.changePane(MainController.EnumPane.FERIEN);
             instance.changePane(MainController.EnumPane.MESSE);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.MESSE);
+        assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.MESSE);
 
         Platform.runLater(() -> {
             instance.changePane(MainController.EnumPane.FERIEN);
@@ -223,24 +240,24 @@ public class TestMainController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         //SelectMesse
-        Assertions.assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.SELECT_MESSE);
+        assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.SELECT_MESSE);
 
         Platform.runLater(() -> {
-            Assertions.assertThat(scene.lookup("#list")).isInstanceOf(ListView.class);
-            Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems().size()).isEqualTo(1);
+            assertThat(scene.lookup("#list")).isInstanceOf(ListView.class);
+            assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(1);
             instance.messe(null);
-            Assertions.assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.SELECT_MESSE);
+            assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.SELECT_MESSE);
         });
         WaitForAsyncUtils.waitForFxEvents();
         //Ferien
         Platform.runLater(() -> {
             instance.ferienplan(null);
-            Assertions.assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
-            Assertions.assertThat(((TableView<?>) scene.lookup("#table")).getColumns().size()).isEqualTo(2);
-            Assertions.assertThat(((TableView<?>) scene.lookup("#table")).getItems().size()).isEqualTo(1);
+            assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
+            assertThat(((TableView<?>) scene.lookup("#table")).getColumns()).hasSize(2);
+            assertThat(((TableView<?>) scene.lookup("#table")).getItems()).hasSize(1);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.FERIEN);
+        assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.FERIEN);
         //StdMessen
         Platform.runLater(() -> {
             Node button = scene.lookup("#zurueck");
@@ -253,8 +270,8 @@ public class TestMainController extends ApplicationTest {
             instance.standardmesse(null);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(scene.lookup("#smesse")).isInstanceOf(Text.class);
-        Assertions.assertThat(((Text) scene.lookup("#smesse")).getText()).doesNotContain("#");
+        assertThat(scene.lookup("#smesse")).isInstanceOf(Text.class);
+        assertThat(((Text) scene.lookup("#smesse")).getText()).doesNotContain("#");
         //SelectMedi
         Platform.runLater(() -> {
             Node button = scene.lookup("#abbrechen");
@@ -266,9 +283,9 @@ public class TestMainController extends ApplicationTest {
             instance.medi(null);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.SELECT_MEDI);
-        Assertions.assertThat(scene.lookup("#list")).isInstanceOf(ListView.class);
-        Assertions.assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(1);
+        assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.SELECT_MEDI);
+        assertThat(scene.lookup("#list")).isInstanceOf(ListView.class);
+        assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(1);
 
         //Plan
         Einstellungen einstellungen = new Einstellungen();
@@ -279,24 +296,25 @@ public class TestMainController extends ApplicationTest {
         //Info
         Platform.runLater(() -> {
             instance.info(null);
-            Assertions.assertThat(this.listTargetWindows().size()).isGreaterThan(1);
+            assertThat(this.listTargetWindows()).hasSizeGreaterThan(1);
             this.listTargetWindows().forEach(w -> {
                 if (w instanceof Stage && w != stage) {
                     ((Stage) w).close();
                 }
             });
-            Assertions.assertThat(this.listTargetWindows().size()).isGreaterThan(0);
+            assertThat(this.listTargetWindows()).isNotEmpty();
         });
         WaitForAsyncUtils.waitForFxEvents();
     }
 
-    @Ignore("should not run on ci")
+    @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "should not run on ci")
     @Test
-    public void testAwtDesktop() {
+    void testAwtDesktop() throws IOException {
         DateienVerwalter.setInstance(dv);
         final File file = new File(System.getProperty("user.dir"));
         Mockito.when(dv.getSavePath()).thenReturn(file);
-
+        Mockito.when(pf.getName()).thenReturn("");
+        Mockito.when(dv.getPfarrei()).thenReturn(pf);
         FXMLLoader loader = new FXMLLoader();
         loader.setController(new MainController(main, stage));
         instance = loader.getController();
@@ -304,12 +322,16 @@ public class TestMainController extends ApplicationTest {
         instance.log(null);
         instance.workingdir(null);
         instance.savepath(null);
-        Assertions.assertThat(true).isTrue();
+        loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));
+        loader.load();
+        ((MainController) loader.getController()).changePane(MainController.EnumPane.START);
+        WaitForAsyncUtils.waitForFxEvents();
+        assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.START);
     }
 
-    @Ignore("Robotcontext should not run on ci")
+    @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "Robotcontext should not run on ci")
     @Test
-    public void testChangeSpeicherort() {
+    void testChangeSpeicherort() {
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -328,7 +350,7 @@ public class TestMainController extends ApplicationTest {
             Assertions.fail(e.getMessage(), e);
         }
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(System.getProperty("user.home").isEmpty()).isFalse();
+        assertThat(System.getProperty("user.home")).isNotEmpty();
         File f = new File(System.getProperty("user.home"), Speicherort.TEXTDATEI);
         final Path copy = Path.of(System.getProperty("user.home"), Speicherort.TEXTDATEI + "c");
         try {
@@ -336,8 +358,9 @@ public class TestMainController extends ApplicationTest {
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
-        Assertions.assertThat(stage.focusedProperty().getValue()).isTrue();
+        assertThat(stage.focusedProperty().getValue()).isTrue();
 
+        loader = new FXMLLoader();
         loader.setController(new MainController(main, stage));
         instance = loader.getController();
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
@@ -359,7 +382,7 @@ public class TestMainController extends ApplicationTest {
         instance.speicherort(null);
         WaitForAsyncUtils.waitForFxEvents();
         long sec = System.currentTimeMillis();
-        Assertions.assertThat(sec - first).isLessThan(1000L);
+        assertThat(sec - first).isLessThan(1000L);
         Platform.runLater(() -> {
             instance.changePane(MainController.EnumPane.START);
             instance.speicherort(null);
@@ -371,12 +394,12 @@ public class TestMainController extends ApplicationTest {
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
-        Assertions.assertThat(stage.focusedProperty().getValue()).isFalse();
+        assertThat(stage.focusedProperty().getValue()).isFalse();
         robotContext().getKeyboardRobot().press(KeyCode.ESCAPE);
     }
 
     @Test
-    public void testPfarrei() {
+    void testPfarrei() {
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -396,21 +419,21 @@ public class TestMainController extends ApplicationTest {
         }
         WaitForAsyncUtils.waitForFxEvents();
         Scene scene = new Scene(pane);
-        Assertions.assertThat(System.getProperty("user.home").isEmpty()).isFalse();
+        assertThat(System.getProperty("user.home")).isNotEmpty();
         Platform.runLater(() -> {
             stage.setScene(scene);
             stage.setTitle("MessdienerplanErsteller");
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(stage.focusedProperty().getValue()).isTrue();
+        assertThat(stage.focusedProperty().getValue()).isTrue();
         Platform.runLater(() -> instance.changePane(MainController.EnumPane.START));
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(stage.focusedProperty().getValue()).isTrue();
+        assertThat(stage.focusedProperty().getValue()).isTrue();
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> instance.editPfarrei(null));
         WaitForAsyncUtils.waitForFxEvents();
         final Node lookup = this.listWindows().get(1).getScene().lookup("#table");
-        Assertions.assertThat(lookup).isInstanceOf(TableView.class);
-        Assertions.assertThat(((TableView<?>) lookup).getItems().get(0).toString()).isEqualTo(pf.getStandardMessen().get(0).toString());
+        assertThat(lookup).isInstanceOf(TableView.class);
+        assertThat(((TableView<?>) lookup).getItems().get(0)).hasToString(pf.getStandardMessen().get(0).toString());
     }
 }

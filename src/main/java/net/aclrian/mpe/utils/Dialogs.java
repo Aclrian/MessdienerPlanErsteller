@@ -3,6 +3,7 @@ package net.aclrian.mpe.utils;
 import javafx.application.*;
 import javafx.beans.value.*;
 import javafx.collections.*;
+import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -12,8 +13,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.stage.Window;
 import javafx.stage.*;
 import net.aclrian.fx.*;
+import net.aclrian.mpe.controller.*;
+import net.aclrian.mpe.controller.converter.*;
+import net.aclrian.mpe.converter.*;
 import net.aclrian.mpe.messdiener.*;
 import net.aclrian.mpe.messe.*;
 import net.aclrian.mpe.pfarrei.*;
@@ -87,7 +92,7 @@ public class Dialogs {
         if (Platform.isFxApplicationThread()) {
             alertBuilder(AlertType.ERROR, string).showAndWait();
         } else {
-            Platform.runLater(() -> alertBuilder(AlertType.INFORMATION, string).showAndWait());
+            Platform.runLater(() -> alertBuilder(AlertType.ERROR, string).showAndWait());
         }
     }
 
@@ -169,8 +174,8 @@ public class Dialogs {
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(string);
         Optional<ButtonType> res = a.showAndWait();
-        if (res.isPresent() && res.get() == cc) return YesNoCancelEnum.CANCEL;
-        return res.isPresent() && (res.get() == yesbtn) ? YesNoCancelEnum.YES : YesNoCancelEnum.NO;
+        if (res.isEmpty() || res.get() == cc) return YesNoCancelEnum.CANCEL;
+        return res.get() == yesbtn ? YesNoCancelEnum.YES : YesNoCancelEnum.NO;
     }
 
     public void fatal(Exception e, String string) {
@@ -397,6 +402,32 @@ public class Dialogs {
     public List<Messdiener> select(List<Messdiener> data, Messdiener without, List<Messdiener> freund, String s) {
         data.remove(without);
         return select(data, freund, s);
+    }
+
+    public ConvertCSV.ConvertData importDialog(Window window) {
+        File file = Speicherort.waehleDatei(window, new FileChooser.ExtensionFilter("CSV-Datei", "*.csv"), "Datei zum Importieren auswählen");
+        if (file == null || !file.exists()) return null;
+        URL u = getClass().getResource("/view/converter.fxml");
+        FXMLLoader fl = new FXMLLoader(u);
+        Parent p;
+        ConvertController controller = new ConvertController(file);
+        try {
+            fl.setController(controller);
+            p = fl.load();
+        } catch (IOException e) {
+            Log.getLogger().error(e.getMessage(), e);
+            return null;
+        }
+        controller.afterStartup(null, null);
+
+        Alert a = alertBuilder(AlertType.INFORMATION, "Spalten zuordnen", p);
+        Optional<ButtonType> res = a.showAndWait();
+        if(!controller.isValid()){
+            Dialogs.getDialogs().error("Ein Eingabefeld ist leer oder es sind mehr Standartmessen angegeben als im System sind");
+            return  importDialog(window);
+        }
+        if (res.isEmpty() || res.get() != ButtonType.OK) return null;
+        return controller.getData();
     }
 
     public enum YesNoCancelEnum {

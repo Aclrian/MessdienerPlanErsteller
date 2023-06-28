@@ -7,12 +7,13 @@ import javafx.scene.control.Slider;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.junit.Test;
-import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit.ApplicationTest;
+import org.junit.jupiter.api.Test;
+import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
-public class TestASlider extends ApplicationTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class TestASlider extends ApplicationTest {
 
     private final String stringValue = "object2342+3";
     private Slider instance;
@@ -27,23 +28,23 @@ public class TestASlider extends ApplicationTest {
     }
 
     @Test
-    public void testAslider() {
+    void testAslider() {
         instance = new Slider(1, 10, 3);
         Platform.runLater(() -> {
             pane.getChildren().add(instance);
             ASlider.makeASlider(stringValue, instance, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(instance.lookup(ASlider.THUMB)).isNotNull();
+        assertThat(instance.lookup(ASlider.THUMB)).isNotNull();
         Platform.runLater(() -> instance.setValue(instance.getMax()));
         WaitForAsyncUtils.waitForFxEvents();
         Object o = instance.lookup(ASlider.THUMB).lookup("#" + ASlider.SLIDER_VALUE);
-        Assertions.assertThat(o).isInstanceOf(Label.class);
-        Assertions.assertThat(((Label) instance.lookup("#" + ASlider.SLIDER_VALUE)).getText()).contains(stringValue+": ");
+        assertThat(o).isInstanceOf(Label.class);
+        assertThat(((Label) instance.lookup("#" + ASlider.SLIDER_VALUE)).getText()).contains(stringValue + ": ");
     }
 
     @Test
-    public void testASlider2(){
+    void testASlider2() {
         instance = new Slider(1, 10, 3);
         Platform.runLater(() -> {
             pane.getChildren().add(instance);
@@ -51,12 +52,12 @@ public class TestASlider extends ApplicationTest {
             instance.setValue(1);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(instance.lookup(ASlider.THUMB)).isNotNull();
-        Assertions.assertThat(((Label) instance.lookup("#" + ASlider.SLIDER_VALUE)).getText()).isEqualTo("1");
+        assertThat(instance.lookup(ASlider.THUMB)).isNotNull();
+        assertThat(((Label) instance.lookup("#" + ASlider.SLIDER_VALUE)).getText()).isEqualTo("1");
     }
 
     @Test
-    public void testEventHandler() {
+    void testEventHandler() {
         instance = new Slider(1, 10, 3);
         Platform.runLater(() -> {
             pane.getChildren().add(instance);
@@ -65,16 +66,16 @@ public class TestASlider extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         double firstValue = instance.getValue();
-        Assertions.assertThat(firstValue).isEqualTo(1);
+        assertThat(firstValue).isEqualTo(1);
         Platform.runLater(() -> instance.setValue(instance.getMax()));
         WaitForAsyncUtils.waitForFxEvents();
         double secondValue = instance.getValue();
 
-        Assertions.assertThat(secondValue).isEqualTo(instance.getMax())
+        assertThat(secondValue).isEqualTo(instance.getMax())
                 .isNotEqualTo(firstValue);
         Platform.runLater(() -> instance.setValue(1));
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(instance.getValue()).isEqualTo(1);
+        assertThat(instance.getValue()).isEqualTo(1);
 
         ScrollEvent event = new ScrollEvent(ScrollEvent.SCROLL,
                 0d, 0d, 0d, 0d,
@@ -85,7 +86,7 @@ public class TestASlider extends ApplicationTest {
                 0, null);
         ASlider.scrollValue(instance, event);
 
-        Assertions.assertThat(instance.getValue()).isEqualTo(2);
+        assertThat(instance.getValue()).isEqualTo(2);
 
         event = new ScrollEvent(ScrollEvent.SCROLL,
                 0d, 0d, 0d, 0d,
@@ -95,7 +96,7 @@ public class TestASlider extends ApplicationTest {
                 ScrollEvent.VerticalTextScrollUnits.NONE, 0d,
                 0, null);
         ASlider.scrollValue(instance, event);
-        Assertions.assertThat(instance.getValue()).isEqualTo(1);
+        assertThat(instance.getValue()).isEqualTo(1);
         event = new ScrollEvent(ScrollEvent.SCROLL,
                 0d, 0d, 0d, 0d,
                 false, false, false, false, false, false,
@@ -104,6 +105,6 @@ public class TestASlider extends ApplicationTest {
                 ScrollEvent.VerticalTextScrollUnits.NONE, 0d,
                 0, null);
         ASlider.scrollValue(instance, event);
-        Assertions.assertThat(instance.getValue()).isEqualTo(1);
+        assertThat(instance.getValue()).isEqualTo(1);
     }
 }

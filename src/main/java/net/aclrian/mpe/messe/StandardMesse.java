@@ -67,7 +67,6 @@ public class StandardMesse {
                 + ")";
     }
 
-    @SuppressWarnings("unused")
     public String toBenutzerfreundlichenString() {
         return typ + " jeden " + wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + ", " + "um " + beginnStunde + ":" + beginnMinute + " in " + ort + " (" + anzMessdiener + ")";
     }

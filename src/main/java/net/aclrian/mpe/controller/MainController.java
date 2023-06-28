@@ -8,6 +8,7 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import net.aclrian.mpe.*;
 import net.aclrian.mpe.controller.Select.*;
+import net.aclrian.mpe.converter.*;
 import net.aclrian.mpe.messdiener.*;
 import net.aclrian.mpe.messe.*;
 import net.aclrian.mpe.utils.*;
@@ -109,6 +110,8 @@ public class MainController {
             control.afterStartup(p.getScene().getWindow(), this);
         } catch (IOException e) {
             Dialogs.getDialogs().fatal(e, "Auf " + ep.getLocation() + NO_ACCESS);
+        } catch (Exception ex) {
+            changePane(EnumPane.START);
         }
     }
 
@@ -247,6 +250,22 @@ public class MainController {
             Desktop.getDesktop().open(Log.getWorkingDir());
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Konnte den Ordner nicht öffnen:");
+        }
+    }
+
+    @FXML
+    public void importCSV(ActionEvent event){
+        ConvertCSV.ConvertData data;
+        data = Dialogs.getDialogs().importDialog(stage.getScene().getWindow());
+        if (data == null) return;
+        try {
+            ConvertCSV csv = new ConvertCSV(data);
+            csv.start();
+        } catch (Exception e) {
+            Dialogs.getDialogs().error(e, e.getMessage());
+        }
+        if (ep==EnumPane.SELECT_MEDI){
+            control.afterStartup(stage, this);
         }
     }
 

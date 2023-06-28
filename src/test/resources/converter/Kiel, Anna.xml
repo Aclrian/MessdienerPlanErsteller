@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<XML>
+  <MpE-Creator LICENSE="MIT">Aclrian</MpE-Creator>
+  <Body>
+    <Vorname>Anna</Vorname>
+    <Nachname>Kiel</Nachname>
+    <Email>ak@w.de</Email>
+    <Messverhalten>
+      <Mo-8-00-1>false</Mo-8-00-1>
+      <Di-8-00-1>false</Di-8-00-1>
+      <Mi-8-00-1>false</Mi-8-00-1>
+      <Do-8-00-1>false</Do-8-00-1>
+      <Sa-8-00-1>false</Sa-8-00-1>
+      <So-8-00-1>false</So-8-00-1>
+    </Messverhalten>
+    <Leiter>false</Leiter>
+    <Eintritt>2012</Eintritt>
+    <Anvertraute>
+      <F1>Schmidt, Tim</F1>
+      <F2>Schmidt, Tom</F2>
+      <F3>LEER</F3>
+      <F4>LEER</F4>
+      <F5>LEER</F5>
+      <g1>LEER</g1>
+      <g2>LEER</g2>
+      <g3>LEER</g3>
+    </Anvertraute>
+  </Body>
+</XML>

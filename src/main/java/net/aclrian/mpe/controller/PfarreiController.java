@@ -243,7 +243,7 @@ public class PfarreiController {
                 DateienVerwalter.reStart(old);
                 ((Stage) s).close();
                 return;
-            } catch (IDateienVerwalter.NoSuchPfarrei e1) {
+            } catch (DateienVerwalter.NoSuchPfarrei e1) {
                 Log.getLogger().error(e1.getMessage());
             }
         }

@@ -20,7 +20,7 @@ public class Messdaten {
     private ArrayList<LocalDate> ausgeteilt = new ArrayList<>();
     private ArrayList<LocalDate> pause = new ArrayList<>();
 
-    public Messdaten(Messdiener m) {
+    public Messdaten(Messdiener m) throws CouldFindMessdiener {
         geschwister = new ArrayList<>();
         freunde = new ArrayList<>();
         update(m);
@@ -155,6 +155,14 @@ public class Messdaten {
         return true;
     }
 
+    public List<Messdiener> getFreunde() {
+        return freunde;
+    }
+
+    public List<Messdiener> getGeschwister() {
+        return geschwister;
+    }
+
     public boolean ausgeteilt(LocalDate date) {
         return ausgeteilt.contains(date);
     }
@@ -180,29 +188,34 @@ public class Messdaten {
         return insgesamtEingeteilt;
     }
 
-    public void update(Messdiener m) {
+    public void update(Messdiener m) throws CouldFindMessdiener {
         update(false, m.getGeschwister(), m);
         update(true, m.getFreunde(), m);
     }
 
-    private void update(boolean isFreund, String[] s, Messdiener m) {
+    private void update(boolean isFreund, String[] s, Messdiener m) throws CouldFindMessdiener {
         for (String value : s) {
-            Messdiener medi;
+            Messdiener medi = null;
             if (!value.equals("") && !value.equals("LEER") && !value.equals("Vorname, Nachname")) {
                 try {
-                    medi = sucheMessdiener(value, m, DateienVerwalter.getInstance().getMessdiener());
-                    if (medi != null) {
+                    medi = sucheMessdiener(value, m);
+                } catch (CouldNotFindMessdiener e) {
+                    messdienerNotFound(isFreund, s, m, value, e);
+                }
+                if (medi != null) {
+                    if (isFreund) {
+                        this.freunde.add(medi);
+                        freunde = rd.removeDuplicatedEntries(this.freunde);
+                    } else {
                         this.geschwister.add(medi);
                         geschwister = rd.removeDuplicatedEntries(this.geschwister);
                     }
-                } catch (CouldnotFindMedi e) {
-                    if (messdienerNotFound(isFreund, s, m, value, e)) return;
                 }
             }
         }
     }
 
-    private boolean messdienerNotFound(boolean isFreund, String[] s, Messdiener m, String value, CouldnotFindMedi e) {
+    private void messdienerNotFound(boolean isFreund, String[] s, Messdiener m, String value, CouldNotFindMessdiener e) {
         boolean beheben = Dialogs.getDialogs().frage(e.getMessage(),
                 "ignorieren", "beheben");
         if (beheben) {
@@ -217,28 +230,61 @@ public class Messdaten {
             } catch (IOException ex) {
                 Dialogs.getDialogs().error(ex, "Konnte es nicht beheben.");
             }
-            update(isFreund, gew, m);
-            return true;
+            DateienVerwalter.getInstance().reloadMessdiener();
         }
-        return false;
     }
 
-    public Messdiener sucheMessdiener(String geschwi, Messdiener akt, List<Messdiener> medis) throws CouldnotFindMedi {
-        for (Messdiener messdiener : medis) {
+    public Messdiener sucheMessdiener(String geschwi, Messdiener akt) throws CouldNotFindMessdiener, CouldFindMessdiener {
+        for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
             if (messdiener.toString().equals(geschwi)) {
                 return messdiener;
             }
         }
-        throw new CouldnotFindMedi("Konnte für " + akt.toString() + " : " + geschwi + " nicht finden");
+        // additional Search for Vorname and Nachname
+        String replaceSeparators = geschwi.replace(", ", " ")
+                .replace("-", " ").replace("; ", " ").toLowerCase(Locale.getDefault());
+        String[] parts = replaceSeparators.split(" ");
+        Arrays.sort(parts);
+        for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
+            String[] parts2 = messdiener.toString().replace(", ", " ")
+                    .replace("-", " ").replace("; ", " ").toLowerCase(Locale.getDefault()).split(" ");
+            Arrays.sort(parts2);
+            if (Arrays.equals(parts, parts2)) {
+                String message = "Konnte für " + akt.toString() + " : " + geschwi + " finden";
+                Log.getLogger().info(message);
+                throw new CouldFindMessdiener(messdiener.toString(), geschwi, message);
+            }
+        }
+
+        throw new CouldNotFindMessdiener("Konnte für " + akt.toString() + " : " + geschwi + " nicht finden");
     }
 
     public int getAnzMessen() {
         return anzMessen;
     }
 
-    public static class CouldnotFindMedi extends Exception {
-        public CouldnotFindMedi(String message) {
+    public static class CouldNotFindMessdiener extends Exception {
+        public CouldNotFindMessdiener(String message) {
             super(message);
+        }
+    }
+
+    public static class CouldFindMessdiener extends Exception {
+        private final String messdienerID;
+        private final String string;
+
+        public CouldFindMessdiener(String foundID, String string, String message) {
+            super(message);
+            this.messdienerID = foundID;
+            this.string = string;
+        }
+
+        public String getFoundMessdienerID() {
+            return messdienerID;
+        }
+
+        public String getString() {
+            return string;
         }
     }
 }

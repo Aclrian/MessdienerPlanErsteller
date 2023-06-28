@@ -10,15 +10,16 @@ import java.nio.channels.*;
 import java.nio.file.*;
 import java.util.*;
 
-public class DateienVerwalter implements IDateienVerwalter {
+public class DateienVerwalter {
     public static final String PFARREI_DATEIENDUNG = ".xml.pfarrei";
     public static final String MESSDIENER_DATEIENDUNG = ".xml";
-    private static IDateienVerwalter instance;
+    private static DateienVerwalter instance;
     private final File dir;
     private Pfarrei pf;
     private List<Messdiener> medis;
     private FileOutputStream pfarreiFos;
     private FileLock lock;
+    private boolean messdienerAlreadyNull = false;
 
     public DateienVerwalter(String path) throws NoSuchPfarrei {
         this.dir = new File(path);
@@ -30,18 +31,18 @@ public class DateienVerwalter implements IDateienVerwalter {
                     useKey(service);
                 }
             } catch (IOException e) {
-                Dialogs.getDialogs().warn("");
+                Log.getLogger().error(e.getMessage(), e);
             }
         });
         thread.setDaemon(true);
         thread.start();
     }
 
-    public static IDateienVerwalter getInstance() {
+    public static DateienVerwalter getInstance() {
         return instance;
     }
 
-    public static void setInstance(IDateienVerwalter instance) {
+    public static void setInstance(DateienVerwalter instance) {
         DateienVerwalter.instance = instance;
     }
 
@@ -55,23 +56,21 @@ public class DateienVerwalter implements IDateienVerwalter {
         try {
             key = service.take();
             key.pollEvents();
-            reloadMessdiener();
+            if (!messdienerAlreadyNull) reloadMessdiener();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     }
 
-    @Override
     public File getSavePath() {
         return dir;
     }
 
-    @Override
     public void reloadMessdiener() {
+        messdienerAlreadyNull = true;
         medis = null;
     }
 
-    @Override
     public List<Messdiener> getMessdiener() {
         if (medis == null) {
             ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{MESSDIENER_DATEIENDUNG.substring(1)}, true));
@@ -80,11 +79,13 @@ public class DateienVerwalter implements IDateienVerwalter {
                 ReadFile rf = new ReadFile();
                 medis.add(rf.getMessdiener(file));
             });
-            medis.forEach(Messdiener::setnewMessdatenDaten);
+            for (Messdiener m : medis) {
+                    m.setNewMessdatenDaten();
+            }
+            messdienerAlreadyNull = false;
         }
         return medis;
     }
-
 
     //Pfarrei
     private void lookForPfarreiFile() throws NoSuchPfarrei {
@@ -112,17 +113,14 @@ public class DateienVerwalter implements IDateienVerwalter {
         }
     }
 
-    @Override
     public FileLock getLock() {
         return lock;
     }
 
-    @Override
     public FileOutputStream getPfarreiFileOutputStream() {
         return pfarreiFos;
     }
 
-    @Override
     public void removeOldPfarrei(File neuePfarrei) {
         ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREI_DATEIENDUNG.substring(1)}, true));
         ArrayList<File> toDel = new ArrayList<>();
@@ -144,8 +142,19 @@ public class DateienVerwalter implements IDateienVerwalter {
             });
     }
 
-    @Override
     public Pfarrei getPfarrei() {
         return pf;
+    }
+
+    public static class NoSuchPfarrei extends Exception {
+        private final File savepath;
+
+        public NoSuchPfarrei(File savepath) {
+            this.savepath = savepath;
+        }
+
+        public File getSavepath() {
+            return savepath;
+        }
     }
 }

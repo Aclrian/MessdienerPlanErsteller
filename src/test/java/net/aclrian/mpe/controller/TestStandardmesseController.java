@@ -1,30 +1,40 @@
 package net.aclrian.mpe.controller;
 
-import javafx.application.*;
-import javafx.fxml.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import net.aclrian.fx.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.pfarrei.*;
-import net.aclrian.mpe.utils.*;
-import org.junit.*;
-import org.mockito.*;
-import org.testfx.assertions.api.*;
-import org.testfx.framework.junit.*;
-import org.testfx.util.*;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import net.aclrian.fx.ATilePane;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.Log;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.time.*;
-import java.time.format.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Locale;
 
-public class TestStandardmesseController extends ApplicationTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class TestStandardmesseController extends ApplicationTest {
 
     private final StandardMesse StandardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
     @Mock
@@ -51,7 +61,7 @@ public class TestStandardmesseController extends ApplicationTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -86,32 +96,32 @@ public class TestStandardmesseController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(scene.lookup("#pane")).isInstanceOf(ATilePane.class);
+        assertThat(scene.lookup("#pane")).isInstanceOf(ATilePane.class);
         int i = 0;
         for (Node n : ((ATilePane) scene.lookup("#pane")).getChildren()) {
             if (n instanceof ATilePane.ACheckBox) {
                 if (((ATilePane.ACheckBox) n).getMessdiener().equals(m1)) {
-                    Assertions.assertThat(((ATilePane.ACheckBox) n).isSelected()).isFalse();
+                    assertThat(((ATilePane.ACheckBox) n).isSelected()).isFalse();
                     i++;
                     ((ATilePane.ACheckBox) n).setSelected(true);
                 } else if (((ATilePane.ACheckBox) n).getMessdiener().equals(m2)) {
-                    Assertions.assertThat(((ATilePane.ACheckBox) n).isSelected()).isTrue();
+                    assertThat(((ATilePane.ACheckBox) n).isSelected()).isTrue();
                     i++;
                     ((ATilePane.ACheckBox) n).setSelected(false);
                 }
             }
         }
-        Assertions.assertThat(i).isEqualTo(2);
-        Assertions.assertThat(scene.lookup("#fertig")).isInstanceOf(Button.class);
+        assertThat(i).isEqualTo(2);
+        assertThat(scene.lookup("#fertig")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#fertig")).fire();
-        final File aFile = new File(f.getAbsolutePath(),"a.xml");
-        Assertions.assertThat(aFile).exists();
+        final File aFile = new File(f.getAbsolutePath(), "a.xml");
+        assertThat(aFile).exists();
         final File bFile = new File(f.getAbsolutePath(), "b.xml");
-        Assertions.assertThat(bFile).exists();
+        assertThat(bFile).exists();
         try {
             String doW = DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault());
-            Assertions.assertThat(Files.readString(aFile.toPath())).contains("<" + doW + "-8-00-2>true</" + doW + "-8-00-2>");
-            Assertions.assertThat(Files.readString(bFile.toPath())).contains("<" + doW + "-8-00-2>false</" + doW + "-8-00-2>");
+            assertThat(Files.readString(aFile.toPath())).contains("<" + doW + "-8-00-2>true</" + doW + "-8-00-2>");
+            assertThat(Files.readString(bFile.toPath())).contains("<" + doW + "-8-00-2>false</" + doW + "-8-00-2>");
             Files.delete(aFile.toPath());
             Files.delete(bFile.toPath());
         } catch (IOException e) {

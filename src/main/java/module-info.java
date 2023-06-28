@@ -34,5 +34,7 @@ module MessdienerplanErsteller.main {
     exports net.aclrian.mpe.messe;
     exports net.aclrian.mpe.pfarrei;
     exports net.aclrian.mpe.utils;
+    exports net.aclrian.mpe.controller.converter;
+    opens net.aclrian.mpe.controller.converter;
 
 }
