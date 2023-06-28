@@ -14,28 +14,27 @@ import java.util.List;
 
 public class ATilePane extends TilePane {
 
-    public static final double VGAP = 5d;
-
     public ATilePane() {
+        super();
         setAlignment(Pos.CENTER);
         setOrientation(Orientation.VERTICAL);
         setMaxHeight(Double.MAX_VALUE);
         setMaxWidth(Double.MAX_VALUE);
-        setVgap(VGAP);
-        List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
+        setVgap(5d);
+        List<Messdiener>  medis = DateienVerwalter.getInstance().getMessdiener();
         medis.sort(Messdiener.MESSDIENER_COMPARATOR);
         for (Messdiener messdiener : medis) {
-            ACheckBox cb = new ACheckBox(messdiener);
-            cb.setMaxWidth(Double.MAX_VALUE);
-            cb.setStyle("-fx-padding: 0 0 0 10");
-            getChildren().add(cb);
+            ACheckBox checkBox = new ACheckBox(messdiener);
+            checkBox.setMaxWidth(Double.MAX_VALUE);
+            checkBox.setStyle("-fx-padding: 0 0 0 10");
+            getChildren().add(checkBox);
         }
     }
 
     public List<Messdiener> getSelected() {
         ArrayList<Messdiener> rtn = new ArrayList<>();
         for (Node n : getChildrenUnmodifiable()) {
-            if (n instanceof ACheckBox acb && acb.isSelected())
+            if (n instanceof (ACheckBox acb) && acb.isSelected())
                 rtn.add(acb.getMessdiener());
         }
         return rtn;
