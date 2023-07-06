@@ -16,6 +16,8 @@
         <exclude name="TooManyFields" />
         <exclude name="CyclomaticComplexity" />
         <exclude name="LocalVariableCouldBeFinal"/>
+        <exclude name="LawOfDemeter"/>
+        <exclude name="LongVariable"/>
     </rule>
     <rule ref="category/java/codestyle.xml">
     </rule>
