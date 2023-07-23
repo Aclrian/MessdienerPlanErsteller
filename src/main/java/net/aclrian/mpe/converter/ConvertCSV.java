@@ -194,7 +194,7 @@ public class ConvertCSV {
             for (int i = 0; i < m.getFreunde().length; i++) {
                 if (m.getFreunde()[i].matches(pattern)) {
                     try {
-                        m.getFreunde()[i] = importedMessdiener.get(Integer.parseInt(m.getFreunde()[i])+offset).toString();
+                        m.getFreunde()[i] = importedMessdiener.get(Integer.parseInt(m.getFreunde()[i]) + offset).toString();
                     } catch (IndexOutOfBoundsException e) {
                         final String message = String.format("%s: %s in %s could not parsed as an valid Integer %s", e.getMessage(), m.getFreunde()[i], m, e.getCause());
                         MPELog.getLogger().warn(message, e);

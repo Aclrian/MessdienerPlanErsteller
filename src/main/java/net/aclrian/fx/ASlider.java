@@ -13,7 +13,7 @@ public class ASlider {
         s.setOnScroll(e -> scrollValue(s, e));
     }
 
-    private ASlider(){
+    private ASlider() {
 
     }
 
@@ -22,10 +22,10 @@ public class ASlider {
         int amount = 0;
         if (delta < 0) {
             amount = -1;
-        } else if(delta>0) {
+        } else if (delta > 0) {
             amount = 1;
         }
-        s.adjustValue(s.getValue()+amount);
+        s.adjustValue(s.getValue() + amount);
     }
 
     public static void makeASlider(String value, Slider s, Tooltip tooltip) {
@@ -48,7 +48,9 @@ public class ASlider {
             l.setText(as);
         });
         p.getChildren().add(l);
-        if (tooltip != null) { l.setTooltip(tooltip); }
+        if (tooltip != null) {
+            l.setTooltip(tooltip);
+        }
     }
 
     public interface IFormatter {

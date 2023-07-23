@@ -26,7 +26,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Mit dieser Klasse werden Messdiener in xml-Dateien gespeichert
+ * Mit dieser Klasse werden Messdiener in xml-Dateien gespeichert.
  *
  * @author Aclrain
  */
@@ -129,7 +129,7 @@ public class WriteFile {
 
     private void addGeschwister(Document doc, String[] g, Element anvertraute) {
         for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
-            Element ge = doc.createElement("g"+ (i+1));
+            Element ge = doc.createElement("g" + (i + 1));
             try {
                 if (g[i].isEmpty()) {
                     ge.appendChild(doc.createTextNode("LEER"));
@@ -146,7 +146,7 @@ public class WriteFile {
 
     private void addFreunde(Document doc, String[] f, Element anvertraute) {
         for (int i = 0; i < Messdiener.LENGHT_FREUNDE; i++) {
-            Element fr = doc.createElement("F" + (i+1));
+            Element fr = doc.createElement("F" + (i + 1));
             try {
                 if (f[i].isEmpty()) {
                     fr.appendChild(doc.createTextNode("LEER"));
