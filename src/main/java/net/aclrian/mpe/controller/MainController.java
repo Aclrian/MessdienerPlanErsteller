@@ -159,10 +159,10 @@ public class MainController {
 
     @FXML
     public void generieren(ActionEvent actionEvent) {
-        if (!DateienVerwalter.getInstance().getMessdiener().isEmpty() && !messen.isEmpty()) {
-            changePane(EnumPane.PLAN);
-        } else {
+        if (DateienVerwalter.getInstance().getMessdiener().isEmpty() || messen.isEmpty()) {
             Dialogs.getDialogs().warn("Bitte erst Messen und Messdiener eingeben.");
+        } else {
+            changePane(EnumPane.PLAN);
         }
     }
 
@@ -190,10 +190,10 @@ public class MainController {
 
     @FXML
     public void ferienplan(ActionEvent actionEvent) {
-        if (!DateienVerwalter.getInstance().getMessdiener().isEmpty() && !messen.isEmpty()) {
-            changePane(EnumPane.FERIEN);
-        } else {
+        if (DateienVerwalter.getInstance().getMessdiener().isEmpty() || messen.isEmpty()) {
             Dialogs.getDialogs().warn("Bitte erst Messen und Messdiener eingeben.");
+        } else {
+            changePane(EnumPane.FERIEN);
         }
     }
 
@@ -261,7 +261,9 @@ public class MainController {
     public void importCSV(ActionEvent event){
         ConvertCSV.ConvertData data;
         data = Dialogs.getDialogs().importDialog(stage.getScene().getWindow());
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         try {
             ConvertCSV csv = new ConvertCSV(data);
             csv.start();

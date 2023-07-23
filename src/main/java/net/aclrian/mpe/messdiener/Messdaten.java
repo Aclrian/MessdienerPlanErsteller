@@ -13,7 +13,7 @@ import java.util.*;
 public class Messdaten {
 
     private final int maxMessen;
-    RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
+    private final RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
     private List<Messdiener> geschwister;
     private List<Messdiener> freunde;
     private int anzMessen;
@@ -101,13 +101,13 @@ public class Messdaten {
         geschwister = rd.removeDuplicatedEntries(geschwister);
         freunde = rd.removeDuplicatedEntries(freunde);
 
-        rtn.addAll(setTeilAnvertraute(medis, geschwister));
-        rtn.addAll(setTeilAnvertraute(medis, freunde));
+        rtn.addAll(vereinigeAnvertraute(medis, geschwister));
+        rtn.addAll(vereinigeAnvertraute(medis, freunde));
 
         return rd.removeDuplicatedEntries(rtn);
     }
 
-    private ArrayList<Messdiener> setTeilAnvertraute(List<Messdiener> medis, List<Messdiener> freunde) {
+    private ArrayList<Messdiener> vereinigeAnvertraute(List<Messdiener> medis, List<Messdiener> freunde) {
         ArrayList<Messdiener> rtn = new ArrayList<>();
         for (Messdiener messdiener : freunde) {
             for (Messdiener medi : medis) {
@@ -224,11 +224,15 @@ public class Messdaten {
             ArrayList<String> list = new ArrayList<>(Arrays.asList(s));
             list.remove(value);
             String[] gew = MediController.getArrayString(list, isFreund ? Messdiener.LENGHT_FREUNDE : Messdiener.LENGHT_GESCHWISTER);
-            if (isFreund) m.setFreunde(gew);
-            else m.setGeschwister(gew);
+            if (isFreund) {
+                m.setFreunde(gew);
+            }
+            else {
+                m.setGeschwister(gew);
+            }
             WriteFile wf = new WriteFile(m);
             try {
-                wf.toXML();
+                wf.saveToXML();
             } catch (IOException ex) {
                 Dialogs.getDialogs().error(ex, "Konnte es nicht beheben.");
             }

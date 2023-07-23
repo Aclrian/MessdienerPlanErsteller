@@ -30,10 +30,10 @@ public class Speicherort {
         homedir = homedir + TEXTDATEI;
         MPELog.getLogger().info("Das Home-Verzeichnis wurde gefunden: {}", homedir);
         File f = new File(homedir);
-        if (!f.exists()) {
-            createSaveFile(homedir);
-        } else {
+        if (f.exists()) {
             readSaveFile(homedir, f);
+        } else {
+            createSaveFile(homedir);
         }
         MPELog.getLogger().info("Der Speicherort liegt in: {}", speicherortString);
     }
@@ -48,7 +48,9 @@ public class Speicherort {
             }
         } catch (IOException ignored) {}
         File saveFile = new File(line);
-        if (!saveFile.exists()) {
+        if (saveFile.exists()) {
+            speicherortString = line;
+        } else {
             MPELog.getLogger().info("Der Speicherort aus '{}' ('{}') existiert nicht!", f, line);
             try {
                 Files.delete(f.toPath());
@@ -72,8 +74,7 @@ public class Speicherort {
                 MPELog.getLogger().info("Auf den Speicherort '{}' kann nicht zugegriffen werden!", f);
                 getSpeicherortString();
             }
-        } else {
-            speicherortString = line;
+
         }
     }
 

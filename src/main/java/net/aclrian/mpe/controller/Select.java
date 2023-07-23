@@ -116,12 +116,16 @@ public class Select implements Controller {
         list.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 int i = list.getSelectionModel().getSelectedIndex();
-                if (i >= 0 && i < messen.size()) mc.changePaneMesse(messen.get(i));
+                if (i >= 0 && i < messen.size()) {
+                    mc.changePaneMesse(messen.get(i));
+                }
             }
         });
         bearbeiten.setOnAction(e -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && i < messen.size()) mc.changePaneMesse(messen.get(i));
+            if (i >= 0 && i < messen.size()) {
+                mc.changePaneMesse(messen.get(i));
+            }
         });
         remove.setOnAction(arg0 -> {
             int i = list.getSelectionModel().getSelectedIndex();
@@ -162,13 +166,16 @@ public class Select implements Controller {
         list.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 int i = list.getSelectionModel().getSelectedIndex();
-                if (i >= 0 && i < data.size())
+                if (i >= 0 && i < data.size()) {
                     mc.changePaneMessdiener(data.get(i));
+                }
             }
         });
         bearbeiten.setOnAction(e -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && i < data.size()) mc.changePaneMessdiener(data.get(i));
+            if (i >= 0 && i < data.size()) {
+                mc.changePaneMessdiener(data.get(i));
+            }
         });
         remove.setOnAction(arg0 -> {
             int i = list.getSelectionModel().getSelectedIndex();
@@ -189,9 +196,12 @@ public class Select implements Controller {
     }
 
     public void neu() {
-        if (selector == Selector.MESSDIENER)
+        if (selector == Selector.MESSDIENER) {
             mc.changePaneMessdiener(null);
-        else if (selector == Selector.MESSE) mc.changePaneMesse(null);
+        }
+        else if (selector == Selector.MESSE) {
+            mc.changePaneMesse(null);
+        }
     }
 
     @Override

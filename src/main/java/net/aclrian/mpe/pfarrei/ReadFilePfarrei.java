@@ -110,8 +110,9 @@ public class ReadFilePfarrei {
             int i = Integer.parseInt(id);
             if (i < Einstellungen.LENGTH && i > -1) {
                 einst.editiereYear(i, anz);
-            } else
+            } else {
                 MPELog.getLogger().info("id ist zu groß!");
+            }
         } else if (eE.hasAttribute("Lleiter")) {
             String id = eE.getAttribute("Lleiter");
             int i = Integer.parseInt(id);

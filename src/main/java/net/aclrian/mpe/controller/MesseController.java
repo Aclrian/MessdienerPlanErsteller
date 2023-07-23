@@ -69,7 +69,9 @@ public class MesseController implements Controller {
         slider.setMin(1);
         cancel.setOnAction(e -> {
             locked = false;
-            if (moben != null) mc.getMessen().add(moben);
+            if (moben != null) {
+                mc.getMessen().add(moben);
+            }
             mc.changePane(MainController.EnumPane.SELECT_MESSE);
         });
         saveNew.setOnAction(e -> {
@@ -119,7 +121,9 @@ public class MesseController implements Controller {
     }
 
     public void setMesse(Messe messe) {
-        if (messe == null) return;
+        if (messe == null) {
+            return;
+        }
         standardMesse = messe.getStandardMesse();
         smesse.setText(messe.getStandardMesse().toLangerBenutzerfreundlichenString());
         moben = messe;

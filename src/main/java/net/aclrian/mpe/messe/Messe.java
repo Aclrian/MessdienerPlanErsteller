@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
 
-public class Messe implements Comparable<Messe> {
+public class Messe implements Comparable<Messe> { //NOPMD - suppressed TooManyMethods - Model class cannot be refactored
     public static final Comparator<Messe> MESSE_COMPARATOR = Comparator.comparing(Messe::getDate);
     private final StandardMesse em;
     private boolean hochamt;
@@ -169,18 +169,21 @@ public class Messe implements Comparable<Messe> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Messe messe = (Messe) o;
 
-        if (hochamt != messe.hochamt) return false;
-        if (anzMessdiener != messe.anzMessdiener) return false;
-        if (!Objects.equals(date, messe.date)) return false;
-        if (!Objects.equals(kirche, messe.kirche)) return false;
-        if (!Objects.equals(em, messe.em)) return false;
-        if (!Objects.equals(typ, messe.typ)) return false;
-        if (!Objects.equals(medis, messe.medis)) return false;
+        if (hochamt != messe.hochamt || anzMessdiener != messe.anzMessdiener || !Objects.equals(date, messe.date) || !Objects.equals(kirche, messe.kirche)) {
+            return false;
+        }
+        if (!Objects.equals(em, messe.em) || !Objects.equals(typ, messe.typ) || !Objects.equals(medis, messe.medis)) {
+            return false;
+        }
         return Objects.equals(leiter, messe.leiter);
     }
 

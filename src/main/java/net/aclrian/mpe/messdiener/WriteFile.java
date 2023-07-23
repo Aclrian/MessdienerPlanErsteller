@@ -57,7 +57,7 @@ public class WriteFile {
         return new Container(doc, xml, transformer);
     }
 
-    public void toXML() throws IOException {
+    public void saveToXML() throws IOException {
         try {
             Container c = writeXMLFile();
             Document doc = c.document();

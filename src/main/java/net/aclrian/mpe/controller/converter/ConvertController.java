@@ -120,26 +120,34 @@ public class ConvertController implements Controller {
         });
         rfup.setOnAction(a -> {
             int i = reihenfolge.getSelectionModel().getSelectedIndex();
-            if (i <= 0) return;
+            if (i <= 0) {
+                return;
+            }
             Collections.swap(reihenfolge.getItems(), i - 1, i);
             reihenfolge.getSelectionModel().select(i - 1);
         });
         rfdown.setOnAction(a -> {
             int i = reihenfolge.getSelectionModel().getSelectedIndex();
-            if (i < 0 || i >= reihenfolge.getItems().size()-1) return;
+            if (i < 0 || i >= reihenfolge.getItems().size()-1) {
+                return;
+            }
             Collections.swap(reihenfolge.getItems(), i, i + 1);
             reihenfolge.getSelectionModel().select(i + 1);
         });
         rfrm.setOnAction(a -> {
             int i = reihenfolge.getSelectionModel().getSelectedIndex();
-            if (i < 0) return;
+            if (i < 0) {
+                return;
+            }
             final List<ConvertCSV.Sortierung> items = new ArrayList<>(reihenfolge.getItems());
             items.remove(i);
             reihenfolge.setItems(FXCollections.observableList(items));
         });
         smdown.setOnAction(a -> {
             int i = smReihenfolge.getSelectionModel().getSelectedIndex();
-            if (i<0 || i >= smReihenfolge.getItems().size()-1) return;
+            if (i<0 || i >= smReihenfolge.getItems().size()-1) {
+                return;
+            }
             final List<StandardMesse> list = new ArrayList<>(smReihenfolge.getItems().stream().toList());
             Collections.swap(list, i, i + 1);
             smReihenfolge.setItems(FXCollections.observableList(list));
@@ -147,7 +155,9 @@ public class ConvertController implements Controller {
         });
         smup.setOnAction(a -> {
             int i = smReihenfolge.getSelectionModel().getSelectedIndex();
-            if (i <= 0) return;
+            if (i <= 0) {
+                return;
+            }
             final List<StandardMesse> list = new ArrayList<>(smReihenfolge.getItems().stream().toList());
             Collections.swap(list, i - 1, i);
             smReihenfolge.setItems(FXCollections.observableList(list));
@@ -155,7 +165,9 @@ public class ConvertController implements Controller {
         });
         smrm.setOnAction(a -> {
             int i = smReihenfolge.getSelectionModel().getSelectedIndex();
-            if (i < 0) return;
+            if (i < 0) {
+                return;
+            }
             final List<StandardMesse> items = new ArrayList<>(smReihenfolge.getItems());
             items.remove(i);
             smReihenfolge.setItems(FXCollections.observableList(items));

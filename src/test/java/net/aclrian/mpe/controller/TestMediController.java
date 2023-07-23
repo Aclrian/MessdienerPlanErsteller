@@ -106,7 +106,7 @@ public class TestMediController extends ApplicationTest {
     }
 
     @Test
-    void testReadAndSave() {
+    void testReadAndSave() { //NOPMD - suppressed NcssCount - for test purposes
         File f = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
         try {
             Files.writeString(f.toPath(), medi);

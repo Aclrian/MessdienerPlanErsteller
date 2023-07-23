@@ -66,7 +66,9 @@ public class DateienVerwalter {
         try {
             key = service.take();
             key.pollEvents();
-            if (!messdienerAlreadyNull) reloadMessdiener();
+            if (!messdienerAlreadyNull) {
+                reloadMessdiener();
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -101,7 +103,9 @@ public class DateienVerwalter {
     private void lookForPfarreiFile() throws NoSuchPfarrei {
         ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREI_DATEIENDUNG.substring(1)}, true));
         File pfarreiFile;
-        if (files.size() != 1) {
+        if (files.size() == 1) {
+            pfarreiFile = files.get(0);
+        } else {
             if (files.size() > 1) {
                 Dialogs.getDialogs().warn("Es darf nur eine Datei mit der Endung: '" + PFARREI_DATEIENDUNG + "' in dem Ordner: "
                         + dir + " vorhanden sein.");
@@ -109,8 +113,6 @@ public class DateienVerwalter {
             } else {
                 throw new NoSuchPfarrei(dir);
             }
-        } else {
-            pfarreiFile = files.get(0);
         }
         MPELog.getLogger().info("Pfarrei gefunden in: {}", pfarreiFile);
         try {
@@ -136,13 +138,13 @@ public class DateienVerwalter {
         ArrayList<File> toDel = new ArrayList<>();
         boolean candel = false;
         for (File f : files) {
-            if (!f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())) {
-                toDel.add(f);
-            } else {
+            if (f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())) {
                 candel = true;
+            } else {
+                toDel.add(f);
             }
         }
-        if (candel)
+        if (candel) {
             toDel.forEach(file -> {
                 try {
                     Files.delete(file.toPath());
@@ -150,6 +152,7 @@ public class DateienVerwalter {
                     e.printStackTrace();
                 }
             });
+        }
     }
 
     public Pfarrei getPfarrei() {

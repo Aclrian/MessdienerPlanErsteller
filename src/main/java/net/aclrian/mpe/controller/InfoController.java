@@ -6,14 +6,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.text.Text;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.aclrian.mpe.MainApplication;
@@ -22,6 +17,7 @@ import net.aclrian.mpe.utils.MPELog;
 import org.apache.commons.io.IOUtils;
 
 import java.awt.*;
+import java.awt.Button;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -143,7 +139,9 @@ public class InfoController {
                 sel.add(table.getSelectionModel().getSelectedItem()[4]);
                 Object o = Dialogs.getDialogs().singleSelect(sel, "Wähle eine Website zum Öffnen:");
                 try {
-                    if (o != null) Desktop.getDesktop().browse(new URI(o.toString()));
+                    if (o != null) {
+                        Desktop.getDesktop().browse(new URI(o.toString()));
+                    }
                 } catch (IOException | URISyntaxException e) {
                     Dialogs.getDialogs().error(e, "Konnte die Website nicht öffnen.");
                 }

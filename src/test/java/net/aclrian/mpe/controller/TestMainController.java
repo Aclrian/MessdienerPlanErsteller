@@ -48,11 +48,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TestMainController extends ApplicationTest {
 
     @Mock
-    Dialogs dialogs;
+    private Dialogs dialogs;
     @Mock
-    DateienVerwalter dv;
+    private DateienVerwalter dv;
     @Mock
-    Pfarrei pf;
+    private Pfarrei pf;
     private Pane pane;
     private MainController instance;
     @Mock
@@ -75,7 +75,7 @@ class TestMainController extends ApplicationTest {
 
     @Test
     @RetryingTest(5)
-    void testEachEnumPane() {
+    void testEachEnumPane() { //NOPMD - suppressed NPathComplexity - for test purpose
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);

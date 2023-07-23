@@ -7,12 +7,14 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 
 public class ASlider {
-
     public static final String THUMB = ".thumb";
     public static final String SLIDER_VALUE = "sliderValue";
-
-    static void setEventHandler(Slider s) {
+    public static void setEventHandler(Slider s) {
         s.setOnScroll(e -> scrollValue(s, e));
+    }
+
+    private ASlider(){
+
     }
 
     public static void scrollValue(Slider s, javafx.scene.input.ScrollEvent e) {
@@ -46,7 +48,7 @@ public class ASlider {
             l.setText(as);
         });
         p.getChildren().add(l);
-        if (tooltip != null) l.setTooltip(tooltip);
+        if (tooltip != null) { l.setTooltip(tooltip); }
     }
 
     public interface IFormatter {

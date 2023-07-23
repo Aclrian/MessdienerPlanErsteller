@@ -57,7 +57,7 @@ public class StandardmesseController implements Controller {
                 try {
                     m.getDienverhalten().editiereBestimmteMesse(sm, pane.getSelected().contains(m));
                     WriteFile wf = new WriteFile(m);
-                    wf.toXML();
+                    wf.saveToXML();
                 } catch (IOException e) {
                     Dialogs.getDialogs().error(e, "Konnte den Messdiener " + medis + " nicht speichern.");
                 }

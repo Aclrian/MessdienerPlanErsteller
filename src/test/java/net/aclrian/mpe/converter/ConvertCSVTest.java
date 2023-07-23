@@ -29,7 +29,7 @@ class ConvertCSVTest {
     private List<Messdiener> medis = new ArrayList<>();
 
     @Test
-    void testImport(@TempDir Path tempDir) throws IOException {
+    void testImport(@TempDir Path tempDir) throws IOException { //NOPMD - suppressed NcssCount - for test purposes
         DateienVerwalter dv = Mockito.mock(DateienVerwalter.class);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);

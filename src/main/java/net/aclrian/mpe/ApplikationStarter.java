@@ -8,7 +8,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 
-public class ApplikationStarter {
+public class ApplikationStarter { //NOPMD - suppressed UseUtilityClass - contains only main method
     private static final URI WIKI = URI.create("https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Installationshinweise");
 
     public static void main(String[] args) {

@@ -2,14 +2,11 @@ package net.aclrian.mpe.controller;
 
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.collections.*;
+import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -22,13 +19,8 @@ import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.MainApplication;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
-import net.aclrian.mpe.pfarrei.Einstellungen;
-import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.pfarrei.Setting;
-import net.aclrian.mpe.pfarrei.WriteFilePfarrei;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.MPELog;
+import net.aclrian.mpe.pfarrei.*;
+import net.aclrian.mpe.utils.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -48,9 +40,9 @@ public class PfarreiController {
     private final MainApplication mainApplication;
     // ----------------------------------------------------------------------
     @FXML
-    private TableView<Setting> settingTableView = new TableView<>();
+    private TableView<Setting> settingTableView = new TableView<>(); //NOPMD - suppressed ImmutableField - need to be immutable for javafx
     @FXML
-    private /*NOT final!*/ TableView<StandardMesse> table = new TableView<>();
+    private TableView<StandardMesse> table = new TableView<>(); //NOPMD - suppressed ImmutableField - need to be immutable for fxml
     private String nameS = null;
     private int mediI;
     private int leiterI;
@@ -250,8 +242,9 @@ public class PfarreiController {
         ArrayList<StandardMesse> sm = new ArrayList<>(ol);
         Pfarrei pf = new Pfarrei(einst, sm, name.getText(), hochamt.isSelected());
         Window s = ((Button) e.getSource()).getParent().getScene().getWindow();
-        if (nameS != null)
+        if (nameS != null) {
             WriteFilePfarrei.writeFile(pf);
+        }
         WriteFilePfarrei.writeFile(pf, savepath);
         if (old != null) {
             try {

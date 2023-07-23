@@ -23,6 +23,7 @@
         <exclude name="AtLeastOneConstructor"/>
         <exclude name="ShortVariable"/>
         <exclude name="OnlyOneReturn"/>
+        <exclude name="MethodArgumentCouldBeFinal"/>
     </rule>
     <rule ref="category/java/codestyle.xml">
         <exclude name="ExcessiveParameterList" />
@@ -37,5 +38,11 @@
         <exclude name="AtLeastOneConstructor"/>
         <exclude name="ShortVariable"/>
         <exclude name="OnlyOneReturn"/>
+        <exclude name="MethodArgumentCouldBeFinal"/>
+    </rule>
+    <rule ref="category/java/design.xml/CognitiveComplexity">
+        <properties>
+            <property name="reportLevel" value="18" />
+        </properties>
     </rule>
 </ruleset>

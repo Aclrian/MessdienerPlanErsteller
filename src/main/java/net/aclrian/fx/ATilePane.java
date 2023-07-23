@@ -34,8 +34,9 @@ public class ATilePane extends TilePane {
     public List<Messdiener> getSelected() {
         ArrayList<Messdiener> rtn = new ArrayList<>();
         for (Node n : getChildrenUnmodifiable()) {
-            if (n instanceof ACheckBox acb && acb.isSelected())
+            if (n instanceof ACheckBox acb && acb.isSelected()) {
                 rtn.add(acb.getMessdiener());
+            }
         }
         return rtn;
     }

@@ -19,13 +19,21 @@ public class VersionIDHandler {
     private static final String URL_WITH_TAG = "https://github.com/Aclrian/MessdienerPlanErsteller/releases/tag/";
     private static String internetId;
 
+    private VersionIDHandler(){
+
+    }
+
     private static EnumHandling rankingVersionID() {
         try (InputStream is = URL_TO_LATEST_RELEASE_JSON_FILE.toURL().openStream()) {
             Gson gson = new Gson();
             internetId = gson.fromJson(new String(is.readAllBytes(), StandardCharsets.UTF_8), Version.class).getVersion();
             getLogger().info("Running with: {} found: {}", MainApplication.VERSION_ID, internetId);
-            if (!internetId.contains(".")) return EnumHandling.IS_TOO_NEW;
-            if (internetId.equals(MainApplication.VERSION_ID)) return EnumHandling.IS_THE_LATEST;
+            if (!internetId.contains(".")) {
+                return EnumHandling.IS_TOO_NEW;
+            }
+            if (internetId.equals(MainApplication.VERSION_ID)) {
+                return EnumHandling.IS_THE_LATEST;
+            }
             return oldNewOrLatest();
         } catch (Exception e) {
             getLogger().error(e);
@@ -50,7 +58,9 @@ public class VersionIDHandler {
         if (inumbers.length != lnumbers.length) {
             if (inumbers.length > lnumbers.length) {
                 return EnumHandling.IS_OLD;
-            } else return EnumHandling.IS_TOO_NEW;
+            } else {
+                return EnumHandling.IS_TOO_NEW;
+            }
         }
         return EnumHandling.IS_THE_LATEST;
     }
@@ -76,10 +86,14 @@ public class VersionIDHandler {
                 }
                 break;
             case ERROR:
-                if (showAll) Dialogs.getDialogs().error(eh.getMessage());
+                if (showAll) {
+                    Dialogs.getDialogs().error(eh.getMessage());
+                }
                 break;
             default:
-                if (showAll) Dialogs.getDialogs().info("Versionsüberprüfung", eh.getMessage());
+                if (showAll) {
+                    Dialogs.getDialogs().info("Versionsüberprüfung", eh.getMessage());
+                }
                 break;
         }
         getLogger().info(eh.getMessage());

@@ -51,7 +51,7 @@ public class ConvertCSV {
         }
     }
 
-    public static Messdiener parseLineToMessdiener(String line, ConvertData convertData) {
+    public static Messdiener parseLineToMessdiener(String line, ConvertData convertData) {//NOPMD - suppressed CognitiveComplexity - need for switch in a loop
         String[] elemente = line.split(convertData.delimiter());
         if (elemente.length < 2) {
             return null;
@@ -86,11 +86,11 @@ public class ConvertCSV {
                 case NICHT_LEITER -> leiter = elemente[j].equals("");
                 case NACHNAME_KOMMA_VORNAME -> {
                     String[] array2 = elemente[j].split(", ");
-                    if (array2.length != 2) {
-                        return null;
-                    } else {
+                    if (array2.length == 2) {
                         nachname = array2[0];
                         vorname = array2[1];
+                    } else {
+                        return null;
                     }
                 }
                 case EMAIL -> email = elemente[j];
@@ -141,7 +141,9 @@ public class ConvertCSV {
                 }
             }
         }
-        if (vorname.isEmpty() || nachname.isEmpty()) return null;
+        if (vorname.isEmpty() || nachname.isEmpty()) {
+            return null;
+        }
         Messdiener m = new Messdiener(new File(DateienVerwalter.getInstance().getSavePath(), nachname + ", " + vorname + ".xml"));
         m.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, dienverhalten);
         m.setFreunde(freunde);
@@ -160,7 +162,7 @@ public class ConvertCSV {
         for (Messdiener m : importedMessdiener) {
             for (Messdiener freund : m.getMessdaten().getFreunde()) {
                 if (!freund.getMessdaten().getFreunde().contains(m)) {
-                    for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
+                    for (int i = 0; i < Messdiener.LENGHT_FREUNDE; i++) {
                         if (freund.getFreunde()[i].equals("") || freund.getFreunde()[i].equals("LEER") || freund.getFreunde()[i].equals("Vorname, Nachname")) {
                             freund.getFreunde()[i] = m.toString();
                             DateienVerwalter.getInstance().reloadMessdiener();

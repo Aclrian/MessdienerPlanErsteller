@@ -12,15 +12,10 @@ import javafx.stage.Window;
 import javafx.util.Pair;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.messe.*;
 import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.utils.DateUtil;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.MPELog;
+import net.aclrian.mpe.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -50,21 +45,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TestFinishController extends ApplicationTest {
 
     @Mock
-    MainController mc;
+    private MainController mc;
     @Mock
-    DateienVerwalter dv;
+    private DateienVerwalter dv;
     @Mock
-    Messdiener m1;
+    private Messdiener m1;
     @Mock
-    Messdiener m2;
+    private  Messdiener m2;
     @Mock
-    Messdiener m3;
+    private Messdiener m3;
     @Mock
-    Einstellungen einst = new Einstellungen();
+    private final Einstellungen einst = new Einstellungen();
     @Mock
-    Dialogs dialogs;
+    private Dialogs dialogs;
     @Mock
-    Pfarrei pf;
+    private Pfarrei pf;
 
     private Pane pane;
     private FinishController instance;
@@ -139,7 +134,7 @@ class TestFinishController extends ApplicationTest {
         m1.getMessdaten().einteilenVorzeitig(date, false);
 
 
-        Platform.runLater(() -> Mockito.when(dialogs.yesNoCancel(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+        Platform.runLater(() -> Mockito.when(dialogs.yesNoCancel(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(Dialogs.YesNoCancelEnum.CANCEL, Dialogs.YesNoCancelEnum.YES));
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> {
@@ -202,7 +197,7 @@ class TestFinishController extends ApplicationTest {
         testEinteilung(true);
     }
 
-    private void testEinteilung(boolean skipDOCX) throws Messdaten.CouldFindMessdiener {
+    private void testEinteilung(boolean skipDOCX) throws Messdaten.CouldFindMessdiener { //NOPMD - suppressed NPathComplexity - for test purpose
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -302,7 +297,7 @@ class TestFinishController extends ApplicationTest {
             if (out.exists()) {
                 Files.delete(out.toPath());
             }
-            instance.toPDF(null);
+            instance.sendToPDF(null);
             assertThat(out).exists();
             Files.delete(out.toPath());
         } catch (IOException e) {
@@ -315,7 +310,7 @@ class TestFinishController extends ApplicationTest {
                 if (out.exists()) {
                     Files.delete(out.toPath());
                 }
-                instance.toWORD(null);
+                instance.sendToWORD(null);
                 assertThat(out).exists();
                 Files.delete(out.toPath());
             } catch (IOException e) {

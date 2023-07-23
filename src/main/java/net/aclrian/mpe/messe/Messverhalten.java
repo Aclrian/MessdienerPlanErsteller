@@ -14,7 +14,7 @@ import java.util.List;
  * @author Aclrian
  */
 public class Messverhalten {
-    private ArrayList<KannWelcheMesse> messen = new ArrayList<>();
+    private final ArrayList<KannWelcheMesse> messen = new ArrayList<>();
 
     public Messverhalten() {
         for (StandardMesse standardMesse : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
@@ -86,9 +86,9 @@ public class Messverhalten {
     }
 
     /**
-     * Klasse fuer das {@link Messverhalten}
+     * Klasse für das {@link Messverhalten}
      */
-    public static class KannWelcheMesse {
+    public static class KannWelcheMesse { //NOPMD - suppressed DataClass
         public static final Comparator<KannWelcheMesse> SORT = (o1, o2) -> {
             StandardMesse sm1 = o1.messe;
             StandardMesse sm2 = o2.messe;

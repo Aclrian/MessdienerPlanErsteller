@@ -34,9 +34,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TestFerienplanController extends ApplicationTest {
 
     @Mock
-    DateienVerwalter dv;
+    private DateienVerwalter dv;
     @Mock
-    MainController mc;
+    private MainController mc;
     private Pane pane;
     private FerienplanController instance;
     @Mock
@@ -118,7 +118,7 @@ class TestFerienplanController extends ApplicationTest {
     }
 
     @Test
-    void withData() {
+    void withData() { //NOPMD - suppressed NcssCount - for test purposes
         List<Messe> messen = Arrays.asList(
                 new Messe(false, 1, getToday().atTime(0, 0), "ort1", "typ1"),
                 new Messe(false, 2, getTomorrow().atTime(0, 0), "ort1", "typ1"),

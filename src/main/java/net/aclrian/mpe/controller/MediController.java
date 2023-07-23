@@ -3,6 +3,7 @@ package net.aclrian.mpe.controller;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -11,8 +12,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.stage.Window;
+import javafx.util.Callback;
 import net.aclrian.fx.ASlider;
-import net.aclrian.mpe.messdiener.KannWelcheMesse;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.WriteFile;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static net.aclrian.mpe.utils.MPELog.getLogger;
+import static net.aclrian.mpe.messe.Messverhalten.KannWelcheMesse;
 
 public class MediController implements Controller {
 
@@ -126,7 +128,7 @@ public class MediController implements Controller {
                 }
                 WriteFile wf = new WriteFile(medi);
                 try {
-                    wf.toXML();
+                    wf.saveToXML();
                 } catch (IOException e) {
                     Dialogs.getDialogs().error(e, "Konnte bei dem Bekannten '" + medi
                             + "' von dem zulöschenden Messdiener diesen nicht löschen.");
@@ -145,7 +147,7 @@ public class MediController implements Controller {
     }
 
     @Override
-    public void afterStartup(Window window, MainController mc) {
+    public void afterStartup(Window window, MainController mc) { //NOPMD - suppressed CognitiveComplexity - initialization that cannot be done with fxml
         cancel.setOnAction(e -> {
             locked = false;
             mc.changePane(MainController.EnumPane.SELECT_MEDI);
@@ -174,27 +176,37 @@ public class MediController implements Controller {
         bearbeitenFreunde = new Label("Bearbeiten");
         bearbeitenFreunde.setStyle("-fx-font-style: italic;");
         bearbeitenFreunde.setId(FREUNDE_BEARBEITEN_ID);
-        bearbeitenFreunde.setOnMouseClicked(new EventHandler<Event>() {
-
-            @Override
-            public void handle(Event arg0) {
-                List<Messdiener> selected = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben,
-                        freund, FREUNDE_AUSWAEHLEN);
-                if (selected.size() >= Messdiener.LENGHT_FREUNDE) {
-                    Dialogs.getDialogs().error(
-                            "Zu viele Freunde: Bitte nur " + (Messdiener.LENGHT_FREUNDE - 1) + " Messdiener angeben.");
-                    handle(arg0);
-                    return;
-                }
-                updateFreunde(selected);
-            }
-        });
+        bearbeitenFreunde.setOnMouseClicked(bearbeitenFreundeEventHandler());
         freunde.getItems().add(bearbeitenFreunde);
 
         bearbeitenGeschwister = new Label("Bearbeiten");
         bearbeitenGeschwister.setStyle("-fx-font-style: italic;");
         bearbeitenGeschwister.setId(GESCHWISTER_BEARBEITEN_ID);
-        bearbeitenGeschwister.setOnMouseClicked(new EventHandler<Event>() {
+        bearbeitenGeschwister.setOnMouseClicked(bearbeitenGeschwisterEventHandler());
+        geschwie.getItems().add(bearbeitenGeschwister);
+
+        stdm.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMesse().toKurzerBenutzerfreundlichenString()));
+        kann.setCellFactory(CheckBoxTableCell.forTableColumn(kann));
+        kann.setCellValueFactory(createCellDataFactory());
+        kann.setCellFactory(tc -> new CheckBoxTableCell<>());
+        kann.setEditable(true);
+        Messverhalten mv = new Messverhalten();
+        ol = FXCollections.observableArrayList(mv.getKannWelcheMessen());
+        ol.sort(KannWelcheMesse.SORT);
+        stdm.setReorderable(false);
+        kann.setReorderable(false);
+        stdm.setSortable(false);
+        kann.setSortable(false);
+        table.setItems(ol);
+        table.setEditable(true);
+
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        stdm.setMaxWidth(1f * Integer.MAX_VALUE * 85);
+        kann.setMaxWidth(1f * Integer.MAX_VALUE * 15);
+    }
+
+    private EventHandler<Event> bearbeitenGeschwisterEventHandler() {
+        return new EventHandler<Event>() {
 
             @Override
             public void handle(Event arg0) {
@@ -208,33 +220,35 @@ public class MediController implements Controller {
                 }
                 updateGeschwister(g);
             }
-        });
-        geschwie.getItems().add(bearbeitenGeschwister);
+        };
+    }
 
-        stdm.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMesse().toKurzerBenutzerfreundlichenString()));
-        kann.setCellFactory(CheckBoxTableCell.forTableColumn(kann));
-        kann.setCellValueFactory(celldata -> {
+    private static Callback<TableColumn.CellDataFeatures<KannWelcheMesse, Boolean>, ObservableValue<Boolean>> createCellDataFactory() {
+        return celldata -> {
             KannWelcheMesse cellValue = celldata.getValue();
             SimpleBooleanProperty property = new SimpleBooleanProperty(cellValue.kannDann());
             // Add listener to handler change
             property.addListener((observable, oldValue, newValue) -> cellValue.setKannDann(newValue));
             return property;
-        });
-        kann.setCellFactory(tc -> new CheckBoxTableCell<>());
-        kann.setEditable(true);
-        Messverhalten mv = new Messverhalten();
-        ol = FXCollections.observableArrayList(mv.getKannWelcheMessen());
-        ol.sort(KannWelcheMesse.MESSE_COMPARATOR);
-        stdm.setReorderable(false);
-        kann.setReorderable(false);
-        stdm.setSortable(false);
-        kann.setSortable(false);
-        table.setItems(ol);
-        table.setEditable(true);
+        };
+    }
 
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        stdm.setMaxWidth(1f * Integer.MAX_VALUE * 85);
-        kann.setMaxWidth(1f * Integer.MAX_VALUE * 15);
+    private EventHandler<Event> bearbeitenFreundeEventHandler() {
+        return new EventHandler<>() {
+
+            @Override
+            public void handle(Event arg0) {
+                List<Messdiener> selected = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben,
+                        freund, FREUNDE_AUSWAEHLEN);
+                if (selected.size() >= Messdiener.LENGHT_FREUNDE) {
+                    Dialogs.getDialogs().error(
+                            "Zu viele Freunde: Bitte nur " + (Messdiener.LENGHT_FREUNDE - 1) + " Messdiener angeben.");
+                    handle(arg0);
+                    return;
+                }
+                updateFreunde(selected);
+            }
+        };
     }
 
     private void updateFreunde(List<Messdiener> freund) {
@@ -278,7 +292,9 @@ public class MediController implements Controller {
     }
 
     public boolean isValid() {
-        if (!name.getText().equals("") && !vorname.getText().equals("")) {
+        if (name.getText().equals("") || vorname.getText().equals("")) {
+            Dialogs.getDialogs().warn("Bitte einen Namen eintragen!");
+        } else {
             try {
                 // ME
                 Messdiener m = new Messdiener(null);
@@ -296,8 +312,6 @@ public class MediController implements Controller {
             } catch (Messdiener.NotValidException e) {
                 Dialogs.getDialogs().warn("Bitte eine richtige E-Mail oder nichts angeben!");
             }
-        } else {
-            Dialogs.getDialogs().warn("Bitte einen Namen eintragen!");
         }
         return false;
     }
@@ -360,7 +374,7 @@ public class MediController implements Controller {
         try {
             for (Messdiener messdiener : bearbeitete) {
                 WriteFile wf = new WriteFile(messdiener);
-                wf.toXML();
+                wf.saveToXML();
             }
             if (getLogger().isDebugEnabled()) {
                 getLogger().info("Messdiener {} wurde gespeichert!", m);
@@ -372,12 +386,12 @@ public class MediController implements Controller {
     }
 
     private void addBekanntschaft(Messdiener medi, Messdiener woben, boolean isGeschwister) {
-        if (!isGeschwister) {
-            ArrayList<String> freundeStrings = new ArrayList<>(Arrays.asList(medi.getFreunde()));
-            medi.setFreunde(addToArray(freundeStrings, woben.toString(), Messdiener.LENGHT_FREUNDE));
-        } else {
+        if (isGeschwister) {
             ArrayList<String> geschwisterStrings = new ArrayList<>(Arrays.asList(medi.getGeschwister()));
             medi.setGeschwister(addToArray(geschwisterStrings, woben.toString(), Messdiener.LENGHT_GESCHWISTER));
+        } else {
+            ArrayList<String> freundeStrings = new ArrayList<>(Arrays.asList(medi.getFreunde()));
+            medi.setFreunde(addToArray(freundeStrings, woben.toString(), Messdiener.LENGHT_FREUNDE));
         }
     }
 
@@ -394,7 +408,9 @@ public class MediController implements Controller {
         List<Messdiener> alle = DateienVerwalter.getInstance().getMessdiener();
         ArrayList<Messdiener> al = new ArrayList<>();
         for (int i = 0; i < arrayList.size(); i++) {
-            if (searchForMessdiener(arrayList, alle, al, i)) continue;
+            if (searchForMessdiener(arrayList, alle, al, i)) {
+                continue;
+            }
             boolean beheben = Dialogs.getDialogs().frage(
                     KONNTE + arrayList.get(i) + "' als Freund von '" + medi + "' nicht finden!",
                     "Ignorieren", "Beheben");
@@ -427,7 +443,9 @@ public class MediController implements Controller {
         List<Messdiener> alle = DateienVerwalter.getInstance().getMessdiener();
         ArrayList<Messdiener> al = new ArrayList<>();
         for (int i = 0; i < arrayList.size(); i++) {
-            if (searchForMessdiener(arrayList, alle, al, i)) continue;
+            if (searchForMessdiener(arrayList, alle, al, i)) {
+                continue;
+            }
             boolean beheben = Dialogs.getDialogs().frage(
                     KONNTE + arrayList.get(i) + "' als Geschwister von '" + medi + "' nicht finden!",
                     "ignorieren", "Beheben");

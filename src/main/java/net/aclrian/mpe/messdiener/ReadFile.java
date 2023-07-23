@@ -121,9 +121,9 @@ public class ReadFile {
     }
 
     private void readGeschwister(File fXmlFile, Element eElement, String[] geschwister) {
-        String g1 = "LEER";
-        String g2 = "LEER";
-        String g3 = "LEER";
+        String g1 = "";
+        String g2 = "";
+        String g3 = "";
         try {
             g1 = eElement.getElementsByTagName("g1").item(0).getTextContent();
             g2 = eElement.getElementsByTagName("g2").item(0).getTextContent();
@@ -131,29 +131,29 @@ public class ReadFile {
         } catch (NullPointerException e) {
             MPELog.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
         }
-        if (!g1.equals("LEER")) {
-            geschwister[0] = g1;
-        } else {
+        if (g1.equals("LEER")) {
             geschwister[0] = "";
-        }
-        if (!g2.equals("LEER")) {
-            geschwister[1] = g2;
         } else {
+            geschwister[0] = g1;
+        }
+        if (g2.equals("LEER")) {
             geschwister[1] = "";
-        }
-        if (!g3.equals("LEER")) {
-            geschwister[2] = g3;
         } else {
+            geschwister[1] = g2;
+        }
+        if (g3.equals("LEER")) {
             geschwister[2] = "";
+        } else {
+            geschwister[2] = g3;
         }
     }
 
     private void readFreunde(File fXmlFile, Element eElement, String[] freunde) {
-        String f1 = "LEER";
-        String f2 = "LEER";
-        String f3 = "LEER";
-        String f4 = "LEER";
-        String f5 = "LEER";
+        String f1 = "";
+        String f2 = "";
+        String f3 = "";
+        String f4 = "";
+        String f5 = "";
         try {
             f1 = eElement.getElementsByTagName("F1").item(0).getTextContent();
             f2 = eElement.getElementsByTagName("F2").item(0).getTextContent();
@@ -163,42 +163,46 @@ public class ReadFile {
         } catch (NullPointerException e) {
             MPELog.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
         }
-        if (!f1.equals("LEER")) {
-            freunde[0] = f1;
-        } else {
+        if (f1.equals("LEER")) {
             freunde[0] = "";
-        }
-        if (!f2.equals("LEER")) {
-            freunde[1] = f2;
         } else {
+            freunde[0] = f1;
+        }
+        if (f2.equals("LEER")) {
             freunde[1] = "";
-        }
-        if (!f3.equals("LEER")) {
-            freunde[2] = f3;
         } else {
+            freunde[1] = f2;
+        }
+        if (f3.equals("LEER")) {
             freunde[2] = "";
-        }
-        if (!f4.equals("LEER")) {
-            freunde[3] = f4;
         } else {
+            freunde[2] = f3;
+        }
+        if (f4.equals("LEER")) {
             freunde[3] = "";
-        }
-        if (!f5.equals("LEER")) {
-            freunde[4] = f5;
         } else {
+            freunde[3] = f4;
+        }
+        if (f5.equals("LEER")) {
             freunde[4] = "";
+        } else {
+            freunde[4] = f5;
         }
     }
 
     private void fixEmail(Messdiener me, String mail, String vorname, String nachname, int eintritt, boolean leiter, Messverhalten dienverhalten) {
         if (Dialogs.getDialogs().frage("Die E-Mail-Addresse '" + mail + "' von " + me + " ist ungültig und wird gelöscht.\nSoll eine neue eingegeben werden?")) {
             String s = Dialogs.getDialogs().text("Neue E-Mail-Adresse von " + me + " eingeben:\nWenn keine vorhanden ist, soll das Feld leer bleiben.", "E-Mail:");
-            if (!s.equals("")) me.setEmailEmpty();
+            if (!s.equals("")) {
+                me.setEmailEmpty();
+            }
             try {
                 me.setEmail(s);
             } catch (Messdiener.NotValidException e) {
                 fixEmail(me, s + "' bzw. '" + mail, vorname, nachname, eintritt, leiter, dienverhalten);
             }
-        } else me.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, dienverhalten);
+        } else {
+            me.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, dienverhalten);
+        }
     }
 }

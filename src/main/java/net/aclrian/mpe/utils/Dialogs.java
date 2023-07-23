@@ -7,10 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -39,7 +35,7 @@ import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.List;
 
-public class Dialogs {
+public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class cannot be refactored
 
     public static final String ICON = "/images/title_32.png";
     private static Dialogs dialogs;
@@ -180,7 +176,9 @@ public class Dialogs {
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(headerText);
         Optional<ButtonType> res = a.showAndWait();
-        if (res.isEmpty() || res.get() == cancelBtn) return YesNoCancelEnum.CANCEL;
+        if (res.isEmpty() || res.get() == cancelBtn) {
+            return YesNoCancelEnum.CANCEL;
+        }
         return res.get() == yesBtn ? YesNoCancelEnum.YES : YesNoCancelEnum.NO;
     }
 
@@ -328,8 +326,9 @@ public class Dialogs {
                 String as;
                 if (d < 10) {
                     as = "0" + new DecimalFormat("#").format(d);
-                } else
+                } else {
                     as = new DecimalFormat("#").format(d);
+                }
                 as = "Minute: " + as;
                 return as;
             }, minute, null);
@@ -352,8 +351,9 @@ public class Dialogs {
         Optional<ButtonType> o = a.showAndWait();
         if (o.isPresent() && o.get().equals(ButtonType.OK)) {
             String min = String.valueOf((int) minute.getValue());
-            if (((int) minute.getValue()) < 10)
+            if (((int) minute.getValue()) < 10) {
                 min = "0" + min;
+            }
             TemporalAccessor accessor = DateUtil.DAY_OF_WEEK_LONG.parse(wochentag.getValue());
             return new StandardMesse(DayOfWeek.from(accessor), (int) stunde.getValue(), min, ort.getText(),
                     (int) anz.getValue(), typ.getText());
@@ -412,7 +412,9 @@ public class Dialogs {
 
     public ConvertCSV.ConvertData importDialog(Window window) {
         File file = Speicherort.waehleDatei(window, new FileChooser.ExtensionFilter("CSV-Datei", "*.csv"), "Datei zum Importieren auswählen");
-        if (file == null || !file.exists()) return null;
+        if (file == null || !file.exists()) {
+            return null;
+        }
         URL u = getClass().getResource("/view/converter.fxml");
         FXMLLoader fl = new FXMLLoader(u);
         Parent p;
@@ -428,7 +430,9 @@ public class Dialogs {
 
         Alert a = alertBuilder(Alert.AlertType.INFORMATION, "Spalten zuordnen", p);
         Optional<ButtonType> res = a.showAndWait();
-        if (res.isEmpty() || res.get() != ButtonType.OK) return null;
+        if (res.isEmpty() || res.get() != ButtonType.OK) {
+            return null;
+        }
         if(!controller.isValid()){
             Dialogs.getDialogs().error("Ein Eingabefeld ist leer oder es sind mehr Standartmessen angegeben als im System sind");
             return  importDialog(window);

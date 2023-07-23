@@ -142,7 +142,7 @@ public class Messdiener {
     public void makeXML() {
         WriteFile wf = new WriteFile(this);
         try {
-            wf.toXML();
+            wf.saveToXML();
         } catch (Exception e) {
             e.printStackTrace();
             Platform.runLater(() -> Dialogs.getDialogs().error(e, "Der Messdiener '" + this + "' konnte nicht gespeichert werden."));
@@ -238,8 +238,12 @@ public class Messdiener {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Messdiener that = (Messdiener) o;
         return Objects.equals(file, that.file);
     }

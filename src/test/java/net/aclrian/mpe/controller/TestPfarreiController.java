@@ -88,7 +88,7 @@ public class TestPfarreiController extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    void test() {
+    void test() { //NOPMD - suppressed NcssCount - for test purpose
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
