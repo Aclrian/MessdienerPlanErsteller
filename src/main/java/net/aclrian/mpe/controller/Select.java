@@ -19,7 +19,7 @@ import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -67,7 +67,7 @@ public class Select implements Controller {
             }
         }
         rtn.sort(Messe.MESSE_COMPARATOR);
-        Log.getLogger().info("DefaultMessen generiert");
+        MPELog.getLogger().info("DefaultMessen generiert");
         return rtn;
     }
 
@@ -114,7 +114,7 @@ public class Select implements Controller {
 
         updateMesse(mc.getMessen());
         list.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && (mouseEvent.getClickCount() == 2)) {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 int i = list.getSelectionModel().getSelectedIndex();
                 if (i >= 0 && i < messen.size()) mc.changePaneMesse(messen.get(i));
             }
@@ -125,7 +125,7 @@ public class Select implements Controller {
         });
         remove.setOnAction(arg0 -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && (list.getSelectionModel().getSelectedItem().getText().replace("\t\t", "\t").equals(messen.get(i).toString()))) {
+            if (i >= 0 && list.getSelectionModel().getSelectedItem().getText().replace("\t\t", "\t").equals(messen.get(i).toString())) {
                 messen.remove(i);
                 updateMesse(mc.getMessen());
             }
@@ -160,7 +160,7 @@ public class Select implements Controller {
             list.getItems().add(new Label(datum.toString()));
         }
         list.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && (mouseEvent.getClickCount() == 2)) {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 int i = list.getSelectionModel().getSelectedIndex();
                 if (i >= 0 && i < data.size())
                     mc.changePaneMessdiener(data.get(i));
@@ -172,7 +172,7 @@ public class Select implements Controller {
         });
         remove.setOnAction(arg0 -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && (list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString()))
+            if (i >= 0 && list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString())
                     && MediController.remove(data.get(i))) {
                 DateienVerwalter.getInstance().reloadMessdiener();
                 afterStartup(window, mc);

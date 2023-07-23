@@ -6,7 +6,7 @@ import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -113,7 +113,7 @@ public class ReadFile {
                 String value = eElement.getElementsByTagName(sname).item(0).getTextContent();
                 kann = value.equals("true");
             } catch (Exception e) {
-                Log.getLogger().warn(e.getMessage(), e);
+                MPELog.getLogger().warn(e.getMessage(), e);
             }
             dienverhalten.editiereBestimmteMesse(sm, kann);
         }
@@ -129,7 +129,7 @@ public class ReadFile {
             g2 = eElement.getElementsByTagName("g2").item(0).getTextContent();
             g3 = eElement.getElementsByTagName("g3").item(0).getTextContent();
         } catch (NullPointerException e) {
-            Log.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
+            MPELog.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
         }
         if (!g1.equals("LEER")) {
             geschwister[0] = g1;
@@ -161,7 +161,7 @@ public class ReadFile {
             f4 = eElement.getElementsByTagName("F4").item(0).getTextContent();
             f5 = eElement.getElementsByTagName("F5").item(0).getTextContent();
         } catch (NullPointerException e) {
-            Log.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
+            MPELog.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
         }
         if (!f1.equals("LEER")) {
             freunde[0] = f1;

@@ -2,7 +2,7 @@ package net.aclrian.mpe.utils;
 
 
 import com.google.gson.Gson;
-import net.aclrian.mpe.Main;
+import net.aclrian.mpe.MainApplication;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,21 +11,21 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.MPELog.getLogger;
 
 public class VersionIDHandler {
-    private static final URI urlToLatestReleaseJsonFile = URI.create("https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest");
-    private static final URI alternativedownloadurl = URI.create("https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest");
+    private static final URI URL_TO_LATEST_RELEASE_JSON_FILE = URI.create("https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest");
+    private static final URI ALTERNATIVE_DOWNLOAD_URL = URI.create("https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest");
     private static final String URL_WITH_TAG = "https://github.com/Aclrian/MessdienerPlanErsteller/releases/tag/";
-    private static String internettid;
+    private static String internetId;
 
     private static EnumHandling rankingVersionID() {
-        try (InputStream is = urlToLatestReleaseJsonFile.toURL().openStream()) {
+        try (InputStream is = URL_TO_LATEST_RELEASE_JSON_FILE.toURL().openStream()) {
             Gson gson = new Gson();
-            internettid = gson.fromJson(new String(is.readAllBytes(), StandardCharsets.UTF_8), Version.class).getVersion();
-            getLogger().info("Running with: {} found: {}", Main.VERSION_ID, internettid);
-            if (!internettid.contains(".")) return EnumHandling.IS_TOO_NEW;
-            if (internettid.equals(Main.VERSION_ID)) return EnumHandling.IS_THE_LATEST;
+            internetId = gson.fromJson(new String(is.readAllBytes(), StandardCharsets.UTF_8), Version.class).getVersion();
+            getLogger().info("Running with: {} found: {}", MainApplication.VERSION_ID, internetId);
+            if (!internetId.contains(".")) return EnumHandling.IS_TOO_NEW;
+            if (internetId.equals(MainApplication.VERSION_ID)) return EnumHandling.IS_THE_LATEST;
             return oldNewOrLatest();
         } catch (Exception e) {
             getLogger().error(e);
@@ -34,8 +34,8 @@ public class VersionIDHandler {
     }
 
     private static EnumHandling oldNewOrLatest() {
-        String[] inumbers = internettid.split(Pattern.quote("."));
-        String[] lnumbers = Main.VERSION_ID.split(Pattern.quote("."));
+        String[] inumbers = internetId.split(Pattern.quote("."));
+        String[] lnumbers = MainApplication.VERSION_ID.split(Pattern.quote("."));
         int i = 0;
         while (i < inumbers.length && i < lnumbers.length) {
             int inet = Integer.parseInt(inumbers[i]);
@@ -56,7 +56,7 @@ public class VersionIDHandler {
     }
 
     private static String getInternetId() {
-        return internettid;
+        return internetId;
     }
 
     public static void versionCheck(boolean showAll) {
@@ -68,7 +68,7 @@ public class VersionIDHandler {
                             eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
                 } catch (IOException | URISyntaxException e) {
                     try {
-                        Dialogs.getDialogs().open(VersionIDHandler.alternativedownloadurl,
+                        Dialogs.getDialogs().open(VersionIDHandler.ALTERNATIVE_DOWNLOAD_URL,
                                 eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
                     } catch (IOException e1) {
                         getLogger().warn("Die Download-Url konnte nicht aufgelöst werden.");
@@ -100,10 +100,10 @@ public class VersionIDHandler {
     }
 
     private static class Version {
-        private String tag_name;
+        private String tagName;
 
         public String getVersion() {
-            return tag_name;
+            return tagName;
         }
     }
 }

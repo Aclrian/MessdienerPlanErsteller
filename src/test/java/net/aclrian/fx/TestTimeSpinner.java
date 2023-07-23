@@ -27,8 +27,8 @@ class TestTimeSpinner extends ApplicationTest {
     @Test
     void testConversion() {
         LocalTime time = LocalTime.of(12, 59);
-        assertThat(TimeSpinner.converter.toString(time)).isEqualTo("12:59");
-        assertThat(TimeSpinner.converter.toString(LocalTime.of(0, 0, 0))).isEqualTo("00:00");
+        assertThat(TimeSpinner.CONVERTER.toString(time)).isEqualTo("12:59");
+        assertThat(TimeSpinner.CONVERTER.toString(LocalTime.of(0, 0, 0))).isEqualTo("00:00");
     }
 
     @Test
@@ -38,8 +38,8 @@ class TestTimeSpinner extends ApplicationTest {
 
     @Test
     void testFromString() {
-        assertThat(TimeSpinner.converter.fromString("").format(DateUtil.TIME)).isEqualTo("00:00");
-        assertThat(TimeSpinner.converter.fromString("13:50").format(DateUtil.TIME)).isEqualTo("13:50");
+        assertThat(TimeSpinner.CONVERTER.fromString("").format(DateUtil.TIME)).isEqualTo("00:00");
+        assertThat(TimeSpinner.CONVERTER.fromString("13:50").format(DateUtil.TIME)).isEqualTo("13:50");
     }
 
     @Test
@@ -57,7 +57,7 @@ class TestTimeSpinner extends ApplicationTest {
     @Test
     void testConverter() {
         TimeSpinner spinner = new TimeSpinner();
-        assertThat(spinner.getValueFactory().getConverter()).isSameAs(TimeSpinner.converter);
+        assertThat(spinner.getValueFactory().getConverter()).isSameAs(TimeSpinner.CONVERTER);
     }
 
 }

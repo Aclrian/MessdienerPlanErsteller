@@ -41,7 +41,7 @@ public class DateienVerwalter {
                     useKey(service);
                 }
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
         });
         thread.setDaemon(true);
@@ -112,7 +112,7 @@ public class DateienVerwalter {
         } else {
             pfarreiFile = files.get(0);
         }
-        Log.getLogger().info("Pfarrei gefunden in: {}", pfarreiFile);
+        MPELog.getLogger().info("Pfarrei gefunden in: {}", pfarreiFile);
         try {
             pf = ReadFilePfarrei.getPfarrei(pfarreiFile.getAbsolutePath());
             pfarreiFos = new FileOutputStream(pfarreiFile, true);
@@ -160,6 +160,7 @@ public class DateienVerwalter {
         private final File savepath;
 
         public NoSuchPfarrei(File savepath) {
+            super();
             this.savepath = savepath;
         }
 

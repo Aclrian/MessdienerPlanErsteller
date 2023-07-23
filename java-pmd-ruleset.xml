@@ -18,7 +18,24 @@
         <exclude name="LocalVariableCouldBeFinal"/>
         <exclude name="LawOfDemeter"/>
         <exclude name="LongVariable"/>
+        <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
+        <exclude name="AvoidCatchingGenericException"/>
+        <exclude name="AtLeastOneConstructor"/>
+        <exclude name="ShortVariable"/>
+        <exclude name="OnlyOneReturn"/>
     </rule>
     <rule ref="category/java/codestyle.xml">
+        <exclude name="ExcessiveParameterList" />
+        <exclude name="ExcessivePublicCount" />
+        <exclude name="TooManyFields" />
+        <exclude name="CyclomaticComplexity" />
+        <exclude name="LocalVariableCouldBeFinal"/>
+        <exclude name="LawOfDemeter"/>
+        <exclude name="LongVariable"/>
+        <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
+        <exclude name="AvoidCatchingGenericException"/>
+        <exclude name="AtLeastOneConstructor"/>
+        <exclude name="ShortVariable"/>
+        <exclude name="OnlyOneReturn"/>
     </rule>
 </ruleset>

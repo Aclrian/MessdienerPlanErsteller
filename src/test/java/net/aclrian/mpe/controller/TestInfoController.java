@@ -12,12 +12,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testfx.assertions.api.Assertions;
@@ -31,22 +29,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TestInfoController extends ApplicationTest {
 
     @Mock
-    private DateienVerwalter dv;
-    @Mock
-    private MainController mc;
-    @Mock
     private Dialogs dialog;
     private InfoController instance;
 
     @Override
     public void start(Stage stage) {
         Pane pane = new Pane();
-        Scene scene = new Scene(pane, 1000, 1000);
+        Scene scene = new Scene(pane, 10, 10);
         stage.setScene(scene);
         stage.setResizable(true);
-
-        mc = Mockito.mock(MainController.class);
-        dv = Mockito.mock(DateienVerwalter.class);
         dialog = Mockito.mock(Dialogs.class);
     }
 
@@ -58,7 +49,7 @@ class TestInfoController extends ApplicationTest {
                 instance = new InfoController(new Stage());
             } catch (IOException e) {
                 Assertions.fail(e.getMessage(), e);
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
             instance.start();
         });
@@ -110,7 +101,7 @@ class TestInfoController extends ApplicationTest {
                 instance = new InfoController(new Stage());
             } catch (IOException e) {
                 Assertions.fail(e.getMessage(), e);
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
             instance.start();
         });

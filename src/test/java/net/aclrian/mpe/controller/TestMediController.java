@@ -19,7 +19,7 @@ import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestMediController extends ApplicationTest {
 
-    private final StandardMesse StandardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
+    private final StandardMesse standardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
     private final String medi = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
             "<XML>" + System.getProperty("line.separator") +
             "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator") +
@@ -52,7 +52,7 @@ public class TestMediController extends ApplicationTest {
             "    <Nachname>Tannenbusch</Nachname>" + System.getProperty("line.separator") +
             "    <Email/>" + System.getProperty("line.separator") +
             "    <Messverhalten>" + System.getProperty("line.separator") +
-            "      <" + StandardMesse.toReduziertenString() + ">true</" + StandardMesse.toReduziertenString() + ">" + System.getProperty("line.separator") +
+            "      <" + standardMesse.toReduziertenString() + ">true</" + standardMesse.toReduziertenString() + ">" + System.getProperty("line.separator") +
             "    </Messverhalten>" + System.getProperty("line.separator") +
             "    <Leiter>false</Leiter>" + System.getProperty("line.separator") +
             "    <Eintritt>2019</Eintritt>" + System.getProperty("line.separator") +
@@ -118,7 +118,7 @@ public class TestMediController extends ApplicationTest {
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getSavePath()).thenReturn(f.getParentFile());
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.MESSDIENER.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
@@ -129,7 +129,7 @@ public class TestMediController extends ApplicationTest {
                 final Messdiener messdiener = new ReadFile().getMessdiener(f);
                 instance.setMedi(messdiener);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });
@@ -171,7 +171,7 @@ public class TestMediController extends ApplicationTest {
         TableView<?> table = (TableView<?>) scene.lookup("#table");
         assertThat(table.getItems()).hasSize(1);
         assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isTrue();
-        assertThat(((KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(StandardMesse);
+        assertThat(((KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(standardMesse);
         ((KannWelcheMesse) table.getItems().get(0)).setKannDann(false);
         Platform.runLater(() -> ((SplitMenuButton) scene.lookup("#button")).fire());
         WaitForAsyncUtils.waitForFxEvents();
@@ -192,7 +192,7 @@ public class TestMediController extends ApplicationTest {
         assertThat(((TextField) scene.lookup("#email")).getText()).isEqualTo("a@abc.de");
         assertThat(table.getItems()).hasSize(1);
         assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
-        assertThat(((KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(StandardMesse);
+        assertThat(((KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(standardMesse);
         assertThat(f).doesNotExist();
         try {
             Files.delete(newFile.toPath());
@@ -213,7 +213,7 @@ public class TestMediController extends ApplicationTest {
         Dialogs.setDialogs(dialog);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         DateienVerwalter.setInstance(dv);
         Messdiener m1 = Mockito.mock(Messdiener.class);
         Mockito.when(m1.toString()).thenReturn("Tannenbusch, Nora");
@@ -243,7 +243,7 @@ public class TestMediController extends ApplicationTest {
                 instance.afterStartup(pane.getScene().getWindow(), mc);
                 instance.setMedi(messdiener);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });

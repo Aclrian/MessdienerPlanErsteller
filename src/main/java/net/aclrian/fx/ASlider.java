@@ -31,7 +31,7 @@ public class ASlider {
             if (value.isEmpty()) {
                 return String.valueOf((int) d);
             }
-            return (value + ": " + (int) d);
+            return value + ": " + (int) d;
         }, s, tooltip);
     }
 

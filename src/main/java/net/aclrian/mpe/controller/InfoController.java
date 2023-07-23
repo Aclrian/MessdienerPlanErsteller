@@ -16,9 +16,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import net.aclrian.mpe.Main;
+import net.aclrian.mpe.MainApplication;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.apache.commons.io.IOUtils;
 
 import java.awt.*;
@@ -105,13 +105,13 @@ public class InfoController {
         pane.setExpanded(true);
         quellcode.setOnAction(browse(quellcode));
         mpeWebsite.setOnAction(browse(mpeWebsite));
-        version.setText(Main.VERSION_ID);
-        folder.setOnAction(open(Log.getWorkingDir()));
+        version.setText(MainApplication.VERSION_ID);
+        folder.setOnAction(open(MPELog.getWorkingDir()));
         log.setOnAction(e -> {
             try {
-                Desktop.getDesktop().open(Log.getLogFile());
+                Desktop.getDesktop().open(MPELog.getLogFile());
             } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.getDialogs().error(ex, KONNTE + MPELog.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         });
         ArrayList<String[]> entries = new ArrayList<>();
@@ -157,7 +157,7 @@ public class InfoController {
             try {
                 Desktop.getDesktop().browse(new URI(link.getText()));
             } catch (IOException | URISyntaxException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.getDialogs().error(ex, KONNTE + MPELog.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         };
     }
@@ -167,7 +167,7 @@ public class InfoController {
             try {
                 Desktop.getDesktop().open(file);
             } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.getDialogs().error(ex, KONNTE + MPELog.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         };
     }

@@ -186,7 +186,7 @@ public class Messe implements Comparable<Messe> {
 
     @Override
     public int hashCode() {
-        int result = (hochamt ? 1 : 0);
+        int result = hochamt ? 1 : 0;
         result = 31 * result + anzMessdiener;
         result = 31 * result + (date != null ? date.hashCode() : 0);
         result = 31 * result + (kirche != null ? kirche.hashCode() : 0);

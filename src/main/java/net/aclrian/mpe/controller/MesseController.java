@@ -17,7 +17,7 @@ import net.aclrian.mpe.utils.Dialogs;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.MPELog.getLogger;
 
 public class MesseController implements Controller {
     public static final String STANDARDMESSE_AUSWAEHLEN = "Standardmesse ändern:";

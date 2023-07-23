@@ -136,7 +136,7 @@ public class Messdaten {
     }
 
     public boolean kann(LocalDate date, boolean dateZwang, boolean zwang) {
-        return kanndann(date, dateZwang) && (kannnoch() || (zwang && ((anzMessen - maxMessen) <= (int) (maxMessen * 0.2) + 1)));
+        return kanndann(date, dateZwang) && (kannnoch() || zwang && (anzMessen - maxMessen <= (int) (maxMessen * 0.2) + 1));
     }
 
     public boolean kanndann(LocalDate date, boolean zwang) {
@@ -253,7 +253,7 @@ public class Messdaten {
             Arrays.sort(parts2);
             if (Arrays.equals(parts, parts2)) {
                 String message = "Konnte für " + akt.toString() + " : " + geschwi + " finden";
-                Log.getLogger().info(message);
+                MPELog.getLogger().info(message);
                 throw new CouldFindMessdiener(messdiener.toString(), geschwi, message);
             }
         }

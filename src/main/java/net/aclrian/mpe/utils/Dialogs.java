@@ -77,24 +77,24 @@ public class Dialogs {
     }
 
     public void info(String string) {
-        Log.getLogger().info(string);
+        MPELog.getLogger().info(string);
         alertBuilder(Alert.AlertType.INFORMATION, string).showAndWait();
     }
 
     public void info(String header, String string) {
-        Log.getLogger().info(string);
+        MPELog.getLogger().info(string);
         Alert a = alertBuilder(Alert.AlertType.INFORMATION, header);
         a.setContentText(string);
         a.showAndWait();
     }
 
     public void warn(String string) {
-        Log.getLogger().warn(string);
+        MPELog.getLogger().warn(string);
         alertBuilder(Alert.AlertType.WARNING, string).showAndWait();
     }
 
     public void error(String string) {
-        Log.getLogger().error(string);
+        MPELog.getLogger().error(string);
         if (Platform.isFxApplicationThread()) {
             alertBuilder(Alert.AlertType.ERROR, string).showAndWait();
         } else {
@@ -103,10 +103,10 @@ public class Dialogs {
     }
 
     public void error(Exception e, String string) {
-        Log.getLogger().error(string);
+        MPELog.getLogger().error(string);
         StringWriter stack = new StringWriter();
         e.printStackTrace(new PrintWriter(stack));
-        Log.getLogger().error(stack);
+        MPELog.getLogger().error(stack);
         String header;
         if (e.getLocalizedMessage() != null && !e.getLocalizedMessage().equals("")) {
             header = string + "\n" + e.getLocalizedMessage();
@@ -135,7 +135,7 @@ public class Dialogs {
     public void open(URI open, String string) throws IOException {
         Alert a = alertBuilder(Alert.AlertType.CONFIRMATION, string);
         Optional<ButtonType> res = a.showAndWait();
-        if (res.isPresent() && (res.get() == ButtonType.OK)) {
+        if (res.isPresent() && res.get() == ButtonType.OK) {
             Desktop.getDesktop().browse(open);
         }
     }
@@ -160,7 +160,7 @@ public class Dialogs {
 
     public boolean frage(String string) {
         Optional<ButtonType> res = alertBuilder(Alert.AlertType.CONFIRMATION, string).showAndWait();
-        return res.isPresent() && (res.get() == ButtonType.OK);
+        return res.isPresent() && res.get() == ButtonType.OK;
     }
 
     public boolean frage(String string, String cancel, String ok) {
@@ -168,20 +168,20 @@ public class Dialogs {
         ((Button) a.getDialogPane().lookupButton(ButtonType.CANCEL)).setText(cancel);
         ((Button) a.getDialogPane().lookupButton(ButtonType.OK)).setText(ok);
         Optional<ButtonType> res = a.showAndWait();
-        return res.isPresent() && (res.get() == ButtonType.OK);
+        return res.isPresent() && res.get() == ButtonType.OK;
     }
 
-    public YesNoCancelEnum yesNoCancel(String yes, String no, String cancel, String string) {
-        ButtonType yesbtn = new ButtonType(yes, ButtonBar.ButtonData.YES);
-        ButtonType cc = new ButtonType(cancel, ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType nobtn = new ButtonType(no, ButtonBar.ButtonData.NO);
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION, "", yesbtn, cc, nobtn);
+    public YesNoCancelEnum yesNoCancel(String cancel, String headerText) {
+        ButtonType yesBtn = new ButtonType("Ja", ButtonBar.ButtonData.YES);
+        ButtonType cancelBtn = new ButtonType(cancel, ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType noBtn = new ButtonType("Nein", ButtonBar.ButtonData.NO);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION, "", yesBtn, cancelBtn, noBtn);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
-        a.setHeaderText(string);
+        a.setHeaderText(headerText);
         Optional<ButtonType> res = a.showAndWait();
-        if (res.isEmpty() || res.get() == cc) return YesNoCancelEnum.CANCEL;
-        return res.get() == yesbtn ? YesNoCancelEnum.YES : YesNoCancelEnum.NO;
+        if (res.isEmpty() || res.get() == cancelBtn) return YesNoCancelEnum.CANCEL;
+        return res.get() == yesBtn ? YesNoCancelEnum.YES : YesNoCancelEnum.NO;
     }
 
     public void fatal(Exception e, String string) {
@@ -248,7 +248,7 @@ public class Dialogs {
         hb.setSpacing(20d);
         Alert a = alertBuilder(Alert.AlertType.INFORMATION, string, hb);
         ChangeListener<Object> e = (arg0, arg1, arg2) -> {
-            if (d1.getValue() != null && d2.getValue() != null && (!d1.getValue().isAfter(d2.getValue()))) {
+            if (d1.getValue() != null && d2.getValue() != null && !d1.getValue().isAfter(d2.getValue())) {
                 a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
                 return;
             }
@@ -421,18 +421,18 @@ public class Dialogs {
             fl.setController(controller);
             p = fl.load();
         } catch (IOException e) {
-            Log.getLogger().error(e.getMessage(), e);
+            MPELog.getLogger().error(e.getMessage(), e);
             return null;
         }
         controller.afterStartup(null, null);
 
         Alert a = alertBuilder(Alert.AlertType.INFORMATION, "Spalten zuordnen", p);
         Optional<ButtonType> res = a.showAndWait();
+        if (res.isEmpty() || res.get() != ButtonType.OK) return null;
         if(!controller.isValid()){
             Dialogs.getDialogs().error("Ein Eingabefeld ist leer oder es sind mehr Standartmessen angegeben als im System sind");
             return  importDialog(window);
         }
-        if (res.isEmpty() || res.get() != ButtonType.OK) return null;
         return controller.getData();
     }
 

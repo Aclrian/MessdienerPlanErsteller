@@ -241,12 +241,12 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src/mainApplication/resources</directory>
             </resource>
         </resources>
         <testResources>
             <testResource>
-                <directory>${project.basedir}/src/main/resources</directory>
+                <directory>${project.basedir}/src/mainApplication/resources</directory>
             </testResource>
         </testResources>
     </build>

@@ -6,7 +6,7 @@ import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -111,7 +111,7 @@ public class WriteFilePfarrei {
             datei = datei.replace(" ", "_");
             savepath = savepath == null ? DateienVerwalter.getInstance().getSavePath().getAbsolutePath() : savepath;
             File f = new File(savepath, datei + DateienVerwalter.PFARREI_DATEIENDUNG);
-            Log.getLogger()
+            MPELog.getLogger()
                     .info("Pfarrei wird gespeichert in: {}", f);
             StreamResult streamResult = new StreamResult(f);
             c.transformer().transform(domSource, streamResult);

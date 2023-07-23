@@ -17,7 +17,7 @@ import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -77,8 +77,12 @@ public class TestSelect extends ApplicationTest {
     }
 
     @AfterEach
-    public void close() throws Exception {
-        openMocks.close();
+    public void close() {
+        try {
+            openMocks.close();
+        } catch (Exception e){
+            Assertions.fail(e);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -119,7 +123,7 @@ public class TestSelect extends ApplicationTest {
                 pane.getChildren().add(fl.load());
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
@@ -187,8 +191,8 @@ public class TestSelect extends ApplicationTest {
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        final StandardMesse StandardMesse = new StandardMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
+        final StandardMesse standardMesse = new StandardMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         LocalDate von = LocalDate.of(2020, 10, 1);
         LocalDate bis = LocalDate.of(2020, 10, 15);
         Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
@@ -207,7 +211,7 @@ public class TestSelect extends ApplicationTest {
                 pane.getChildren().add(fl.load());
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
@@ -242,8 +246,8 @@ public class TestSelect extends ApplicationTest {
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        final StandardMesse StandardMesse = new StandardMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
+        final StandardMesse standardMesse = new StandardMesse(DayOfWeek.THURSDAY, 10, "00", "o1", 20, "t1");
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         LocalDate von = LocalDate.of(2020, 10, 1);
         LocalDate bis = LocalDate.of(2020, 10, 15);
         Mockito.when(dialog.getDates(Select.ZEITRAUM_WAEHLEN, Select.VON, Select.BIS)).thenReturn(Arrays.asList(von, bis));
@@ -262,7 +266,7 @@ public class TestSelect extends ApplicationTest {
                 pane.getChildren().add(fl.load());
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
         });
         WaitForAsyncUtils.waitForFxEvents();

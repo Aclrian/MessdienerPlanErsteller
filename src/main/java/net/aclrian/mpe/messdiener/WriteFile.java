@@ -6,7 +6,7 @@ import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -43,7 +43,7 @@ public class WriteFile {
     public static Container writeXMLFile() throws ParserConfigurationException, TransformerConfigurationException {
         Transformer transformer = TransformerFactory.newDefaultInstance().newTransformer();
         transformer.setOutputProperty("indent", "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        transformer.setOutputProperty("{https://xml.apache.org/xslt}indent-amount", "2");
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newDefaultInstance();
         DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
         Document doc = documentBuilder.newDocument();
@@ -120,7 +120,7 @@ public class WriteFile {
             StreamResult result = new StreamResult(out);
             c.transformer().transform(domSource, result);
             out.close();
-            Log.getLogger().info("Datei wird gespeichert in: {}", file);
+            MPELog.getLogger().info("Datei wird gespeichert in: {}", file);
             me.setFile(file);
         } catch (ParserConfigurationException | TransformerException e) {
             Dialogs.getDialogs().error(e, "Konnte den Messdiener " + me + " nicht lesen.");

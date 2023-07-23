@@ -12,7 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
-import net.aclrian.mpe.Main;
+import net.aclrian.mpe.MainApplication;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
@@ -22,7 +22,7 @@ import net.aclrian.mpe.pfarrei.ReadFilePfarrei;
 import net.aclrian.mpe.pfarrei.Setting;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -47,7 +47,7 @@ public class TestPfarreiController extends ApplicationTest {
     @Mock
     private DateienVerwalter dv;
     @Mock
-    private Main main;
+    private MainApplication mainApplication;
     @Mock
     private Dialogs dialog;
     private PfarreiController instance;
@@ -78,8 +78,12 @@ public class TestPfarreiController extends ApplicationTest {
     }
 
     @AfterEach
-    public void close() throws Exception {
-        openMocks.close();
+    public void close() {
+        try {
+            openMocks.close();
+        } catch (Exception e){
+            Assertions.fail(e);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -90,11 +94,11 @@ public class TestPfarreiController extends ApplicationTest {
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Mockito.when(dialog.chance(Mockito.any())).thenReturn(null);
-        StandardMesse Standardmesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 9, "t");
-        StandardMesse Standardmesse1 = new StandardMesse(DayOfWeek.TUESDAY, 5, "09", "o1", 5, "t2");
-        Mockito.when(dialog.standardmesse(Mockito.isNull())).thenReturn(Standardmesse, Standardmesse1);
+        StandardMesse standardmesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 9, "t");
+        StandardMesse standardmesse1 = new StandardMesse(DayOfWeek.TUESDAY, 5, "09", "o1", 5, "t2");
+        Mockito.when(dialog.standardmesse(Mockito.isNull())).thenReturn(standardmesse, standardmesse1);
         FXMLLoader loader = new FXMLLoader();
-        PfarreiController cont = new PfarreiController(stage, System.getProperty("user.home"), main);
+        PfarreiController cont = new PfarreiController(stage, System.getProperty("user.home"), mainApplication);
         loader.setLocation(cont.getClass().getResource(PfarreiController.STANDARDMESSE_FXML));
         loader.setController(cont);
         Parent root = null;
@@ -107,7 +111,7 @@ public class TestPfarreiController extends ApplicationTest {
         Platform.runLater(() -> {
             stage.setScene(scene);
 
-            stage.setTitle(Log.PROGRAMM_NAME);
+            stage.setTitle(MPELog.PROGRAMM_NAME);
             stage.setResizable(false);
             stage.show();
         });
@@ -125,7 +129,7 @@ public class TestPfarreiController extends ApplicationTest {
             ((Button) neu).fire();
         });
         WaitForAsyncUtils.waitForFxEvents();
-        assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).contains(Standardmesse, Standardmesse1);
+        assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).contains(standardmesse, standardmesse1);
         assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).hasSize(2);
         final Node rm = root.lookup("#loeschen");
         Platform.runLater(() -> {
@@ -143,7 +147,7 @@ public class TestPfarreiController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).hasSize(1);
-        assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).contains(Standardmesse);
+        assertThat(((TableView<StandardMesse>) root.lookup("#table")).getItems()).contains(standardmesse);
 
         final Node weiter = root.lookup("#weiterbtn");
         Platform.runLater(() -> {
@@ -260,7 +264,7 @@ public class TestPfarreiController extends ApplicationTest {
             Assertions.fail(e.getMessage(), e);
         }
         assertThat(pfRead).isNotNull();
-        assertThat(pfRead.getStandardMessen()).containsExactlyInAnyOrder(Standardmesse, new Sonstiges());
+        assertThat(pfRead.getStandardMessen()).containsExactlyInAnyOrder(standardmesse, new Sonstiges());
         assertThat(pfRead.zaehlenHochaemterMit()).isTrue();
         assertThat(pfRead.getName()).isEqualTo("namesdfsdjklflös");
         assertThat(pfRead.getSettings().getSettings()).hasSize(Einstellungen.LENGTH - 2);

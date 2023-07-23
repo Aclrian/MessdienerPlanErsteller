@@ -11,7 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import net.aclrian.fx.TimeSpinner;
-import net.aclrian.mpe.Main;
+import net.aclrian.mpe.MainApplication;
 import net.aclrian.mpe.messdiener.KannWelcheMesse;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
@@ -56,7 +56,7 @@ class TestMainController extends ApplicationTest {
     private Pane pane;
     private MainController instance;
     @Mock
-    private Main main;
+    private MainApplication mainApplication;
     private Stage stage;
 
     @Override
@@ -67,14 +67,14 @@ class TestMainController extends ApplicationTest {
         stage.setResizable(true);
         this.stage = stage;
 
-        main = Mockito.mock(Main.class);
+        mainApplication = Mockito.mock(MainApplication.class);
         dialogs = Mockito.mock(Dialogs.class);
         dv = Mockito.mock(DateienVerwalter.class);
         pf = Mockito.mock(Pfarrei.class);
     }
 
     @Test
-    @RetryingTest(value = 5)
+    @RetryingTest(5)
     void testEachEnumPane() {
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
@@ -84,7 +84,7 @@ class TestMainController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandardMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
         FXMLLoader loader = new FXMLLoader();
 
-        loader.setController(new MainController(main, stage));
+        loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
         try {
@@ -316,7 +316,7 @@ class TestMainController extends ApplicationTest {
         Mockito.when(pf.getName()).thenReturn("");
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         FXMLLoader loader = new FXMLLoader();
-        loader.setController(new MainController(main, stage));
+        loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
 
         instance.log(null);
@@ -340,7 +340,7 @@ class TestMainController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandardMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setController(new MainController(main, stage));
+        loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
         try {
@@ -361,7 +361,7 @@ class TestMainController extends ApplicationTest {
         assertThat(stage.focusedProperty().getValue()).isTrue();
 
         loader = new FXMLLoader();
-        loader.setController(new MainController(main, stage));
+        loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
         try {
@@ -408,7 +408,7 @@ class TestMainController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandardMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
         FXMLLoader loader = new FXMLLoader();
 
-        loader.setController(new MainController(main, stage));
+        loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
         try {

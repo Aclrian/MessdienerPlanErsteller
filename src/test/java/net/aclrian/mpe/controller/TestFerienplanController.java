@@ -14,7 +14,7 @@ import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -88,7 +88,7 @@ class TestFerienplanController extends ApplicationTest {
                 instance = fl.getController();
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });
@@ -112,7 +112,7 @@ class TestFerienplanController extends ApplicationTest {
                 assertThat(o1.get(DATE.format(tomorrow)).property().get()).isFalse();
             }
         } catch (IndexOutOfBoundsException | ClassCastException | AssertionError e) {
-            Log.getLogger().error(e.getMessage(), e);
+            MPELog.getLogger().error(e.getMessage(), e);
             Assertions.fail("Couldn't find table", e);
         }
     }
@@ -149,7 +149,7 @@ class TestFerienplanController extends ApplicationTest {
                 instance = fl.getController();
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });
@@ -203,7 +203,7 @@ class TestFerienplanController extends ApplicationTest {
             assert changedCellData != null;
             assertThat(changedCellData.get(DATE.format(getToday())).property().get()).isTrue();
         } catch (IndexOutOfBoundsException | ClassCastException | AssertionError e) {
-            Log.getLogger().error(e.getMessage(), e);
+            MPELog.getLogger().error(e.getMessage(), e);
             Assertions.fail("Couldn't find table");
         }
     }

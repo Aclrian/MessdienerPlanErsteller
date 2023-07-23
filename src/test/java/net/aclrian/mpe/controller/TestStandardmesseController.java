@@ -14,7 +14,7 @@ import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TestStandardmesseController extends ApplicationTest {
 
-    private final StandardMesse StandardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
+    private final StandardMesse standardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
     @Mock
     private DateienVerwalter dv;
     @Mock
@@ -70,12 +70,12 @@ class TestStandardmesseController extends ApplicationTest {
         Mockito.when(dv.getSavePath()).thenReturn(f);
         Messdiener m1 = Mockito.mock(Messdiener.class);
         Messdiener m2 = Mockito.mock(Messdiener.class);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         final Messverhalten mv1 = new Messverhalten();
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
         Mockito.when(m1.toString()).thenReturn("a");
         final Messverhalten mv2 = new Messverhalten();
-        mv2.editiereBestimmteMesse(StandardMesse, true);
+        mv2.editiereBestimmteMesse(standardMesse, true);
         Mockito.when(m2.getDienverhalten()).thenReturn(mv2);
         Mockito.when(m2.toString()).thenReturn("b");
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2));
@@ -87,12 +87,12 @@ class TestStandardmesseController extends ApplicationTest {
             URL u = getClass().getResource(MainController.EnumPane.STDMESSE.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
             try {
-                fl.setController(new StandardmesseController(StandardMesse));
+                fl.setController(new StandardmesseController(standardMesse));
                 pane.getChildren().add(fl.load());
                 instance = fl.getController();
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
         });
         WaitForAsyncUtils.waitForFxEvents();

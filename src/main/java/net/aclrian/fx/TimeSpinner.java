@@ -13,13 +13,13 @@ import java.time.format.DateTimeFormatter;
 public class TimeSpinner extends Spinner<LocalTime> {
 
 
-    public static final StringConverter<LocalTime> converter = new StringConverter<>() {
+    public static final StringConverter<LocalTime> CONVERTER = new StringConverter<>() {
 
-        private final DateTimeFormatter time_format = DateUtil.TIME;
+        private final DateTimeFormatter timeFormat = DateUtil.TIME;
 
         @Override
         public String toString(LocalTime time) {
-            return this.time_format.format(time);
+            return this.timeFormat.format(time);
         }
 
         @Override
@@ -53,7 +53,7 @@ public class TimeSpinner extends Spinner<LocalTime> {
             }
         };
 
-        valueFactory.setConverter(converter);
+        valueFactory.setConverter(CONVERTER);
         this.setValueFactory(valueFactory);
     }
 }

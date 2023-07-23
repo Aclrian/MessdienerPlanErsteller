@@ -19,7 +19,6 @@ import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
 import net.aclrian.mpe.utils.RemoveDoppelte;
 
 import java.io.File;
@@ -30,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.MPELog.getLogger;
 
 public class MediController implements Controller {
 
@@ -152,13 +151,13 @@ public class MediController implements Controller {
             mc.changePane(MainController.EnumPane.SELECT_MEDI);
         });
         saveNew.setOnAction(e -> {
-            if (getMedi()) {
+            if (isValid()) {
                 locked = false;
                 vorname.setText("");
             }
         });
         button.setOnAction(e -> {
-            if (getMedi()) {
+            if (isValid()) {
                 locked = false;
                 mc.changePane(MainController.EnumPane.SELECT_MEDI);
             }
@@ -225,7 +224,7 @@ public class MediController implements Controller {
         kann.setEditable(true);
         Messverhalten mv = new Messverhalten();
         ol = FXCollections.observableArrayList(mv.getKannWelcheMessen());
-        ol.sort(KannWelcheMesse.sort);
+        ol.sort(KannWelcheMesse.MESSE_COMPARATOR);
         stdm.setReorderable(false);
         kann.setReorderable(false);
         stdm.setSortable(false);
@@ -271,14 +270,14 @@ public class MediController implements Controller {
         for (KannWelcheMesse kwm : ol) {
             for (KannWelcheMesse kwm2 : o) {
                 if (kwm.getMesse().toString().equals(kwm2.getMesse().toString())
-                        && (kwm.kannDann() != kwm2.kannDann())) {
+                        && kwm.kannDann() != kwm2.kannDann()) {
                     kwm.setKannDann(!kwm.kannDann());
                 }
             }
         }
     }
 
-    public boolean getMedi() {
+    public boolean isValid() {
         if (!name.getText().equals("") && !vorname.getText().equals("")) {
             try {
                 // ME

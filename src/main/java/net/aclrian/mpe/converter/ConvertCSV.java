@@ -6,7 +6,7 @@ import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -53,6 +53,13 @@ public class ConvertCSV {
 
     public static Messdiener parseLineToMessdiener(String line, ConvertData convertData) {
         String[] elemente = line.split(convertData.delimiter());
+        if (elemente.length < 2) {
+            return null;
+        }
+        if (convertData.sortierung.size() < elemente.length) {
+            return null;
+        }
+
         String vorname = "";
         String nachname = "";
         String email = "";
@@ -64,12 +71,6 @@ public class ConvertCSV {
         Arrays.fill(freunde, "");
         Arrays.fill(geschwister, "");
 
-        if (elemente.length < 2) {
-            return null;
-        }
-        if (convertData.sortierung.size() < elemente.length) {
-            return null;
-        }
         for (int j = 0; j < elemente.length; j++) {
             switch (convertData.sortierung().get(j)) {
                 case VORNAME -> vorname = elemente[j];
@@ -148,7 +149,7 @@ public class ConvertCSV {
         try {
             m.setEmail(email);
         } catch (NotValidException e) {
-            Log.getLogger().info("{} von {} ist nicht gültig", email, m);
+            MPELog.getLogger().info("{} von {} ist nicht gültig", email, m);
             m.setEmailEmpty();
         }
         return m;
@@ -194,7 +195,7 @@ public class ConvertCSV {
                         m.getFreunde()[i] = importedMessdiener.get(Integer.parseInt(m.getFreunde()[i])+offset).toString();
                     } catch (IndexOutOfBoundsException e) {
                         final String message = String.format("%s: %s in %s could not parsed as an valid Integer %s", e.getMessage(), m.getFreunde()[i], m, e.getCause());
-                        Log.getLogger().warn(message, e);
+                        MPELog.getLogger().warn(message, e);
                     }
                 }
             }
@@ -205,7 +206,7 @@ public class ConvertCSV {
                         DateienVerwalter.getInstance().reloadMessdiener();
                     } catch (IndexOutOfBoundsException e) {
                         final String message = String.format("%s: %s in %s could not parsed as an valid Integer %s", e.getMessage(), m.getFreunde()[i], m, e.getCause());
-                        Log.getLogger().warn(message, e);
+                        MPELog.getLogger().warn(message, e);
                     }
                 }
             }

@@ -20,7 +20,7 @@ import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.utils.DateUtil;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -129,7 +129,7 @@ class TestFinishController extends ApplicationTest {
                 pane.getChildren().add(fl.load());
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });
@@ -196,7 +196,7 @@ class TestFinishController extends ApplicationTest {
         testEinteilung(false);
     }
 
-    @Disabled(value = "Run Test with conversion to docx")
+    @Disabled("Run Test with conversion to docx")
     @Test
     void testEinteilungWithDOCX() throws Messdaten.CouldFindMessdiener {
         testEinteilung(true);
@@ -206,8 +206,8 @@ class TestFinishController extends ApplicationTest {
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        StandardMesse StandardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o1", 2, "t1");
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
+        StandardMesse standardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o1", 2, "t1");
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
         einst.editMaxDienen(true, 10);
@@ -255,9 +255,9 @@ class TestFinishController extends ApplicationTest {
         Messverhalten mv3 = new Messverhalten();
         Messverhalten mv1F = new Messverhalten();
 
-        mv1.editiereBestimmteMesse(StandardMesse, true);
+        mv1.editiereBestimmteMesse(standardMesse, true);
         md1.austeilen(DateUtil.getYesterdaysYesterday());
-        mv1F.editiereBestimmteMesse(StandardMesse, true);
+        mv1F.editiereBestimmteMesse(standardMesse, true);
         md1F.austeilen(DateUtil.getYesterdaysYesterday());
 
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
@@ -266,7 +266,7 @@ class TestFinishController extends ApplicationTest {
         Mockito.when(m1Freund.getDienverhalten()).thenReturn(mv1F);
 
         Messe me1 = new Messe(false, 1, DateUtil.getYesterdaysYesterday().atTime(0, 0), "o1", "t1");
-        Messe me2 = new Messe(DateUtil.getToday().atTime(0, 0), StandardMesse);
+        Messe me2 = new Messe(DateUtil.getToday().atTime(0, 0), standardMesse);
         Messe me3 = new Messe(false, 1, DateUtil.getTomorrow().atTime(0, 0), "o3", "t3");
 
         Mockito.doCallRealMethod().when(dialogs).show(Mockito.anyList(), Mockito.eq(FinishController.NICHT_EINGETEILTE_MESSDIENER));
@@ -285,7 +285,7 @@ class TestFinishController extends ApplicationTest {
                 pane.getChildren().add(fl.load());
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });
@@ -297,7 +297,7 @@ class TestFinishController extends ApplicationTest {
         assertThat(md1F.kanndann(DateUtil.getToday(), false)).isFalse();
         assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
 
-        File out = new File(Log.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");
+        File out = new File(MPELog.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");
         try {
             if (out.exists()) {
                 Files.delete(out.toPath());
@@ -306,11 +306,11 @@ class TestFinishController extends ApplicationTest {
             assertThat(out).exists();
             Files.delete(out.toPath());
         } catch (IOException e) {
-            Log.getLogger().error(e.getMessage(), e);
+            MPELog.getLogger().error(e.getMessage(), e);
             Assertions.fail(e.getMessage(), e);
         }
         if (skipDOCX) {
-            out = new File(Log.getWorkingDir(), instance.getTitle() + ".docx");
+            out = new File(MPELog.getWorkingDir(), instance.getTitle() + ".docx");
             try {
                 if (out.exists()) {
                     Files.delete(out.toPath());
@@ -319,7 +319,7 @@ class TestFinishController extends ApplicationTest {
                 assertThat(out).exists();
                 Files.delete(out.toPath());
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail(e.getMessage(), e);
             }
         }

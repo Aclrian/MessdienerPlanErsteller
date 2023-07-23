@@ -145,19 +145,19 @@ class ConvertCSVTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(standardMessen);
 
 
-        Path convert_file = Paths.get("src", "test", "resources", "converter", "converter_data.csv");
-        ConvertCSV.ConvertData convertdata = new ConvertCSV.ConvertData(convert_file.toFile(), List.of(ConvertCSV.Sortierung.VORNAME, ConvertCSV.Sortierung.NACHNAME, ConvertCSV.Sortierung.EINTRITT, ConvertCSV.Sortierung.EMAIL, ConvertCSV.Sortierung.FREUNDE, ConvertCSV.Sortierung.GESCHWISTER, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.IGNORIEREN), standardMessen, ";", ",", Charset.defaultCharset(), true, false);
-        assertThat(convert_file.toFile()).exists();
+        Path convertFile = Paths.get("src", "test", "resources", "converter", "converter_data.csv");
+        ConvertCSV.ConvertData convertdata = new ConvertCSV.ConvertData(convertFile.toFile(), List.of(ConvertCSV.Sortierung.VORNAME, ConvertCSV.Sortierung.NACHNAME, ConvertCSV.Sortierung.EINTRITT, ConvertCSV.Sortierung.EMAIL, ConvertCSV.Sortierung.FREUNDE, ConvertCSV.Sortierung.GESCHWISTER, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.IGNORIEREN), standardMessen, ";", ",", Charset.defaultCharset(), true, false);
+        assertThat(convertFile.toFile()).exists();
         new ConvertCSV(convertdata).start();
-        String tom_string = "Schmidt, Tom.xml";
-        Path tom = Paths.get(tempDir.toString(), tom_string);
-        String tim_string = "Schmidt, Tim.xml";
-        Path tim = Paths.get(tempDir.toString(), tim_string);
-        String anna_string = "Kiel, Anna.xml";
-        Path anna = Paths.get(tempDir.toString(), anna_string);
-        assertThat(tom).exists().hasSameContentAs(Paths.get(convert_file.getParent().toString(), tom_string));
-        assertThat(tim).exists().hasSameContentAs(Paths.get(convert_file.getParent().toString(), tim_string));
-        assertThat(anna).exists().hasSameContentAs(Paths.get(convert_file.getParent().toString(), anna_string));
+        String tomString = "Schmidt, Tom.xml";
+        Path tom = Paths.get(tempDir.toString(), tomString);
+        String timString = "Schmidt, Tim.xml";
+        Path tim = Paths.get(tempDir.toString(), timString);
+        String annaString = "Kiel, Anna.xml";
+        Path anna = Paths.get(tempDir.toString(), annaString);
+        assertThat(tom).exists().hasSameContentAs(Paths.get(convertFile.getParent().toString(), tomString));
+        assertThat(tim).exists().hasSameContentAs(Paths.get(convertFile.getParent().toString(), timString));
+        assertThat(anna).exists().hasSameContentAs(Paths.get(convertFile.getParent().toString(), annaString));
         Mockito.verify(dialog, Mockito.times(1)).info(Mockito.anyString());
         Locale.setDefault(locale);
     }

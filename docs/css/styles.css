@@ -38,7 +38,7 @@
     margin: 0 auto;
 }
 
-/*#vorschau{
+/* #vorschau{
 	max-width: 20vw;
 	max-height: 20vw;
 	margin-left: auto;
@@ -47,7 +47,7 @@
 }/*
 #vorschau:hover{
 	max-width: 62vw;
-}*/
+} */
 body {
     background-color: lightgrey;
     font-family: veranda, sans-serif;
@@ -85,13 +85,12 @@ div, span, a {
 }
 
 #inhalt a, #footer a {
-    color: rgb(21, 114, 109);
+    color: rgb(21 114 109);
 }
 
 .btn {
     border: 1px solid white;
     padding: 5px;
-
     vertical-align: middle;
 }
 
@@ -106,8 +105,8 @@ div, span, a {
 }
 
 .btn:hover {
-    color: rgb(21, 114, 109);
-    background-color: rgba(92, 192, 192, 15);
+    color: rgb(21 114 109);
+    background-color: rgb(92 192 192 / 1500%);
 }
 
 a {
@@ -115,8 +114,8 @@ a {
     text-decoration: none;
 }
 
-::selection, ::-moz-selection {
-    background: rgb(29, 114, 110);
+::selection, ::selection {
+    background: rgb(29 114 110);
     color: white;
 }
 
@@ -147,7 +146,6 @@ li {
 }
 
 .versteckt {
-    direction: rtl;
     unicode-bidi: bidi-override;
     direction: rtl;
     text-align: left;
@@ -157,6 +155,7 @@ li {
 .email {
     display: none;
 }
+
 table{
 	margin-left: auto;
 	margin-right: auto;
@@ -167,6 +166,10 @@ caption{
     margin-bottom: 2vh;
 }
 
-caption{
-    margin-bottom: 2vh;
+.footer{
+    font-size: min(2vw, 20px);
+}
+
+#vorschau-parent {
+    margin: auto;display: flex;justify-content: center;
 }

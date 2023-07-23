@@ -33,8 +33,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 
 public class FinishController implements Controller {
@@ -90,10 +89,10 @@ public class FinishController implements Controller {
         }
         nichtEingeteile.sort(Messdiener.MESSDIENER_COMPARATOR);
 
-        final String office_home = System.getenv("OFFICE_HOME");
-        if (office_home != null && !office_home.isEmpty()) {
-            Log.getLogger().info("alternatives OfficeHome gefunden bei: {}", office_home);
-            System.setProperty("office.home", office_home);
+        final String officeHome = System.getenv("OFFICE_HOME");
+        if (officeHome != null && !officeHome.isEmpty()) {
+            MPELog.getLogger().info("alternatives OfficeHome gefunden bei: {}", officeHome);
+            System.setProperty("office.home", officeHome);
         }
     }
 
@@ -115,7 +114,7 @@ public class FinishController implements Controller {
     }
 
     private void zurueck(MainController mc) {
-        Dialogs.YesNoCancelEnum delete = Dialogs.getDialogs().yesNoCancel("Ja", "Nein", "Hier bleiben",
+        Dialogs.YesNoCancelEnum delete = Dialogs.getDialogs().yesNoCancel("Hier bleiben",
                 "Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?");
         if (delete.equals(Dialogs.YesNoCancelEnum.CANCEL)) {
             return;
@@ -146,7 +145,7 @@ public class FinishController implements Controller {
         try {
             URI uri = new URI(pair.getValue().toString());
             Desktop.getDesktop().mail(uri);
-            Log.getLogger().info(pair.getValue());
+            MPELog.getLogger().info(pair.getValue());
             if (!pair.getKey().isEmpty()) {
                 Dialogs.getDialogs().show(pair.getKey(), "Messdiener ohne E-Mail-Addresse:");
             }
@@ -186,14 +185,14 @@ public class FinishController implements Controller {
     public void toPDF(ActionEvent actionEvent) {
         try {
             if (LocalOfficeUtils.getDefaultOfficeHome() != null) {
-                Log.getLogger().info("Converting HTML to PDF with JODConverter");
+                MPELog.getLogger().info("Converting HTML to PDF with JODConverter");
                 convert(false);
             } else {
-                Log.getLogger().info("Converting HTML to PDF with iText");
+                MPELog.getLogger().info("Converting HTML to PDF with iText");
                 ConverterProperties converterProperties = new ConverterProperties();
                 converterProperties.setCharset("UTF-8");
 
-                File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + ".pdf");
+                File out = new File(MPELog.getWorkingDir().getAbsolutePath(), titel + ".pdf");
                 HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8)),
                         new FileOutputStream(out), converterProperties);
                 pdfgen = out;
@@ -214,7 +213,7 @@ public class FinishController implements Controller {
             format = DefaultDocumentFormatRegistry.DOCX;
         }
         final LocalOfficeManager officeManager = LocalOfficeManager.install();
-        File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + fileEnd);
+        File out = new File(MPELog.getWorkingDir().getAbsolutePath(), titel + fileEnd);
         try {
             officeManager.start();
         } catch (OfficeException e) {
@@ -245,7 +244,7 @@ public class FinishController implements Controller {
                 Dialogs.getDialogs().info("Für die Konvertierung wird LibreOffice (oder Openoffice) benötigt.", "Wenn es trotz Installation nicht erkannt wird, kann dafür eine Systemvariable OFFICE_HOME angelegt werden, die den Installationspfad von der Officeanwendung enthält.");
                 return;
             }
-            Log.getLogger().info("Converting PDF to WORD with JODConverter");
+            MPELog.getLogger().info("Converting PDF to WORD with JODConverter");
             convert(true);
             if (actionEvent != null) {
                 Desktop.getDesktop().open(pdfgen);
@@ -256,34 +255,34 @@ public class FinishController implements Controller {
     }
 
     private void neuerAlgorythmus() {
-        hauptarray.sort(Messdiener.einteilen);
+        hauptarray.sort(Messdiener.MESSDIENER_EINTEILEN_COMPARATOR);
         if (messen.isEmpty()) {
             return;
         }
         // neuer Monat:
         LocalDate nextMonth = messen.get(0).getDate().toLocalDate();
         nextMonth = nextMonth.plusMonths(1);
-        if (Log.getLogger().isDebugEnabled()) {
-            Log.getLogger().info("nächster Monat bei: {}", DateUtil.DATE.format(nextMonth));
+        if (MPELog.getLogger().isDebugEnabled()) {
+            MPELog.getLogger().info("nächster Monat bei: {}", DateUtil.DATE.format(nextMonth));
         }
         // EIGENTLICHER ALGORYTHMUS
         for (Messe me : messen) {
             if (me.getDate().toLocalDate().isAfter(nextMonth)) {
                 nextMonth = nextMonth.plusMonths(1);
-                if (Log.getLogger().isDebugEnabled()) {
-                    Log.getLogger().info("nächster Monat: Es ist {}", DateUtil.DATE.format(me.getDate().toLocalDate()));
+                if (MPELog.getLogger().isDebugEnabled()) {
+                    MPELog.getLogger().info("nächster Monat: Es ist {}", DateUtil.DATE.format(me.getDate().toLocalDate()));
                 }
                 for (Messdiener messdiener : hauptarray) {
                     messdiener.getMessdaten().naechsterMonat();
                 }
             }
-            Log.getLogger().info("Messe dran: {}", me.getID());
+            MPELog.getLogger().info("Messe dran: {}", me.getID());
             if (me.getStandardMesse() instanceof Sonstiges) {
                 this.einteilen(me, EnumAction.EINFACH_EINTEILEN);
             } else {
                 this.einteilen(me, EnumAction.TYPE_BEACHTEN);
             }
-            Log.getLogger().info("Messe fertig: {}", me.getID());
+            MPELog.getLogger().info("Messe fertig: {}", me.getID());
         }
     }
 
@@ -294,8 +293,8 @@ public class FinishController implements Controller {
         } else {//EnumAction.TYPE_BEACHTEN
             medis = get(m.getStandardMesse(), m, false, false);
         }
-        if (Log.getLogger().isDebugEnabled()) {
-            Log.getLogger().info("{} für {}", medis.size(), m.getNochBenoetigte());
+        if (MPELog.getLogger().isDebugEnabled()) {
+            MPELog.getLogger().info("{} für {}", medis.size(), m.getNochBenoetigte());
         }
         for (Messdiener medi : medis) {
             einteilen(m, medi, false, false);
@@ -307,8 +306,8 @@ public class FinishController implements Controller {
 
     public void zwang(Messe m, boolean zangDate, boolean zwangAnz, String loggerOutput) {
         List<Messdiener> medis = get(m.getStandardMesse(), m, zangDate, zwangAnz);
-        if (Log.getLogger().isDebugEnabled()) {
-            Log.getLogger().warn("{} {}", m, loggerOutput);
+        if (MPELog.getLogger().isDebugEnabled()) {
+            MPELog.getLogger().warn("{} {}", m, loggerOutput);
         }
         for (Messdiener medi : medis) {
             einteilen(m, medi, false, true);
@@ -363,11 +362,11 @@ public class FinishController implements Controller {
             RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
             anv = rd.removeDuplicatedEntries(anv);
             if (!anv.isEmpty()) {
-                anv.sort(Messdiener.einteilen);
+                anv.sort(Messdiener.MESSDIENER_EINTEILEN_COMPARATOR);
                 for (Messdiener messdiener : anv) {
                     boolean b = messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse());
                     if (messdiener.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz) && b) {
-                        Log.getLogger().info("{} dient mit {}?", messdiener, medi);
+                        MPELog.getLogger().info("{} dient mit {}?", messdiener, medi);
                         einteilen(m, messdiener, zwangdate, zwanganz);
                     }
                 }
@@ -385,8 +384,9 @@ public class FinishController implements Controller {
                 allForSMesse.add(medi);
             }
         }
-        Collections.shuffle(allForSMesse);
-        allForSMesse.sort(Messdiener.einteilen);
+        Collections.shuffle(allForSMesse, new Random(System.nanoTime()));
+        Arrays.sort(allForSMesse.toArray());
+        allForSMesse.sort(Messdiener.MESSDIENER_EINTEILEN_COMPARATOR);
         return allForSMesse;
     }
 

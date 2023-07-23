@@ -25,10 +25,10 @@ public class Messdiener {
      */
     public static final int LENGHT_FREUNDE = 5;
     public static final Comparator<Messdiener> MESSDIENER_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
-    public static final Comparator<? super Messdiener> einteilen = (Comparator<Messdiener>) (o1, o2) -> {
+    public static final Comparator<? super Messdiener> MESSDIENER_EINTEILEN_COMPARATOR = (Comparator<Messdiener>) (o1, o2) -> {
         double d1 = o1.getMessdaten().getSortierenDouble();// anz/max 0 kommt zuerst dann 0,5 --> 1
         double d2 = o2.getMessdaten().getSortierenDouble();
-        if ((d1 == d2) && (d1 == 0)) {
+        if (d1 == 0 && d2 == 0) {
             int i1 = o1.getMessdaten().getMaxMessen();
             int i2 = o2.getMessdaten().getMaxMessen();
             return Integer.compare(i2, i1);

@@ -9,7 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import net.aclrian.mpe.Main;
+import net.aclrian.mpe.MainApplication;
 import net.aclrian.mpe.converter.ConvertCSV;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.aclrian.mpe.utils.Log.getLogger;
+import static net.aclrian.mpe.utils.MPELog.getLogger;
 
 
 public class MainController {
@@ -30,7 +30,7 @@ public class MainController {
     public static final String GESPERRT = "Der Fensterbereich ist durch die Bearbeitung gesperrt!";
     public static final String STANDARDMESSE_AUSWAEHLEN = "Bitte Standardmesse auswählen:";
     private final Stage stage;
-    private final Main m;
+    private final MainApplication m;
     private List<Messe> messen = new ArrayList<>();
     @FXML
     private GridPane grid;
@@ -39,7 +39,7 @@ public class MainController {
     private Controller control;
     private EnumPane ep;
 
-    public MainController(Main m, Stage s) {
+    public MainController(MainApplication m, Stage s) {
         this.m = m;
         this.stage = s;
         s.setOnCloseRequest(e -> getLogger().info("Beenden"));
@@ -54,7 +54,7 @@ public class MainController {
         if (this.ep == EnumPane.MESSDIENER) {
             return;
         }
-        if ((control == null || !control.isLocked())) {
+        if (control == null || !control.isLocked()) {
             this.ep = EnumPane.MESSDIENER;
             apane.getChildren().removeIf(p -> true);
             URL u = getClass().getResource(ep.getLocation());
@@ -72,7 +72,7 @@ public class MainController {
         if (this.ep == EnumPane.MESSE) {
             return;
         }
-        if ((control == null || !control.isLocked())) {
+        if (control == null || !control.isLocked()) {
             this.ep = EnumPane.MESSE;
             apane.getChildren().removeIf(p -> true);
             URL u = getClass().getResource(ep.getLocation());
@@ -88,7 +88,7 @@ public class MainController {
     }
 
     private void changePane(StandardMesse sm) {
-        if ((control == null || !control.isLocked()) && (ep != EnumPane.STDMESSE)) {
+        if ((control == null || !control.isLocked()) && ep != EnumPane.STDMESSE) {
             this.ep = EnumPane.STDMESSE;
             apane.getChildren().removeIf(p -> true);
 
@@ -123,7 +123,7 @@ public class MainController {
         if (this.ep == ep) {
             return;
         }
-        if ((control == null || !control.isLocked())) {
+        if (control == null || !control.isLocked()) {
             EnumPane old = this.ep;
             this.ep = ep;
             apane.getChildren().removeIf(p -> true);
@@ -228,7 +228,7 @@ public class MainController {
     @FXML
     public void log(ActionEvent event) {
         try {
-            Desktop.getDesktop().open(Log.getLogFile());
+            Desktop.getDesktop().open(MPELog.getLogFile());
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Konnte das Protokoll nicht öffnen:");
         }
@@ -251,7 +251,7 @@ public class MainController {
     @FXML
     public void workingdir(ActionEvent event) {
         try {
-            Desktop.getDesktop().open(Log.getWorkingDir());
+            Desktop.getDesktop().open(MPELog.getWorkingDir());
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Konnte den Ordner nicht öffnen:");
         }

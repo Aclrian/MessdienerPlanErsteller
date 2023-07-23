@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TestASlider extends ApplicationTest {
 
-    private final String stringValue = "object2342+3";
+    private final static String STRING_VALUE = "object2342+3";
     private Slider instance;
     private Pane pane;
 
@@ -32,7 +32,7 @@ class TestASlider extends ApplicationTest {
         instance = new Slider(1, 10, 3);
         Platform.runLater(() -> {
             pane.getChildren().add(instance);
-            ASlider.makeASlider(stringValue, instance, null);
+            ASlider.makeASlider(STRING_VALUE, instance, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
         assertThat(instance.lookup(ASlider.THUMB)).isNotNull();
@@ -40,7 +40,7 @@ class TestASlider extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Object o = instance.lookup(ASlider.THUMB).lookup("#" + ASlider.SLIDER_VALUE);
         assertThat(o).isInstanceOf(Label.class);
-        assertThat(((Label) instance.lookup("#" + ASlider.SLIDER_VALUE)).getText()).contains(stringValue + ": ");
+        assertThat(((Label) instance.lookup("#" + ASlider.SLIDER_VALUE)).getText()).contains(STRING_VALUE + ": ");
     }
 
     @Test
