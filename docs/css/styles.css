@@ -114,7 +114,7 @@ a {
     background-color: rgb(92 192 192 / 1500%);
 }
 
-::selection, ::selection {
+::selection {
     background: rgb(29 114 110);
     color: white;
 }
