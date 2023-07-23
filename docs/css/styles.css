@@ -84,6 +84,11 @@ div, span, a {
     border-radius: 0.7rem;
 }
 
+a {
+    color: white;
+    text-decoration: none;
+}
+
 #inhalt a, #footer a {
     color: rgb(21 114 109);
 }
@@ -109,11 +114,6 @@ div, span, a {
     background-color: rgb(92 192 192 / 1500%);
 }
 
-a {
-    color: white;
-    text-decoration: none;
-}
-
 ::selection, ::selection {
     background: rgb(29 114 110);
     color: white;
@@ -123,11 +123,11 @@ li {
     list-style: none;
 }
 
-.gpics {
-}
+/*.gpics {*/
+/*}*/
 
-#bilder {
-}
+/*#bilder {*/
+/*}*/
 
 #bilder img, #bilder, #vorschau {
     width: 100%;
