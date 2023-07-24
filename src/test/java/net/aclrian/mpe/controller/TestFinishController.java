@@ -197,7 +197,8 @@ class TestFinishController extends ApplicationTest {
         testEinteilung(true);
     }
 
-    private void testEinteilung(boolean skipDOCX) throws Messdaten.CouldFindMessdiener { //NOPMD - suppressed NPathComplexity - for test purpose
+    //CHECKSTYLE:OFF: MethodLength
+    private void testEinteilung(boolean skipDOCX) throws Messdaten.CouldFindMessdiener { //NOPMD - suppressed NPathComplexity - test purpose
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -319,7 +320,7 @@ class TestFinishController extends ApplicationTest {
             }
         }
 
-        Platform.runLater(() -> Mockito.when(dialogs.yesNoCancel(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+        Platform.runLater(() -> Mockito.when(dialogs.yesNoCancel(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(Dialogs.YesNoCancelEnum.YES));
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> {
@@ -344,7 +345,10 @@ class TestFinishController extends ApplicationTest {
         String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        assertThat(pair.getValue()).hasToString("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20" + from + ".%20" + UriUtils.encode(fromMonth, StandardCharsets.UTF_8) + "%20bis%20" + to + ".%20" + UriUtils.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
+        assertThat(pair.getValue()).hasToString(
+                "mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20"
+                        + from + ".%20" + UriUtils.encode(fromMonth, StandardCharsets.UTF_8) + "%20"
+                        + "bis%20" + to + ".%20" + UriUtils.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {
@@ -353,4 +357,5 @@ class TestFinishController extends ApplicationTest {
 
         assertThat(pair.getKey()).hasSize(3).containsAll(Arrays.asList(m1, m2, m1Freund));
     }
+    //CHECKSTYLE:ON: MethodLength
 }

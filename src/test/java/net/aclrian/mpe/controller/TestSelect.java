@@ -133,7 +133,10 @@ public class TestSelect extends ApplicationTest {
         assertThat(((ListView<?>) list).getItems()).anyMatch(o -> o instanceof Label && ((Label) o).getText().equalsIgnoreCase(m2.toString()));
 
         ((ListView<?>) list).getSelectionModel().select(0);
-        list.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, false, false, false, false, false, false, false, false, false, false, null));
+        list.fireEvent(new MouseEvent(
+                MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0,
+                MouseButton.PRIMARY, 2, false, false, false, false, false,
+                false, false, false, false, false, null));
         Mockito.verify(mc, Mockito.times(1)).changePaneMessdiener(m1);
 
         assertThat(scene.lookup("#bearbeiten")).isInstanceOf(Button.class);
@@ -155,28 +158,28 @@ public class TestSelect extends ApplicationTest {
         assertThat(f2).exists();
         try {
             final String actual = Files.readString(f2.toPath());
-            assertThat(actual).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
-                    "<XML>" + System.getProperty("line.separator") +
-                    "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator") +
-                    "  <Body>" + System.getProperty("line.separator") +
-                    "    <Vorname/>" + System.getProperty("line.separator") +
-                    "    <Nachname/>" + System.getProperty("line.separator") +
-                    "    <Email/>" + System.getProperty("line.separator") +
-                    "    <Messverhalten/>" + System.getProperty("line.separator") +
-                    "    <Leiter>false</Leiter>" + System.getProperty("line.separator") +
-                    "    <Eintritt>0</Eintritt>" + System.getProperty("line.separator") +
-                    "    <Anvertraute>" + System.getProperty("line.separator") +
-                    "      <F1>LEER</F1>" + System.getProperty("line.separator") +
-                    "      <F2>LEER</F2>" + System.getProperty("line.separator") +
-                    "      <F3>LEER</F3>" + System.getProperty("line.separator") +
-                    "      <F4>LEER</F4>" + System.getProperty("line.separator") +
-                    "      <F5>LEER</F5>" + System.getProperty("line.separator") +
-                    "      <g1>LEER</g1>" + System.getProperty("line.separator") +
-                    "      <g2>LEER</g2>" + System.getProperty("line.separator") +
-                    "      <g3>LEER</g3>" + System.getProperty("line.separator") +
-                    "    </Anvertraute>" + System.getProperty("line.separator") +
-                    "  </Body>" + System.getProperty("line.separator") +
-                    "</XML>" + System.getProperty("line.separator"));
+            assertThat(actual).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator")
+                    + "<XML>" + System.getProperty("line.separator")
+                    + "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator")
+                    + "  <Body>" + System.getProperty("line.separator")
+                    + "    <Vorname/>" + System.getProperty("line.separator")
+                    + "    <Nachname/>" + System.getProperty("line.separator")
+                    + "    <Email/>" + System.getProperty("line.separator")
+                    + "    <Messverhalten/>" + System.getProperty("line.separator")
+                    + "    <Leiter>false</Leiter>" + System.getProperty("line.separator")
+                    + "    <Eintritt>0</Eintritt>" + System.getProperty("line.separator")
+                    + "    <Anvertraute>" + System.getProperty("line.separator")
+                    + "      <F1>LEER</F1>" + System.getProperty("line.separator")
+                    + "      <F2>LEER</F2>" + System.getProperty("line.separator")
+                    + "      <F3>LEER</F3>" + System.getProperty("line.separator")
+                    + "      <F4>LEER</F4>" + System.getProperty("line.separator")
+                    + "      <F5>LEER</F5>" + System.getProperty("line.separator")
+                    + "      <g1>LEER</g1>" + System.getProperty("line.separator")
+                    + "      <g2>LEER</g2>" + System.getProperty("line.separator")
+                    + "      <g3>LEER</g3>" + System.getProperty("line.separator")
+                    + "    </Anvertraute>" + System.getProperty("line.separator")
+                    + "  </Body>" + System.getProperty("line.separator")
+                    + "</XML>" + System.getProperty("line.separator"));
             Files.delete(f2.toPath());
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
@@ -221,7 +224,9 @@ public class TestSelect extends ApplicationTest {
         Mockito.verify(mc, Mockito.times(1)).changePaneMesse(Mockito.isNull());
 
         ((ListView<?>) scene.lookup("#list")).getSelectionModel().select(0);
-        scene.lookup("#list").fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, false, false, false, false, false, false, false, false, false, false, null));
+        scene.lookup("#list").fireEvent(new MouseEvent(
+                MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY,
+                2, false, false, false, false, false, false, false, false, false, false, null));
         Mockito.verify(mc, Mockito.times(1)).changePaneMesse(m1);
 
         assertThat(scene.lookup("#bearbeiten")).isInstanceOf(Button.class);

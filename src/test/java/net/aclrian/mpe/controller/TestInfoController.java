@@ -83,7 +83,10 @@ class TestInfoController extends ApplicationTest {
 
             if (table instanceof TableView<?>) {
                 ((TableView<?>) table).getSelectionModel().select(0);
-                table.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, false, false, false, false, false, false, false, false, false, false, null));
+                table.fireEvent(new MouseEvent(
+                        MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY,
+                        2, false, false, false, false, false, false,
+                        false, false, false, false, null));
                 Mockito.verify(dialog, Mockito.times(1)).singleSelect(
                         Mockito.anyList(), Mockito.anyString());
             } else {

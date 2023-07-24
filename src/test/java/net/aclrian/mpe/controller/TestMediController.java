@@ -10,7 +10,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import net.aclrian.mpe.messdiener.KannWelcheMesse;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.ReadFile;
@@ -44,30 +43,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestMediController extends ApplicationTest {
 
     private final StandardMesse standardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
-    private final String medi = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
-            "<XML>" + System.getProperty("line.separator") +
-            "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator") +
-            "  <Body>" + System.getProperty("line.separator") +
-            "    <Vorname>Lea</Vorname>" + System.getProperty("line.separator") +
-            "    <Nachname>Tannenbusch</Nachname>" + System.getProperty("line.separator") +
-            "    <Email/>" + System.getProperty("line.separator") +
-            "    <Messverhalten>" + System.getProperty("line.separator") +
-            "      <" + standardMesse.toReduziertenString() + ">true</" + standardMesse.toReduziertenString() + ">" + System.getProperty("line.separator") +
-            "    </Messverhalten>" + System.getProperty("line.separator") +
-            "    <Leiter>false</Leiter>" + System.getProperty("line.separator") +
-            "    <Eintritt>2019</Eintritt>" + System.getProperty("line.separator") +
-            "    <Anvertraute>" + System.getProperty("line.separator") +
-            "      <F1>Müller, Lieschen</F1>" + System.getProperty("line.separator") +
-            "      <F2>LEER</F2>" + System.getProperty("line.separator") +
-            "      <F3>LEER</F3>" + System.getProperty("line.separator") +
-            "      <F4>LEER</F4>" + System.getProperty("line.separator") +
-            "      <F5>LEER</F5>" + System.getProperty("line.separator") +
-            "      <g1>Tannenbusch, Nora</g1>" + System.getProperty("line.separator") +
-            "      <g2>LEER</g2>" + System.getProperty("line.separator") +
-            "      <g3>LEER</g3>" + System.getProperty("line.separator") +
-            "    </Anvertraute>" + System.getProperty("line.separator") +
-            "  </Body>" + System.getProperty("line.separator") +
-            "</XML>\n";
+    private final String medi = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator")
+            + "<XML>" + System.getProperty("line.separator")
+            + "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator")
+            + "  <Body>" + System.getProperty("line.separator")
+            + "    <Vorname>Lea</Vorname>" + System.getProperty("line.separator")
+            + "    <Nachname>Tannenbusch</Nachname>" + System.getProperty("line.separator")
+            + "    <Email/>" + System.getProperty("line.separator")
+            + "    <Messverhalten>" + System.getProperty("line.separator")
+            + "      <" + standardMesse.toReduziertenString() + ">true</" + standardMesse.toReduziertenString() + ">" + System.getProperty("line.separator")
+            + "    </Messverhalten>" + System.getProperty("line.separator")
+            + "    <Leiter>false</Leiter>" + System.getProperty("line.separator")
+            + "    <Eintritt>2019</Eintritt>" + System.getProperty("line.separator")
+            + "    <Anvertraute>" + System.getProperty("line.separator")
+            + "      <F1>Müller, Lieschen</F1>" + System.getProperty("line.separator")
+            + "      <F2>LEER</F2>" + System.getProperty("line.separator")
+            + "      <F3>LEER</F3>" + System.getProperty("line.separator")
+            + "      <F4>LEER</F4>" + System.getProperty("line.separator")
+            + "      <F5>LEER</F5>" + System.getProperty("line.separator")
+            + "      <g1>Tannenbusch, Nora</g1>" + System.getProperty("line.separator")
+            + "      <g2>LEER</g2>" + System.getProperty("line.separator")
+            + "      <g3>LEER</g3>" + System.getProperty("line.separator")
+            + "    </Anvertraute>" + System.getProperty("line.separator")
+            + "  </Body>" + System.getProperty("line.separator")
+            + "</XML>\n";
     @Mock
     private DateienVerwalter dv;
     @Mock
@@ -170,9 +169,9 @@ public class TestMediController extends ApplicationTest {
         assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
         TableView<?> table = (TableView<?>) scene.lookup("#table");
         assertThat(table.getItems()).hasSize(1);
-        assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isTrue();
-        assertThat(((KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(standardMesse);
-        ((KannWelcheMesse) table.getItems().get(0)).setKannDann(false);
+        assertThat(((Messverhalten.KannWelcheMesse) table.getItems().get(0)).kannDann()).isTrue();
+        assertThat(((Messverhalten.KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(standardMesse);
+        ((Messverhalten.KannWelcheMesse) table.getItems().get(0)).setKannDann(false);
         Platform.runLater(() -> ((SplitMenuButton) scene.lookup("#button")).fire());
         WaitForAsyncUtils.waitForFxEvents();
         final File newFile = new File(System.getProperty("user.home"), "Tannenbusch, Luisa.xml");
@@ -191,8 +190,8 @@ public class TestMediController extends ApplicationTest {
         assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isTrue();
         assertThat(((TextField) scene.lookup("#email")).getText()).isEqualTo("a@abc.de");
         assertThat(table.getItems()).hasSize(1);
-        assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
-        assertThat(((KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(standardMesse);
+        assertThat(((Messverhalten.KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
+        assertThat(((Messverhalten.KannWelcheMesse) table.getItems().get(0)).getMesse()).isEqualTo(standardMesse);
         assertThat(f).doesNotExist();
         try {
             Files.delete(newFile.toPath());
@@ -230,7 +229,8 @@ public class TestMediController extends ApplicationTest {
         Mockito.when(m2.getDienverhalten()).thenReturn(mv2);
         Mockito.when(m2.getFreunde()).thenReturn(new String[]{"Tannenbusch, Lea", "", "", "", ""});
         Mockito.when(dv.getSavePath()).thenReturn(f.getParentFile());
-        Mockito.when(dialog.select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.anyString())).thenReturn(Collections.singletonList(m2), Collections.singletonList(m1));
+        Mockito.when(dialog.select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.anyString()))
+                .thenReturn(Collections.singletonList(m2), Collections.singletonList(m1));
 
         final Messdiener messdiener = new ReadFile().getMessdiener(f);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, messdiener, m2));
@@ -252,8 +252,16 @@ public class TestMediController extends ApplicationTest {
         assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems()).hasSize(2);
 
         Platform.runLater(() -> {
-            scene.lookup("#" + MediController.GESCHWISTER_BEARBEITEN_ID).fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0d, 0d, 0d, 0d, MouseButton.PRIMARY, 1, false, false, false, false, false, false, false, false, false, false, null));
-            scene.lookup("#" + MediController.FREUNDE_BEARBEITEN_ID).fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0d, 0d, 0d, 0d, MouseButton.PRIMARY, 1, false, false, false, false, false, false, false, false, false, false, null));
+            scene.lookup("#" + MediController.GESCHWISTER_BEARBEITEN_ID)
+                    .fireEvent(new MouseEvent(
+                            MouseEvent.MOUSE_CLICKED, 0d, 0d, 0d, 0d,
+                            MouseButton.PRIMARY, 1, false, false, false, false, false, false,
+                            false, false, false, false, null));
+            scene.lookup("#" + MediController.FREUNDE_BEARBEITEN_ID)
+                    .fireEvent(new MouseEvent(
+                            MouseEvent.MOUSE_CLICKED, 0d, 0d, 0d, 0d,
+                            MouseButton.PRIMARY, 1, false, false, false, false, false, false,
+                            false, false, false, false, null));
 
             Node button = scene.lookup("#button");
             if (button instanceof SplitMenuButton) {
@@ -268,8 +276,17 @@ public class TestMediController extends ApplicationTest {
         Mockito.verify(dialog, Mockito.times(1)).select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.eq(MediController.GESCHWISTER_AUSWAEHLEN));
 
         assertThat(((TextField) scene.lookup("#vorname")).getText()).isEmpty();
-        Mockito.verify(m1).setFreunde(Mockito.argThat(argument -> argument.length == 5 && argument[0].equalsIgnoreCase("Tannenbusch, Lea") && argument[1] == null && argument[2] == null && argument[3] == null && argument[4] == null));
-        Mockito.verify(m2).setGeschwister(Mockito.argThat(argument -> argument.length == 3 && argument[0].equalsIgnoreCase("Tannenbusch, Lea") && argument[1] == null && argument[2] == null));
+        Mockito.verify(m1).setFreunde(
+                Mockito.argThat(
+                        argument -> argument.length == 5
+                                && argument[0].equalsIgnoreCase("Tannenbusch, Lea")
+                                && argument[1] == null && argument[2] == null
+                                && argument[3] == null && argument[4] == null));
+        Mockito.verify(m2).setGeschwister(
+                Mockito.argThat(
+                        argument -> argument.length == 3
+                                && argument[0].equalsIgnoreCase("Tannenbusch, Lea")
+                                && argument[1] == null && argument[2] == null));
 
         Mockito.verify(m1, Mockito.times(24)).getFreunde();
         Mockito.verify(m1, Mockito.times(16)).getGeschwister();
@@ -287,30 +304,32 @@ public class TestMediController extends ApplicationTest {
 
         try {
             String doW = DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault());
-            assertThat(Files.readString(lea.toPath())).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator") +
-                    "<XML>" + System.getProperty("line.separator") +
-                    "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator") +
-                    "  <Body>" + System.getProperty("line.separator") +
-                    "    <Vorname>Lea</Vorname>" + System.getProperty("line.separator") +
-                    "    <Nachname>Tannenbusch</Nachname>" + System.getProperty("line.separator") +
-                    "    <Email/>" + System.getProperty("line.separator") +
-                    "    <Messverhalten>" + System.getProperty("line.separator") +
-                    "      <" + doW + "-8-00-2>true</" + doW + "-8-00-2>" + System.getProperty("line.separator") +
-                    "    </Messverhalten>" + System.getProperty("line.separator") +
-                    "    <Leiter>false</Leiter>" + System.getProperty("line.separator") +
-                    "    <Eintritt>2019</Eintritt>" + System.getProperty("line.separator") +
-                    "    <Anvertraute>" + System.getProperty("line.separator") +
-                    "      <F1>Tannenbusch, Nora</F1>" + System.getProperty("line.separator") +
-                    "      <F2>LEER</F2>" + System.getProperty("line.separator") +
-                    "      <F3>LEER</F3>" + System.getProperty("line.separator") +
-                    "      <F4>LEER</F4>" + System.getProperty("line.separator") +
-                    "      <F5>LEER</F5>" + System.getProperty("line.separator") +
-                    "      <g1>Müller, Lieschen</g1>" + System.getProperty("line.separator") +
-                    "      <g2>LEER</g2>" + System.getProperty("line.separator") +
-                    "      <g3>LEER</g3>" + System.getProperty("line.separator") +
-                    "    </Anvertraute>" + System.getProperty("line.separator") +
-                    "  </Body>" + System.getProperty("line.separator") +
-                    "</XML>" + System.getProperty("line.separator"));
+            assertThat(Files.readString(lea.toPath())).isEqualTo(
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator")
+                    + "<XML>" + System.getProperty("line.separator")
+                    + "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator")
+                    + "  <Body>" + System.getProperty("line.separator")
+                    + "    <Vorname>Lea</Vorname>" + System.getProperty("line.separator")
+                    + "    <Nachname>Tannenbusch</Nachname>" + System.getProperty("line.separator")
+                    + "    <Email/>" + System.getProperty("line.separator")
+                    + "    <Messverhalten>" + System.getProperty("line.separator")
+                    + "      <" + doW + "-8-00-2>true</" + doW + "-8-00-2>" + System.getProperty("line.separator")
+                    + "    </Messverhalten>" + System.getProperty("line.separator")
+                    + "    <Leiter>false</Leiter>" + System.getProperty("line.separator")
+                    + "    <Eintritt>2019</Eintritt>" + System.getProperty("line.separator")
+                    + "    <Anvertraute>" + System.getProperty("line.separator")
+                    + "      <F1>Tannenbusch, Nora</F1>" + System.getProperty("line.separator")
+                    + "      <F2>LEER</F2>" + System.getProperty("line.separator")
+                    + "      <F3>LEER</F3>" + System.getProperty("line.separator")
+                    + "      <F4>LEER</F4>" + System.getProperty("line.separator")
+                    + "      <F5>LEER</F5>" + System.getProperty("line.separator")
+                    + "      <g1>Müller, Lieschen</g1>" + System.getProperty("line.separator")
+                    + "      <g2>LEER</g2>" + System.getProperty("line.separator")
+                    + "      <g3>LEER</g3>" + System.getProperty("line.separator")
+                    + "    </Anvertraute>" + System.getProperty("line.separator")
+                    + "  </Body>" + System.getProperty("line.separator")
+                    + "</XML>" + System.getProperty("line.separator")
+            );
 
             Files.delete(lea.toPath());
             Files.delete(liesch.toPath());

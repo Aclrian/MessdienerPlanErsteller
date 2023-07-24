@@ -162,7 +162,11 @@ class TestFerienplanController extends ApplicationTest {
         try {
             GridPane gridPane = (GridPane) pane.getChildrenUnmodifiable().get(0);
             @SuppressWarnings("unchecked")
-            TableView<FerienplanController.Datentraeger> table = (TableView<FerienplanController.Datentraeger>) gridPane.getChildrenUnmodifiable().stream().filter(node -> node instanceof TableView).findFirst().orElse(null);
+            TableView<FerienplanController.Datentraeger> table = (TableView<FerienplanController.Datentraeger>) gridPane.getChildrenUnmodifiable()
+                    .stream()
+                    .filter(node -> node instanceof TableView)
+                    .findFirst()
+                    .orElse(null);
             assert table != null;
             assertThat(table.getColumns()).hasSize(4);
 

@@ -73,6 +73,7 @@ class TestMainController extends ApplicationTest {
         pf = Mockito.mock(Pfarrei.class);
     }
 
+    //CHECKSTYLE:OFF: MethodLength
     @Test
     @RetryingTest(5)
     void testEachEnumPane() { //NOPMD - suppressed NPathComplexity - for test purpose
@@ -306,6 +307,7 @@ class TestMainController extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
     }
+    //CHECKSTYLE:ON: MethodLength
 
     @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "should not run on ci")
     @Test

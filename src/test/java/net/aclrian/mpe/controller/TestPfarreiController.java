@@ -86,6 +86,7 @@ public class TestPfarreiController extends ApplicationTest {
         }
     }
 
+    //CHECKSTYLE:OFF: MethodLength
     @SuppressWarnings("unchecked")
     @Test
     void test() { //NOPMD - suppressed NcssCount - for test purpose
@@ -175,7 +176,8 @@ public class TestPfarreiController extends ApplicationTest {
         assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems()).allMatch(setting ->
                 setting.anzahlDienen() == 0 && setting.getJahr() <= Messdaten.getMaxYear() && setting.getJahr() >= Messdaten.getMinYear());
         assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems()).hasSize(Einstellungen.LENGTH - 2);
-        Mockito.verify(dialog, Mockito.times(2)).open(Mockito.any(), Mockito.anyString(), Mockito.eq(PfarreiController.MEHR_INFORMATIONEN), Mockito.eq(PfarreiController.VERSTANDEN));
+        Mockito.verify(dialog, Mockito.times(2))
+                .open(Mockito.any(), Mockito.anyString(), Mockito.eq(PfarreiController.MEHR_INFORMATIONEN), Mockito.eq(PfarreiController.VERSTANDEN));
         final Setting setting = ((TableView<Setting>) scene.lookup("#settingTableView")).getItems().get(0);
         final Setting newSetting = new Setting(setting.attribut(), setting.id(), 2);
         Mockito.when(dialog.chance(setting)).thenReturn(newSetting);
@@ -189,7 +191,13 @@ public class TestPfarreiController extends ApplicationTest {
             r.keyPress(KeyCode.UP);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Platform.runLater(() -> scene.lookup("#settingTableView").fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, false, false, false, false, false, false, false, false, false, false, null)));
+        Platform.runLater(() -> scene.lookup("#settingTableView").fireEvent(
+                new MouseEvent(
+                    MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0,
+                    MouseButton.PRIMARY, 2, false, false, false, false, false,
+                    false, false, false, false, false, null
+                )
+        ));
         WaitForAsyncUtils.waitForFxEvents();
         assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems().get(0)).isEqualTo(newSetting);
         Platform.runLater(() -> {
@@ -217,8 +225,8 @@ public class TestPfarreiController extends ApplicationTest {
                       <Body>
                         <Standardmessen>
                           <std_messe id="0">
-                            <tag>""" +
-                    doW + """
+                            <tag>"""
+                    + doW + """
                     </tag>
                             <std>8</std>
                             <min>00</min>
@@ -282,4 +290,5 @@ public class TestPfarreiController extends ApplicationTest {
             Assertions.fail(e.getMessage(), e);
         }
     }
+    //CHECKSTYLE:ON: MethodLength
 }

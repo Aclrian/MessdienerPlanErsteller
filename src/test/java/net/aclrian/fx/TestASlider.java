@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TestASlider extends ApplicationTest {
 
-    private final static String STRING_VALUE = "object2342+3";
+    private static final String STRING_VALUE = "object2342+3";
     private Slider instance;
     private Pane pane;
 

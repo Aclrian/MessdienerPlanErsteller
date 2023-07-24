@@ -35,14 +35,22 @@ class ConvertCSVTest {
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Dialogs dialog = Mockito.mock(Dialogs.class);
-        Dialogs.setDialogs(dialog);Mockito.when(pf.getSettings()).thenReturn(new Einstellungen());
+        Dialogs.setDialogs(dialog);
+        Mockito.when(pf.getSettings()).thenReturn(new Einstellungen());
         doAnswer(invocationOnMock -> {
             medis = null;
             return null;
         }).when(dv).reloadMessdiener();
         Mockito.when(dv.getMessdiener()).then((Answer<List<Messdiener>>) invocationOnMock -> getMessdiener(tempDir));
 
-        ConvertCSV.ConvertData convertdata = new ConvertCSV.ConvertData(null, Arrays.asList(ConvertCSV.Sortierung.VORNAME, ConvertCSV.Sortierung.NACHNAME, ConvertCSV.Sortierung.NICHT_LEITER, ConvertCSV.Sortierung.EINTRITT, ConvertCSV.Sortierung.EMAIL), Collections.singletonList(new Sonstiges()), ";", ",", Charset.defaultCharset(), true, false);
+        List<ConvertCSV.Sortierung> columns = Arrays.asList(
+                ConvertCSV.Sortierung.VORNAME, ConvertCSV.Sortierung.NACHNAME, ConvertCSV.Sortierung.NICHT_LEITER,
+                ConvertCSV.Sortierung.EINTRITT, ConvertCSV.Sortierung.EMAIL
+        );
+        ConvertCSV.ConvertData convertdata = new ConvertCSV.ConvertData(
+                null, columns, Collections.singletonList(new Sonstiges()),
+                ";", ",", Charset.defaultCharset(), true, false
+        );
         Messdiener m = parseLineToMessdiener("a;b;;2000;a@a.de", convertdata);
         assertThat(m).isNotNull();
         assertThat(m.getVorname()).isEqualTo("a");
@@ -51,7 +59,14 @@ class ConvertCSVTest {
         assertThat(m.getEintritt()).isEqualTo(2000);
         assertThat(m.getEmail()).isEqualTo("a@a.de");
 
-        convertdata = new ConvertCSV.ConvertData(null, Arrays.asList(ConvertCSV.Sortierung.NACHNAME_KOMMA_VORNAME, ConvertCSV.Sortierung.LEITER, ConvertCSV.Sortierung.EINTRITT, ConvertCSV.Sortierung.EMAIL, ConvertCSV.Sortierung.IGNORIEREN), Collections.singletonList(new Sonstiges()), ";", ",", Charset.defaultCharset(), true, false);
+        columns = Arrays.asList(
+                ConvertCSV.Sortierung.NACHNAME_KOMMA_VORNAME, ConvertCSV.Sortierung.LEITER, ConvertCSV.Sortierung.EINTRITT,
+                ConvertCSV.Sortierung.EMAIL, ConvertCSV.Sortierung.IGNORIEREN
+        );
+        convertdata = new ConvertCSV.ConvertData(
+                null, columns, Collections.singletonList(new Sonstiges()),
+                ";", ",", Charset.defaultCharset(), true, false
+        );
         m = parseLineToMessdiener("b, a;;x;non-valid e-mail;empty", convertdata);
         assertThat(m).isNotNull();
         assertThat(m.getVorname()).isEqualTo("a");
@@ -60,25 +75,41 @@ class ConvertCSVTest {
         assertThat(m.getEintritt()).isGreaterThanOrEqualTo(2023);
         assertThat(m.getEmail()).isEmpty();
 
-        convertdata = new ConvertCSV.ConvertData(null, List.of(ConvertCSV.Sortierung.NACHNAME), Collections.singletonList(new Sonstiges()), ";", ",", Charset.defaultCharset(), true, false);
+        convertdata = new ConvertCSV.ConvertData(
+                null, List.of(ConvertCSV.Sortierung.NACHNAME), Collections.singletonList(new Sonstiges()),
+                ";", ",", Charset.defaultCharset(), true, false
+        );
         m = parseLineToMessdiener("b;b", convertdata);
         assertThat(m).isNull();
 
-        convertdata = new ConvertCSV.ConvertData(null, List.of(ConvertCSV.Sortierung.NACHNAME), Collections.singletonList(new Sonstiges()), ";", ",", Charset.defaultCharset(), true, false);
+        convertdata = new ConvertCSV.ConvertData(
+                null, List.of(ConvertCSV.Sortierung.NACHNAME), Collections.singletonList(new Sonstiges()),
+                ";", ",", Charset.defaultCharset(), true, false
+        );
         m = parseLineToMessdiener("b", convertdata);
         assertThat(m).isNull();
 
-        convertdata = new ConvertCSV.ConvertData(null, List.of(ConvertCSV.Sortierung.VORNAME_LEERZEICHEN_NACHNAME, ConvertCSV.Sortierung.EINTRITT, ConvertCSV.Sortierung.LEITER), Collections.singletonList(new Sonstiges()), ";", ",", Charset.defaultCharset(), true, false);
+        columns = List.of(ConvertCSV.Sortierung.VORNAME_LEERZEICHEN_NACHNAME, ConvertCSV.Sortierung.EINTRITT, ConvertCSV.Sortierung.LEITER);
+        convertdata = new ConvertCSV.ConvertData(
+                null, columns, Collections.singletonList(new Sonstiges()),
+                ";", ",", Charset.defaultCharset(), true, false
+        );
         m = parseLineToMessdiener("a b c;2023;x;", convertdata);
         assertThat(m.getVorname()).isEqualTo("a");
         assertThat(m.getNachnname()).isEqualTo("b c");
 
-        convertdata = new ConvertCSV.ConvertData(null, List.of(ConvertCSV.Sortierung.VORNAME_LEERZEICHEN_NACHNAME, ConvertCSV.Sortierung.EINTRITT, ConvertCSV.Sortierung.LEITER), Collections.singletonList(new Sonstiges()), ";", ",", Charset.defaultCharset(), true, false);
+        convertdata = new ConvertCSV.ConvertData(
+                null, columns, Collections.singletonList(new Sonstiges()),
+                ";", ",", Charset.defaultCharset(), true, false
+        );
         m = parseLineToMessdiener("a b;2023;x;", convertdata);
         assertThat(m.getVorname()).isEqualTo("a");
         assertThat(m.getNachnname()).isEqualTo("b");
 
-        convertdata = new ConvertCSV.ConvertData(null, List.of(ConvertCSV.Sortierung.VORNAME_LEERZEICHEN_NACHNAME, ConvertCSV.Sortierung.EINTRITT, ConvertCSV.Sortierung.LEITER), Collections.singletonList(new Sonstiges()), ";", ",", Charset.defaultCharset(), true, false);
+        convertdata = new ConvertCSV.ConvertData(
+                null, columns, Collections.singletonList(new Sonstiges()),
+                ";", ",", Charset.defaultCharset(), true, false
+        );
         m = parseLineToMessdiener(" ;2023;x;", convertdata);
         assertThat(m).isNull();
 
@@ -87,7 +118,17 @@ class ConvertCSVTest {
         StandardMesse sm3 = new StandardMesse(DayOfWeek.WEDNESDAY, 8, "00", "ort", 1, "typ");
         StandardMesse sm4 = new StandardMesse(DayOfWeek.THURSDAY, 8, "00", "ort", 1, "typ");
         List<StandardMesse> standardMessen = Arrays.asList(sm1, sm2, sm3, sm4);
-        convertdata = new ConvertCSV.ConvertData(null, List.of(ConvertCSV.Sortierung.VORNAME, ConvertCSV.Sortierung.NACHNAME, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.NICHT_STANDARD_MESSE, ConvertCSV.Sortierung.NICHT_STANDARD_MESSE), standardMessen, ";", ",", Charset.defaultCharset(), true, false);
+        convertdata = new ConvertCSV.ConvertData(
+                null,
+                List.of(
+                ConvertCSV.Sortierung.VORNAME,
+                ConvertCSV.Sortierung.NACHNAME,
+                ConvertCSV.Sortierung.STANDARD_MESSE,
+                ConvertCSV.Sortierung.STANDARD_MESSE,
+                ConvertCSV.Sortierung.NICHT_STANDARD_MESSE,
+                ConvertCSV.Sortierung.NICHT_STANDARD_MESSE
+                ),
+                standardMessen, ";", ",", Charset.defaultCharset(), true, false);
         Mockito.when(pf.getStandardMessen()).thenReturn(standardMessen);
         m = parseLineToMessdiener("a;b;x;;x;;", convertdata);
         assertThat(m.getDienverhalten().getBestimmtes(sm1)).isTrue();
@@ -100,7 +141,15 @@ class ConvertCSVTest {
         Path file = Files.createTempFile(tempDir, null, ".csv");
         Mockito.when(dv.getSavePath()).thenReturn(tempDir.toFile());
         Files.writeString(file, "a;b;1,3;2\nc;d;0;\ne;f;;0\ng;h;0;");
-        convertdata = new ConvertCSV.ConvertData(file.toFile(), List.of(ConvertCSV.Sortierung.VORNAME, ConvertCSV.Sortierung.NACHNAME, ConvertCSV.Sortierung.FREUNDE, ConvertCSV.Sortierung.GESCHWISTER), standardMessen, ";", ",", Charset.defaultCharset(), true, false);
+        convertdata = new ConvertCSV.ConvertData(
+                file.toFile(),
+                List.of(
+                        ConvertCSV.Sortierung.VORNAME,
+                        ConvertCSV.Sortierung.NACHNAME,
+                        ConvertCSV.Sortierung.FREUNDE,
+                        ConvertCSV.Sortierung.GESCHWISTER
+                ),
+                standardMessen, ";", ",", Charset.defaultCharset(), true, false);
         ConvertCSV converter = new ConvertCSV(convertdata);
         converter.start();
 
@@ -127,7 +176,8 @@ class ConvertCSVTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Dialogs dialog = Mockito.mock(Dialogs.class);
         Dialogs.setDialogs(dialog);
-        Dialogs.setDialogs(dialog);Mockito.when(pf.getSettings()).thenReturn(new Einstellungen());
+        Dialogs.setDialogs(dialog);
+        Mockito.when(pf.getSettings()).thenReturn(new Einstellungen());
         medis = new ArrayList<>();
         doAnswer(invocationOnMock -> {
             medis = null;
@@ -146,7 +196,22 @@ class ConvertCSVTest {
 
 
         Path convertFile = Paths.get("src", "test", "resources", "converter", "converter_data.csv");
-        ConvertCSV.ConvertData convertdata = new ConvertCSV.ConvertData(convertFile.toFile(), List.of(ConvertCSV.Sortierung.VORNAME, ConvertCSV.Sortierung.NACHNAME, ConvertCSV.Sortierung.EINTRITT, ConvertCSV.Sortierung.EMAIL, ConvertCSV.Sortierung.FREUNDE, ConvertCSV.Sortierung.GESCHWISTER, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.STANDARD_MESSE, ConvertCSV.Sortierung.IGNORIEREN), standardMessen, ";", ",", Charset.defaultCharset(), true, false);
+        ConvertCSV.ConvertData convertdata = new ConvertCSV.ConvertData(
+                convertFile.toFile(),
+                List.of(ConvertCSV.Sortierung.VORNAME,
+                        ConvertCSV.Sortierung.NACHNAME,
+                        ConvertCSV.Sortierung.EINTRITT,
+                        ConvertCSV.Sortierung.EMAIL,
+                        ConvertCSV.Sortierung.FREUNDE,
+                        ConvertCSV.Sortierung.GESCHWISTER,
+                        ConvertCSV.Sortierung.STANDARD_MESSE,
+                        ConvertCSV.Sortierung.STANDARD_MESSE,
+                        ConvertCSV.Sortierung.STANDARD_MESSE,
+                        ConvertCSV.Sortierung.STANDARD_MESSE,
+                        ConvertCSV.Sortierung.STANDARD_MESSE,
+                        ConvertCSV.Sortierung.STANDARD_MESSE,
+                        ConvertCSV.Sortierung.IGNORIEREN
+                ), standardMessen, ";", ",", Charset.defaultCharset(), true, false);
         assertThat(convertFile.toFile()).exists();
         new ConvertCSV(convertdata).start();
         String tomString = "Schmidt, Tom.xml";
