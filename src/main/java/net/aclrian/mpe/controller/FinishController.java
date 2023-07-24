@@ -328,7 +328,6 @@ public class FinishController implements Controller {
             }
         }
         Collections.shuffle(allForSMesse, new Random(System.nanoTime()));
-        Arrays.sort(allForSMesse.toArray());
         allForSMesse.sort(Messdiener.MESSDIENER_EINTEILEN_COMPARATOR);
         return allForSMesse;
     }
