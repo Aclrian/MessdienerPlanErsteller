@@ -433,7 +433,7 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         if (res.isEmpty() || res.get() != ButtonType.OK) {
             return null;
         }
-        if(!controller.isValid()){
+        if (!controller.isValid()) {
             Dialogs.getDialogs().error("Ein Eingabefeld ist leer oder es sind mehr Standartmessen angegeben als im System sind");
             return  importDialog(window);
         }

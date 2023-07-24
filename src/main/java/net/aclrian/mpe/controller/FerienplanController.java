@@ -28,6 +28,14 @@ import java.util.List;
 
 public class FerienplanController implements Controller {
 
+    private static final String HILFE_STRING = """
+            Hier können Messdiener für bestimmte Tage abgemeldet werden:
+
+            Ein Hacken in einem Kasten heißt, dass der Messdiener an dem Tag nicht eingeteilt wird.
+            Mit den Pfeiltasten kann die Zelle gewechselt werden und mit dem Leerzeichen der Hacken gesetzt und entfernt werden.
+
+            Änderungen werden sofort umgesetzt und können nur durch Leeren komplett zurückgesetzt werden.
+            """;
     private List<String> dates = new ArrayList<>();
     @FXML
     private TableColumn<Datentraeger, String> name;
@@ -100,7 +108,7 @@ public class FerienplanController implements Controller {
                 table.getItems().forEach(dt -> dt.get(d).property().set(false));
             }
         });
-        hilfe.setOnAction(e -> Dialogs.getDialogs().info("Hier können Messdiener für bestimmte Tage abgemeldet werden:\n\nEin Hacken in einem Kasten heißt, dass der Messdiener an dem Tag nicht eingeteilt wird.\nMit den Pfeiltasten kann die Zelle gewechselt werden und mit dem Leerzeichen der Hacken gesetzt und entfernt werden.\n\nÄnderungen werden sofort umgesetzt und können nur durch Leeren komplett zurückgesetzt werden."));
+        hilfe.setOnAction(e -> Dialogs.getDialogs().info(HILFE_STRING));
     }
 
     public List<String> getDates() {

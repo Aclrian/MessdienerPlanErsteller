@@ -21,7 +21,8 @@ public class WORDExport implements IExporter {
     public File generateFile() {
         if (LocalOfficeUtils.getDefaultOfficeHome() == null) {
             Dialogs.getDialogs().info("Für die Konvertierung wird LibreOffice (oder Openoffice) benötigt.",
-                    "Wenn es trotz Installation nicht erkannt wird, kann dafür eine Systemvariable OFFICE_HOME angelegt werden, die den Installationspfad von der Officeanwendung enthält.");
+                    "Wenn es trotz Installation nicht erkannt wird, kann dafür eine Systemvariable OFFICE_HOME angelegt werden,"
+                    + "die den Installationspfad von der Officeanwendung enthält.");
             return null;
         }
         MPELog.getLogger().info("Converting PDF to WORD with JODConverter");

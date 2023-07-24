@@ -191,8 +191,14 @@ public class ReadFile {
     }
 
     private void fixEmail(Messdiener me, String mail, String vorname, String nachname, int eintritt, boolean leiter, Messverhalten dienverhalten) {
-        if (Dialogs.getDialogs().frage("Die E-Mail-Addresse '" + mail + "' von " + me + " ist ungültig und wird gelöscht.\nSoll eine neue eingegeben werden?")) {
-            String s = Dialogs.getDialogs().text("Neue E-Mail-Adresse von " + me + " eingeben:\nWenn keine vorhanden ist, soll das Feld leer bleiben.", "E-Mail:");
+        boolean frage = Dialogs.getDialogs().frage(
+                "Die E-Mail-Addresse '" + mail + "' von " + me + " ist ungültig und wird gelöscht.\nSoll eine neue eingegeben werden?"
+        );
+        if (frage) {
+            String s = Dialogs.getDialogs().text(
+                    "Neue E-Mail-Adresse von " + me + " eingeben:\nWenn keine vorhanden ist, soll das Feld leer bleiben.",
+                    "E-Mail:"
+            );
             if (!s.equals("")) {
                 me.setEmailEmpty();
             }

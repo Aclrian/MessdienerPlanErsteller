@@ -112,8 +112,12 @@ public class InfoController {
         });
         ArrayList<String[]> entries = new ArrayList<>();
         try {
-            ArrayList<String> csv = new ArrayList<>(Arrays.asList(IOUtils.toString(Objects.requireNonNull(this.getClass().getResourceAsStream("/abhängigkeiten.csv")),
-                    StandardCharsets.UTF_8).split(System.lineSeparator())));
+            ArrayList<String> csv = new ArrayList<>(
+                    Arrays.asList(
+                            IOUtils.toString(Objects.requireNonNull(this.getClass().getResourceAsStream("/abhängigkeiten.csv")), StandardCharsets.UTF_8)
+                                    .split(System.lineSeparator())
+                    )
+            );
             for (String entry : csv) {
                 entries.add(entry.split(Pattern.quote(",")));
             }

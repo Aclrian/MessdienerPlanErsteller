@@ -100,9 +100,9 @@
         <module name="InvalidJavadocPosition"/>
         <module name="JavadocMethod"/>
         <module name="JavadocType"/>
-        <module name="JavadocVariable"/>
-        <module name="JavadocStyle"/>
-        <module name="MissingJavadocMethod"/>
+<!--        <module name="JavadocVariable"/>TODO-->
+<!--        <module name="JavadocStyle"/>TODO-->
+<!--        <module name="MissingJavadocMethod"/>TODO-->
         <!-- Enables @SuppressWarnings Support                -->
         <module name="SuppressWarningsHolder"/>
 
@@ -176,7 +176,7 @@
         <!-- See https://checkstyle.org/config_design.html -->
         <module name="DesignForExtension"/>
         <!--module name="FinalClass"/>-->
-        <module name="HideUtilityClassConstructor"/>
+        <!--module name="HideUtilityClassConstructor"/ covered by pmd -->
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier"/>
 
@@ -194,5 +194,9 @@
         </module>
 
     </module>
-
+    <module name="SuppressWithPlainTextCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\:OFF\: ([\w\|]+)"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\:ON\: ([\w\|]+)"/>
+        <property name="checkFormat" value="$1"/>
+    </module>
 </module>

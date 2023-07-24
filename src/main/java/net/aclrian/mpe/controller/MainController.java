@@ -209,7 +209,8 @@ public class MainController {
 
     @FXML
     public void smesse(ActionEvent actionEvent) {
-        StandardMesse sm = (StandardMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), STANDARDMESSE_AUSWAEHLEN);
+        List<StandardMesse> standardMessen = DateienVerwalter.getInstance().getPfarrei().getStandardMessen();
+        StandardMesse sm = (StandardMesse) Dialogs.getDialogs().singleSelect(standardMessen, STANDARDMESSE_AUSWAEHLEN);
         if (sm != null) {
             changePane(sm);
         }
@@ -258,7 +259,7 @@ public class MainController {
     }
 
     @FXML
-    public void importCSV(ActionEvent event){
+    public void importCSV(ActionEvent event) {
         ConvertCSV.ConvertData data;
         data = Dialogs.getDialogs().importDialog(stage.getScene().getWindow());
         if (data == null) {
@@ -270,7 +271,7 @@ public class MainController {
         } catch (Exception e) {
             Dialogs.getDialogs().error(e, e.getMessage());
         }
-        if (ep==EnumPane.SELECT_MEDI){
+        if (ep == EnumPane.SELECT_MEDI) {
             control.afterStartup(stage, this);
         }
     }

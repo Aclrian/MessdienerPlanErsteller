@@ -198,8 +198,7 @@ public class Select implements Controller {
     public void neu() {
         if (selector == Selector.MESSDIENER) {
             mc.changePaneMessdiener(null);
-        }
-        else if (selector == Selector.MESSE) {
+        } else if (selector == Selector.MESSE) {
             mc.changePaneMesse(null);
         }
     }

@@ -232,7 +232,7 @@ public class FinishController implements Controller {
         List<Messdiener> medis;
         if (act == EnumAction.EINFACH_EINTEILEN) {
             medis = get(new Sonstiges(), m, false, false);
-        } else {//EnumAction.TYPE_BEACHTEN
+        } else { //EnumAction.TYPE_BEACHTEN
             medis = get(m.getStandardMesse(), m, false, false);
         }
         if (MPELog.getLogger().isDebugEnabled()) {

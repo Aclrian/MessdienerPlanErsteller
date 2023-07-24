@@ -43,10 +43,10 @@ public class Speicherort {
         try (BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(homedir), StandardCharsets.UTF_8))) {
             line = bufferedReader.readLine();
-            if (line == null){
+            if (line == null) {
                 line = "";
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) { }
         File saveFile = new File(line);
         if (saveFile.exists()) {
             speicherortString = line;

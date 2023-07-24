@@ -66,22 +66,24 @@ public class StandardMesse {
     }
 
     public String toKurzerBenutzerfreundlichenString() {
-        return wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + beginnStunde + ":" + beginnMinute + ": " + ort + " " + typ + " (" + anzMessdiener
-                + ")";
+        return wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                + beginnStunde + ":" + beginnMinute + ": "
+                + ort + " " + typ + " (" + anzMessdiener + ")";
     }
 
     public String toBenutzerfreundlichenString() {
-        return typ + " jeden " + wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + ", " + "um " + beginnStunde + ":" + beginnMinute + " in " + ort + " (" + anzMessdiener + ")";
+        return typ + " jeden " + wochentag.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + ", "
+                + "um " + beginnStunde + ":" + beginnMinute + " in " + ort + " (" + anzMessdiener + ")";
     }
 
     public String toReduziertenString() {
-        return wochentag.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()) + "-" + beginnStunde + "-" + beginnMinute + // ort+ "-" + typ +
-                "-" + anzMessdiener;
+        return wochentag.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()) + "-" + beginnStunde + "-" + beginnMinute // ort+ "-" + typ +
+                + "-" + anzMessdiener;
     }
 
     public String toLangerBenutzerfreundlichenString() {
-        return wochentag.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " um " + beginnStunde + ":" + beginnMinute + " Uhr in " + ort + " als " + typ + " mit " + anzMessdiener
-                + " Messdienern";
+        return wochentag.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " um " + beginnStunde + ":" + beginnMinute + " Uhr"
+                + " in " + ort + " als " + typ + " mit " + anzMessdiener + " Messdienern";
     }
 
     public String getZeit() {

@@ -16,6 +16,7 @@ import net.aclrian.mpe.utils.Dialogs;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static net.aclrian.mpe.utils.MPELog.getLogger;
 
@@ -145,7 +146,8 @@ public class MesseController implements Controller {
 
     @FXML
     private void standardmesseBearbeiten() {
-        StandardMesse s = (StandardMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), STANDARDMESSE_AUSWAEHLEN);
+        List<StandardMesse> standardMessen = DateienVerwalter.getInstance().getPfarrei().getStandardMessen();
+        StandardMesse s = (StandardMesse) Dialogs.getDialogs().singleSelect(standardMessen, STANDARDMESSE_AUSWAEHLEN);
         if (s != null) {
             smesse.setText(s.toLangerBenutzerfreundlichenString());
             this.standardMesse = s;

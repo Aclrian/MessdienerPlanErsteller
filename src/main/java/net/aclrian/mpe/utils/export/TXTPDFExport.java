@@ -15,7 +15,7 @@ public class TXTPDFExport implements IExporter {
     private final String html;
     private final String titel;
 
-    public TXTPDFExport(String html, String titel){
+    public TXTPDFExport(String html, String titel) {
         this.html = html;
         this.titel = titel;
     }

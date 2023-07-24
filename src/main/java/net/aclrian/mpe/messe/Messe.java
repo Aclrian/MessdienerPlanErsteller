@@ -91,10 +91,11 @@ public class Messe implements Comparable<Messe> { //NOPMD - suppressed TooManyMe
     }
 
     public String getIDHTML() {
-        return "<html><font><p><b>" +
-                date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " " +
-                DateUtil.DATE.format(date) + "&emsp;" + DateUtil.TIME.format(date) + " Uhr " +
-                typ + " " + kirche + "</p></b></font></html>";
+        return "<html><font><p><b>"
+                + date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " "
+                + DateUtil.DATE.format(date) + "&emsp;" + DateUtil.TIME.format(date) + " Uhr "
+                + typ + " " + kirche
+                + "</p></b></font></html>";
     }
 
     public String getKirche() {

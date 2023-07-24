@@ -36,7 +36,12 @@ public class DateienVerwalter {
         lookForPfarreiFile();
         Thread thread = new Thread(() -> {
             try (WatchService service = dir.toPath().getFileSystem().newWatchService()) {
-                dir.toPath().register(service, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+                dir.toPath().register(
+                        service,
+                        StandardWatchEventKinds.ENTRY_CREATE,
+                        StandardWatchEventKinds.ENTRY_MODIFY,
+                        StandardWatchEventKinds.ENTRY_DELETE
+                );
                 while (true) {
                     useKey(service);
                 }

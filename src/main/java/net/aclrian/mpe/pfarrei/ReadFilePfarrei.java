@@ -41,7 +41,7 @@ public class ReadFilePfarrei {
             dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(fXmlFile);
-            if (doc == null){
+            if (doc == null) {
                 throw new IOException("Could not parse the file");
             }
             doc.getDocumentElement().normalize();

@@ -19,7 +19,7 @@ public class VersionIDHandler {
     private static final String URL_WITH_TAG = "https://github.com/Aclrian/MessdienerPlanErsteller/releases/tag/";
     private static String internetId;
 
-    private VersionIDHandler(){
+    private VersionIDHandler() {
 
     }
 

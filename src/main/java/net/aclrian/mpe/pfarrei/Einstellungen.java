@@ -26,8 +26,10 @@ public class Einstellungen {
         }
         settings[i] = new Setting(Setting.Attribut.YEAR, eintrittAbstandZumAktuellemJahr, anzMaxDienen);
         if (anzMaxDienen > settings[0].anzahlDienen()) {
-            MPELog.getLogger().warn("Die Anzahl ({}) von der ID: {}"
-                    + " ist größer als der maximale Standardwert von allen nicht Leitern. Dieser max. Wert wird somit neu gesetzt.", anzMaxDienen, eintrittAbstandZumAktuellemJahr);
+            MPELog.getLogger().warn(
+                    "Die Anzahl ({}) von der ID: {} ist größer als der maximale Standardwert von allen nicht Leitern."
+                    + " Dieser max. Wert wird somit neu gesetzt.",
+                    anzMaxDienen, eintrittAbstandZumAktuellemJahr);
             settings[0] = new Setting(Setting.Attribut.MAX, 0, anzMaxDienen);
         }
     }

@@ -226,8 +226,7 @@ public class Messdaten {
             String[] gew = MediController.getArrayString(list, isFreund ? Messdiener.LENGHT_FREUNDE : Messdiener.LENGHT_GESCHWISTER);
             if (isFreund) {
                 m.setFreunde(gew);
-            }
-            else {
+            } else {
                 m.setGeschwister(gew);
             }
             WriteFile wf = new WriteFile(m);

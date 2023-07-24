@@ -14,9 +14,10 @@ import java.util.List;
  * @author Aclrian
  */
 public class Messverhalten {
-    private final ArrayList<KannWelcheMesse> messen = new ArrayList<>();
+    private final ArrayList<KannWelcheMesse> messen;
 
     public Messverhalten() {
+        messen = new ArrayList<>();
         for (StandardMesse standardMesse : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
             if (!(standardMesse instanceof Sonstiges)) {
                 this.messen.add(new KannWelcheMesse(standardMesse, false));

@@ -17,7 +17,13 @@ public class ApplikationStarter { //NOPMD - suppressed UseUtilityClass - contain
             MainApplication.main(args);
         } catch (ClassNotFoundException e) {
             MPELog.getLogger().error(e.getMessage(), e);
-            int i = JOptionPane.showConfirmDialog(new JFrame(), "JAVAFX-Komponenten nicht gefunden!\nSoll die Hilfe-Website geöffnet werden?", "MessdienerplanErsteller", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+            int i = JOptionPane.showConfirmDialog(
+                    new JFrame(),
+                    "JAVAFX-Komponenten nicht gefunden!\nSoll die Hilfe-Website geöffnet werden?",
+                    "MessdienerplanErsteller",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.ERROR_MESSAGE
+            );
             if (i == 0) {
                 try {
                     Desktop.getDesktop().browse(WIKI);

@@ -18,12 +18,12 @@ public class PDFExport implements IExporter {
     @Override
     public File generateFile() throws IOException {
         File pdf = null;
-        try{
+        try {
             pdf = new JodPDFExport(html, titel).generateFile();
-        } catch (Exception e){
+        } catch (Exception e) {
             MPELog.getLogger().info("JODConverter failed attempting itext next:" + e.getMessage());
         }
-        if (pdf == null){
+        if (pdf == null) {
             pdf = new TXTPDFExport(html, titel).generateFile();
         }
         return pdf;

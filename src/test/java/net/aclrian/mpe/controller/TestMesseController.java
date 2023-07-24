@@ -68,7 +68,7 @@ class TestMesseController extends ApplicationTest {
     public void close() {
         try {
             openMocks.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             Assertions.fail(e);
         }
     }
