@@ -1,0 +1,14 @@
+Java 11
+JAVAFX 11 / OpenJDK 11
+Eclipse
+IntelliJ Ultimate
+GIT / GITHUB
+Maven / Gradle
+openjfx: javafx-(maven/gradle)-plugin
+launch4j
+Inno Setup
+paint.net
+AdoptOpenJDK
+StackOverflow
+Geduld und Nerven
+Scenebuilder

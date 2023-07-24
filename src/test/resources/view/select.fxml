@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<GridPane fx:id="gpane" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+          minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml">
+    <columnConstraints>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="6.66"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints minHeight="10.0" percentHeight="14.2857143" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+        <RowConstraints percentHeight="14.2857143" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <Label fx:id="text" text="text" GridPane.columnSpan="16" GridPane.halignment="CENTER">
+        <font>
+            <Font name="System Bold" size="18.0"/>
+        </font>
+    </Label>
+    <ListView fx:id="list" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="16" GridPane.rowIndex="1"
+              GridPane.rowSpan="5">
+        <GridPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        </GridPane.margin>
+        <selectionModel>
+        </selectionModel>
+    </ListView>
+    <FlowPane fx:id="pane" alignment="CENTER" hgap="50.0" maxHeight="1.7976931348623157E308"
+              maxWidth="1.7976931348623157E308" GridPane.columnSpan="16" GridPane.halignment="CENTER"
+              GridPane.rowIndex="6" GridPane.valignment="CENTER">
+        <GridPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0"/>
+        </GridPane.margin>
+        <Button fx:id="bearbeiten" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                mnemonicParsing="false" text="Bearbeiten"/>
+        <Button fx:id="neu" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                mnemonicParsing="false" text="Neu"/>
+        <Button fx:id="remove" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                mnemonicParsing="false" text="Löschen"/>
+    </FlowPane>
+</GridPane>

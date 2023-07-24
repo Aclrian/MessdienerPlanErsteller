@@ -1,0 +1,13 @@
+#custom-slider .thumb {
+    -fx-background-color: transparent;
+    -fx-padding: 24;
+}
+
+#custom-slider .track {
+    -fx-background-color: #2F2F2F;
+}
+
+#base-layout {
+    -fx-background-color: lightgray;
+    -fx-padding: 10px;
+}

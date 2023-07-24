@@ -410,7 +410,6 @@ class TestMainController extends ApplicationTest {
 
         loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
-        System.out.println(instance.getClass().getName());
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
         try {
             pane = loader.load();
