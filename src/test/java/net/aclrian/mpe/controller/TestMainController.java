@@ -73,7 +73,6 @@ class TestMainController extends ApplicationTest {
     }
 
     //CHECKSTYLE:OFF: MethodLength
-    @Test
     @RetryingTest(5)
     void testEachEnumPane() { //NOPMD - suppressed NPathComplexity - for test purpose
         Dialogs.setDialogs(dialogs);
@@ -412,7 +411,7 @@ class TestMainController extends ApplicationTest {
         loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
-        System.out.println(this.getClass().getResource("/view/AAhaupt.fxml").getFile() + "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ");
+        System.out.println(instance.getClass().getResource("/view/AAhaupt.fxml").getFile() + "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ");
         try {
             pane = loader.load();
             Platform.runLater(() -> stage.show());
