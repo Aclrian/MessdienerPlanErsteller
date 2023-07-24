@@ -12,7 +12,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import net.aclrian.fx.TimeSpinner;
 import net.aclrian.mpe.MainApplication;
-import net.aclrian.mpe.messdiener.KannWelcheMesse;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
@@ -157,7 +156,7 @@ class TestMainController extends ApplicationTest {
                 assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
                 final TableView<?> table = (TableView<?>) scene.lookup("#table");
                 assertThat(table.getItems()).hasSize(1);
-                assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
+                assertThat(((Messverhalten.KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
 
                 assertThat(instance.getControl().isLocked()).isTrue();
 

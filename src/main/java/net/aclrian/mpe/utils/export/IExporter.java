@@ -10,10 +10,11 @@ import org.jodconverter.local.office.LocalOfficeManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public interface IExporter {
-    File generateFile();
+    File generateFile() throws IOException;
 
     default File convert(DocumentFormat fileFormat, String html, String titel) {
 

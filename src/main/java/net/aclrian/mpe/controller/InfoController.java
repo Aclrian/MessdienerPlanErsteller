@@ -1,14 +1,20 @@
 package net.aclrian.mpe.controller;
 
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.*;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.text.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.aclrian.mpe.MainApplication;
@@ -17,7 +23,6 @@ import net.aclrian.mpe.utils.MPELog;
 import org.apache.commons.io.IOUtils;
 
 import java.awt.*;
-import java.awt.Button;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -27,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
-
 
 public class InfoController {
     private static final String KONNTE = "Konnte ";
