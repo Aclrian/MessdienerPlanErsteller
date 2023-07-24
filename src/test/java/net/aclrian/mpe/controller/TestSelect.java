@@ -68,7 +68,7 @@ public class TestSelect extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         pane = new Pane();
-        scene = new Scene(pane, 600, 400);
+        scene = new Scene(pane, 10, 10);
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();
@@ -160,25 +160,25 @@ public class TestSelect extends ApplicationTest {
             final String actual = Files.readString(f2.toPath());
             assertThat(actual).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + System.getProperty("line.separator")
                     + "<XML>" + System.getProperty("line.separator")
-                    + "  <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator")
-                    + "  <Body>" + System.getProperty("line.separator")
-                    + "    <Vorname/>" + System.getProperty("line.separator")
-                    + "    <Nachname/>" + System.getProperty("line.separator")
-                    + "    <Email/>" + System.getProperty("line.separator")
-                    + "    <Messverhalten/>" + System.getProperty("line.separator")
-                    + "    <Leiter>false</Leiter>" + System.getProperty("line.separator")
-                    + "    <Eintritt>0</Eintritt>" + System.getProperty("line.separator")
-                    + "    <Anvertraute>" + System.getProperty("line.separator")
-                    + "      <F1>LEER</F1>" + System.getProperty("line.separator")
-                    + "      <F2>LEER</F2>" + System.getProperty("line.separator")
-                    + "      <F3>LEER</F3>" + System.getProperty("line.separator")
-                    + "      <F4>LEER</F4>" + System.getProperty("line.separator")
-                    + "      <F5>LEER</F5>" + System.getProperty("line.separator")
-                    + "      <g1>LEER</g1>" + System.getProperty("line.separator")
-                    + "      <g2>LEER</g2>" + System.getProperty("line.separator")
-                    + "      <g3>LEER</g3>" + System.getProperty("line.separator")
-                    + "    </Anvertraute>" + System.getProperty("line.separator")
-                    + "  </Body>" + System.getProperty("line.separator")
+                    + "    <MpE-Creator LICENSE=\"MIT\">Aclrian</MpE-Creator>" + System.getProperty("line.separator")
+                    + "    <Body>" + System.getProperty("line.separator")
+                    + "        <Vorname/>" + System.getProperty("line.separator")
+                    + "        <Nachname/>" + System.getProperty("line.separator")
+                    + "        <Email/>" + System.getProperty("line.separator")
+                    + "        <Messverhalten/>" + System.getProperty("line.separator")
+                    + "        <Leiter>false</Leiter>" + System.getProperty("line.separator")
+                    + "        <Eintritt>0</Eintritt>" + System.getProperty("line.separator")
+                    + "        <Anvertraute>" + System.getProperty("line.separator")
+                    + "            <F1>LEER</F1>" + System.getProperty("line.separator")
+                    + "            <F2>LEER</F2>" + System.getProperty("line.separator")
+                    + "            <F3>LEER</F3>" + System.getProperty("line.separator")
+                    + "            <F4>LEER</F4>" + System.getProperty("line.separator")
+                    + "            <F5>LEER</F5>" + System.getProperty("line.separator")
+                    + "            <g1>LEER</g1>" + System.getProperty("line.separator")
+                    + "            <g2>LEER</g2>" + System.getProperty("line.separator")
+                    + "            <g3>LEER</g3>" + System.getProperty("line.separator")
+                    + "        </Anvertraute>" + System.getProperty("line.separator")
+                    + "    </Body>" + System.getProperty("line.separator")
                     + "</XML>" + System.getProperty("line.separator"));
             Files.delete(f2.toPath());
         } catch (IOException e) {

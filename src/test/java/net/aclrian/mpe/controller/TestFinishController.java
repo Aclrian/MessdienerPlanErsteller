@@ -67,7 +67,7 @@ class TestFinishController extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         pane = new Pane();
-        Scene scene = new Scene(pane, 10, 10);
+        Scene scene = new Scene(pane, 600, 600);
         stage.setScene(scene);
         stage.show();
         dialogs = Mockito.mock(Dialogs.class);
