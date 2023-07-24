@@ -229,12 +229,12 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/mainApplication/resources</directory>
+                <directory>src/main/resources</directory>
             </resource>
         </resources>
         <testResources>
             <testResource>
-                <directory>${project.basedir}/src/mainApplication/resources</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
             </testResource>
         </testResources>
     </build>
