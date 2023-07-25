@@ -1,4 +1,4 @@
-package net.aclrian.mpe.utils;
+package net.aclrian.mpe.utils; //NOPMD - suppressed ExcessiveImports - creates various dialogs - all in one class
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -21,6 +21,7 @@ import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.controller.converter.ConvertController;
 import net.aclrian.mpe.converter.ConvertCSV;
 import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Setting;
 
@@ -31,6 +32,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -442,6 +444,37 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
             return  importDialog(window);
         }
         return controller.getData();
+    }
+
+    public static boolean remove(Messdiener m) {
+        if (Dialogs.getDialogs().frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
+                "Löschen")) {
+            File file = m.getFile();
+            try {
+                Files.delete(file.toPath());
+            } catch (IOException e) {
+                return false;
+            }
+            ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
+            for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
+                ueberarbeitete.add(Messdiener.alteLoeschen(m, messdiener));
+            }
+            ueberarbeitete.removeIf(Objects::isNull);
+            for (Messdiener medi : ueberarbeitete) {
+                if (medi.toString().equals(m.toString())) {
+                    continue;
+                }
+                WriteFile wf = new WriteFile(medi);
+                try {
+                    wf.saveToXML();
+                } catch (IOException e) {
+                    Dialogs.getDialogs().error(e, "Konnte bei dem Bekannten '" + medi
+                            + "' von dem zulöschenden Messdiener diesen nicht löschen.");
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public enum YesNoCancelEnum {

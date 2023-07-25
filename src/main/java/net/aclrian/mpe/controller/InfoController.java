@@ -1,4 +1,4 @@
-package net.aclrian.mpe.controller;
+package net.aclrian.mpe.controller; //NOPMD - suppressed ExcessiveImports - processes and adds data to the view
 
 
 import javafx.beans.property.SimpleStringProperty;

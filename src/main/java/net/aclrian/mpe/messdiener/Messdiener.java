@@ -50,7 +50,6 @@ public class Messdiener {
     private File file;
 
     public Messdiener(File f) {
-        setDefault();
         this.file = f;
     }
 
@@ -99,23 +98,6 @@ public class Messdiener {
         this.leiter = istLeiter;
         this.dienverhalten = dienverhalten;
         email = "";
-    }
-
-    /**
-     * setzt Standard Werte
-     */
-    private void setDefault() {
-        try {
-            setzeAllesNeu("Vorname", "Nachname", 2000, this.leiter, new Messverhalten(), "");
-        } catch (NotValidException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < LENGHT_FREUNDE; i++) {
-            freunde[i] = "";
-        }
-        for (int i = 0; i < LENGHT_GESCHWISTER; i++) {
-            geschwister[i] = "";
-        }
     }
 
     public String getEmail() {
@@ -210,7 +192,7 @@ public class Messdiener {
     public void setNewMessdatenDaten() {
         try {
             this.daten = new Messdaten(this);
-        } catch (Messdaten.CouldFindMessdiener e) {
+        } catch (FindMessdiener.CouldFindMessdiener e) {
             for (int i = 0; i < freunde.length; i++) {
                 if (freunde[i].equalsIgnoreCase(e.getString())) {
                     freunde[i] = e.getString();
@@ -224,6 +206,26 @@ public class Messdiener {
             makeXML();
             setNewMessdatenDaten();
         }
+    }
+
+    public static Messdiener alteLoeschen(Messdiener toDel, Messdiener toSearchIn) {
+        if (toDel.equals(toSearchIn)) {
+            return toDel;
+        }
+        Messdiener medi = null;
+        for (int i = 0; i < toSearchIn.getGeschwister().length; i++) {
+            if (toSearchIn.getGeschwister()[i].compareTo(toDel.toString()) == 0) {
+                toSearchIn.getGeschwister()[i] = "";
+                medi = toSearchIn;
+            }
+        }
+        for (int i = 0; i < toSearchIn.getFreunde().length; i++) {
+            if (toSearchIn.getFreunde()[i].compareTo(toDel.toString()) == 0) {
+                toSearchIn.getFreunde()[i] = "";
+                medi = toSearchIn;
+            }
+        }
+        return medi;
     }
 
     public File getFile() {

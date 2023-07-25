@@ -1,4 +1,4 @@
-package net.aclrian.mpe.controller;
+package net.aclrian.mpe.controller; //NOPMD - suppressed ExcessiveImports - for test purpose
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -143,7 +143,7 @@ class TestFinishController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        assertThat(m1.getMessdaten().kanndann(date, false)).isFalse();
+        assertThat(m1.getMessdaten().kannDann(date, false)).isFalse();
         Platform.runLater(() -> {
             if (pane.lookup("#zurueck") instanceof Button zurueck) {
                 zurueck.fire();
@@ -157,7 +157,7 @@ class TestFinishController extends ApplicationTest {
                 Assertions.fail("Not all Messdaten are zero");
             }
         }
-        assertThat(m1.getMessdaten().kanndann(date, false)).isTrue();
+        assertThat(m1.getMessdaten().kannDann(date, false)).isTrue();
         assertThat(instance.getNichtEingeteilteMessdiener()).contains(m1);
         assertThat(instance.getNichtEingeteilteMessdiener()).contains(m2);
         assertThat(instance.getNichtEingeteilteMessdiener()).contains(m3);
@@ -289,8 +289,8 @@ class TestFinishController extends ApplicationTest {
         assertThat(me1.istFertig() && me2.istFertig() && me3.istFertig()).isTrue();
         assertThat(!me1.getEingeteilte().contains(m1) && !me1.getEingeteilte().contains(m1Freund)).isTrue();
         assertThat(!me3.getEingeteilte().contains(m1) && !me3.getEingeteilte().contains(m1Freund)).isTrue();
-        assertThat(md1.kanndann(DateUtil.getToday(), false)).isFalse();
-        assertThat(md1F.kanndann(DateUtil.getToday(), false)).isFalse();
+        assertThat(md1.kannDann(DateUtil.getToday(), false)).isFalse();
+        assertThat(md1F.kannDann(DateUtil.getToday(), false)).isFalse();
         assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
 
         File out = new File(MPELog.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");

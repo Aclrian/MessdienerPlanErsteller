@@ -117,14 +117,14 @@ public class Select implements Controller {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 int i = list.getSelectionModel().getSelectedIndex();
                 if (i >= 0 && i < messen.size()) {
-                    mc.changePaneMesse(messen.get(i));
+                    mc.changePane(messen.get(i));
                 }
             }
         });
         bearbeiten.setOnAction(e -> {
             int i = list.getSelectionModel().getSelectedIndex();
             if (i >= 0 && i < messen.size()) {
-                mc.changePaneMesse(messen.get(i));
+                mc.changePane(messen.get(i));
             }
         });
         remove.setOnAction(arg0 -> {
@@ -167,20 +167,20 @@ public class Select implements Controller {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 int i = list.getSelectionModel().getSelectedIndex();
                 if (i >= 0 && i < data.size()) {
-                    mc.changePaneMessdiener(data.get(i));
+                    mc.changePane(data.get(i));
                 }
             }
         });
         bearbeiten.setOnAction(e -> {
             int i = list.getSelectionModel().getSelectedIndex();
             if (i >= 0 && i < data.size()) {
-                mc.changePaneMessdiener(data.get(i));
+                mc.changePane(data.get(i));
             }
         });
         remove.setOnAction(arg0 -> {
             int i = list.getSelectionModel().getSelectedIndex();
             if (i >= 0 && list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString())
-                    && MediController.remove(data.get(i))) {
+                    && Dialogs.remove(data.get(i))) {
                 DateienVerwalter.getInstance().reloadMessdiener();
                 afterStartup(window, mc);
             }
@@ -197,9 +197,9 @@ public class Select implements Controller {
 
     public void neu() {
         if (selector == Selector.MESSDIENER) {
-            mc.changePaneMessdiener(null);
+            mc.changePane(null);
         } else if (selector == Selector.MESSE) {
-            mc.changePaneMesse(null);
+            mc.changePane(null);
         }
     }
 

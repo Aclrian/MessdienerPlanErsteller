@@ -1,11 +1,9 @@
 package net.aclrian.mpe.messdiener;
 
 
-import net.aclrian.mpe.controller.MediController;
 import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.utils.*;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -13,19 +11,18 @@ import java.util.*;
 public class Messdaten {
 
     private final int maxMessen;
-    private final RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
     private List<Messdiener> geschwister;
     private List<Messdiener> freunde;
     private int anzMessen;
     private int insgesamtEingeteilt;
     private ArrayList<LocalDate> eingeteilt = new ArrayList<>();
-    private ArrayList<LocalDate> ausgeteilt = new ArrayList<>();
+    private final ArrayList<LocalDate> ausgeteilt = new ArrayList<>();
     private ArrayList<LocalDate> pause = new ArrayList<>();
 
-    public Messdaten(Messdiener m) throws CouldFindMessdiener {
-        geschwister = new ArrayList<>();
-        freunde = new ArrayList<>();
-        update(m);
+    public Messdaten(Messdiener m) throws FindMessdiener.CouldFindMessdiener {
+        FindMessdiener findMessdiener = new FindMessdiener(this);
+        geschwister = findMessdiener.updateGeschwister(m);
+        freunde = findMessdiener.updateFreunde(m);
         maxMessen = berecheMax(m.getEintritt(), getMaxYear(), m.istLeiter(),
                 DateienVerwalter.getInstance().getPfarrei().getSettings());
         anzMessen = 0;
@@ -44,7 +41,7 @@ public class Messdaten {
         ausgeteilt.add(d);
     }
 
-    public void ausausteilen(LocalDate d) {
+    public void ausAusteilenEntfernen(LocalDate d) {
         ausgeteilt.remove(d);
     }
 
@@ -98,6 +95,7 @@ public class Messdaten {
 
     public List<Messdiener> getAnvertraute(List<Messdiener> medis) {
         ArrayList<Messdiener> rtn = new ArrayList<>();
+        RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
         geschwister = rd.removeDuplicatedEntries(geschwister);
         freunde = rd.removeDuplicatedEntries(freunde);
 
@@ -136,10 +134,10 @@ public class Messdaten {
     }
 
     public boolean kann(LocalDate date, boolean dateZwang, boolean zwang) {
-        return kanndann(date, dateZwang) && (kannnoch() || zwang && (anzMessen - maxMessen <= (int) (maxMessen * 0.2) + 1));
+        return kannDann(date, dateZwang) && (kannnoch() || zwang && (anzMessen - maxMessen <= (int) (maxMessen * 0.2) + 1));
     }
 
-    public boolean kanndann(LocalDate date, boolean zwang) {
+    public boolean kannDann(LocalDate date, boolean zwang) {
         if (eingeteilt.isEmpty() && ausgeteilt.isEmpty() && (zwang || pause.isEmpty())) {
             return true;
         }
@@ -177,11 +175,6 @@ public class Messdaten {
         anzMessen = 0;
     }
 
-    @SuppressWarnings("unused")
-    public void loescheAbwesendeDaten() {
-        ausgeteilt = new ArrayList<>();
-    }
-
     public double getSortierenDouble() {
         return anzMessen / getMaxMessenDouble();
     }
@@ -190,106 +183,15 @@ public class Messdaten {
         return insgesamtEingeteilt;
     }
 
-    public void update(Messdiener m) throws CouldFindMessdiener {
-        update(false, m.getGeschwister(), m);
-        update(true, m.getFreunde(), m);
-    }
-
-    private void update(boolean isFreund, String[] s, Messdiener m) throws CouldFindMessdiener {
-        for (String value : s) {
-            Messdiener medi = null;
-            if (!value.equals("") && !value.equals("LEER") && !value.equals("Vorname, Nachname")) {
-                try {
-                    medi = sucheMessdiener(value, m);
-                } catch (CouldNotFindMessdiener e) {
-                    messdienerNotFound(isFreund, s, m, value, e);
-                }
-                if (medi != null) {
-                    if (isFreund) {
-                        this.freunde.add(medi);
-                        freunde = rd.removeDuplicatedEntries(this.freunde);
-                    } else {
-                        this.geschwister.add(medi);
-                        geschwister = rd.removeDuplicatedEntries(this.geschwister);
-                    }
-                }
-            }
-        }
-    }
-
-    private void messdienerNotFound(boolean isFreund, String[] s, Messdiener m, String value, CouldNotFindMessdiener e) {
-        boolean beheben = Dialogs.getDialogs().frage(e.getMessage(),
-                "ignorieren", "beheben");
-        if (beheben) {
-            ArrayList<String> list = new ArrayList<>(Arrays.asList(s));
-            list.remove(value);
-            String[] gew = MediController.getArrayString(list, isFreund ? Messdiener.LENGHT_FREUNDE : Messdiener.LENGHT_GESCHWISTER);
-            if (isFreund) {
-                m.setFreunde(gew);
-            } else {
-                m.setGeschwister(gew);
-            }
-            WriteFile wf = new WriteFile(m);
-            try {
-                wf.saveToXML();
-            } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, "Konnte es nicht beheben.");
-            }
-            DateienVerwalter.getInstance().reloadMessdiener();
-        }
-    }
-
-    public Messdiener sucheMessdiener(String geschwi, Messdiener akt) throws CouldNotFindMessdiener, CouldFindMessdiener {
-        for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
-            if (messdiener.toString().equals(geschwi)) {
-                return messdiener;
-            }
-        }
-        // additional Search for Vorname and Nachname
-        String replaceSeparators = geschwi.replace(", ", " ")
-                .replace("-", " ").replace("; ", " ").toLowerCase(Locale.getDefault());
-        String[] parts = replaceSeparators.split(" ");
-        Arrays.sort(parts);
-        for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
-            String[] parts2 = messdiener.toString().replace(", ", " ")
-                    .replace("-", " ").replace("; ", " ").toLowerCase(Locale.getDefault()).split(" ");
-            Arrays.sort(parts2);
-            if (Arrays.equals(parts, parts2)) {
-                String message = "Konnte für " + akt.toString() + " : " + geschwi + " finden";
-                MPELog.getLogger().info(message);
-                throw new CouldFindMessdiener(messdiener.toString(), geschwi, message);
-            }
-        }
-
-        throw new CouldNotFindMessdiener("Konnte für " + akt.toString() + " : " + geschwi + " nicht finden");
-    }
-
     public int getAnzMessen() {
         return anzMessen;
     }
 
-    public static class CouldNotFindMessdiener extends Exception {
-        public CouldNotFindMessdiener(String message) {
-            super(message);
-        }
+    public static String[] mapFreunde(Messdiener messdiener) {
+        return messdiener.getFreunde();
     }
 
-    public static class CouldFindMessdiener extends Exception {
-        private final String messdienerID;
-        private final String string;
-
-        public CouldFindMessdiener(String foundID, String string, String message) {
-            super(message);
-            this.messdienerID = foundID;
-            this.string = string;
-        }
-
-        public String getFoundMessdienerID() {
-            return messdienerID;
-        }
-
-        public String getString() {
-            return string;
-        }
+    public static String[] mapGeschwister(Messdiener messdiener) {
+        return messdiener.getFreunde();
     }
 }

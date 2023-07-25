@@ -1,4 +1,4 @@
-package net.aclrian.mpe.controller;
+package net.aclrian.mpe.controller; //NOPMD - suppressed ExcessiveImports - for test purpose
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -137,15 +137,15 @@ public class TestSelect extends ApplicationTest {
                 MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0,
                 MouseButton.PRIMARY, 2, false, false, false, false, false,
                 false, false, false, false, false, null));
-        Mockito.verify(mc, Mockito.times(1)).changePaneMessdiener(m1);
+        Mockito.verify(mc, Mockito.times(1)).changePane(m1);
 
         assertThat(scene.lookup("#bearbeiten")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#bearbeiten")).fire();
-        Mockito.verify(mc, Mockito.times(2)).changePaneMessdiener(m1);
+        Mockito.verify(mc, Mockito.times(2)).changePane(m1);
 
         assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#neu")).fire();
-        Mockito.verify(mc, Mockito.times(1)).changePaneMessdiener(Mockito.isNull());
+        Mockito.verify(mc, Mockito.times(1)).changePane(Mockito.isNull());
 
         assertThat(scene.lookup("#remove")).isInstanceOf(Button.class);
         Mockito.when(dialog.frage(Mockito.any(), Mockito.any(), Mockito.eq("Löschen"))).thenReturn(true);
@@ -221,17 +221,17 @@ public class TestSelect extends ApplicationTest {
 
         assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#neu")).fire();
-        Mockito.verify(mc, Mockito.times(1)).changePaneMesse(Mockito.isNull());
+        Mockito.verify(mc, Mockito.times(1)).changePane(Mockito.isNull());
 
         ((ListView<?>) scene.lookup("#list")).getSelectionModel().select(0);
         scene.lookup("#list").fireEvent(new MouseEvent(
                 MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY,
                 2, false, false, false, false, false, false, false, false, false, false, null));
-        Mockito.verify(mc, Mockito.times(1)).changePaneMesse(m1);
+        Mockito.verify(mc, Mockito.times(1)).changePane(m1);
 
         assertThat(scene.lookup("#bearbeiten")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#bearbeiten")).fire();
-        Mockito.verify(mc, Mockito.times(2)).changePaneMesse(m1);
+        Mockito.verify(mc, Mockito.times(2)).changePane(m1);
 
         assertThat(scene.lookup("#" + Select.GENERIEREN_ID)).isInstanceOf(Button.class);
         assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);

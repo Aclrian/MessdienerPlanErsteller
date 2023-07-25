@@ -324,7 +324,7 @@ public class FinishController implements Controller {
             if (!m.istFertig() && kannStandardMesse) {
                 List<Messdiener> anv = medi.getMessdaten()
                         .getAnvertraute(DateienVerwalter.getInstance().getMessdiener());
-                RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<Messdiener>();
+                RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
                 anv = rd.removeDuplicatedEntries(anv);
                 anv.sort(Messdiener.MESSDIENER_EINTEILEN_COMPARATOR);
                 for (Messdiener messdiener : anv) {
@@ -341,7 +341,7 @@ public class FinishController implements Controller {
         }
 
         public List<Messdiener> get(StandardMesse sm, Messe m, boolean zwangdate, boolean zwanganz) {
-            ArrayList<Messdiener> allForSMesse = new ArrayList<Messdiener>();
+            ArrayList<Messdiener> allForSMesse = new ArrayList<>();
             for (Messdiener medi : messdiener) {
                 int id = medi.istLeiter() ? 1 : 0;
                 if (medi.getDienverhalten().getBestimmtes(sm)

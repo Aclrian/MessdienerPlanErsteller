@@ -78,7 +78,7 @@ public class MesseController implements Controller {
         saveNew.setOnAction(e -> {
             if (saveMesse(mc)) {
                 locked = false;
-                mc.changePaneMesse(null);
+                mc.changePane(null);
             } else {
                 Dialogs.getDialogs().warn("Bitte einen Titel, Ort, Datum und Uhrzeit eingeben.");
             }

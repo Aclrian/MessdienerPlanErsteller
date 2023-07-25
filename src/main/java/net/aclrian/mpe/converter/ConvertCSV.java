@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 public class ConvertCSV {
     private final ConvertData convertData;
@@ -168,29 +169,23 @@ public class ConvertCSV {
     private void createMissingBackReferences() {
         DateienVerwalter.getInstance().reloadMessdiener();
         for (Messdiener m : importedMessdiener) {
-            for (Messdiener freund : m.getMessdaten().getFreunde()) {
-                if (!freund.getMessdaten().getFreunde().contains(m)) {
-                    for (int i = 0; i < Messdiener.LENGHT_FREUNDE; i++) {
-                        if (freund.getFreunde()[i].equals("") || freund.getFreunde()[i].equals("LEER") || freund.getFreunde()[i].equals("Vorname, Nachname")) {
-                            freund.getFreunde()[i] = m.toString();
-                            DateienVerwalter.getInstance().reloadMessdiener();
-                            freund.makeXML();
-                            break;
-                        }
-                    }
-                }
-            }
-            for (Messdiener geschwi : m.getMessdaten().getGeschwister()) {
-                if (!geschwi.getMessdaten().getGeschwister().contains(m)) {
-                    for (int i = 0; i < Messdiener.LENGHT_GESCHWISTER; i++) {
-                        if (geschwi.getGeschwister()[i].equals("")
-                                || geschwi.getGeschwister()[i].equals("LEER")
-                                || geschwi.getGeschwister()[i].equals("Vorname, Nachname")) {
-                            geschwi.getGeschwister()[i] = m.toString();
-                            geschwi.makeXML();
-                            DateienVerwalter.getInstance().reloadMessdiener();
-                            break;
-                        }
+            addBackReferenz(m.getMessdaten().getFreunde(), m, Messdiener::getFreunde);
+            addBackReferenz(m.getMessdaten().getGeschwister(), m, Messdiener::getGeschwister);
+        }
+    }
+
+    private void addBackReferenz(List<Messdiener> anvertraute, Messdiener m, Function<Messdiener, String[]> getAnvertraute) {
+        for (Messdiener anvertrauterMedi : anvertraute) {
+            if (!anvertrauterMedi.getMessdaten().getFreunde().contains(m)) {
+                String[] list = getAnvertraute.apply(anvertrauterMedi);
+                for (int i = 0; i < list.length; i++) {
+                    if (list[i].equals("")
+                            || list[i].equals("LEER")
+                            || list[i].equals("Vorname, Nachname")) {
+                        list[i] = m.toString();
+                        anvertrauterMedi.makeXML();
+                        DateienVerwalter.getInstance().reloadMessdiener();
+                        break;
                     }
                 }
             }
@@ -198,38 +193,34 @@ public class ConvertCSV {
     }
 
     private void replaceLineNumberWithMessdiener() {
-        int offset = convertData.lineStartetMit1 ? -1 : 0;
-        final String pattern = " ?\\d{1," + (importedMessdiener.size() - 1) + "} ?";
         for (Messdiener m : importedMessdiener) {
-            for (int i = 0; i < m.getFreunde().length; i++) {
-                if (m.getFreunde()[i].matches(pattern)) {
-                    try {
-                        m.getFreunde()[i] = importedMessdiener.get(Integer.parseInt(m.getFreunde()[i]) + offset).toString();
-                    } catch (IndexOutOfBoundsException e) {
-                        final String message = String.format(
-                                "%s: %s in %s could not parsed as an valid Integer %s",
-                                e.getMessage(), m.getFreunde()[i], m, e.getCause());
-                        MPELog.getLogger().warn(message, e);
-                    }
-                }
-            }
-            for (int i = 0; i < m.getGeschwister().length; i++) {
-                if (m.getGeschwister()[i].matches(pattern)) {
-                    try {
-                        m.getGeschwister()[i] = importedMessdiener.get(Integer.parseInt(m.getGeschwister()[i]) + offset).toString();
-                        DateienVerwalter.getInstance().reloadMessdiener();
-                    } catch (IndexOutOfBoundsException e) {
-                        final String message = String.format(
-                                "%s: %s in %s could not parsed as an valid Integer %s",
-                                e.getMessage(), m.getFreunde()[i], m, e.getCause());
-                        MPELog.getLogger().warn(message, e);
-                    }
-                }
-            }
+            m.setFreunde(replaceLineNumber(m, Messdiener::getFreunde));
+            m.setGeschwister(replaceLineNumber(m, Messdiener::getGeschwister));
             m.makeXML();
         }
+
         importedMessdiener.forEach(Messdiener::setNewMessdatenDaten);
         DateienVerwalter.getInstance().getMessdiener();
+    }
+
+    private String[] replaceLineNumber(Messdiener m, Function<Messdiener, String[]> getAnvertraute) {
+        int offset = convertData.lineStartetMit1 ? -1 : 0;
+        final String pattern = " ?\\d{1," + (importedMessdiener.size() - 1) + "} ?";
+        return Arrays.stream(getAnvertraute.apply(m))
+                .map(freund -> {
+                    if (freund.matches(pattern)) {
+                        int index = Integer.parseInt(freund) + offset;
+                        try {
+                            return importedMessdiener.get(index).toString();
+                        } catch (IndexOutOfBoundsException e) {
+                            final String message = String.format(
+                                    "%s: %s in %s could not parsed as an valid Integer %s",
+                                    e.getMessage(), freund, m, e.getCause());
+                            MPELog.getLogger().warn(message, e);
+                        }
+                    }
+                    return freund;
+                }).toArray(String[]::new);
     }
 
     public enum Sortierung {

@@ -25,7 +25,7 @@ import java.util.List;
 import static net.aclrian.mpe.utils.MPELog.getLogger;
 
 
-public class MainController {
+public class MainController { //NOPMD - suppressed TooManyMethods - needed for fxml
     public static final String NO_ACCESS = " konnte nicht zugegriffen werden!";
     public static final String GESPERRT = "Der Fensterbereich ist durch die Bearbeitung gesperrt!";
     public static final String STANDARDMESSE_AUSWAEHLEN = "Bitte Standardmesse auswählen:";
@@ -50,7 +50,7 @@ public class MainController {
         changePane(pane);
     }
 
-    public void changePaneMessdiener(Messdiener messdiener) {
+    public void changePane(Messdiener messdiener) {
         if (this.ep == EnumPane.MESSDIENER) {
             return;
         }
@@ -68,7 +68,7 @@ public class MainController {
         }
     }
 
-    public void changePaneMesse(Messe messe) {
+    public void changePane(Messe messe) {
         if (this.ep == EnumPane.MESSE) {
             return;
         }

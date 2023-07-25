@@ -137,7 +137,7 @@ public class FerienplanController implements Controller {
                         if (neu) {
                             messdiener.getMessdaten().austeilen(date);
                         } else {
-                            messdiener.getMessdaten().ausausteilen(date);
+                            messdiener.getMessdaten().ausAusteilenEntfernen(date);
                         }
                     }
                 });

@@ -3,7 +3,6 @@ package net.aclrian.mpe.controller;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -12,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.stage.Window;
-import javafx.util.Callback;
 import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
@@ -22,7 +20,6 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.RemoveDoppelte;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -88,57 +85,6 @@ public class MediController implements Controller {
         return s;
     }
 
-    private static Messdiener alteloeschen(Messdiener toDel, Messdiener toSearchIn) {
-        if (toDel.equals(toSearchIn)) {
-            return toDel;
-        }
-        Messdiener medi = null;
-        for (int i = 0; i < toSearchIn.getGeschwister().length; i++) {
-            if (toSearchIn.getGeschwister()[i].compareTo(toDel.toString()) == 0) {
-                toSearchIn.getGeschwister()[i] = "";
-                medi = toSearchIn;
-            }
-        }
-        for (int i = 0; i < toSearchIn.getFreunde().length; i++) {
-            if (toSearchIn.getFreunde()[i].compareTo(toDel.toString()) == 0) {
-                toSearchIn.getFreunde()[i] = "";
-                medi = toSearchIn;
-            }
-        }
-        return medi;
-    }
-
-    public static boolean remove(Messdiener m) {
-        if (Dialogs.getDialogs().frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
-                "Löschen")) {
-            File file = m.getFile();
-            try {
-                Files.delete(file.toPath());
-            } catch (IOException e) {
-                return false;
-            }
-            ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
-            for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
-                ueberarbeitete.add(alteloeschen(m, messdiener));
-            }
-            ueberarbeitete.removeIf(Objects::isNull);
-            for (Messdiener medi : ueberarbeitete) {
-                if (medi.toString().equals(m.toString())) {
-                    continue;
-                }
-                WriteFile wf = new WriteFile(medi);
-                try {
-                    wf.saveToXML();
-                } catch (IOException e) {
-                    Dialogs.getDialogs().error(e, "Konnte bei dem Bekannten '" + medi
-                            + "' von dem zulöschenden Messdiener diesen nicht löschen.");
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
     public void initialize() {
         freund = new ArrayList<>();
         geschwi = new ArrayList<>();
@@ -176,18 +122,52 @@ public class MediController implements Controller {
         bearbeitenFreunde = new Label("Bearbeiten");
         bearbeitenFreunde.setStyle("-fx-font-style: italic;");
         bearbeitenFreunde.setId(FREUNDE_BEARBEITEN_ID);
-        bearbeitenFreunde.setOnMouseClicked(bearbeitenFreundeEventHandler());
+        bearbeitenFreunde.setOnMouseClicked(new EventHandler<Event>() {
+
+            @Override
+            public void handle(Event arg0) {
+                List<Messdiener> selected = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben,
+                        freund, FREUNDE_AUSWAEHLEN);
+                if (selected.size() >= Messdiener.LENGHT_FREUNDE) {
+                    Dialogs.getDialogs().error(
+                            "Zu viele Freunde: Bitte nur " + (Messdiener.LENGHT_FREUNDE - 1) + " Messdiener angeben.");
+                    handle(arg0);
+                    return;
+                }
+                updateFreunde(selected);
+            }
+        });
         freunde.getItems().add(bearbeitenFreunde);
 
         bearbeitenGeschwister = new Label("Bearbeiten");
         bearbeitenGeschwister.setStyle("-fx-font-style: italic;");
         bearbeitenGeschwister.setId(GESCHWISTER_BEARBEITEN_ID);
-        bearbeitenGeschwister.setOnMouseClicked(bearbeitenGeschwisterEventHandler());
+        bearbeitenGeschwister.setOnMouseClicked(new EventHandler<Event>() {
+
+            @Override
+            public void handle(Event arg0) {
+                List<Messdiener> g = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben, geschwi,
+                        GESCHWISTER_AUSWAEHLEN);
+                if (g.size() >= Messdiener.LENGHT_GESCHWISTER) {
+                    Dialogs.getDialogs().error("Zu viele Geschwister: Bitte nur " + (Messdiener.LENGHT_GESCHWISTER - 1)
+                            + " Messdiener angeben.");
+                    handle(arg0);
+                    return;
+                }
+                updateGeschwister(g);
+            }
+        });
         geschwie.getItems().add(bearbeitenGeschwister);
 
         stdm.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMesse().toKurzerBenutzerfreundlichenString()));
         kann.setCellFactory(CheckBoxTableCell.forTableColumn(kann));
-        kann.setCellValueFactory(createCellDataFactory());
+        kann.setCellValueFactory(celldata -> {
+            KannWelcheMesse cellValue = celldata.getValue();
+            SimpleBooleanProperty property = new SimpleBooleanProperty(cellValue.kannDann());
+            // Add listener to handler change
+            property.addListener((observable, oldValue, newValue) -> cellValue.setKannDann(newValue));
+            return property;
+        });
         kann.setCellFactory(tc -> new CheckBoxTableCell<>());
         kann.setEditable(true);
         Messverhalten mv = new Messverhalten();
@@ -203,52 +183,6 @@ public class MediController implements Controller {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         stdm.setMaxWidth(1f * Integer.MAX_VALUE * 85);
         kann.setMaxWidth(1f * Integer.MAX_VALUE * 15);
-    }
-
-    private EventHandler<Event> bearbeitenGeschwisterEventHandler() {
-        return new EventHandler<Event>() {
-
-            @Override
-            public void handle(Event arg0) {
-                List<Messdiener> g = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben, geschwi,
-                        GESCHWISTER_AUSWAEHLEN);
-                if (g.size() >= Messdiener.LENGHT_GESCHWISTER) {
-                    Dialogs.getDialogs().error("Zu viele Geschwister: Bitte nur " + (Messdiener.LENGHT_GESCHWISTER - 1)
-                            + " Messdiener angeben.");
-                    handle(arg0);
-                    return;
-                }
-                updateGeschwister(g);
-            }
-        };
-    }
-
-    private static Callback<TableColumn.CellDataFeatures<KannWelcheMesse, Boolean>, ObservableValue<Boolean>> createCellDataFactory() {
-        return celldata -> {
-            KannWelcheMesse cellValue = celldata.getValue();
-            SimpleBooleanProperty property = new SimpleBooleanProperty(cellValue.kannDann());
-            // Add listener to handler change
-            property.addListener((observable, oldValue, newValue) -> cellValue.setKannDann(newValue));
-            return property;
-        };
-    }
-
-    private EventHandler<Event> bearbeitenFreundeEventHandler() {
-        return new EventHandler<>() {
-
-            @Override
-            public void handle(Event arg0) {
-                List<Messdiener> selected = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben,
-                        freund, FREUNDE_AUSWAEHLEN);
-                if (selected.size() >= Messdiener.LENGHT_FREUNDE) {
-                    Dialogs.getDialogs().error(
-                            "Zu viele Freunde: Bitte nur " + (Messdiener.LENGHT_FREUNDE - 1) + " Messdiener angeben.");
-                    handle(arg0);
-                    return;
-                }
-                updateFreunde(selected);
-            }
-        };
     }
 
     private void updateFreunde(List<Messdiener> freund) {
@@ -280,23 +214,11 @@ public class MediController implements Controller {
         return locked;
     }
 
-    private void setDienverhalten(List<KannWelcheMesse> o) {
-        for (KannWelcheMesse kwm : ol) {
-            for (KannWelcheMesse kwm2 : o) {
-                if (kwm.getMesse().toString().equals(kwm2.getMesse().toString())
-                        && kwm.kannDann() != kwm2.kannDann()) {
-                    kwm.setKannDann(!kwm.kannDann());
-                }
-            }
-        }
-    }
-
     public boolean isValid() {
         if (name.getText().equals("") || vorname.getText().equals("")) {
             Dialogs.getDialogs().warn("Bitte einen Namen eintragen!");
         } else {
             try {
-                // ME
                 Messdiener m = new Messdiener(null);
                 if (moben != null) {
                     m.setFile(moben.getFile());
@@ -305,7 +227,15 @@ public class MediController implements Controller {
                 m.setzeAllesNeu(vorname.getText(), name.getText(), (int) eintritt.getValue(), leiter.isSelected(),
                         Messverhalten.convert(ol), email.getText());
                 if (moben != null) {
-                    checkForChangedName(m);
+                    // check for changed Name
+                    boolean b = moben.getNachnname().equals(m.getNachnname()) && moben.getVorname().equals(m.getVorname());
+                    if (!b) {
+                        try {
+                            Files.delete(moben.getFile().toPath());
+                        } catch (IOException e) {
+                            Dialogs.getDialogs().error(e, "Konnte den alten-veränderten Messdiener nicht löschen.");
+                        }
+                    }
                 }
                 setAndUpdateAnvertraute(m);
                 return true;
@@ -329,21 +259,17 @@ public class MediController implements Controller {
             updateFreunde(messdiener);
             updateGeschwister(messdiener);
             List<KannWelcheMesse> messen = messdiener.getDienverhalten().copy().getKannWelcheMessen();
-            setDienverhalten(messen);
+            for (KannWelcheMesse kwm : ol) {
+                for (KannWelcheMesse kwm2 : messen) {
+                    if (kwm.getMesse().toString().equals(kwm2.getMesse().toString())
+                            && kwm.kannDann() != kwm2.kannDann()) {
+                        kwm.setKannDann(!kwm.kannDann());
+                        break;
+                    }
+                }
+            }
             moben = messdiener;
             getLogger().info("Messdiener wurde geladen");
-        }
-    }
-
-    private void checkForChangedName(Messdiener m) {
-        boolean b = moben.getNachnname().equals(m.getNachnname());
-        boolean bo = moben.getVorname().equals(m.getVorname());
-        if (!b || !bo) {
-            try {
-                Files.delete(moben.getFile().toPath());
-            } catch (IOException e) {
-                Dialogs.getDialogs().error(e, "Konnte den alten-veränderten Messdiener nicht löschen.");
-            }
         }
     }
 
@@ -352,9 +278,9 @@ public class MediController implements Controller {
         m.setGeschwister(getArrayString(geschwi, Messdiener.LENGHT_GESCHWISTER));
         List<Messdiener> bearbeitete = new ArrayList<>();
         for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
-            bearbeitete.add(alteloeschen(m, messdiener));
+            bearbeitete.add(Messdiener.alteLoeschen(m, messdiener));
             if (moben != null) {
-                bearbeitete.add(alteloeschen(moben, messdiener));
+                bearbeitete.add(Messdiener.alteLoeschen(moben, messdiener));
             }
         }
         for (Messdiener medi : geschwi) {

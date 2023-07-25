@@ -1,4 +1,4 @@
-package net.aclrian.mpe.controller;
+package net.aclrian.mpe.controller; //NOPMD - suppressed ExcessiveImports - for test purpose
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -132,7 +132,7 @@ class TestMainController extends ApplicationTest {
                 Mockito.when(messdiener.getEmail()).thenReturn("a@a.de");
                 Messverhalten mv = new Messverhalten();
                 Mockito.when(messdiener.getDienverhalten()).thenReturn(mv);
-                instance.changePaneMessdiener(messdiener);
+                instance.changePane(messdiener);
 
                 Mockito.when(dv.getMessdiener()).thenReturn(Collections.singletonList(messdiener));
                 final Messdaten md = Mockito.mock(Messdaten.class);
@@ -184,7 +184,7 @@ class TestMainController extends ApplicationTest {
                 Mockito.when(m.getStandardMesse()).thenReturn(new Sonstiges());
                 Mockito.when(m.htmlAusgeben()).thenReturn("123456</html>");
 
-                instance.changePaneMesse(m);
+                instance.changePane(m);
             } else {
                 Assertions.fail("could not find cancel");
             }
