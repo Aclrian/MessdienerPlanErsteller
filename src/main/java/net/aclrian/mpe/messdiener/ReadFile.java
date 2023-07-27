@@ -78,7 +78,10 @@ public class ReadFile {
             MPELog.getLogger().warn(mailString);
             mail = fixEmail(mailString, vname, nname);
         }
-        return new Messdiener(xmlFile, vname, nname, mail, eintritt, istLeiter, dienverhalten, freunde, geschwister);
+        Messdiener messdiener = new Messdiener(xmlFile, vname, nname, mail, eintritt, istLeiter, dienverhalten);
+        messdiener.setGeschwister(geschwister);
+        messdiener.setFreunde(freunde);
+        return messdiener;
     }
 
     private int readEintritt(Element eElement) {

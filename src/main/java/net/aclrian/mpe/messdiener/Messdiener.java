@@ -2,6 +2,7 @@ package net.aclrian.mpe.messdiener;
 
 import javafx.application.Platform;
 import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 
 import java.io.File;
@@ -25,8 +26,8 @@ public class Messdiener extends Person {
      * Dies ist die Anzahl, wie viele Freunde ein Messdiener haben kann.
      */
     public static final int LENGTH_FREUNDE = 5;
-    private String[] freunde = new String[LENGTH_FREUNDE];
-    private String[] geschwister = new String[LENGTH_GESCHWISTER];
+    private String[] freunde;
+    private String[] geschwister;
     private final Messverhalten dienverhalten;
     private final int eintritt;
     private final boolean leiter;
@@ -40,6 +41,10 @@ public class Messdiener extends Person {
         this.eintritt = eintritt;
         this.leiter = istLeiter;
         this.dienverhalten = dienverhalten;
+        freunde = new String[Messdiener.LENGTH_FREUNDE];
+        Arrays.fill(freunde, "");
+        geschwister = new String[Messdiener.LENGTH_GESCHWISTER];
+        Arrays.fill(geschwister, "");
     }
 
     /**
@@ -49,6 +54,7 @@ public class Messdiener extends Person {
         WriteFile wf = new WriteFile(this);
         try {
             file = wf.saveToXML();
+            DateienVerwalter.getInstance().reloadMessdiener();
         } catch (Exception e) {
             Platform.runLater(() -> Dialogs.getDialogs().error(e, "Der Messdiener '" + this + "' konnte nicht gespeichert werden."));
         }
@@ -87,22 +93,7 @@ public class Messdiener extends Person {
     }
 
     public void setNewMessdatenDaten() {
-        try {
-            this.daten = new Messdaten(this);
-        } catch (FindMessdiener.CouldFindMessdiener e) {
-            for (int i = 0; i < freunde.length; i++) {
-                if (freunde[i].equalsIgnoreCase(e.getString())) {
-                    freunde[i] = e.getString();
-                }
-            }
-            for (int i = 0; i < geschwister.length; i++) {
-                if (geschwister[i].equalsIgnoreCase(e.getString())) {
-                    geschwister[i] = e.getString();
-                }
-            }
-            makeXML();
-            setNewMessdatenDaten();
-        }
+        this.daten = new Messdaten(this);
     }
 
     public void addFreund(Messdiener freund) {
@@ -191,13 +182,15 @@ public class Messdiener extends Person {
     }
 
     public static class AnvertrauteHandler {
-        public static final AnvertrauteHandler FREUNDE = new AnvertrauteHandler(Messdiener::getFreunde, Messdiener::setFreunde);
-        public static final AnvertrauteHandler GESCHWISTER = new AnvertrauteHandler(Messdiener::getGeschwister, Messdiener::setGeschwister);
+        public static final AnvertrauteHandler FREUNDE = new AnvertrauteHandler("Freund", Messdiener::getFreunde, Messdiener::setFreunde);
+        public static final AnvertrauteHandler GESCHWISTER = new AnvertrauteHandler("Geschwister", Messdiener::getGeschwister, Messdiener::setGeschwister);
 
+        private final String name;
         private final Function<Messdiener, String[]> get;
         private final BiConsumer<Messdiener, String[]> set;
 
-        private AnvertrauteHandler(Function<Messdiener, String[]> get, BiConsumer<Messdiener, String[]> set) {
+        private AnvertrauteHandler(String name, Function<Messdiener, String[]> get, BiConsumer<Messdiener, String[]> set) {
+            this.name = name;
             this.get = get;
             this.set = set;
         }
@@ -212,6 +205,10 @@ public class Messdiener extends Person {
 
         public void set(Messdiener messdiener, List<?> arrayList) {
             set.accept(messdiener, getArrayString(arrayList, get.apply(messdiener).length));
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }

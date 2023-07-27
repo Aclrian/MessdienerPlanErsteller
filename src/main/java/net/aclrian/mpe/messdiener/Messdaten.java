@@ -35,7 +35,7 @@ public class Messdaten {
     private final ArrayList<LocalDate> ausgeteilt = new ArrayList<>();
     private ArrayList<LocalDate> pause = new ArrayList<>();
 
-    public Messdaten(Messdiener m) throws FindMessdiener.CouldFindMessdiener {
+    public Messdaten(Messdiener m) {
         anzMessen = 0;
         insgesamtEingeteilt = 0;
         int eintritt = m.getEintritt();

@@ -22,6 +22,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -32,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -87,16 +89,16 @@ public class TestSelect extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    void testMedi() {
+    void testMedi(@TempDir Path tempDir) {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        Mockito.when(dv.getSavePath()).thenReturn(new File(System.getProperty("user.home")));
+        Mockito.when(dv.getSavePath()).thenReturn(tempDir.toFile());
         Messdiener m1 = Mockito.mock(Messdiener.class);
         Messdiener m2 = Mockito.mock(Messdiener.class);
-        File f1 = new File(System.getProperty("user.home"), "cdajklsdfkldjoa.xml");
-        File f2 = new File(System.getProperty("user.home"), "sdjgdlöfkgjclvk.xml");
+        File f1 = new File(tempDir.toFile(), "cdajklsdfkldjoa.xml");
+        File f2 = new File(tempDir.toFile(), "sdjgdlöfkgjclvk.xml");
         try {
             Files.createFile(f1.toPath());
             Files.createFile(f2.toPath());
@@ -145,7 +147,7 @@ public class TestSelect extends ApplicationTest {
 
         assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#neu")).fire();
-        Mockito.verify(mc, Mockito.times(1)).changePane(Mockito.eq(MainController.EnumPane.MESSDIENER));
+        Mockito.verify(mc, Mockito.times(1)).changePane(MainController.EnumPane.MESSDIENER);
 
         assertThat(scene.lookup("#remove")).isInstanceOf(Button.class);
         Mockito.when(dialog.frage(Mockito.any(), Mockito.any(), Mockito.eq("Löschen"))).thenReturn(true);
@@ -221,7 +223,7 @@ public class TestSelect extends ApplicationTest {
 
         assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#neu")).fire();
-        Mockito.verify(mc, Mockito.times(1)).changePane(Mockito.eq(MainController.EnumPane.MESSE));
+        Mockito.verify(mc, Mockito.times(1)).changePane(MainController.EnumPane.MESSE);
 
         ((ListView<?>) scene.lookup("#list")).getSelectionModel().select(0);
         scene.lookup("#list").fireEvent(new MouseEvent(

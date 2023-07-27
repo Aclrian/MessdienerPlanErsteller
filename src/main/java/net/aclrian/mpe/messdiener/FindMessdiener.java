@@ -15,15 +15,15 @@ public class FindMessdiener {
 
     private FindMessdiener() { }
 
-    public static List<Messdiener> updateFreunde(Messdiener m) throws CouldFindMessdiener {
+    public static List<Messdiener> updateFreunde(Messdiener m) {
         return update(m.getFreunde(), m, Messdiener.AnvertrauteHandler.FREUNDE);
     }
 
-    public static List<Messdiener> updateGeschwister(Messdiener m) throws CouldFindMessdiener {
+    public static List<Messdiener> updateGeschwister(Messdiener m) {
         return update(m.getGeschwister(), m, Messdiener.AnvertrauteHandler.GESCHWISTER);
     }
 
-    private static List<Messdiener> update(String[] strings, Messdiener m, Messdiener.AnvertrauteHandler handler) throws CouldFindMessdiener {
+    private static List<Messdiener> update(String[] strings, Messdiener m, Messdiener.AnvertrauteHandler handler) {
         ArrayList<Messdiener> updatedList = new ArrayList<>();
         for (String value : strings) {
             Messdiener medi = null;
@@ -32,6 +32,9 @@ public class FindMessdiener {
                     medi = sucheMessdiener(value, m);
                 } catch (CouldNotFindMessdiener e) {
                     messdienerNotFound(strings, m, value, e, handler);
+                } catch (CouldFindMessdiener e) {
+                    messdienerFound(m, e, handler);
+                    return update(strings, m, handler);
                 }
                 if (medi != null) {
                     updatedList.add(medi);
@@ -39,6 +42,18 @@ public class FindMessdiener {
             }
         }
         return REMOVE_DUPLICATES.removeDuplicatedEntries(updatedList);
+    }
+
+    private static void messdienerFound(Messdiener m, CouldFindMessdiener e, Messdiener.AnvertrauteHandler handler) {
+        String[] anvertrauteList = handler.get(m);
+        for (int i = 0; i < anvertrauteList.length; i++) {
+            if (anvertrauteList[i].equalsIgnoreCase(e.getString())) {
+                anvertrauteList[i] = e.getFoundMessdienerID();
+            }
+        }
+        handler.set(m, anvertrauteList);
+        m.makeXML();
+
     }
 
     public static void messdienerNotFound(String[] s, Messdiener m, String value, CouldNotFindMessdiener e, Messdiener.AnvertrauteHandler handler) {
@@ -49,7 +64,6 @@ public class FindMessdiener {
             list.remove(value);
             handler.set(m, list);
             m.makeXML();
-            DateienVerwalter.getInstance().reloadMessdiener();
         }
     }
 

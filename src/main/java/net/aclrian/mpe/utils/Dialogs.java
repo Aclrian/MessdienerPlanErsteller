@@ -454,6 +454,7 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
             } catch (IOException e) {
                 return false;
             }
+            DateienVerwalter.getInstance().reloadMessdiener();
             ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
             for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
                 ueberarbeitete.add(Messdiener.alteLoeschen(m, messdiener));

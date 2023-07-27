@@ -67,6 +67,8 @@ class TestMainController extends ApplicationTest {
         stage.setScene(scene);
         stage.setResizable(true);
         this.stage = stage;
+        stage.setWidth(10);
+        stage.setHeight(10);
 
         mainApplication = Mockito.mock(MainApplication.class);
         dialogs = Mockito.mock(Dialogs.class);
@@ -148,10 +150,10 @@ class TestMainController extends ApplicationTest {
                 assertThat(((TextField) scene.lookup("#vorname")).getText()).isEqualTo("v");
                 assertThat(scene.lookup("#name")).isInstanceOf(TextField.class);
                 assertThat(((TextField) scene.lookup("#name")).getText()).isEqualTo("n");
-                assertThat(scene.lookup("#geschwie")).isInstanceOf(ListView.class);
-                assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems()).hasSize(1);
-                assertThat(scene.lookup("#freunde")).isInstanceOf(ListView.class);
-                assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
+                assertThat(scene.lookup("#geschwisterListView")).isInstanceOf(ListView.class);
+                assertThat(((ListView<?>) scene.lookup("#geschwisterListView")).getItems()).hasSize(1);
+                assertThat(scene.lookup("#freundeListView")).isInstanceOf(ListView.class);
+                assertThat(((ListView<?>) scene.lookup("#freundeListView")).getItems()).hasSize(1);
                 assertThat(scene.lookup("#eintritt")).isInstanceOf(Slider.class);
                 assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(DateUtil.getCurrentYear());
                 assertThat(scene.lookup("#leiter")).isInstanceOf(CheckBox.class);

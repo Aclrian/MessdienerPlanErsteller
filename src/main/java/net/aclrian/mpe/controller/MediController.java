@@ -13,6 +13,7 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.stage.Window;
 import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.messdiener.Email;
+import net.aclrian.mpe.messdiener.FindMessdiener;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.utils.DateUtil;
@@ -23,7 +24,6 @@ import net.aclrian.mpe.utils.RemoveDoppelte;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static net.aclrian.mpe.utils.MPELog.getLogger;
@@ -251,8 +251,12 @@ public class MediController implements Controller {
             leiter.setSelected(messdiener.istLeiter());
             eintritt.setValue(messdiener.getEintritt());
             table.setItems(FXCollections.observableList(messdiener.getDienverhalten().getKannWelcheMessen()));
-            updateFreunde(messdiener);
-            updateGeschwister(messdiener);
+
+            freundeArray = FindMessdiener.updateFreunde(messdiener);
+            updateAnvertrauteInView(freundeArray, freundeListView);
+            geschwisterArray = FindMessdiener.updateGeschwister(messdiener);
+            updateAnvertrauteInView(geschwisterArray, geschwisterListView);
+
             List<KannWelcheMesse> messen = messdiener.getDienverhalten().copy().getKannWelcheMessen();
             for (KannWelcheMesse kwm : ol) {
                 for (KannWelcheMesse kwm2 : messen) {
@@ -296,65 +300,5 @@ public class MediController implements Controller {
         if (getLogger().isDebugEnabled()) {
             getLogger().info("Messdiener {} wurde gespeichert!", m);
         }
-        DateienVerwalter.getInstance().reloadMessdiener();
-    }
-
-    private void updateFreunde(Messdiener medi) {
-        ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(medi.getFreunde()));
-        List<Messdiener> alle = DateienVerwalter.getInstance().getMessdiener();
-        ArrayList<Messdiener> al = new ArrayList<>();
-        for (int i = 0; i < arrayList.size(); i++) {
-            if (searchForMessdiener(arrayList, alle, al, i)) {
-                continue;
-            }
-            boolean beheben = Dialogs.getDialogs().frage(
-                    KONNTE + arrayList.get(i) + "' als Freund von '" + medi + "' nicht finden!",
-                    "Ignorieren", "Beheben");
-            if (beheben) {
-                arrayList.remove(i);
-                String[] freundeArray = arrayList.toArray(new String[0]);
-                medi.setFreunde(freundeArray);
-                updateFreunde(medi);
-                return;
-            }
-        }
-        freundeArray = al;
-        updateAnvertrauteInView(freundeArray, freundeListView);
-    }
-
-    private boolean searchForMessdiener(List<String> arrayList, List<Messdiener> alle, List<Messdiener> al, int i) {
-        if (arrayList.get(i).equals("")) {
-            return true;
-        }
-        for (Messdiener messdiener : alle) {
-            if (arrayList.get(i).equals(messdiener.toString())) {
-                al.add(messdiener);
-                break;
-            }
-        }
-        return !al.isEmpty();
-    }
-
-    private void updateGeschwister(Messdiener medi) {
-        ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(medi.getGeschwister()));
-        List<Messdiener> alle = DateienVerwalter.getInstance().getMessdiener();
-        ArrayList<Messdiener> al = new ArrayList<>();
-        for (int i = 0; i < arrayList.size(); i++) {
-            if (searchForMessdiener(arrayList, alle, al, i)) {
-                continue;
-            }
-            boolean beheben = Dialogs.getDialogs().frage(
-                    KONNTE + arrayList.get(i) + "' als Geschwister von '" + medi + "' nicht finden!",
-                    "ignorieren", "Beheben");
-            if (beheben) {
-                arrayList.remove(i);
-                String[] gew = arrayList.toArray(new String[0]);
-                medi.setGeschwister(gew);
-                updateGeschwister(medi);
-                return;
-            }
-        }
-        geschwisterArray = al;
-        updateAnvertrauteInView(geschwisterArray, geschwisterListView);
     }
 }

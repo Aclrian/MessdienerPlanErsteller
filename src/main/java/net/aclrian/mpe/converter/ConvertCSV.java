@@ -42,7 +42,6 @@ public class ConvertCSV {
             }
             if (importedMessdiener.size() > 1) {
                 replaceLineNumberWithMessdiener();
-                DateienVerwalter.getInstance().reloadMessdiener();
                 if (convertData.gegenseitigEintragen()) {
                     createMissingBackReferences();
                 }
@@ -67,7 +66,9 @@ public class ConvertCSV {
         Messverhalten dienverhalten = new Messverhalten();
         boolean leiter = false;
         String[] freunde = new String[Messdiener.LENGTH_FREUNDE];
+        Arrays.fill(freunde, "");
         String[] geschwister = new String[Messdiener.LENGTH_GESCHWISTER];
+        Arrays.fill(geschwister, "");
         for (int j = 0; j < elemente.length; j++) {
             //CHECKSTYLE:OFF: InnerAssignment
             switch (convertData.sortierung().get(j)) {
@@ -154,7 +155,9 @@ public class ConvertCSV {
         }
         Email email = Email.EMPTY_EMAIL;
         File file = new File(DateienVerwalter.getInstance().getSavePath(), nachname + ", " + vorname + ".xml");
-        Messdiener m = new Messdiener(file, vorname, nachname, email, eintritt, leiter, dienverhalten, freunde, geschwister);
+        Messdiener m = new Messdiener(file, vorname, nachname, email, eintritt, leiter, dienverhalten);
+        m.setFreunde(freunde);
+        m.setGeschwister(geschwister);
         try {
             m.setEmail(new Email(emailString));
         } catch (Email.NotValidException e) {
@@ -164,24 +167,22 @@ public class ConvertCSV {
     }
 
     private void createMissingBackReferences() {
-        DateienVerwalter.getInstance().reloadMessdiener();
         for (Messdiener m : importedMessdiener) {
             addBackReferenz(m.getMessdaten().getFreunde(), m, Messdiener.AnvertrauteHandler.FREUNDE);
             addBackReferenz(m.getMessdaten().getGeschwister(), m, Messdiener.AnvertrauteHandler.GESCHWISTER);
         }
     }
 
-    private void addBackReferenz(List<Messdiener> anvertraute, Messdiener m, Messdiener.AnvertrauteHandler anvertrauteHandler) {
+    private void addBackReferenz(List<Messdiener> anvertraute, Messdiener m, Messdiener.AnvertrauteHandler handler) {
         for (Messdiener anvertrauterMedi : anvertraute) {
-            if (!anvertrauterMedi.getMessdaten().getFreunde().contains(m)) {
-                String[] list = anvertrauteHandler.get(anvertrauterMedi);
+            if (Arrays.stream(handler.get(anvertrauterMedi)).noneMatch(id -> id.equals(m.toString()))) {
+                String[] list = handler.get(anvertrauterMedi);
                 for (int i = 0; i < list.length; i++) {
                     if (list[i].equals("")
                             || list[i].equals("LEER")
                             || list[i].equals("Vorname, Nachname")) {
                         list[i] = m.toString();
                         anvertrauterMedi.makeXML();
-                        DateienVerwalter.getInstance().reloadMessdiener();
                         break;
                     }
                 }

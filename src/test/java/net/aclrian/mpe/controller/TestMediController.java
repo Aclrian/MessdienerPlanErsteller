@@ -276,23 +276,16 @@ public class TestMediController extends ApplicationTest {
         Mockito.verify(dialog, Mockito.times(1)).select(Mockito.anyList(), Mockito.any(), Mockito.anyList(), Mockito.eq(MediController.GESCHWISTER_AUSWAEHLEN));
 
         assertThat(((TextField) scene.lookup("#vorname")).getText()).isEmpty();
-        Mockito.verify(m1).setFreunde(
-                Mockito.argThat(
-                        argument -> argument.length == 5
-                                && argument[0].equalsIgnoreCase("Tannenbusch, Lea")
-                                && argument[1] == null && argument[2] == null
-                                && argument[3] == null && argument[4] == null));
-        Mockito.verify(m2).setGeschwister(
-                Mockito.argThat(
-                        argument -> argument.length == 3
-                                && argument[0].equalsIgnoreCase("Tannenbusch, Lea")
-                                && argument[1] == null && argument[2] == null));
+        Mockito.verify(m1)
+                .addFreund(Mockito.argThat(argument -> argument.toString().equalsIgnoreCase("Tannenbusch, Lea")));
+        Mockito.verify(m2)
+                .addGeschwister(Mockito.argThat(argument -> argument.toString().equalsIgnoreCase("Tannenbusch, Lea")));
 
-        Mockito.verify(m1, Mockito.times(24)).getFreunde();
-        Mockito.verify(m1, Mockito.times(16)).getGeschwister();
+        Mockito.verify(m1, Mockito.times(22)).getFreunde();
+        Mockito.verify(m1, Mockito.times(15)).getGeschwister();
 
-        Mockito.verify(m2, Mockito.times(24)).getFreunde();
-        Mockito.verify(m2, Mockito.times(16)).getGeschwister();
+        Mockito.verify(m2, Mockito.times(23)).getFreunde();
+        Mockito.verify(m2, Mockito.times(14)).getGeschwister();
 
         final File nora = new File(System.getProperty("user.home"), "Tannenbusch, Nora.xml");
         final File lea = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");

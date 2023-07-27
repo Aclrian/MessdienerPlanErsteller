@@ -25,7 +25,7 @@ import static net.aclrian.mpe.converter.ConvertCSV.parseLineToMessdiener;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doAnswer;
 
-class ConvertCSVTest {
+class TestConvertCSV {
     private List<Messdiener> medis = new ArrayList<>();
 
     @Test

@@ -181,7 +181,6 @@ public class Select implements Controller {
             int i = list.getSelectionModel().getSelectedIndex();
             if (i >= 0 && list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString())
                     && Dialogs.remove(data.get(i))) {
-                DateienVerwalter.getInstance().reloadMessdiener();
                 afterStartup(window, mc);
             }
         });

@@ -92,11 +92,11 @@ public class WriteFile {
         body.appendChild(mv);
 
         Element leiter = doc.createElement("Leiter");
-        leiter.appendChild(doc.createTextNode(String.valueOf(this.me.istLeiter())));
+        leiter.appendChild(doc.createTextNode(String.valueOf(me.istLeiter())));
         body.appendChild(leiter);
 
         Element eintritt = doc.createElement("Eintritt");
-        eintritt.appendChild(doc.createTextNode(String.valueOf(this.me.getEintritt())));
+        eintritt.appendChild(doc.createTextNode(String.valueOf(me.getEintritt())));
         body.appendChild(eintritt);
 
         // Freunde und Geschwister
@@ -104,8 +104,6 @@ public class WriteFile {
         String[] g = me.getGeschwister();
         Element anvertraute = doc.createElement("Anvertraute");
         addFreunde(doc, f, anvertraute);
-
-        // Geschwister
         addGeschwister(doc, g, anvertraute);
 
         body.appendChild(anvertraute);
