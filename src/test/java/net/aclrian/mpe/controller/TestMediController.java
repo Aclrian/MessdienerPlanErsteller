@@ -10,12 +10,12 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.ReadFile;
 import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.utils.DateUtil;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.MPELog;
@@ -126,7 +126,7 @@ public class TestMediController extends ApplicationTest {
                 instance = fl.getController();
                 instance.afterStartup(pane.getScene().getWindow(), mc);
                 final Messdiener messdiener = new ReadFile().getMessdiener(f);
-                instance.setMedi(messdiener);
+                instance.setMessdiener(messdiener);
             } catch (IOException e) {
                 MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
@@ -138,13 +138,13 @@ public class TestMediController extends ApplicationTest {
         ((TextField) scene.lookup("#vorname")).setText("Luisa");
         assertThat(scene.lookup("#name")).isInstanceOf(TextField.class);
         assertThat(((TextField) scene.lookup("#name")).getText()).isEqualTo("Tannenbusch");
-        assertThat(scene.lookup("#geschwie")).isInstanceOf(ListView.class);
-        assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems()).hasSize(1);
-        assertThat(scene.lookup("#freunde")).isInstanceOf(ListView.class);
-        assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
+        assertThat(scene.lookup("#geschwisterListView")).isInstanceOf(ListView.class);
+        assertThat(((ListView<?>) scene.lookup("#geschwisterListView")).getItems()).hasSize(1);
+        assertThat(scene.lookup("#freundeListView")).isInstanceOf(ListView.class);
+        assertThat(((ListView<?>) scene.lookup("#freundeListView")).getItems()).hasSize(1);
         assertThat(scene.lookup("#eintritt")).isInstanceOf(Slider.class);
         assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(2019);
-        Platform.runLater(() -> ((Slider) scene.lookup("#eintritt")).setValue(Messdaten.getMaxYear()));
+        Platform.runLater(() -> ((Slider) scene.lookup("#eintritt")).setValue(DateUtil.getCurrentYear()));
         WaitForAsyncUtils.waitForFxEvents();
         assertThat(scene.lookup("#leiter")).isInstanceOf(CheckBox.class);
         assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isFalse();
@@ -178,15 +178,15 @@ public class TestMediController extends ApplicationTest {
         assertThat(newFile).exists();
         Platform.runLater(() -> {
             final Messdiener messdiener = new ReadFile().getMessdiener(newFile);
-            instance.setMedi(messdiener);
+            instance.setMessdiener(messdiener);
         });
         WaitForAsyncUtils.waitForFxEvents();
         assertThat(((TextField) scene.lookup("#vorname")).getText()).isEqualTo("Luisa");
         ((TextField) scene.lookup("#vorname")).setText("Luisa");
         assertThat(((TextField) scene.lookup("#name")).getText()).isEqualTo("Tannenbusch");
-        assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems()).hasSize(1);
-        assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
-        assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(Messdaten.getMaxYear());
+        assertThat(((ListView<?>) scene.lookup("#geschwisterListView")).getItems()).hasSize(1);
+        assertThat(((ListView<?>) scene.lookup("#freundeListView")).getItems()).hasSize(1);
+        assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(DateUtil.getCurrentYear());
         assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isTrue();
         assertThat(((TextField) scene.lookup("#email")).getText()).isEqualTo("a@abc.de");
         assertThat(table.getItems()).hasSize(1);
@@ -241,15 +241,15 @@ public class TestMediController extends ApplicationTest {
                 pane.getChildren().add(fl.load());
                 instance = fl.getController();
                 instance.afterStartup(pane.getScene().getWindow(), mc);
-                instance.setMedi(messdiener);
+                instance.setMessdiener(messdiener);
             } catch (IOException e) {
                 MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        assertThat(scene.lookup("#geschwie")).isInstanceOf(ListView.class);
-        assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems()).hasSize(2);
+        assertThat(scene.lookup("#geschwisterListView")).isInstanceOf(ListView.class);
+        assertThat(((ListView<?>) scene.lookup("#geschwisterListView")).getItems()).hasSize(2);
 
         Platform.runLater(() -> {
             scene.lookup("#" + MediController.GESCHWISTER_BEARBEITEN_ID)

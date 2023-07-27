@@ -2,17 +2,14 @@ package net.aclrian.mpe.controller;
 
 
 import javafx.fxml.FXML;
-import javafx.stage.Window;
+import javafx.scene.control.Button;
 import javafx.scene.text.Text;
-import javafx.scene.control.*;
+import javafx.stage.Window;
 import net.aclrian.fx.ATilePane;
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +35,9 @@ public class StandardmesseController implements Controller {
         smesse.setText(sm.toKurzerBenutzerfreundlichenString());
         ArrayList<Messdiener> selected = new ArrayList<>();
         for (Messdiener m : DateienVerwalter.getInstance().getMessdiener()) {
-                if (m.getDienverhalten().getBestimmtes(sm)) {
-                    selected.add(m);
-                }
+            if (m.getDienverhalten().getBestimmtes(sm)) {
+                selected.add(m);
+            }
         }
         pane.setSelected(selected);
     }
@@ -54,13 +51,8 @@ public class StandardmesseController implements Controller {
         fertig.setOnAction(event -> {
             List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
             for (Messdiener m : medis) {
-                try {
-                    m.getDienverhalten().editiereBestimmteMesse(sm, pane.getSelected().contains(m));
-                    WriteFile wf = new WriteFile(m);
-                    wf.saveToXML();
-                } catch (IOException e) {
-                    Dialogs.getDialogs().error(e, "Konnte den Messdiener " + medis + " nicht speichern.");
-                }
+                m.getDienverhalten().editiereBestimmteMesse(sm, pane.getSelected().contains(m));
+                m.makeXML();
             }
             locked = false;
             mc.changePane(MainController.EnumPane.START);

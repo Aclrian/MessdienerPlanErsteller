@@ -11,6 +11,7 @@
 
     <!-- STANDARD RULES -->
     <rule ref="category/java/design.xml">
+        <exclude name="DataClass" />
         <exclude name="ExcessiveParameterList" />
         <exclude name="ExcessivePublicCount" />
         <exclude name="TooManyFields" />

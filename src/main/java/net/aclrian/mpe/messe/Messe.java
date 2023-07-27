@@ -115,7 +115,7 @@ public class Messe implements Comparable<Messe> { //NOPMD - suppressed TooManyMe
         out.addAll(leiter);
         rtn.append("<p>");
         for (Messdiener messdiener : out) {
-            rtn.append(messdiener.getVorname()).append(" ").append(messdiener.getNachnname()).append(", ");
+            rtn.append(messdiener.getVorname()).append(" ").append(messdiener.getNachname()).append(", ");
         }
         if (rtn.toString().endsWith(", ")) {
             rtn = new StringBuilder(rtn.substring(0, rtn.length() - 2));
@@ -141,7 +141,7 @@ public class Messe implements Comparable<Messe> { //NOPMD - suppressed TooManyMe
     }
 
     public boolean vorzeitigEinteilen(Messdiener medi) {
-        if (medi.getMessdaten().einteilenVorzeitig(date.toLocalDate(), hochamt)) {
+        if (medi.getMessdaten().vorzeitigEinteilen(date.toLocalDate(), hochamt)) {
             if (medi.istLeiter()) {
                 leiter.add(medi);
             } else {

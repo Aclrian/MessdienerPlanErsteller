@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Window;
 import javafx.util.Pair;
+import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.Sonstiges;
@@ -152,10 +153,10 @@ public class FinishController implements Controller {
         StringBuilder sb = new StringBuilder("mailto:?");
         ArrayList<Messdiener> noemail = new ArrayList<>();
         for (Messdiener medi : medis) {
-            if (medi.getEmail().equals("")) {
+            if (medi.getEmail().toString().equals("")) {
                 noemail.add(medi);
             } else {
-                sb.append("bcc=").append(medi.getEmail()).append("&");
+                sb.append("bcc=").append(medi.getEmail().toString()).append("&");
             }
         }
         sb.append("subject=").append(UriUtils.encode(titel, StandardCharsets.UTF_8));
@@ -220,7 +221,7 @@ public class FinishController implements Controller {
         }
 
         private void einteilen() {
-            messdiener.sort(Messdiener.MESSDIENER_EINTEILEN_COMPARATOR);
+            messdiener.sort(Messdaten.MESSDIENER_EINTEILEN_COMPARATOR);
             if (messen.isEmpty()) {
                 return;
             }
@@ -322,12 +323,12 @@ public class FinishController implements Controller {
                 kannStandardMesse = m.einteilen(medi, zwangdate, zwanganz);
             }
             if (!m.istFertig() && kannStandardMesse) {
-                List<Messdiener> anv = medi.getMessdaten()
-                        .getAnvertraute(DateienVerwalter.getInstance().getMessdiener());
                 RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
-                anv = rd.removeDuplicatedEntries(anv);
-                anv.sort(Messdiener.MESSDIENER_EINTEILEN_COMPARATOR);
-                for (Messdiener messdiener : anv) {
+                List<Messdiener> anvertraute = new ArrayList<>(medi.getMessdaten().getGeschwister());
+                anvertraute.addAll(medi.getMessdaten().getFreunde());
+                anvertraute = rd.removeDuplicatedEntries(anvertraute);
+                anvertraute.sort(Messdaten.MESSDIENER_EINTEILEN_COMPARATOR);
+                for (Messdiener messdiener : anvertraute) {
                     if (m.istFertig()) {
                         break;
                     }
@@ -351,7 +352,7 @@ public class FinishController implements Controller {
                 }
             }
             Collections.shuffle(allForSMesse, new Random(System.nanoTime()));
-            allForSMesse.sort(Messdiener.MESSDIENER_EINTEILEN_COMPARATOR);
+            allForSMesse.sort(Messdaten.MESSDIENER_EINTEILEN_COMPARATOR);
             return allForSMesse;
         }
     }

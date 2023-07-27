@@ -10,6 +10,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Pair;
+import net.aclrian.mpe.messdiener.Email;
+import net.aclrian.mpe.messdiener.FindMessdiener;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.*;
@@ -83,11 +85,12 @@ class TestFinishController extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    void cleanTest() throws Messdaten.CouldFindMessdiener {
+    void cleanTest() throws FindMessdiener.CouldFindMessdiener {
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
+        einst.editiereYear(0, 10);
 
         Mockito.when(m1.toString()).thenReturn("m1");
         Mockito.when(m2.toString()).thenReturn("m2");
@@ -104,9 +107,9 @@ class TestFinishController extends ApplicationTest {
         Mockito.when(m2.getFreunde()).thenReturn(new String[0]);
         Mockito.when(m3.getFreunde()).thenReturn(new String[0]);
 
-        Mockito.when(m1.getEintritt()).thenReturn(Messdaten.getMaxYear());
-        Mockito.when(m1.getEintritt()).thenReturn(Messdaten.getMaxYear());
-        Mockito.when(m1.getEintritt()).thenReturn(Messdaten.getMaxYear());
+        Mockito.when(m1.getEintritt()).thenReturn(DateUtil.getCurrentYear());
+        Mockito.when(m1.getEintritt()).thenReturn(DateUtil.getCurrentYear());
+        Mockito.when(m1.getEintritt()).thenReturn(DateUtil.getCurrentYear());
         Messdaten md1 = new Messdaten(m1);
         Mockito.when(m1.getMessdaten()).thenReturn(md1);
         Messdaten md2 = new Messdaten(m2);
@@ -131,7 +134,7 @@ class TestFinishController extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         LocalDate date = DateUtil.getToday();
-        m1.getMessdaten().einteilenVorzeitig(date, false);
+        m1.getMessdaten().vorzeitigEinteilen(date, false);
 
 
         Platform.runLater(() -> Mockito.when(dialogs.yesNoCancel(Mockito.anyString(), Mockito.anyString()))
@@ -143,7 +146,7 @@ class TestFinishController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        assertThat(m1.getMessdaten().kannDann(date, false)).isFalse();
+        assertThat(m1.getMessdaten().kann(date, false, false)).isFalse();
         Platform.runLater(() -> {
             if (pane.lookup("#zurueck") instanceof Button zurueck) {
                 zurueck.fire();
@@ -157,7 +160,7 @@ class TestFinishController extends ApplicationTest {
                 Assertions.fail("Not all Messdaten are zero");
             }
         }
-        assertThat(m1.getMessdaten().kannDann(date, false)).isTrue();
+        assertThat(m1.getMessdaten().kann(date, false, false)).isTrue();
         assertThat(instance.getNichtEingeteilteMessdiener()).contains(m1);
         assertThat(instance.getNichtEingeteilteMessdiener()).contains(m2);
         assertThat(instance.getNichtEingeteilteMessdiener()).contains(m3);
@@ -187,18 +190,18 @@ class TestFinishController extends ApplicationTest {
     }
 
     @Test
-    void testEinteilungWithoutDOCX() throws Messdaten.CouldFindMessdiener {
+    void testEinteilungWithoutDOCX() throws FindMessdiener.CouldFindMessdiener {
         testEinteilung(false);
     }
 
     @Disabled("Run Test with conversion to docx")
     @Test
-    void testEinteilungWithDOCX() throws Messdaten.CouldFindMessdiener {
+    void testEinteilungWithDOCX() throws FindMessdiener.CouldFindMessdiener {
         testEinteilung(true);
     }
 
     //CHECKSTYLE:OFF: MethodLength
-    private void testEinteilung(boolean skipDOCX) throws Messdaten.CouldFindMessdiener { //NOPMD - suppressed NPathComplexity - test purpose
+    private void testEinteilung(boolean skipDOCX) throws FindMessdiener.CouldFindMessdiener { //NOPMD - suppressed NPathComplexity - test purpose
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -219,10 +222,14 @@ class TestFinishController extends ApplicationTest {
         Mockito.when(m2.istLeiter()).thenReturn(true);
         Mockito.when(m3.istLeiter()).thenReturn(false);
 
-        Mockito.when(m1.getEmail()).thenReturn("");
-        Mockito.when(m2.getEmail()).thenReturn("");
-        Mockito.when(m3.getEmail()).thenReturn("a@w.de");
-        Mockito.when(m1Freund.getEmail()).thenReturn("");
+        Mockito.when(m1.getEmail()).thenReturn(Email.EMPTY_EMAIL);
+        Mockito.when(m2.getEmail()).thenReturn(Email.EMPTY_EMAIL);
+        try {
+            Mockito.when(m3.getEmail()).thenReturn(new Email("a@w.de"));
+        } catch (Email.NotValidException e) {
+            Assertions.fail("Email was not valid");
+        }
+        Mockito.when(m1Freund.getEmail()).thenReturn(Email.EMPTY_EMAIL);
 
         Mockito.when(m1.getGeschwister()).thenReturn(new String[0]);
         Mockito.when(m2.getGeschwister()).thenReturn(new String[0]);
@@ -234,10 +241,10 @@ class TestFinishController extends ApplicationTest {
         Mockito.when(m3.getFreunde()).thenReturn(new String[0]);
         Mockito.when(m1Freund.getFreunde()).thenReturn(new String[]{"m1"});
 
-        Mockito.when(m1.getEintritt()).thenReturn(Messdaten.getMaxYear());
-        Mockito.when(m2.getEintritt()).thenReturn(Messdaten.getMaxYear());
-        Mockito.when(m3.getEintritt()).thenReturn(Messdaten.getMaxYear());
-        Mockito.when(m1Freund.getEintritt()).thenReturn(Messdaten.getMaxYear());
+        Mockito.when(m1.getEintritt()).thenReturn(DateUtil.getCurrentYear());
+        Mockito.when(m2.getEintritt()).thenReturn(DateUtil.getCurrentYear());
+        Mockito.when(m3.getEintritt()).thenReturn(DateUtil.getCurrentYear());
+        Mockito.when(m1Freund.getEintritt()).thenReturn(DateUtil.getCurrentYear());
         Messdaten md1 = new Messdaten(m1);
         Mockito.when(m1.getMessdaten()).thenReturn(md1);
         Messdaten md2 = new Messdaten(m2);
@@ -267,10 +274,10 @@ class TestFinishController extends ApplicationTest {
 
         Mockito.doCallRealMethod().when(dialogs).show(Mockito.anyList(), Mockito.eq(FinishController.NICHT_EINGETEILTE_MESSDIENER));
 
-        assertThat(m1.getMessdaten().kann(me1.getDate(), false, false)).isFalse();
-        assertThat(m1Freund.getMessdaten().kann(me1.getDate(), false, false)).isFalse();
-        assertThat(m1.getMessdaten().kann(me2.getDate(), false, false)).isTrue();
-        assertThat(m1Freund.getMessdaten().kann(me2.getDate(), false, false)).isTrue();
+        assertThat(m1.getMessdaten().kann(me1.getDate().toLocalDate(), false, false)).isFalse();
+        assertThat(m1Freund.getMessdaten().kann(me1.getDate().toLocalDate(), false, false)).isFalse();
+        assertThat(m1.getMessdaten().kann(me2.getDate().toLocalDate(), false, false)).isTrue();
+        assertThat(m1Freund.getMessdaten().kann(me2.getDate().toLocalDate(), false, false)).isTrue();
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.PLAN.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
@@ -289,8 +296,8 @@ class TestFinishController extends ApplicationTest {
         assertThat(me1.istFertig() && me2.istFertig() && me3.istFertig()).isTrue();
         assertThat(!me1.getEingeteilte().contains(m1) && !me1.getEingeteilte().contains(m1Freund)).isTrue();
         assertThat(!me3.getEingeteilte().contains(m1) && !me3.getEingeteilte().contains(m1Freund)).isTrue();
-        assertThat(md1.kannDann(DateUtil.getToday(), false)).isFalse();
-        assertThat(md1F.kannDann(DateUtil.getToday(), false)).isFalse();
+        assertThat(md1.kann(DateUtil.getToday(), false, false)).isFalse();
+        assertThat(md1F.kann(DateUtil.getToday(), false, false)).isFalse();
         assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
 
         File out = new File(MPELog.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");

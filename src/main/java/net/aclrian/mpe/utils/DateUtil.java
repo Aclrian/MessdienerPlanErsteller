@@ -43,4 +43,12 @@ public class DateUtil {
     public static LocalDate getPreviousDay(LocalDate date) {
         return date.plusDays(-1);
     }
+
+    public static int getCurrentYear() {
+        return LocalDate.now().getYear();
+    }
+
+    public static int getYearCap() {
+        return DateUtil.getCurrentYear() - 18;
+    }
 }

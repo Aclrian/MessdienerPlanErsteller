@@ -81,14 +81,14 @@ class TestMesseController extends ApplicationTest {
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Messdiener messdiener = Mockito.mock(Messdiener.class);
         Mockito.when(messdiener.getVorname()).thenReturn("v");
-        Mockito.when(messdiener.getNachnname()).thenReturn("n");
-        Mockito.when(messdiener.getEintritt()).thenReturn(Messdaten.getMaxYear());
+        Mockito.when(messdiener.getNachname()).thenReturn("n");
+        Mockito.when(messdiener.getEintritt()).thenReturn(DateUtil.getCurrentYear());
         Mockito.when(messdiener.istLeiter()).thenReturn(false);
         Messverhalten mv = new Messverhalten();
         Mockito.when(messdiener.getDienverhalten()).thenReturn(mv);
         Messdaten md = Mockito.mock(Messdaten.class);
         Mockito.when(messdiener.getMessdaten()).thenReturn(md);
-        Mockito.when(md.einteilenVorzeitig(Mockito.any(), Mockito.anyBoolean())).thenReturn(true);
+        Mockito.when(md.vorzeitigEinteilen(Mockito.any(), Mockito.anyBoolean())).thenReturn(true);
         Mockito.when(dv.getMessdiener()).thenReturn(Collections.singletonList(messdiener));
         StandardMesse standardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));

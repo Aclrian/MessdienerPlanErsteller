@@ -6,11 +6,11 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -21,7 +21,6 @@ import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.controller.converter.ConvertController;
 import net.aclrian.mpe.converter.ConvertCSV;
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Setting;
 
@@ -38,8 +37,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.time.temporal.TemporalAccessor;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class cannot be refactored
 
@@ -441,7 +440,7 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         }
         if (!controller.isValid()) {
             Dialogs.getDialogs().error("Ein Eingabefeld ist leer oder es sind mehr Standartmessen angegeben als im System sind");
-            return  importDialog(window);
+            return importDialog(window);
         }
         return controller.getData();
     }
@@ -464,13 +463,7 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
                 if (medi.toString().equals(m.toString())) {
                     continue;
                 }
-                WriteFile wf = new WriteFile(medi);
-                try {
-                    wf.saveToXML();
-                } catch (IOException e) {
-                    Dialogs.getDialogs().error(e, "Konnte bei dem Bekannten '" + medi
-                            + "' von dem zulöschenden Messdiener diesen nicht löschen.");
-                }
+                medi.makeXML();
             }
             return true;
         }

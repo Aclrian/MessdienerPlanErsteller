@@ -3,7 +3,7 @@ package net.aclrian.mpe.pfarrei;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import net.aclrian.mpe.messdiener.Messdaten;
+import net.aclrian.mpe.utils.DateUtil;
 
 public record Setting(Attribut attribut, int id, int anzahlDienen) {
 
@@ -11,7 +11,7 @@ public record Setting(Attribut attribut, int id, int anzahlDienen) {
     public static final String ANZAHL_DIENEN_NAME = "anzahlDienen";
 
     public Integer getJahr() {
-        return Messdaten.getMaxYear() - id;
+        return DateUtil.getCurrentYear() - id;
     }
 
     public IntegerProperty anzahlDienenProperty() {

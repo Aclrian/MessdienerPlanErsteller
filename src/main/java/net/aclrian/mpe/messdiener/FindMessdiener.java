@@ -1,31 +1,29 @@
 package net.aclrian.mpe.messdiener;
 
-import net.aclrian.mpe.controller.MediController;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.MPELog;
 import net.aclrian.mpe.utils.RemoveDoppelte;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 public class FindMessdiener {
-    private final RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
+    private static final RemoveDoppelte<Messdiener> REMOVE_DUPLICATES = new RemoveDoppelte<>();
 
-    public FindMessdiener(Messdaten messdaten) { }
+    private FindMessdiener() { }
 
-    public List<Messdiener> updateFreunde(Messdiener m) throws CouldFindMessdiener {
-        return update(true, m.getFreunde(), m);
+    public static List<Messdiener> updateFreunde(Messdiener m) throws CouldFindMessdiener {
+        return update(m.getFreunde(), m, Messdiener.AnvertrauteHandler.FREUNDE);
     }
 
-    public List<Messdiener> updateGeschwister(Messdiener m) throws CouldFindMessdiener {
-        return update(false, m.getGeschwister(), m);
+    public static List<Messdiener> updateGeschwister(Messdiener m) throws CouldFindMessdiener {
+        return update(m.getGeschwister(), m, Messdiener.AnvertrauteHandler.GESCHWISTER);
     }
 
-    private List<Messdiener> update(boolean isFreund, String[] strings, Messdiener m) throws CouldFindMessdiener {
+    private static List<Messdiener> update(String[] strings, Messdiener m, Messdiener.AnvertrauteHandler handler) throws CouldFindMessdiener {
         ArrayList<Messdiener> updatedList = new ArrayList<>();
         for (String value : strings) {
             Messdiener medi = null;
@@ -33,39 +31,29 @@ public class FindMessdiener {
                 try {
                     medi = sucheMessdiener(value, m);
                 } catch (CouldNotFindMessdiener e) {
-                    messdienerNotFound(isFreund, strings, m, value, e);
+                    messdienerNotFound(strings, m, value, e, handler);
                 }
                 if (medi != null) {
                     updatedList.add(medi);
                 }
             }
         }
-        return rd.removeDuplicatedEntries(updatedList);
+        return REMOVE_DUPLICATES.removeDuplicatedEntries(updatedList);
     }
 
-    public void messdienerNotFound(boolean isFreund, String[] s, Messdiener m, String value, CouldNotFindMessdiener e) {
+    public static void messdienerNotFound(String[] s, Messdiener m, String value, CouldNotFindMessdiener e, Messdiener.AnvertrauteHandler handler) {
         boolean beheben = Dialogs.getDialogs().frage(e.getMessage(),
                 "ignorieren", "beheben");
         if (beheben) {
             ArrayList<String> list = new ArrayList<>(Arrays.asList(s));
             list.remove(value);
-            String[] gew = MediController.getArrayString(list, isFreund ? Messdiener.LENGHT_FREUNDE : Messdiener.LENGHT_GESCHWISTER);
-            if (isFreund) {
-                m.setFreunde(gew);
-            } else {
-                m.setGeschwister(gew);
-            }
-            WriteFile wf = new WriteFile(m);
-            try {
-                wf.saveToXML();
-            } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, "Konnte es nicht beheben.");
-            }
+            handler.set(m, list);
+            m.makeXML();
             DateienVerwalter.getInstance().reloadMessdiener();
         }
     }
 
-    public Messdiener sucheMessdiener(String geschwi, Messdiener akt) throws CouldFindMessdiener, CouldNotFindMessdiener {
+    public static Messdiener sucheMessdiener(String geschwi, Messdiener akt) throws CouldFindMessdiener, CouldNotFindMessdiener {
         for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
             if (messdiener.toString().equals(geschwi)) {
                 return messdiener;

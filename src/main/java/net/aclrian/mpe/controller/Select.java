@@ -197,9 +197,9 @@ public class Select implements Controller {
 
     public void neu() {
         if (selector == Selector.MESSDIENER) {
-            mc.changePane(null);
+            mc.changePane(MainController.EnumPane.MESSDIENER);
         } else if (selector == Selector.MESSE) {
-            mc.changePane(null);
+            mc.changePane(MainController.EnumPane.MESSE);
         }
     }
 

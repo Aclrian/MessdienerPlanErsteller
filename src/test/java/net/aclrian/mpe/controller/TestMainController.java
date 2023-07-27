@@ -12,6 +12,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import net.aclrian.fx.TimeSpinner;
 import net.aclrian.mpe.MainApplication;
+import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
@@ -20,6 +21,7 @@ import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.utils.DateUtil;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Speicherort;
@@ -124,12 +126,16 @@ class TestMainController extends ApplicationTest {
                 items.stream().filter(menuItem -> menuItem.getId().equals("cancel")).findFirst().orElseThrow().fire();
                 Messdiener messdiener = Mockito.mock(Messdiener.class);
                 Mockito.when(messdiener.getVorname()).thenReturn("v");
-                Mockito.when(messdiener.getNachnname()).thenReturn("n");
+                Mockito.when(messdiener.getNachname()).thenReturn("n");
                 Mockito.when(messdiener.getGeschwister()).thenReturn(new String[0]);
                 Mockito.when(messdiener.getFreunde()).thenReturn(new String[0]);
-                Mockito.when(messdiener.getEintritt()).thenReturn(Messdaten.getMaxYear());
+                Mockito.when(messdiener.getEintritt()).thenReturn(DateUtil.getCurrentYear());
                 Mockito.when(messdiener.istLeiter()).thenReturn(false);
-                Mockito.when(messdiener.getEmail()).thenReturn("a@a.de");
+                try {
+                    Mockito.when(messdiener.getEmail()).thenReturn(new Email("a@a.de"));
+                } catch (Email.NotValidException e) {
+                    Assertions.fail(e);
+                }
                 Messverhalten mv = new Messverhalten();
                 Mockito.when(messdiener.getDienverhalten()).thenReturn(mv);
                 instance.changePane(messdiener);
@@ -147,7 +153,7 @@ class TestMainController extends ApplicationTest {
                 assertThat(scene.lookup("#freunde")).isInstanceOf(ListView.class);
                 assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
                 assertThat(scene.lookup("#eintritt")).isInstanceOf(Slider.class);
-                assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(Messdaten.getMaxYear());
+                assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(DateUtil.getCurrentYear());
                 assertThat(scene.lookup("#leiter")).isInstanceOf(CheckBox.class);
                 assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isFalse();
                 assertThat(scene.lookup("#email")).isInstanceOf(TextField.class);

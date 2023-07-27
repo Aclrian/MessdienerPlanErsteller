@@ -13,13 +13,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 import net.aclrian.mpe.MainApplication;
-import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.pfarrei.ReadFilePfarrei;
 import net.aclrian.mpe.pfarrei.Setting;
+import net.aclrian.mpe.utils.DateUtil;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.MPELog;
@@ -174,7 +174,7 @@ public class TestPfarreiController extends ApplicationTest {
         scene = stage.getScene();
         assertThat(scene.lookup("#settingTableView")).isInstanceOf(TableView.class);
         assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems()).allMatch(setting ->
-                setting.anzahlDienen() == 0 && setting.getJahr() <= Messdaten.getMaxYear() && setting.getJahr() >= Messdaten.getMinYear());
+                setting.anzahlDienen() == 0 && setting.getJahr() <= DateUtil.getCurrentYear() && setting.getJahr() >= DateUtil.getYearCap());
         assertThat(((TableView<Setting>) scene.lookup("#settingTableView")).getItems()).hasSize(Einstellungen.LENGTH - 2);
         Mockito.verify(dialog, Mockito.times(2))
                 .open(Mockito.any(), Mockito.anyString(), Mockito.eq(PfarreiController.MEHR_INFORMATIONEN), Mockito.eq(PfarreiController.VERSTANDEN));

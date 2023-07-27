@@ -12,10 +12,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.stage.Window;
 import net.aclrian.fx.ASlider;
-import net.aclrian.mpe.messdiener.Messdaten;
+import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.utils.DateUtil;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.RemoveDoppelte;
@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static net.aclrian.mpe.utils.MPELog.getLogger;
 import static net.aclrian.mpe.messe.Messverhalten.KannWelcheMesse;
@@ -35,8 +34,8 @@ public class MediController implements Controller {
     private static final String KONNTE = "Konnte den Messdiener '";
     public static final String FREUNDE_AUSWAEHLEN = "Freunde auswählen:";
     public static final String GESCHWISTER_AUSWAEHLEN = "Geschwister auswählen:";
-    private List<Messdiener> freund;
-    private List<Messdiener> geschwi;
+    private List<Messdiener> freundeArray;
+    private List<Messdiener> geschwisterArray;
     private Messdiener moben;
     private boolean locked = true;
 
@@ -61,9 +60,9 @@ public class MediController implements Controller {
     @FXML
     private CheckBox leiter;
     @FXML
-    private ListView<Label> geschwie;
+    private ListView<Label> geschwisterListView;
     @FXML
-    private ListView<Label> freunde;
+    private ListView<Label> freundeListView;
     @FXML
     private SplitMenuButton button;
     @FXML
@@ -71,25 +70,13 @@ public class MediController implements Controller {
     @FXML
     private MenuItem saveNew;
     public static final String FREUNDE_BEARBEITEN_ID = "freundeId";
-    public static final String GESCHWISTER_BEARBEITEN_ID = "geschwieId";
-
-    public static String[] getArrayString(List<?> freunde2, int begr) {
-        String[] s = new String[begr];
-        for (int i = 0; i < s.length; i++) {
-            try {
-                s[i] = freunde2.get(i).toString();
-            } catch (IndexOutOfBoundsException | NullPointerException e) {
-                s[i] = "";
-            }
-        }
-        return s;
-    }
+    public static final String GESCHWISTER_BEARBEITEN_ID = "geschwisterId";
 
     public void initialize() {
-        freund = new ArrayList<>();
-        geschwi = new ArrayList<>();
-        eintritt.setMax(Messdaten.getMaxYear());
-        eintritt.setMin(Messdaten.getMinYear());
+        freundeArray = new ArrayList<>();
+        geschwisterArray = new ArrayList<>();
+        eintritt.setMax(DateUtil.getCurrentYear());
+        eintritt.setMin(DateUtil.getYearCap());
     }
 
     @Override
@@ -99,13 +86,13 @@ public class MediController implements Controller {
             mc.changePane(MainController.EnumPane.SELECT_MEDI);
         });
         saveNew.setOnAction(e -> {
-            if (isValid()) {
+            if (saveMessdiener()) {
                 locked = false;
                 vorname.setText("");
             }
         });
         button.setOnAction(e -> {
-            if (isValid()) {
+            if (saveMessdiener()) {
                 locked = false;
                 mc.changePane(MainController.EnumPane.SELECT_MEDI);
             }
@@ -113,12 +100,12 @@ public class MediController implements Controller {
         // Email valid
         email.focusedProperty().addListener((arg0, oldValue, newValue) -> {
             if (Boolean.FALSE.equals(newValue)) {
-                email.setText(Messdiener.EMAIL_PATTERN.matcher(email.getText()).matches() ? email.getText() : "");
+                email.setText(Email.EMAIL_PATTERN.matcher(email.getText()).matches() ? email.getText() : "");
             }
         });
         // Value in Silder
         ASlider.makeASlider("Eintritt", eintritt, null);
-        eintritt.setValue(Messdaten.getMaxYear());
+        eintritt.setValue(DateUtil.getCurrentYear());
         bearbeitenFreunde = new Label("Bearbeiten");
         bearbeitenFreunde.setStyle("-fx-font-style: italic;");
         bearbeitenFreunde.setId(FREUNDE_BEARBEITEN_ID);
@@ -127,17 +114,18 @@ public class MediController implements Controller {
             @Override
             public void handle(Event arg0) {
                 List<Messdiener> selected = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben,
-                        freund, FREUNDE_AUSWAEHLEN);
-                if (selected.size() >= Messdiener.LENGHT_FREUNDE) {
+                        freundeArray, FREUNDE_AUSWAEHLEN);
+                if (selected.size() >= Messdiener.LENGTH_FREUNDE) {
                     Dialogs.getDialogs().error(
-                            "Zu viele Freunde: Bitte nur " + (Messdiener.LENGHT_FREUNDE - 1) + " Messdiener angeben.");
+                            "Zu viele Freunde: Bitte nur " + (Messdiener.LENGTH_FREUNDE - 1) + " Messdiener angeben.");
                     handle(arg0);
                     return;
                 }
-                updateFreunde(selected);
+                freundeArray = selected;
+                updateAnvertrauteInView(freundeArray, freundeListView);
             }
         });
-        freunde.getItems().add(bearbeitenFreunde);
+        freundeListView.getItems().add(bearbeitenFreunde);
 
         bearbeitenGeschwister = new Label("Bearbeiten");
         bearbeitenGeschwister.setStyle("-fx-font-style: italic;");
@@ -146,18 +134,19 @@ public class MediController implements Controller {
 
             @Override
             public void handle(Event arg0) {
-                List<Messdiener> g = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben, geschwi,
+                List<Messdiener> g = Dialogs.getDialogs().select(DateienVerwalter.getInstance().getMessdiener(), moben, geschwisterArray,
                         GESCHWISTER_AUSWAEHLEN);
-                if (g.size() >= Messdiener.LENGHT_GESCHWISTER) {
-                    Dialogs.getDialogs().error("Zu viele Geschwister: Bitte nur " + (Messdiener.LENGHT_GESCHWISTER - 1)
+                if (g.size() >= Messdiener.LENGTH_GESCHWISTER) {
+                    Dialogs.getDialogs().error("Zu viele Geschwister: Bitte nur " + (Messdiener.LENGTH_GESCHWISTER - 1)
                             + " Messdiener angeben.");
                     handle(arg0);
                     return;
                 }
-                updateGeschwister(g);
+                geschwisterArray = g;
+                updateAnvertrauteInView(geschwisterArray, geschwisterListView);
             }
         });
-        geschwie.getItems().add(bearbeitenGeschwister);
+        geschwisterListView.getItems().add(bearbeitenGeschwister);
 
         stdm.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMesse().toKurzerBenutzerfreundlichenString()));
         kann.setCellFactory(CheckBoxTableCell.forTableColumn(kann));
@@ -170,6 +159,7 @@ public class MediController implements Controller {
         });
         kann.setCellFactory(tc -> new CheckBoxTableCell<>());
         kann.setEditable(true);
+
         Messverhalten mv = new Messverhalten();
         ol = FXCollections.observableArrayList(mv.getKannWelcheMessen());
         ol.sort(KannWelcheMesse.SORT);
@@ -185,28 +175,27 @@ public class MediController implements Controller {
         kann.setMaxWidth(1f * Integer.MAX_VALUE * 15);
     }
 
-    private void updateFreunde(List<Messdiener> freund) {
-        this.freund = freund;
-        freunde.getItems().removeIf(p -> true);
-        for (Messdiener messdiener : this.freund) {
+    private void updateAnvertrauteInView(
+            List<Messdiener> updatedList,
+            ListView<Label> listViewToBeUpdated
+    ) {
+        Label bearbeitenLabel = null;
+        if (listViewToBeUpdated.getItems().contains(bearbeitenFreunde)) {
+            bearbeitenLabel = bearbeitenFreunde;
+        }
+        if (listViewToBeUpdated.getItems().contains(bearbeitenGeschwister)) {
+            bearbeitenLabel = bearbeitenGeschwister;
+        }
+        listViewToBeUpdated.getItems().removeIf(p -> true);
+        for (Messdiener messdiener : updatedList) {
             if (moben != null && messdiener.toString().equals(moben.toString())) {
                 continue;
             }
-            freunde.getItems().add(new Label(messdiener.toString()));
+            listViewToBeUpdated.getItems().add(new Label(messdiener.toString()));
         }
-        freunde.getItems().add(bearbeitenFreunde);
-    }
-
-    private void updateGeschwister(List<Messdiener> geschwi2) {
-        geschwi = geschwi2;
-        geschwie.getItems().removeIf(p -> true);
-        for (Messdiener messdiener : geschwi) {
-            if (moben != null && messdiener.toString().equals(moben.toString())) {
-                continue;
-            }
-            geschwie.getItems().add(new Label(messdiener.toString()));
+        if (bearbeitenLabel != null) {
+            listViewToBeUpdated.getItems().add(bearbeitenLabel);
         }
-        geschwie.getItems().add(bearbeitenGeschwister);
     }
 
     @Override
@@ -214,45 +203,51 @@ public class MediController implements Controller {
         return locked;
     }
 
-    public boolean isValid() {
+    public boolean saveMessdiener() {
         if (name.getText().equals("") || vorname.getText().equals("")) {
             Dialogs.getDialogs().warn("Bitte einen Namen eintragen!");
         } else {
             try {
-                Messdiener m = new Messdiener(null);
+                ol = table.getItems();
+                Messdiener m = new Messdiener(
+                        null, vorname.getText(), name.getText(), new Email(email.getText()),
+                        (int) eintritt.getValue(), leiter.isSelected(), Messverhalten.convert(ol)
+                );
+                m.setFreundeFromList(freundeArray);
+                m.setGeschwisterFromList(geschwisterArray);
                 if (moben != null) {
                     m.setFile(moben.getFile());
                 }
-                ol = table.getItems();
-                m.setzeAllesNeu(vorname.getText(), name.getText(), (int) eintritt.getValue(), leiter.isSelected(),
-                        Messverhalten.convert(ol), email.getText());
                 if (moben != null) {
-                    // check for changed Name
-                    boolean b = moben.getNachnname().equals(m.getNachnname()) && moben.getVorname().equals(m.getVorname());
-                    if (!b) {
-                        try {
-                            Files.delete(moben.getFile().toPath());
-                        } catch (IOException e) {
-                            Dialogs.getDialogs().error(e, "Konnte den alten-veränderten Messdiener nicht löschen.");
-                        }
-                    }
+                    handleChangedName(m);
                 }
-                setAndUpdateAnvertraute(m);
+                anvertrauteEintragen(m);
                 return true;
-            } catch (Messdiener.NotValidException e) {
+            } catch (Email.NotValidException e) {
                 Dialogs.getDialogs().warn("Bitte eine richtige E-Mail oder nichts angeben!");
             }
         }
         return false;
     }
 
-    public void setMedi(Messdiener messdiener) {
+    private void handleChangedName(Messdiener m) {
+        boolean nameChanged = moben.getNachname().equals(m.getNachname()) && moben.getVorname().equals(m.getVorname());
+        if (!nameChanged) {
+            try {
+                Files.delete(moben.getFile().toPath());
+            } catch (IOException e) {
+                Dialogs.getDialogs().error(e, "Konnte den alten-veränderten Messdiener nicht löschen.");
+            }
+        }
+    }
+
+    public void setMessdiener(Messdiener messdiener) {
         if (messdiener == null) {
             name.setText("");
         } else {
-            name.setText(messdiener.getNachnname());
+            name.setText(messdiener.getNachname());
             vorname.setText(messdiener.getVorname());
-            email.setText(messdiener.getEmail());
+            email.setText(messdiener.getEmail().toString());
             leiter.setSelected(messdiener.istLeiter());
             eintritt.setValue(messdiener.getEintritt());
             table.setItems(FXCollections.observableList(messdiener.getDienverhalten().getKannWelcheMessen()));
@@ -273,9 +268,7 @@ public class MediController implements Controller {
         }
     }
 
-    private void setAndUpdateAnvertraute(Messdiener m) {
-        m.setFreunde(getArrayString(freund, Messdiener.LENGHT_FREUNDE));
-        m.setGeschwister(getArrayString(geschwi, Messdiener.LENGHT_GESCHWISTER));
+    private void anvertrauteEintragen(Messdiener m) {
         List<Messdiener> bearbeitete = new ArrayList<>();
         for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
             bearbeitete.add(Messdiener.alteLoeschen(m, messdiener));
@@ -283,50 +276,27 @@ public class MediController implements Controller {
                 bearbeitete.add(Messdiener.alteLoeschen(moben, messdiener));
             }
         }
-        for (Messdiener medi : geschwi) {
-            addBekanntschaft(medi, m, true);
+        for (Messdiener medi : geschwisterArray) {
+            medi.addGeschwister(m);
             bearbeitete.add(medi);
         }
-        for (Messdiener medi : freund) {
-            addBekanntschaft(medi, m, false);
+        for (Messdiener medi : freundeArray) {
+            medi.addFreund(m);
             bearbeitete.add(medi);
         }
-        bearbeitete.removeIf(Objects::isNull);
         // speichern
         bearbeitete.add(m);
         RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
         bearbeitete = rd.removeDuplicatedEntries(bearbeitete);
-        bearbeitete.removeIf(messdiener -> moben != null && messdiener.hashCode() == moben.hashCode());
-        try {
-            for (Messdiener messdiener : bearbeitete) {
-                WriteFile wf = new WriteFile(messdiener);
-                wf.saveToXML();
-            }
-            if (getLogger().isDebugEnabled()) {
-                getLogger().info("Messdiener {} wurde gespeichert!", m);
-            }
-            DateienVerwalter.getInstance().reloadMessdiener();
-        } catch (IOException e) {
-            Dialogs.getDialogs().error(e, KONNTE + m + "' nicht speichern");
+        bearbeitete.removeIf(messdiener -> messdiener == null
+                || moben != null && messdiener.hashCode() == moben.hashCode());
+        for (Messdiener messdiener : bearbeitete) {
+            messdiener.makeXML();
         }
-    }
-
-    private void addBekanntschaft(Messdiener medi, Messdiener woben, boolean isGeschwister) {
-        if (isGeschwister) {
-            ArrayList<String> geschwisterStrings = new ArrayList<>(Arrays.asList(medi.getGeschwister()));
-            medi.setGeschwister(addToArray(geschwisterStrings, woben.toString(), Messdiener.LENGHT_GESCHWISTER));
-        } else {
-            ArrayList<String> freundeStrings = new ArrayList<>(Arrays.asList(medi.getFreunde()));
-            medi.setFreunde(addToArray(freundeStrings, woben.toString(), Messdiener.LENGHT_FREUNDE));
+        if (getLogger().isDebugEnabled()) {
+            getLogger().info("Messdiener {} wurde gespeichert!", m);
         }
-    }
-
-    private String[] addToArray(ArrayList<String> strings, String toAdded, int limit) {
-        strings.add(toAdded);
-        strings.removeIf(t -> t == null || t.equals(""));
-        String[] s = new String[limit];
-        strings.toArray(s);
-        return s;
+        DateienVerwalter.getInstance().reloadMessdiener();
     }
 
     private void updateFreunde(Messdiener medi) {
@@ -348,7 +318,8 @@ public class MediController implements Controller {
                 return;
             }
         }
-        updateFreunde(al);
+        freundeArray = al;
+        updateAnvertrauteInView(freundeArray, freundeListView);
     }
 
     private boolean searchForMessdiener(List<String> arrayList, List<Messdiener> alle, List<Messdiener> al, int i) {
@@ -383,6 +354,7 @@ public class MediController implements Controller {
                 return;
             }
         }
-        updateGeschwister(al);
+        geschwisterArray = al;
+        updateAnvertrauteInView(geschwisterArray, geschwisterListView);
     }
 }

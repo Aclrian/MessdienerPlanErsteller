@@ -61,7 +61,7 @@ public class MainController { //NOPMD - suppressed TooManyMethods - needed for f
             FXMLLoader fl = new FXMLLoader(u);
             load(fl);
             if (control instanceof MediController mc) {
-                mc.setMedi(messdiener);
+                mc.setMessdiener(messdiener);
             }
         } else {
             Dialogs.getDialogs().warn(GESPERRT);

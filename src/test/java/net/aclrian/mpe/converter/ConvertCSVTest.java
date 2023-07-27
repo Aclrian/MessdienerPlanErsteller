@@ -54,10 +54,10 @@ class ConvertCSVTest {
         Messdiener m = parseLineToMessdiener("a;b;;2000;a@a.de", convertdata);
         assertThat(m).isNotNull();
         assertThat(m.getVorname()).isEqualTo("a");
-        assertThat(m.getNachnname()).isEqualTo("b");
+        assertThat(m.getNachname()).isEqualTo("b");
         assertThat(m.istLeiter()).isTrue();
         assertThat(m.getEintritt()).isEqualTo(2000);
-        assertThat(m.getEmail()).isEqualTo("a@a.de");
+        assertThat(m.getEmail().toString()).isEqualTo("a@a.de");
 
         columns = Arrays.asList(
                 ConvertCSV.Sortierung.NACHNAME_KOMMA_VORNAME, ConvertCSV.Sortierung.LEITER, ConvertCSV.Sortierung.EINTRITT,
@@ -70,10 +70,10 @@ class ConvertCSVTest {
         m = parseLineToMessdiener("b, a;;x;non-valid e-mail;empty", convertdata);
         assertThat(m).isNotNull();
         assertThat(m.getVorname()).isEqualTo("a");
-        assertThat(m.getNachnname()).isEqualTo("b");
+        assertThat(m.getNachname()).isEqualTo("b");
         assertThat(m.istLeiter()).isFalse();
         assertThat(m.getEintritt()).isGreaterThanOrEqualTo(2023);
-        assertThat(m.getEmail()).isEmpty();
+        assertThat(m.getEmail().toString()).isEmpty();
 
         convertdata = new ConvertCSV.ConvertData(
                 null, List.of(ConvertCSV.Sortierung.NACHNAME), Collections.singletonList(new Sonstiges()),
@@ -96,7 +96,7 @@ class ConvertCSVTest {
         );
         m = parseLineToMessdiener("a b c;2023;x;", convertdata);
         assertThat(m.getVorname()).isEqualTo("a");
-        assertThat(m.getNachnname()).isEqualTo("b c");
+        assertThat(m.getNachname()).isEqualTo("b c");
 
         convertdata = new ConvertCSV.ConvertData(
                 null, columns, Collections.singletonList(new Sonstiges()),
@@ -104,7 +104,7 @@ class ConvertCSVTest {
         );
         m = parseLineToMessdiener("a b;2023;x;", convertdata);
         assertThat(m.getVorname()).isEqualTo("a");
-        assertThat(m.getNachnname()).isEqualTo("b");
+        assertThat(m.getNachname()).isEqualTo("b");
 
         convertdata = new ConvertCSV.ConvertData(
                 null, columns, Collections.singletonList(new Sonstiges()),
@@ -135,7 +135,7 @@ class ConvertCSVTest {
         assertThat(m.getDienverhalten().getBestimmtes(sm2)).isFalse();
         assertThat(m.getDienverhalten().getBestimmtes(sm3)).isFalse();
         assertThat(m.getDienverhalten().getBestimmtes(sm4)).isFalse();
-        assertThat(m.getNachnname()).isEqualTo("b");
+        assertThat(m.getNachname()).isEqualTo("b");
 
         Files.createDirectories(tempDir);
         Path file = Files.createTempFile(tempDir, null, ".csv");

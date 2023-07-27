@@ -1,7 +1,7 @@
 package net.aclrian.mpe.converter;
 
+import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messdiener.Messdiener.NotValidException;
 import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 public class ConvertCSV {
     private final ConvertData convertData;
@@ -63,12 +62,12 @@ public class ConvertCSV {
 
         String vorname = "";
         String nachname = "";
-        String email = "";
+        String emailString = "";
         int eintritt = LocalDate.now().getYear();
         Messverhalten dienverhalten = new Messverhalten();
         boolean leiter = false;
-        String[] freunde = new String[Messdiener.LENGHT_FREUNDE];
-        String[] geschwister = new String[Messdiener.LENGHT_GESCHWISTER];
+        String[] freunde = new String[Messdiener.LENGTH_FREUNDE];
+        String[] geschwister = new String[Messdiener.LENGTH_GESCHWISTER];
         for (int j = 0; j < elemente.length; j++) {
             //CHECKSTYLE:OFF: InnerAssignment
             switch (convertData.sortierung().get(j)) {
@@ -92,7 +91,7 @@ public class ConvertCSV {
                         return null;
                     }
                 }
-                case EMAIL -> email = elemente[j];
+                case EMAIL -> emailString = elemente[j];
                 case VORNAME_LEERZEICHEN_NACHNAME -> {
                     String[] name = elemente[j].split(" ");
                     if (name.length == 2) {
@@ -127,19 +126,19 @@ public class ConvertCSV {
                 }
                 case FREUNDE -> {
                     String[] split = elemente[j].split(convertData.subdelimiter());
-                    freunde = new String[Messdiener.LENGHT_FREUNDE];
+                    freunde = new String[Messdiener.LENGTH_FREUNDE];
                     Arrays.fill(freunde, "");
                     System.arraycopy(split, 0, freunde, 0, split.length);
-                    for (int i = Math.min(split.length, Messdiener.LENGHT_FREUNDE); i < Messdiener.LENGHT_FREUNDE; i++) {
+                    for (int i = Math.min(split.length, Messdiener.LENGTH_FREUNDE); i < Messdiener.LENGTH_FREUNDE; i++) {
                         freunde[i] = "";
                     }
                 }
                 case GESCHWISTER -> {
                     String[] split = elemente[j].split(convertData.subdelimiter());
-                    geschwister = new String[Messdiener.LENGHT_GESCHWISTER];
+                    geschwister = new String[Messdiener.LENGTH_GESCHWISTER];
                     Arrays.fill(geschwister, "");
                     System.arraycopy(split, 0, geschwister, 0, split.length);
-                    for (int i = Math.min(split.length, Messdiener.LENGHT_GESCHWISTER); i < Messdiener.LENGHT_GESCHWISTER; i++) {
+                    for (int i = Math.min(split.length, Messdiener.LENGTH_GESCHWISTER); i < Messdiener.LENGTH_GESCHWISTER; i++) {
                         geschwister[i] = "";
                     }
                 }
@@ -153,15 +152,13 @@ public class ConvertCSV {
         if (vorname.isEmpty() || nachname.isEmpty()) {
             return null;
         }
-        Messdiener m = new Messdiener(new File(DateienVerwalter.getInstance().getSavePath(), nachname + ", " + vorname + ".xml"));
-        m.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, dienverhalten);
-        m.setFreunde(freunde);
-        m.setGeschwister(geschwister);
+        Email email = Email.EMPTY_EMAIL;
+        File file = new File(DateienVerwalter.getInstance().getSavePath(), nachname + ", " + vorname + ".xml");
+        Messdiener m = new Messdiener(file, vorname, nachname, email, eintritt, leiter, dienverhalten, freunde, geschwister);
         try {
-            m.setEmail(email);
-        } catch (NotValidException e) {
-            MPELog.getLogger().info("{} von {} ist nicht gültig", email, m);
-            m.setEmailEmpty();
+            m.setEmail(new Email(emailString));
+        } catch (Email.NotValidException e) {
+            MPELog.getLogger().info("{} von {} ist nicht gültig", emailString, m);
         }
         return m;
     }
@@ -169,15 +166,15 @@ public class ConvertCSV {
     private void createMissingBackReferences() {
         DateienVerwalter.getInstance().reloadMessdiener();
         for (Messdiener m : importedMessdiener) {
-            addBackReferenz(m.getMessdaten().getFreunde(), m, Messdiener::getFreunde);
-            addBackReferenz(m.getMessdaten().getGeschwister(), m, Messdiener::getGeschwister);
+            addBackReferenz(m.getMessdaten().getFreunde(), m, Messdiener.AnvertrauteHandler.FREUNDE);
+            addBackReferenz(m.getMessdaten().getGeschwister(), m, Messdiener.AnvertrauteHandler.GESCHWISTER);
         }
     }
 
-    private void addBackReferenz(List<Messdiener> anvertraute, Messdiener m, Function<Messdiener, String[]> getAnvertraute) {
+    private void addBackReferenz(List<Messdiener> anvertraute, Messdiener m, Messdiener.AnvertrauteHandler anvertrauteHandler) {
         for (Messdiener anvertrauterMedi : anvertraute) {
             if (!anvertrauterMedi.getMessdaten().getFreunde().contains(m)) {
-                String[] list = getAnvertraute.apply(anvertrauterMedi);
+                String[] list = anvertrauteHandler.get(anvertrauterMedi);
                 for (int i = 0; i < list.length; i++) {
                     if (list[i].equals("")
                             || list[i].equals("LEER")
@@ -194,8 +191,8 @@ public class ConvertCSV {
 
     private void replaceLineNumberWithMessdiener() {
         for (Messdiener m : importedMessdiener) {
-            m.setFreunde(replaceLineNumber(m, Messdiener::getFreunde));
-            m.setGeschwister(replaceLineNumber(m, Messdiener::getGeschwister));
+            m.setFreunde(replaceLineNumber(m, Messdiener.AnvertrauteHandler.FREUNDE));
+            m.setGeschwister(replaceLineNumber(m, Messdiener.AnvertrauteHandler.GESCHWISTER));
             m.makeXML();
         }
 
@@ -203,10 +200,10 @@ public class ConvertCSV {
         DateienVerwalter.getInstance().getMessdiener();
     }
 
-    private String[] replaceLineNumber(Messdiener m, Function<Messdiener, String[]> getAnvertraute) {
+    private String[] replaceLineNumber(Messdiener m, Messdiener.AnvertrauteHandler handler) {
         int offset = convertData.lineStartetMit1 ? -1 : 0;
         final String pattern = " ?\\d{1," + (importedMessdiener.size() - 1) + "} ?";
-        return Arrays.stream(getAnvertraute.apply(m))
+        return Arrays.stream(handler.get(m))
                 .map(freund -> {
                     if (freund.matches(pattern)) {
                         int index = Integer.parseInt(freund) + offset;

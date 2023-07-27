@@ -145,7 +145,7 @@ public class TestSelect extends ApplicationTest {
 
         assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#neu")).fire();
-        Mockito.verify(mc, Mockito.times(1)).changePane(Mockito.isNull());
+        Mockito.verify(mc, Mockito.times(1)).changePane(Mockito.eq(MainController.EnumPane.MESSDIENER));
 
         assertThat(scene.lookup("#remove")).isInstanceOf(Button.class);
         Mockito.when(dialog.frage(Mockito.any(), Mockito.any(), Mockito.eq("Löschen"))).thenReturn(true);
@@ -221,7 +221,7 @@ public class TestSelect extends ApplicationTest {
 
         assertThat(scene.lookup("#neu")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#neu")).fire();
-        Mockito.verify(mc, Mockito.times(1)).changePane(Mockito.isNull());
+        Mockito.verify(mc, Mockito.times(1)).changePane(Mockito.eq(MainController.EnumPane.MESSE));
 
         ((ListView<?>) scene.lookup("#list")).getSelectionModel().select(0);
         scene.lookup("#list").fireEvent(new MouseEvent(
