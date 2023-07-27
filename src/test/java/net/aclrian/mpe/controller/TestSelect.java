@@ -11,7 +11,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Pfarrei;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -90,6 +93,7 @@ public class TestSelect extends ApplicationTest {
     @SuppressWarnings("unchecked")
     @Test
     void testMedi(@TempDir Path tempDir) {
+        tempDir = Paths.get(new File(System.getProperty("user.home")).toURI()); // TODO fix me
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -109,12 +113,33 @@ public class TestSelect extends ApplicationTest {
         Mockito.when(m2.toString()).thenReturn("sdjgdlöfkgjclvk");
         Mockito.when(m1.getFile()).thenReturn(f1);
         Mockito.when(m2.getFile()).thenReturn(f2);
+        Mockito.when(m1.getEmail()).thenReturn(Email.EMPTY_EMAIL);
+        Mockito.when(m2.getEmail()).thenReturn(Email.EMPTY_EMAIL);
         Mockito.when(m1.getFreunde()).thenReturn(new String[]{"sdjgdlöfkgjclvk", "", "", "", "", ""});
         Mockito.when(m1.getGeschwister()).thenReturn(new String[]{"sdjgdlöfkgjclvk", "", ""});
         Mockito.when(m2.getFreunde()).thenReturn(new String[]{"cdajklsdfkldjoa", "", "", "", "", ""});
         Mockito.when(m2.getGeschwister()).thenReturn(new String[]{"cdajklsdfkldjoa", "", ""});
 
-
+        Mockito.doAnswer(invocationOnMock -> {
+            WriteFile wf = new WriteFile(m1);
+            try {
+                wf.saveToXML();
+            } catch (Exception e) {
+                Dialogs.getDialogs().error(e, "Konnte bei dem Bekannten '" + m1
+                        + "' von dem zu löschenden Messdiener diesen nicht löschen.");
+            }
+            return null;
+        }).when(m1).makeXML();
+        Mockito.doAnswer(invocationOnMock -> {
+            WriteFile wf = new WriteFile(m2);
+            try {
+                wf.saveToXML();
+            } catch (Exception e) {
+                Dialogs.getDialogs().error(e, "Konnte bei dem Bekannten '" + m2
+                        + "' von dem zu löschenden Messdiener diesen nicht löschen.");
+            }
+            return null;
+        }).when(m2).makeXML();
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2), Arrays.asList(m1, m2), Collections.singletonList(m2));
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.SELECT_MEDI.getLocation());
