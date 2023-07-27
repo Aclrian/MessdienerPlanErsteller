@@ -50,6 +50,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestSelect extends ApplicationTest {
 
+    @Mock
+    private DateienVerwalter dv;
+
+    @Mock
+    private MainController mc;
+    @Mock
+    private Dialogs dialog;
+    private Pane pane;
+    private Select instance;
+    private Scene scene;
+    private AutoCloseable openMocks;
+
     public static Answer<Messdiener> getAnswerForMessdienerMock(Messdiener messdiener) {
         return invocationOnMock -> {
             WriteFile wf = new WriteFile(messdiener);
@@ -65,17 +77,6 @@ public class TestSelect extends ApplicationTest {
     public static void mockSaveToXML(Messdiener messdiener) {
         Mockito.doAnswer(getAnswerForMessdienerMock(messdiener)).when(messdiener).makeXML();
     }
-
-    @Mock
-    private DateienVerwalter dv;
-    @Mock
-    private MainController mc;
-    @Mock
-    private Dialogs dialog;
-    private Pane pane;
-    private Select instance;
-    private Scene scene;
-    private AutoCloseable openMocks;
 
     @AfterAll
     public static void removeFiles() {

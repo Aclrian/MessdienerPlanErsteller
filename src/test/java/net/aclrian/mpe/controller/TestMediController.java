@@ -203,7 +203,7 @@ public class TestMediController extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    void testGeschwister() {
+    void testGeschwister() { //NOPMD - suppressed NcssCount - for test purpose
         File f = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
         try {
             Files.writeString(f.toPath(), medi);
