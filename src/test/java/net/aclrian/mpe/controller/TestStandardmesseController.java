@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import net.aclrian.fx.ATilePane;
+import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.messe.StandardMesse;
@@ -70,6 +71,10 @@ class TestStandardmesseController extends ApplicationTest {
         Mockito.when(dv.getSavePath()).thenReturn(f);
         Messdiener m1 = Mockito.mock(Messdiener.class);
         Messdiener m2 = Mockito.mock(Messdiener.class);
+        Mockito.when(m1.getEmail()).thenReturn(Email.EMPTY_EMAIL);
+        Mockito.when(m2.getEmail()).thenReturn(Email.EMPTY_EMAIL);
+        TestSelect.mockSaveToXML(m1);
+        TestSelect.mockSaveToXML(m2);
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         final Messverhalten mv1 = new Messverhalten();
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
@@ -114,6 +119,7 @@ class TestStandardmesseController extends ApplicationTest {
         assertThat(i).isEqualTo(2);
         assertThat(scene.lookup("#fertig")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#fertig")).fire();
+        WaitForAsyncUtils.waitForFxEvents();
         final File aFile = new File(f.getAbsolutePath(), "a.xml");
         assertThat(aFile).exists();
         final File bFile = new File(f.getAbsolutePath(), "b.xml");

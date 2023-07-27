@@ -28,6 +28,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
@@ -48,6 +49,22 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestSelect extends ApplicationTest {
+
+    public static Answer<Messdiener> getAnswerForMessdienerMock(Messdiener messdiener) {
+        return invocationOnMock -> {
+            WriteFile wf = new WriteFile(messdiener);
+            try {
+                wf.saveToXML();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        };
+    }
+
+    public static void mockSaveToXML(Messdiener messdiener) {
+        Mockito.doAnswer(getAnswerForMessdienerMock(messdiener)).when(messdiener).makeXML();
+    }
 
     @Mock
     private DateienVerwalter dv;
@@ -120,26 +137,8 @@ public class TestSelect extends ApplicationTest {
         Mockito.when(m2.getFreunde()).thenReturn(new String[]{"cdajklsdfkldjoa", "", "", "", "", ""});
         Mockito.when(m2.getGeschwister()).thenReturn(new String[]{"cdajklsdfkldjoa", "", ""});
 
-        Mockito.doAnswer(invocationOnMock -> {
-            WriteFile wf = new WriteFile(m1);
-            try {
-                wf.saveToXML();
-            } catch (Exception e) {
-                Dialogs.getDialogs().error(e, "Konnte bei dem Bekannten '" + m1
-                        + "' von dem zu löschenden Messdiener diesen nicht löschen.");
-            }
-            return null;
-        }).when(m1).makeXML();
-        Mockito.doAnswer(invocationOnMock -> {
-            WriteFile wf = new WriteFile(m2);
-            try {
-                wf.saveToXML();
-            } catch (Exception e) {
-                Dialogs.getDialogs().error(e, "Konnte bei dem Bekannten '" + m2
-                        + "' von dem zu löschenden Messdiener diesen nicht löschen.");
-            }
-            return null;
-        }).when(m2).makeXML();
+        mockSaveToXML(m1);
+        mockSaveToXML(m2);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2), Arrays.asList(m1, m2), Collections.singletonList(m2));
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.SELECT_MEDI.getLocation());

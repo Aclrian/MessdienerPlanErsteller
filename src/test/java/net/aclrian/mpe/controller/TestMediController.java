@@ -10,6 +10,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.ReadFile;
 import net.aclrian.mpe.messe.Messverhalten;
@@ -215,6 +216,8 @@ public class TestMediController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         DateienVerwalter.setInstance(dv);
         Messdiener m1 = Mockito.mock(Messdiener.class);
+        TestSelect.mockSaveToXML(m1);
+        Mockito.when(m1.getEmail()).thenReturn(Email.EMPTY_EMAIL);
         Mockito.when(m1.toString()).thenReturn("Tannenbusch, Nora");
         Mockito.when(m1.toString()).thenReturn("Tannenbusch, Nora");
         Mockito.when(m1.getGeschwister()).thenReturn(new String[]{"Tannenbusch, Lea", "", ""});
@@ -222,6 +225,8 @@ public class TestMediController extends ApplicationTest {
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
         Mockito.when(m1.getFreunde()).thenReturn(new String[]{"", "", "", "", ""});
         Messdiener m2 = Mockito.mock(Messdiener.class);
+        TestSelect.mockSaveToXML(m2);
+        Mockito.when(m2.getEmail()).thenReturn(Email.EMPTY_EMAIL);
         Mockito.when(m2.toString()).thenReturn("Müller, Lieschen");
         Mockito.when(m2.toString()).thenReturn("Müller, Lieschen");
         Mockito.when(m2.getGeschwister()).thenReturn(new String[]{"", "", ""});
@@ -281,11 +286,11 @@ public class TestMediController extends ApplicationTest {
         Mockito.verify(m2)
                 .addGeschwister(Mockito.argThat(argument -> argument.toString().equalsIgnoreCase("Tannenbusch, Lea")));
 
-        Mockito.verify(m1, Mockito.times(22)).getFreunde();
-        Mockito.verify(m1, Mockito.times(15)).getGeschwister();
+        Mockito.verify(m1, Mockito.times(23)).getFreunde();
+        Mockito.verify(m1, Mockito.times(16)).getGeschwister();
 
-        Mockito.verify(m2, Mockito.times(23)).getFreunde();
-        Mockito.verify(m2, Mockito.times(14)).getGeschwister();
+        Mockito.verify(m2, Mockito.times(24)).getFreunde();
+        Mockito.verify(m2, Mockito.times(15)).getGeschwister();
 
         final File nora = new File(System.getProperty("user.home"), "Tannenbusch, Nora.xml");
         final File lea = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
