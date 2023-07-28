@@ -7,12 +7,13 @@ import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.*;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class Einteilung {
 
@@ -179,7 +180,11 @@ public class Einteilung {
                 allForSMesse.add(medi);
             }
         }
-        Collections.shuffle(allForSMesse, new Random(System.nanoTime()));
+        try {
+            Collections.shuffle(allForSMesse, SecureRandom.getInstance("NativePRNG"));
+        } catch (NoSuchAlgorithmException e) {
+            Dialogs.getDialogs().error(e, "Konnte keinen kryptografisch sicheren RNG finden.");
+        }
         allForSMesse.sort(Messdaten.MESSDIENER_EINTEILEN_COMPARATOR);
         return allForSMesse;
     }

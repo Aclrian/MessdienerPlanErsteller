@@ -10,6 +10,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import net.aclrian.mpe.TestUtil;
 import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.ReadFile;
@@ -20,9 +21,9 @@ import net.aclrian.mpe.utils.DateUtil;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.MPELog;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -32,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Arrays;
@@ -78,20 +80,6 @@ public class TestMediController extends ApplicationTest {
     private MediController instance;
     private Scene scene;
 
-    @AfterAll
-    public static void removeFiles() {
-        try {
-            final File nora = new File(System.getProperty("user.home"), "Tannenbusch, Nora.xml");
-            final File lea = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
-            final File liesch = new File(System.getProperty("user.home"), "Müller, Lieschen.xml");
-            Files.deleteIfExists(nora.toPath());
-            Files.deleteIfExists(lea.toPath());
-            Files.deleteIfExists(liesch.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void start(Stage stage) {
         pane = new Pane();
@@ -106,8 +94,8 @@ public class TestMediController extends ApplicationTest {
     }
 
     @Test
-    void testReadAndSave() { //NOPMD - suppressed NcssCount - for test purposes
-        File f = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
+    public void testReadAndSave(@TempDir Path tempDir) { //NOPMD - suppressed NcssCount - for test purposes
+        File f = new File(tempDir.toString(), "Tannenbusch, Lea.xml");
         try {
             Files.writeString(f.toPath(), medi);
         } catch (IOException e) {
@@ -175,7 +163,7 @@ public class TestMediController extends ApplicationTest {
         ((Messverhalten.KannWelcheMesse) table.getItems().get(0)).setKannDann(false);
         Platform.runLater(() -> ((SplitMenuButton) scene.lookup("#button")).fire());
         WaitForAsyncUtils.waitForFxEvents();
-        final File newFile = new File(System.getProperty("user.home"), "Tannenbusch, Luisa.xml");
+        final File newFile = new File(tempDir.toString(), "Tannenbusch, Luisa.xml");
         assertThat(newFile).exists();
         Platform.runLater(() -> {
             final Messdiener messdiener = new ReadFile().getMessdiener(newFile);
@@ -199,12 +187,14 @@ public class TestMediController extends ApplicationTest {
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    void testGeschwister() { //NOPMD - suppressed NcssCount - for test purpose
-        File f = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
+    public void testGeschwister(@TempDir Path tempDir) { //NOPMD - suppressed NcssCount - for test purpose
+        File f = new File(tempDir.toString(), "Tannenbusch, Lea.xml");
         try {
             Files.writeString(f.toPath(), medi);
         } catch (IOException e) {
@@ -216,7 +206,7 @@ public class TestMediController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         DateienVerwalter.setInstance(dv);
         Messdiener m1 = Mockito.mock(Messdiener.class);
-        TestSelect.mockSaveToXML(m1);
+        TestUtil.mockSaveToXML(m1);
         Mockito.when(m1.getEmail()).thenReturn(Email.EMPTY_EMAIL);
         Mockito.when(m1.toString()).thenReturn("Tannenbusch, Nora");
         Mockito.when(m1.toString()).thenReturn("Tannenbusch, Nora");
@@ -225,7 +215,7 @@ public class TestMediController extends ApplicationTest {
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
         Mockito.when(m1.getFreunde()).thenReturn(new String[]{"", "", "", "", ""});
         Messdiener m2 = Mockito.mock(Messdiener.class);
-        TestSelect.mockSaveToXML(m2);
+        TestUtil.mockSaveToXML(m2);
         Mockito.when(m2.getEmail()).thenReturn(Email.EMPTY_EMAIL);
         Mockito.when(m2.toString()).thenReturn("Müller, Lieschen");
         Mockito.when(m2.toString()).thenReturn("Müller, Lieschen");
@@ -292,9 +282,9 @@ public class TestMediController extends ApplicationTest {
         Mockito.verify(m2, Mockito.times(24)).getFreunde();
         Mockito.verify(m2, Mockito.times(15)).getGeschwister();
 
-        final File nora = new File(System.getProperty("user.home"), "Tannenbusch, Nora.xml");
-        final File lea = new File(System.getProperty("user.home"), "Tannenbusch, Lea.xml");
-        final File liesch = new File(System.getProperty("user.home"), "Müller, Lieschen.xml");
+        final File nora = new File(tempDir.toString(), "Tannenbusch, Nora.xml");
+        final File lea = new File(tempDir.toString(), "Tannenbusch, Lea.xml");
+        final File liesch = new File(tempDir.toString(), "Müller, Lieschen.xml");
 
         assertThat(nora).exists();
         assertThat(liesch).exists();
@@ -335,5 +325,7 @@ public class TestMediController extends ApplicationTest {
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 }

@@ -25,11 +25,11 @@ import static net.aclrian.mpe.converter.ConvertCSV.parseLineToMessdiener;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doAnswer;
 
-class TestConvertCSV {
+public class TestConvertCSV {
     private List<Messdiener> medis = new ArrayList<>();
 
     @Test
-    void testImport(@TempDir Path tempDir) throws IOException { //NOPMD - suppressed NcssCount - for test purposes
+    public void testImport(@TempDir Path tempDir) throws IOException { //NOPMD - suppressed NcssCount - for test purposes
         DateienVerwalter dv = Mockito.mock(DateienVerwalter.class);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -167,7 +167,7 @@ class TestConvertCSV {
     }
 
     @Test
-    void testIO(@TempDir Path tempDir) throws IOException {
+    public void testIO(@TempDir Path tempDir) throws IOException {
         Locale locale = Locale.getDefault();
         Locale.setDefault(Locale.GERMANY);
         DateienVerwalter dv = Mockito.mock(DateienVerwalter.class);
@@ -225,6 +225,7 @@ class TestConvertCSV {
         assertThat(anna).exists().hasSameContentAs(Paths.get(convertFile.getParent().toString(), annaString));
         Mockito.verify(dialog, Mockito.times(1)).info(Mockito.anyString());
         Locale.setDefault(locale);
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     private List<Messdiener> getMessdiener(Path tempDir) {

@@ -38,7 +38,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestMesseController extends ApplicationTest {
+public class TestMesseController extends ApplicationTest {
 
     @Mock
     private DateienVerwalter dv;
@@ -74,7 +74,7 @@ class TestMesseController extends ApplicationTest {
     }
 
     @Test
-    void test() {
+    public void test() {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -167,5 +167,7 @@ class TestMesseController extends ApplicationTest {
             m.vorzeitigEinteilen(messdiener);
             return argument.equals(m);
         }));
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 }

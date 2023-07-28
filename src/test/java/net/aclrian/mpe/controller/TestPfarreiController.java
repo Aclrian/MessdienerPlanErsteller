@@ -23,10 +23,10 @@ import net.aclrian.mpe.utils.DateUtil;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.MPELog;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -36,6 +36,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -54,16 +55,6 @@ public class TestPfarreiController extends ApplicationTest {
     private Scene scene;
     private Stage stage;
     private AutoCloseable openMocks;
-
-    @AfterAll
-    public static void deleteFile() {
-        File file = new File(System.getProperty("user.home"), "name" + DateienVerwalter.PFARREI_DATEIENDUNG);
-        try {
-            Files.deleteIfExists(file.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void start(Stage stage) {
@@ -91,7 +82,7 @@ public class TestPfarreiController extends ApplicationTest {
     //CHECKSTYLE:OFF: MethodLength
     @SuppressWarnings("unchecked")
     @Test
-    void test() { //NOPMD - suppressed NcssCount - for test purpose
+    public void test(@TempDir Path tempDir) { //NOPMD - suppressed NcssCount - for test purpose
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -101,7 +92,7 @@ public class TestPfarreiController extends ApplicationTest {
         StandardMesse standardmesse1 = new StandardMesse(DayOfWeek.TUESDAY, 5, "09", "o1", 5, "t2");
         Mockito.when(dialog.standardmesse(Mockito.isNull())).thenReturn(standardmesse, standardmesse1);
         FXMLLoader loader = new FXMLLoader();
-        PfarreiController cont = new PfarreiController(stage, System.getProperty("user.home"), mainApplication);
+        PfarreiController cont = new PfarreiController(stage, tempDir.toString(), mainApplication);
         loader.setLocation(cont.getClass().getResource(PfarreiController.STANDARDMESSE_FXML));
         loader.setController(cont);
         Parent root = null;
@@ -216,7 +207,7 @@ public class TestPfarreiController extends ApplicationTest {
             ((Button) scene.lookup("#save")).fire();
         });
         WaitForAsyncUtils.waitForFxEvents();
-        File file = new File(System.getProperty("user.home"), "namesdfsdjklflös" + DateienVerwalter.PFARREI_DATEIENDUNG);
+        File file = new File(tempDir.toString(), "namesdfsdjklflös" + DateienVerwalter.PFARREI_DATEIENDUNG);
         assertThat(file).exists();
         try {
             String doW = DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault());
@@ -291,6 +282,8 @@ public class TestPfarreiController extends ApplicationTest {
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
     //CHECKSTYLE:ON: MethodLength
 }

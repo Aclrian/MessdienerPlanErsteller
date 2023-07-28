@@ -46,7 +46,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestMainController extends ApplicationTest {
+public class TestMainController extends ApplicationTest {
 
     @Mock
     private Dialogs dialogs;
@@ -78,7 +78,7 @@ class TestMainController extends ApplicationTest {
 
     //CHECKSTYLE:OFF: MethodLength
     @RetryingTest(5)
-    void testEachEnumPane() { //NOPMD - suppressed NPathComplexity - for test purpose
+    public void testEachEnumPane() { //NOPMD - suppressed NPathComplexity - for test purpose
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -312,12 +312,13 @@ class TestMainController extends ApplicationTest {
             assertThat(this.listTargetWindows()).isNotEmpty();
         });
         WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
     //CHECKSTYLE:ON: MethodLength
 
     @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "should not run on ci")
     @Test
-    void testAwtDesktop() throws IOException {
+    public void testAwtDesktop() throws IOException {
         DateienVerwalter.setInstance(dv);
         final File file = new File(System.getProperty("user.dir"));
         Mockito.when(dv.getSavePath()).thenReturn(file);
@@ -335,11 +336,13 @@ class TestMainController extends ApplicationTest {
         ((MainController) loader.getController()).changePane(MainController.EnumPane.START);
         WaitForAsyncUtils.waitForFxEvents();
         assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.START);
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "Robotcontext should not run on ci")
     @Test
-    void testChangeSpeicherort() {
+    public void testChangeSpeicherort() {
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -404,10 +407,12 @@ class TestMainController extends ApplicationTest {
         }
         assertThat(stage.focusedProperty().getValue()).isFalse();
         robotContext().getKeyboardRobot().press(KeyCode.ESCAPE);
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @Test
-    void testPfarrei() {
+    public void testPfarrei() {
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -443,5 +448,7 @@ class TestMainController extends ApplicationTest {
         final Node lookup = this.listWindows().get(1).getScene().lookup("#table");
         assertThat(lookup).isInstanceOf(TableView.class);
         assertThat(((TableView<?>) lookup).getItems().get(0)).hasToString(pf.getStandardMessen().get(0).toString());
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 }

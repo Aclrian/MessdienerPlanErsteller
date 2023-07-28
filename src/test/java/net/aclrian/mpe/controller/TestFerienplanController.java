@@ -31,7 +31,7 @@ import java.util.List;
 import static net.aclrian.mpe.utils.DateUtil.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestFerienplanController extends ApplicationTest {
+public class TestFerienplanController extends ApplicationTest {
 
     @Mock
     private DateienVerwalter dv;
@@ -62,7 +62,7 @@ class TestFerienplanController extends ApplicationTest {
     }
 
     @Test
-    void testWithoutMessen() {
+    public void testWithoutMessen() {
         final LocalDateTime tomorrow = getTomorrow().atTime(10, 42);
         final LocalDateTime yesterday = getYesterday().atTime(3, 14);
         final LocalDateTime today = getToday().atTime(0, 0);
@@ -118,7 +118,7 @@ class TestFerienplanController extends ApplicationTest {
     }
 
     @Test
-    void withData() { //NOPMD - suppressed NcssCount - for test purposes
+    public void withData() { //NOPMD - suppressed NcssCount - for test purposes
         List<Messe> messen = Arrays.asList(
                 new Messe(false, 1, getToday().atTime(0, 0), "ort1", "typ1"),
                 new Messe(false, 2, getTomorrow().atTime(0, 0), "ort1", "typ1"),

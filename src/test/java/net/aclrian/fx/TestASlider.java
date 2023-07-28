@@ -13,7 +13,7 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestASlider extends ApplicationTest {
+public class TestASlider extends ApplicationTest {
 
     private static final String STRING_VALUE = "object2342+3";
     private Slider instance;
@@ -28,7 +28,7 @@ class TestASlider extends ApplicationTest {
     }
 
     @Test
-    void testAslider() {
+    public void testAslider() {
         instance = new Slider(1, 10, 3);
         Platform.runLater(() -> {
             pane.getChildren().add(instance);
@@ -44,7 +44,7 @@ class TestASlider extends ApplicationTest {
     }
 
     @Test
-    void testASlider2() {
+    public void testASlider2() {
         instance = new Slider(1, 10, 3);
         Platform.runLater(() -> {
             pane.getChildren().add(instance);
@@ -57,7 +57,7 @@ class TestASlider extends ApplicationTest {
     }
 
     @Test
-    void testEventHandler() {
+    public void testEventHandler() {
         instance = new Slider(1, 10, 3);
         Platform.runLater(() -> {
             pane.getChildren().add(instance);

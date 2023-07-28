@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestATilePane extends ApplicationTest {
+public class TestATilePane extends ApplicationTest {
 
     @Mock
     private DateienVerwalter dv;
@@ -45,7 +45,7 @@ class TestATilePane extends ApplicationTest {
     }
 
     @Test
-    void test() {
+    public void test() {
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(medi1, medi2, medi3));
         Mockito.when(medi1.toString()).thenReturn("z");

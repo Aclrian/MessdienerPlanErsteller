@@ -11,16 +11,15 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import net.aclrian.mpe.TestUtil;
 import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messdiener.WriteFile;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.MPELog;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
@@ -37,7 +35,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -62,32 +59,6 @@ public class TestSelect extends ApplicationTest {
     private Scene scene;
     private AutoCloseable openMocks;
 
-    public static Answer<Messdiener> getAnswerForMessdienerMock(Messdiener messdiener) {
-        return invocationOnMock -> {
-            WriteFile wf = new WriteFile(messdiener);
-            try {
-                wf.saveToXML();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        };
-    }
-
-    public static void mockSaveToXML(Messdiener messdiener) {
-        Mockito.doAnswer(getAnswerForMessdienerMock(messdiener)).when(messdiener).makeXML();
-    }
-
-    @AfterAll
-    public static void removeFiles() {
-        try {
-            Files.deleteIfExists(new File(System.getProperty("user.home"), "cdajklsdfkldjoa.xml").toPath());
-            Files.deleteIfExists(new File(System.getProperty("user.home"), "sdjgdlöfkgjclvk.xml").toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void start(Stage stage) {
         pane = new Pane();
@@ -110,8 +81,7 @@ public class TestSelect extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    void testMedi(@TempDir Path tempDir) {
-        tempDir = Paths.get(new File(System.getProperty("user.home")).toURI()); // TODO fix me
+    public void testMessdiener(@TempDir Path tempDir) {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -138,8 +108,8 @@ public class TestSelect extends ApplicationTest {
         Mockito.when(m2.getFreunde()).thenReturn(new String[]{"cdajklsdfkldjoa", "", "", "", "", ""});
         Mockito.when(m2.getGeschwister()).thenReturn(new String[]{"cdajklsdfkldjoa", "", ""});
 
-        mockSaveToXML(m1);
-        mockSaveToXML(m2);
+        TestUtil.mockSaveToXML(m1);
+        TestUtil.mockSaveToXML(m2);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2), Arrays.asList(m1, m2), Collections.singletonList(m2));
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.SELECT_MEDI.getLocation());
@@ -212,11 +182,13 @@ public class TestSelect extends ApplicationTest {
             Assertions.fail(e.getMessage(), e);
         }
         Mockito.verify(dv, Mockito.times(3)).getMessdiener();
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    void testMesse() {
+    public void testMesse() {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -269,11 +241,13 @@ public class TestSelect extends ApplicationTest {
         Locale.setDefault(tmp);
         WaitForAsyncUtils.waitForFxEvents();
         assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    void testeMesseRemove() {
+    public void testeMesseRemove() {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
@@ -309,5 +283,7 @@ public class TestSelect extends ApplicationTest {
         WaitForAsyncUtils.asyncFx(() -> ((Button) scene.lookup("#remove")).fire());
         WaitForAsyncUtils.waitForFxEvents();
         assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(1);
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 }

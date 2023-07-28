@@ -34,9 +34,9 @@ public class ReadFilePfarrei {
         String s = fXmlFile.getAbsolutePath();
         if (s.endsWith(DateienVerwalter.PFARREI_DATEIENDUNG)) {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newDefaultInstance();
-            dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); // DevSkim: reviewed DS137138 on 2023-07-28 by Aclrian
+            dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false); // DevSkim: reviewed DS137138 by Aclrian
+            dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false); // DevSkim: reviewed DS137138 by Aclrian
             dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

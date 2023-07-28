@@ -41,7 +41,7 @@ import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestFinishController extends ApplicationTest {
+public class TestFinishController extends ApplicationTest {
 
     @Mock
     private MainController mc;
@@ -82,7 +82,7 @@ class TestFinishController extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    void cleanTest() throws FindMessdiener.CouldFindMessdiener {
+    public void cleanTest() throws FindMessdiener.CouldFindMessdiener {
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Mockito.when(pf.getSettings()).thenReturn(einst);
@@ -184,16 +184,17 @@ class TestFinishController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @Test
-    void testEinteilungWithoutDOCX() throws FindMessdiener.CouldFindMessdiener {
+    public void testEinteilungWithoutDOCX() throws FindMessdiener.CouldFindMessdiener {
         testEinteilung(false);
     }
 
     @Disabled("Run Test with conversion to docx")
     @Test
-    void testEinteilungWithDOCX() throws FindMessdiener.CouldFindMessdiener {
+    public void testEinteilungWithDOCX() throws FindMessdiener.CouldFindMessdiener {
         testEinteilung(true);
     }
 
@@ -360,6 +361,8 @@ class TestFinishController extends ApplicationTest {
         }
 
         assertThat(pair.getKey()).hasSize(3).containsAll(Arrays.asList(m1, m2, m1Freund));
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
     //CHECKSTYLE:ON: MethodLength
 }

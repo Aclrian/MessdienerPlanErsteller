@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestInfoController extends ApplicationTest {
+public class TestInfoController extends ApplicationTest {
 
     @Mock
     private Dialogs dialog;
@@ -42,7 +42,7 @@ class TestInfoController extends ApplicationTest {
     }
 
     @Test
-    void test() {
+    public void test() {
         Dialogs.setDialogs(dialog);
         Platform.runLater(() -> {
             try {
@@ -94,11 +94,12 @@ class TestInfoController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "should not run on ci")
     @Test
-    void testAwtDesktop() {
+    public void testAwtDesktop() {
         Platform.runLater(() -> {
             try {
                 instance = new InfoController(new Stage());
@@ -131,5 +132,6 @@ class TestInfoController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 }
