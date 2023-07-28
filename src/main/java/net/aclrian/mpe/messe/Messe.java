@@ -52,10 +52,10 @@ public class Messe implements Comparable<Messe> { //NOPMD - suppressed TooManyMe
         if (medi.getMessdaten().einteilen(date.toLocalDate(), hochamt, zwangdate, zwanganz)) {
             if (medi.istLeiter()) {
                 leiter.add(medi);
-                leiter.sort(Messdiener.MESSDIENER_COMPARATOR);
+                leiter.sort(Messdiener.PERSON_COMPARATOR);
             } else {
                 medis.add(medi);
-                medis.sort(Messdiener.MESSDIENER_COMPARATOR);
+                medis.sort(Messdiener.PERSON_COMPARATOR);
             }
             return true;
         }
@@ -109,8 +109,8 @@ public class Messe implements Comparable<Messe> { //NOPMD - suppressed TooManyMe
     public String htmlAusgeben() {
         StringBuilder rtn = new StringBuilder(getIDHTML());
         rtn = new StringBuilder(rtn.substring(0, rtn.length() - 7));
-        medis.sort(Messdiener.MESSDIENER_COMPARATOR);
-        leiter.sort(Messdiener.MESSDIENER_COMPARATOR);
+        medis.sort(Messdiener.PERSON_COMPARATOR);
+        leiter.sort(Messdiener.PERSON_COMPARATOR);
         ArrayList<Messdiener> out = medis;
         out.addAll(leiter);
         rtn.append("<p>");
@@ -147,7 +147,7 @@ public class Messe implements Comparable<Messe> { //NOPMD - suppressed TooManyMe
             } else {
                 medis.add(medi);
             }
-            medis.sort(Messdiener.MESSDIENER_COMPARATOR);
+            medis.sort(Messdiener.PERSON_COMPARATOR);
             return true;
         }
         return false;

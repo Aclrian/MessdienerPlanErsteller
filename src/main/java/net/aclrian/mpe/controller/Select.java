@@ -13,16 +13,14 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Window;
+import net.aclrian.mpe.einteilung.Einteilung;
 import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.Person;
 import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Sonstiges;
-import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.MPELog;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,39 +49,6 @@ public class Select implements Controller {
     public Select(Selector selector, MainController mc) {
         this.selector = selector;
         this.mc = mc;
-    }
-
-    public static List<Messe> generiereDefaultMessen(LocalDate anfang, LocalDate ende) {
-        ArrayList<Messe> rtn = new ArrayList<>();
-        for (StandardMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
-            if (!(sm instanceof Sonstiges)) {
-                // clone LocalDates
-                LocalDate start = LocalDate.now();
-                LocalDate end = LocalDate.now();
-                start = anfang;
-                end = ende;
-                List<Messe> m = optimieren(start, sm, end, new ArrayList<>());
-                rtn.addAll(m);
-            }
-        }
-        rtn.sort(Messe.MESSE_COMPARATOR);
-        MPELog.getLogger().info("DefaultMessen generiert");
-        return rtn;
-    }
-
-    public static List<Messe> optimieren(LocalDate start, StandardMesse sm, LocalDate end, List<Messe> mes) {
-        if (start.isBefore(end) && !(sm instanceof Sonstiges)) {
-            if (start.getDayOfWeek().compareTo(sm.getWochentag()) == 0) {
-                LocalDateTime messeTime = start.atTime(sm.getBeginnStunde(), sm.getBeginnMinute());
-                Messe m = new Messe(messeTime, sm);
-                mes.add(m);
-                start = start.plusDays(7);
-            } else {
-                start = start.plusDays(1);
-            }
-            mes = optimieren(start, sm, end, mes);
-        }
-        return mes;
     }
 
     @Override
@@ -142,7 +107,7 @@ public class Select implements Controller {
                     VON, BIS);
             if (!daten.isEmpty()) {
                 try {
-                    messen.addAll(Select.generiereDefaultMessen(daten.get(0), daten.get(1)));
+                    messen.addAll(Einteilung.generiereDefaultMessen(daten.get(0), daten.get(1)));
                     messen.sort(Messe.MESSE_COMPARATOR);
                     ArrayList<Label> l = new ArrayList<>();
                     for (Messe m : messen) {
@@ -159,9 +124,9 @@ public class Select implements Controller {
 
     private void messdiener(Window window, MainController mc) {
         List<Messdiener> data = DateienVerwalter.getInstance().getMessdiener();
-        data.sort(Messdiener.MESSDIENER_COMPARATOR);
-        for (Messdiener datum : data) {
-            list.getItems().add(new Label(datum.toString()));
+        data.sort(Person.PERSON_COMPARATOR);
+        for (Messdiener messdiener : data) {
+            list.getItems().add(new Label(messdiener.toString()));
         }
         list.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {

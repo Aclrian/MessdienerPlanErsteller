@@ -40,7 +40,8 @@ public class DateienVerwalter {
                         service,
                         StandardWatchEventKinds.ENTRY_CREATE,
                         StandardWatchEventKinds.ENTRY_MODIFY,
-                        StandardWatchEventKinds.ENTRY_DELETE
+                        StandardWatchEventKinds.ENTRY_DELETE,
+                        StandardWatchEventKinds.OVERFLOW
                 );
                 while (true) {
                     useKey(service);

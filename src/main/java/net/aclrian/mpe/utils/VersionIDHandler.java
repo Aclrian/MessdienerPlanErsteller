@@ -23,25 +23,25 @@ public class VersionIDHandler {
 
     }
 
-    private static EnumHandling rankingVersionID() {
+    private static EnumVersionHandling rankingVersionID() {
         try (InputStream is = URL_TO_LATEST_RELEASE_JSON_FILE.toURL().openStream()) {
             Gson gson = new Gson();
             internetId = gson.fromJson(new String(is.readAllBytes(), StandardCharsets.UTF_8), Version.class).getVersion();
             getLogger().info("Running with: {} found: {}", MainApplication.VERSION_ID, internetId);
             if (!internetId.contains(".")) {
-                return EnumHandling.IS_TOO_NEW;
+                return EnumVersionHandling.IS_TOO_NEW;
             }
             if (internetId.equals(MainApplication.VERSION_ID)) {
-                return EnumHandling.IS_THE_LATEST;
+                return EnumVersionHandling.IS_THE_LATEST;
             }
-            return oldNewOrLatest();
+            return getEnumVersionHandling();
         } catch (Exception e) {
             getLogger().error(e);
-            return EnumHandling.ERROR;
+            return EnumVersionHandling.ERROR;
         }
     }
 
-    private static EnumHandling oldNewOrLatest() {
+    private static EnumVersionHandling getEnumVersionHandling() {
         String[] inumbers = internetId.split(Pattern.quote("."));
         String[] lnumbers = MainApplication.VERSION_ID.split(Pattern.quote("."));
         int i = 0;
@@ -49,20 +49,20 @@ public class VersionIDHandler {
             int inet = Integer.parseInt(inumbers[i]);
             int loc = Integer.parseInt(lnumbers[i]);
             if (inet > loc) {
-                return EnumHandling.IS_OLD;
+                return EnumVersionHandling.IS_OLD;
             } else if (inet < loc) {
-                return EnumHandling.IS_TOO_NEW;
+                return EnumVersionHandling.IS_TOO_NEW;
             }
             i++;
         }
         if (inumbers.length != lnumbers.length) {
             if (inumbers.length > lnumbers.length) {
-                return EnumHandling.IS_OLD;
+                return EnumVersionHandling.IS_OLD;
             } else {
-                return EnumHandling.IS_TOO_NEW;
+                return EnumVersionHandling.IS_TOO_NEW;
             }
         }
-        return EnumHandling.IS_THE_LATEST;
+        return EnumVersionHandling.IS_THE_LATEST;
     }
 
     private static String getInternetId() {
@@ -70,7 +70,7 @@ public class VersionIDHandler {
     }
 
     public static void versionCheck(boolean showAll) {
-        EnumHandling eh = rankingVersionID();
+        EnumVersionHandling eh = rankingVersionID();
         switch (eh) {
             case IS_OLD:
                 try {
@@ -99,12 +99,12 @@ public class VersionIDHandler {
         getLogger().info(eh.getMessage());
     }
 
-    private enum EnumHandling {
+    private enum EnumVersionHandling {
         IS_THE_LATEST("Es wurde keine neuere Version gefunden"), IS_OLD("Es wurde eine neuere Version gefunden"),
         IS_TOO_NEW("Neuere Version"), ERROR("Bei der Versionsüberprüfung kam es zu einem Fehler");
         private final String message;
 
-        EnumHandling(String message) {
+        EnumVersionHandling(String message) {
             this.message = message;
         }
 

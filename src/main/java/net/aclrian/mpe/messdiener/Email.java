@@ -28,7 +28,7 @@ public class Email {
 
     public static class NotValidException extends Exception {
         public NotValidException() {
-            super("Keine gültige E-Mail Addresse");
+            super("Keine gültige E-Mail-Adresse");
         }
     }
 }

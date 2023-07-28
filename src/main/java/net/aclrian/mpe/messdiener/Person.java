@@ -3,10 +3,10 @@ package net.aclrian.mpe.messdiener;
 import java.util.Comparator;
 
 public class Person {
-    private String vorname = "";
-    private String nachname = "";
-    private Email email = Email.EMPTY_EMAIL;
-    public static final Comparator<Person> MESSDIENER_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
+    private String vorname;
+    private String nachname;
+    private Email email;
+    public static final Comparator<Person> PERSON_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
 
     public Person(String vorname, String nachname, Email email) {
         this.vorname = vorname;

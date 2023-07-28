@@ -52,7 +52,7 @@ public class FerienplanController implements Controller {
 
     @Override
     public void initialize() {
-        //no operation
+        // no operation
     }
 
     @Override

@@ -54,7 +54,7 @@ public class Einstellungen {
 
     public Setting getDaten(int index) {
         if (index > LENGTH) {
-            //if a medi has an older year of entry
+            //if a messdiener has an older year of entry
             return settings[LENGTH];
         }
         return settings[index];

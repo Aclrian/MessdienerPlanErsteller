@@ -16,7 +16,7 @@ import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messdiener.Messverhalten;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Einstellungen;

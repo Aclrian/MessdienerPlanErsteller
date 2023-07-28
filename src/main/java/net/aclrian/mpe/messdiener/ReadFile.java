@@ -1,7 +1,6 @@
 package net.aclrian.mpe.messdiener;
 
 
-import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateUtil;

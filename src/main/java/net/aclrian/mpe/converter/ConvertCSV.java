@@ -2,7 +2,7 @@ package net.aclrian.mpe.converter;
 
 import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messdiener.Messverhalten;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;

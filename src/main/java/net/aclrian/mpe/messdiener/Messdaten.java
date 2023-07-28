@@ -63,28 +63,26 @@ public class Messdaten {
 
     public boolean einteilen(LocalDate date, boolean hochamt, boolean datezwang, boolean anzzwang) {
         if (kann(date, datezwang, anzzwang)) {
-            eingeteilt.add(date);
-            pause.add(DateUtil.getNextDay(date));
-            pause.add(DateUtil.getPreviousDay(date));
-            insgesamtEingeteilt++;
-            if (!hochamt || DateienVerwalter.getInstance().getPfarrei().zaehlenHochaemterMit()) {
-                anzMessen++;
-            }
+            einteilen(date, hochamt);
             return true;
         }
         return false;
     }
 
+    private void einteilen(LocalDate date, boolean hochamt) {
+        eingeteilt.add(date);
+        pause.add(DateUtil.getNextDay(date));
+        pause.add(DateUtil.getPreviousDay(date));
+        insgesamtEingeteilt++;
+        if (!hochamt || DateienVerwalter.getInstance().getPfarrei().zaehlenHochaemterMit()) {
+            anzMessen++;
+        }
+    }
+
 
     public boolean vorzeitigEinteilen(LocalDate date, boolean hochamt) {
         if (kannVorzeitig(date)) {
-            eingeteilt.add(date);
-            pause.add(DateUtil.getNextDay(date));
-            pause.add(DateUtil.getPreviousDay(date));
-            insgesamtEingeteilt++;
-            if (!hochamt || DateienVerwalter.getInstance().getPfarrei().zaehlenHochaemterMit()) {
-                anzMessen++;
-            }
+            einteilen(date, hochamt);
             return true;
         }
         return false;

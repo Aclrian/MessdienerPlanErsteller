@@ -72,6 +72,8 @@ public class TestPfarreiController extends ApplicationTest {
         this.stage = stage;
         stage.setScene(scene);
         stage.setResizable(true);
+        stage.setHeight(10);
+        stage.setWidth(10);
         stage.show();
 
         openMocks = MockitoAnnotations.openMocks(this);

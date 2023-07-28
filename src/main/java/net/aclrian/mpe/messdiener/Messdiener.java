@@ -1,7 +1,6 @@
 package net.aclrian.mpe.messdiener;
 
 import javafx.application.Platform;
-import net.aclrian.mpe.messe.Messverhalten;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 
@@ -51,11 +50,9 @@ public class Messdiener extends Person {
      * Mit dieser Methode wird der Messdiener als .xml Datei lokal gespeichert
      */
     public void makeXML() {
-        System.out.println(this.toString());
         WriteFile wf = new WriteFile(this);
         try {
             file = wf.saveToXML();
-            System.out.println(this.toString());
             DateienVerwalter.getInstance().reloadMessdiener();
         } catch (Exception e) {
             Platform.runLater(() -> Dialogs.getDialogs().error(e, "Der Messdiener '" + this + "' konnte nicht gespeichert werden."));

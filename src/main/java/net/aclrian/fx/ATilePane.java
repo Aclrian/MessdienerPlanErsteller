@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.TilePane;
 import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.Person;
 import net.aclrian.mpe.utils.DateienVerwalter;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class ATilePane extends TilePane {
         setMaxWidth(Double.MAX_VALUE);
         setVgap(5d);
         List<Messdiener>  medis = DateienVerwalter.getInstance().getMessdiener();
-        medis.sort(Messdiener.MESSDIENER_COMPARATOR);
+        medis.sort(Person.PERSON_COMPARATOR);
         for (Messdiener messdiener : medis) {
             ACheckBox checkBox = new ACheckBox(messdiener);
             checkBox.setMaxWidth(Double.MAX_VALUE);

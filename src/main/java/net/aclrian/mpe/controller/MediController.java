@@ -15,7 +15,7 @@ import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.FindMessdiener;
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messdiener.Messverhalten;
 import net.aclrian.mpe.utils.DateUtil;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.aclrian.mpe.utils.MPELog.getLogger;
-import static net.aclrian.mpe.messe.Messverhalten.KannWelcheMesse;
+import static net.aclrian.mpe.messdiener.Messverhalten.KannWelcheMesse;
 
 public class MediController implements Controller {
 
