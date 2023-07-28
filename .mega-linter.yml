@@ -12,3 +12,4 @@ FILEIO_REPORTER: false
 # DISABLE_ERRORS: true # Uncomment if you want MegaLinter to detect errors but not block CI to pass
 FILTER_REGEX_EXCLUDE: (tmp/)
 HTML_DJLINT_ARGUMENTS: "--ignore=H006"
+VALIDATE_ALL_CODEBASE: false
