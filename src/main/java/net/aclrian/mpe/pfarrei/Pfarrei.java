@@ -1,6 +1,7 @@
 package net.aclrian.mpe.pfarrei;
 
-import net.aclrian.mpe.messe.*;
+
+import net.aclrian.mpe.messe.StandardMesse;
 
 import java.util.*;
 

@@ -1,34 +1,46 @@
-package net.aclrian.mpe.utils;
+package net.aclrian.mpe.utils; //NOPMD - suppressed ExcessiveImports - creates various dialogs - all in one class
 
-import javafx.application.*;
-import javafx.beans.value.*;
-import javafx.collections.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.*;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import net.aclrian.fx.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.pfarrei.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+import net.aclrian.fx.ASlider;
+import net.aclrian.mpe.controller.converter.ConvertController;
+import net.aclrian.mpe.converter.ConvertCSV;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.pfarrei.Setting;
 
 import java.awt.*;
-import java.io.*;
-import java.net.*;
-import java.text.*;
-import java.time.*;
-import java.time.format.*;
-import java.time.temporal.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
+import java.text.DecimalFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.time.temporal.TemporalAccessor;
 import java.util.List;
 import java.util.*;
 
-public class Dialogs {
+public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class cannot be refactored
 
     public static final String ICON = "/images/title_32.png";
     private static Dialogs dialogs;
@@ -47,7 +59,7 @@ public class Dialogs {
         Dialogs.dialogs = dialogs;
     }
 
-    private Alert alertBuilder(AlertType type, String headertext) {
+    private Alert alertBuilder(Alert.AlertType type, String headertext) {
         Alert a = new Alert(type);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
@@ -57,7 +69,7 @@ public class Dialogs {
         return a;
     }
 
-    private Alert alertBuilder(AlertType type, String header, Node n) {
+    private Alert alertBuilder(Alert.AlertType type, String header, Node n) {
         Alert a = alertBuilder(type, header);
         a.getDialogPane().setExpandableContent(n);
         a.getDialogPane().setExpanded(true);
@@ -66,36 +78,36 @@ public class Dialogs {
     }
 
     public void info(String string) {
-        Log.getLogger().info(string);
-        alertBuilder(AlertType.INFORMATION, string).showAndWait();
+        MPELog.getLogger().info(string);
+        alertBuilder(Alert.AlertType.INFORMATION, string).showAndWait();
     }
 
     public void info(String header, String string) {
-        Log.getLogger().info(string);
-        Alert a = alertBuilder(AlertType.INFORMATION, header);
+        MPELog.getLogger().info(string);
+        Alert a = alertBuilder(Alert.AlertType.INFORMATION, header);
         a.setContentText(string);
         a.showAndWait();
     }
 
     public void warn(String string) {
-        Log.getLogger().warn(string);
-        alertBuilder(AlertType.WARNING, string).showAndWait();
+        MPELog.getLogger().warn(string);
+        alertBuilder(Alert.AlertType.WARNING, string).showAndWait();
     }
 
     public void error(String string) {
-        Log.getLogger().error(string);
+        MPELog.getLogger().error(string);
         if (Platform.isFxApplicationThread()) {
-            alertBuilder(AlertType.ERROR, string).showAndWait();
+            alertBuilder(Alert.AlertType.ERROR, string).showAndWait();
         } else {
-            Platform.runLater(() -> alertBuilder(AlertType.INFORMATION, string).showAndWait());
+            Platform.runLater(() -> alertBuilder(Alert.AlertType.ERROR, string).showAndWait());
         }
     }
 
     public void error(Exception e, String string) {
-        Log.getLogger().error(string);
+        MPELog.getLogger().error(string);
         StringWriter stack = new StringWriter();
         e.printStackTrace(new PrintWriter(stack));
-        Log.getLogger().error(stack);
+        MPELog.getLogger().error(stack);
         String header;
         if (e.getLocalizedMessage() != null && !e.getLocalizedMessage().equals("")) {
             header = string + "\n" + e.getLocalizedMessage();
@@ -114,17 +126,17 @@ public class Dialogs {
         vb.getChildren().addAll(l, ta);
 
         if (Platform.isFxApplicationThread()) {
-            alertBuilder(AlertType.ERROR, header, vb).showAndWait();
+            alertBuilder(Alert.AlertType.ERROR, header, vb).showAndWait();
 
         } else {
-            Platform.runLater(() -> alertBuilder(AlertType.INFORMATION, string).showAndWait());
+            Platform.runLater(() -> alertBuilder(Alert.AlertType.INFORMATION, string).showAndWait());
         }
     }
 
     public void open(URI open, String string) throws IOException {
-        Alert a = alertBuilder(AlertType.CONFIRMATION, string);
+        Alert a = alertBuilder(Alert.AlertType.CONFIRMATION, string);
         Optional<ButtonType> res = a.showAndWait();
-        if (res.isPresent() && (res.get() == ButtonType.OK)) {
+        if (res.isPresent() && res.get() == ButtonType.OK) {
             Desktop.getDesktop().browse(open);
         }
     }
@@ -132,7 +144,7 @@ public class Dialogs {
     public void open(URI open, String string, String ok, String close) {
         ButtonType od = new ButtonType(ok, ButtonBar.ButtonData.OK_DONE);
         ButtonType cc = new ButtonType(close, ButtonBar.ButtonData.CANCEL_CLOSE);
-        Alert a = new Alert(AlertType.CONFIRMATION, "", od, cc);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION, "", od, cc);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
         a.setHeaderText(string);
@@ -148,29 +160,31 @@ public class Dialogs {
     }
 
     public boolean frage(String string) {
-        Optional<ButtonType> res = alertBuilder(AlertType.CONFIRMATION, string).showAndWait();
-        return res.isPresent() && (res.get() == ButtonType.OK);
+        Optional<ButtonType> res = alertBuilder(Alert.AlertType.CONFIRMATION, string).showAndWait();
+        return res.isPresent() && res.get() == ButtonType.OK;
     }
 
     public boolean frage(String string, String cancel, String ok) {
-        Alert a = alertBuilder(AlertType.CONFIRMATION, string);
+        Alert a = alertBuilder(Alert.AlertType.CONFIRMATION, string);
         ((Button) a.getDialogPane().lookupButton(ButtonType.CANCEL)).setText(cancel);
         ((Button) a.getDialogPane().lookupButton(ButtonType.OK)).setText(ok);
         Optional<ButtonType> res = a.showAndWait();
-        return res.isPresent() && (res.get() == ButtonType.OK);
+        return res.isPresent() && res.get() == ButtonType.OK;
     }
 
-    public YesNoCancelEnum yesNoCancel(String yes, String no, String cancel, String string) {
-        ButtonType yesbtn = new ButtonType(yes, ButtonBar.ButtonData.YES);
-        ButtonType cc = new ButtonType(cancel, ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType nobtn = new ButtonType(no, ButtonBar.ButtonData.NO);
-        Alert a = new Alert(AlertType.CONFIRMATION, "", yesbtn, cc, nobtn);
+    public YesNoCancelEnum yesNoCancel(String cancel, String headerText) {
+        ButtonType yesBtn = new ButtonType("Ja", ButtonBar.ButtonData.YES);
+        ButtonType cancelBtn = new ButtonType(cancel, ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType noBtn = new ButtonType("Nein", ButtonBar.ButtonData.NO);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION, "", yesBtn, cancelBtn, noBtn);
         Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(ICON))));
-        a.setHeaderText(string);
+        a.setHeaderText(headerText);
         Optional<ButtonType> res = a.showAndWait();
-        if (res.isPresent() && res.get() == cc) return YesNoCancelEnum.CANCEL;
-        return res.isPresent() && (res.get() == yesbtn) ? YesNoCancelEnum.YES : YesNoCancelEnum.NO;
+        if (res.isEmpty() || res.get() == cancelBtn) {
+            return YesNoCancelEnum.CANCEL;
+        }
+        return res.get() == yesBtn ? YesNoCancelEnum.YES : YesNoCancelEnum.NO;
     }
 
     public void fatal(Exception e, String string) {
@@ -187,7 +201,7 @@ public class Dialogs {
             b.setToggleGroup(g);
             v.getChildren().add(b);
         }
-        alertBuilder(AlertType.INFORMATION, s, v).showAndWait();
+        alertBuilder(Alert.AlertType.INFORMATION, s, v).showAndWait();
         if (g.getSelectedToggle() instanceof ARadioButton) {
             return ((ARadioButton<?>) g.getSelectedToggle()).getI();
         }
@@ -195,7 +209,7 @@ public class Dialogs {
     }
 
     public <I> List<I> select(List<I> dataAmBestenSortiert, List<I> selected, String string) {
-        Alert a = alertBuilder(AlertType.INFORMATION, string);
+        Alert a = alertBuilder(Alert.AlertType.INFORMATION, string);
         ListView<CheckBox> lw = new ListView<>();
         ArrayList<I> rtn = new ArrayList<>();
         for (I item : dataAmBestenSortiert) {
@@ -235,9 +249,9 @@ public class Dialogs {
         d2.setPromptText(bis);
         HBox hb = new HBox(d1, d2);
         hb.setSpacing(20d);
-        Alert a = alertBuilder(AlertType.INFORMATION, string, hb);
+        Alert a = alertBuilder(Alert.AlertType.INFORMATION, string, hb);
         ChangeListener<Object> e = (arg0, arg1, arg2) -> {
-            if (d1.getValue() != null && d2.getValue() != null && (!d1.getValue().isAfter(d2.getValue()))) {
+            if (d1.getValue() != null && d2.getValue() != null && !d1.getValue().isAfter(d2.getValue())) {
                 a.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
                 return;
             }
@@ -262,7 +276,16 @@ public class Dialogs {
         ort.setPromptText("Ort:");
         TextField typ = new TextField();
         typ.setPromptText("Typ:");
-        List<String> dayOfWeeks = Arrays.stream(DayOfWeek.values()).map(dow -> dow.getDisplayName(TextStyle.FULL, Locale.getDefault())).toList();
+        List<String> dayOfWeeks = Arrays.stream(DayOfWeek.values())
+                .map(dow -> dow.getDisplayName(TextStyle.FULL, Locale.getDefault()))
+                .map(dow -> {
+                    // fix ci error
+                    if (dow == null) {
+                        return "";
+                    } else {
+                        return dow;
+                    }
+                }).toList();
         ComboBox<String> wochentag = new ComboBox<>(
                 FXCollections.observableArrayList(dayOfWeeks));
         wochentag.setPromptText("Wochentag:");
@@ -283,7 +306,7 @@ public class Dialogs {
 
         VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz);
         v.setSpacing(20);
-        Alert a = alertBuilder(AlertType.INFORMATION, "Neue Standardmesse erstellen:");
+        Alert a = alertBuilder(Alert.AlertType.INFORMATION, "Neue Standardmesse erstellen:");
 
         ChangeListener<Object> e = (arg0, arg1, arg2) -> {
             try {
@@ -308,8 +331,9 @@ public class Dialogs {
                 String as;
                 if (d < 10) {
                     as = "0" + new DecimalFormat("#").format(d);
-                } else
+                } else {
                     as = new DecimalFormat("#").format(d);
+                }
                 as = "Minute: " + as;
                 return as;
             }, minute, null);
@@ -332,8 +356,9 @@ public class Dialogs {
         Optional<ButtonType> o = a.showAndWait();
         if (o.isPresent() && o.get().equals(ButtonType.OK)) {
             String min = String.valueOf((int) minute.getValue());
-            if (((int) minute.getValue()) < 10)
+            if (((int) minute.getValue()) < 10) {
                 min = "0" + min;
+            }
             TemporalAccessor accessor = DateUtil.DAY_OF_WEEK_LONG.parse(wochentag.getValue());
             return new StandardMesse(DayOfWeek.from(accessor), (int) stunde.getValue(), min, ort.getText(),
                     (int) anz.getValue(), typ.getText());
@@ -382,12 +407,68 @@ public class Dialogs {
     public void show(List<?> list, String string) {
         ListView<?> lv = new ListView<>(FXCollections.observableArrayList(list));
         lv.setId("list");
-        alertBuilder(AlertType.INFORMATION, string, lv).showAndWait();
+        alertBuilder(Alert.AlertType.INFORMATION, string, lv).showAndWait();
     }
 
     public List<Messdiener> select(List<Messdiener> data, Messdiener without, List<Messdiener> freund, String s) {
         data.remove(without);
         return select(data, freund, s);
+    }
+
+    public ConvertCSV.ConvertData importDialog(Window window) {
+        File file = Speicherort.waehleDatei(window, new FileChooser.ExtensionFilter("CSV-Datei", "*.csv"), "Datei zum Importieren auswählen");
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        URL u = getClass().getResource("/view/converter.fxml");
+        FXMLLoader fl = new FXMLLoader(u);
+        Parent p;
+        ConvertController controller = new ConvertController(file);
+        try {
+            fl.setController(controller);
+            p = fl.load();
+        } catch (IOException e) {
+            MPELog.getLogger().error(e.getMessage(), e);
+            return null;
+        }
+        controller.afterStartup(null, null);
+
+        Alert a = alertBuilder(Alert.AlertType.INFORMATION, "Spalten zuordnen", p);
+        Optional<ButtonType> res = a.showAndWait();
+        if (res.isEmpty() || res.get() != ButtonType.OK) {
+            return null;
+        }
+        if (!controller.isValid()) {
+            Dialogs.getDialogs().error("Ein Eingabefeld ist leer oder es sind mehr Standartmessen angegeben als im System sind");
+            return importDialog(window);
+        }
+        return controller.getData();
+    }
+
+    public static boolean remove(Messdiener m) {
+        if (Dialogs.getDialogs().frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
+                "Löschen")) {
+            File file = m.getFile();
+            try {
+                Files.delete(file.toPath());
+            } catch (IOException e) {
+                return false;
+            }
+            DateienVerwalter.getInstance().reloadMessdiener();
+            ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
+            for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
+                ueberarbeitete.add(Messdiener.alteLoeschen(m, messdiener));
+            }
+            ueberarbeitete.removeIf(Objects::isNull);
+            for (Messdiener medi : ueberarbeitete) {
+                if (medi.toString().equals(m.toString())) {
+                    continue;
+                }
+                medi.makeXML();
+            }
+            return true;
+        }
+        return false;
     }
 
     public enum YesNoCancelEnum {

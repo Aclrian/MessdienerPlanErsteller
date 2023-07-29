@@ -7,74 +7,71 @@
   <meta name="language" content="German, de, deutsch" />
   <meta name="robots" content="index, follow"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="canonical" href="https://aclrian.github.io/MessdienerPlanErsteller/">
-  <link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/resources/images/title_32.png"/>
-  <link rel="stylesheet" href="./css/styles.css">
-  <script src="./js/main.js"></script>
+  <link rel="canonical" href="https://aclrian.github.io/MessdienerPlanErsteller/"/>
+  <link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/mainApplication/resources/images/title_32.png"/>
+  <link rel="stylesheet" href="./css/styles.css"/>
+  <script src="./js/mainApplication.js"></script>
 	<title>Messdienerplan kostenlos erstellen | MpE</title>
 </head>
 <body onLoad="append()">
 	<div id="main">
-        <div id="head">
-            <h1>MessdienerplanErsteller</h1>
-            <div id="uheader">
-                <a class="btn left" href="./download.html"><span>Download</span></a>
-                <a class="btn" href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest">alternativer
-                    Download</a>
-                <a class="btn right" href="https://github.com/Aclrian/MessdienerPlanErsteller/"><span>Source-Code</span></a>
-            </div>
-        </div>
-        <!--Begrifserklärung Standardmesse, Anzahl   Letztere können auch durch Einstellungen auch nur manuell hinzugefügt werden.-->
-        <div id="inhalt">
-            <h2>Was ist der MessdienerPlanErsteller?</h2>
-            <p>Der MessdienerplanErsteller (kurz: MpE) ist ein kostenloses Open-Source-Programm, um einen Messdienerplan
-                zu erstellen.
-                Dazu benötigt es nur die wöchentlichen Messen einer Pfarrei und die Vorlieben aller Messdiener,
-                die lokal in einem beliebigem Ordner gespeichert werden. Es gibt es die Möglichkeit,
-                den generierten Messdienerplan in Pdf- und Word-Dokument zu speichern und als E-Mail zu versenden.
-                Auch können Messdiener manuell im Programm in Messen eingetragen werden, um sie für bestimmte Tage
-                (Ferien) abzumelden.</p>
-            <a href="./galerie.html" style="margin: auto;display: flex;justify-content: center;"><img
-                    alt="ein fertig generierter Plan"
-                    id="vorschau"
-                    src="./data/programmbild.jpg"/></a>
-            <h3>Über das Projekt</h3>
-            <p>Das Projekt ist 2017 durch die Idee entstanden, einen Messdienerplan einfach und effizient zu erstellen.
-                Über dreijährige Entwicklung eines einzelnen Programmierers wurde es im Laufe der Zeit zu einem
-                umfangreichen Programm. Währenddessen kam die Idee auf,
-                dass alle Pfarreien dieses Programm nutzen können, um einen Plan zu generieren. Dies war nämlich damals
-                noch nicht im Programm vorgesehen und kostete viel Zeit.
-                Doch nun besteht die Möglichkeit, eigene Messen (sog. <a
-                        href="./wiki.html#Standardmesse">Standardmessen</a>) zu erstellen. Deshalb gibt es diese Website
-                und den Programmcode auf <a href="https://github.com/Aclrian/MessdienerPlanErsteller/">Github</a>.</p>
+		<div id="head">
+			<h1>MessdienerplanErsteller</h1>
+			<div id="uheader">
+				<a class="btn left" href="./download.html"><span>Download</span></a>
+				<a class="btn" href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest">alternativer
+					Download</a>
+				<a class="btn right" href="https://github.com/Aclrian/MessdienerPlanErsteller/"><span>Source-Code</span></a>
+			</div>
+		</div>
+		<!--Begrifserklärung Standardmesse, Anzahl   Letztere können auch durch Einstellungen auch nur manuell hinzugefügt werden.-->
+		<div id="inhalt">
+			<h2>Was ist der MessdienerPlanErsteller?</h2>
+			<p>Der MessdienerplanErsteller (kurz: MpE) ist ein kostenloses Open-Source-Programm, um einen Messdienerplan
+				zu erstellen.
+				Dazu benötigt es nur die wöchentlichen Messen einer Pfarrei und die Vorlieben aller Messdiener,
+				die lokal in einem beliebigem Ordner gespeichert werden. Es gibt es die Möglichkeit,
+				den generierten Messdienerplan in Pdf- und Word-Dokument zu speichern und als E-Mail zu versenden.
+				Auch können Messdiener manuell im Programm in Messen eingetragen werden, um sie für bestimmte Tage
+				(Ferien) abzumelden.</p>
+			<a href="./galerie.html" id="vorschau-parent"><img
+					alt="ein fertig generierter Plan"
+					id="vorschau"
+					src="./data/programmbild.jpg"/></a>
+			<h3>Über das Projekt</h3>
+			<p>Das Projekt ist 2017 durch die Idee entstanden, einen Messdienerplan einfach und effizient zu erstellen.
+				Über dreijährige Entwicklung eines einzelnen Programmierers wurde es im Laufe der Zeit zu einem
+				umfangreichen Programm. Währenddessen kam die Idee auf,
+				dass alle Pfarreien dieses Programm nutzen können, um einen Plan zu generieren. Dies war nämlich damals
+				noch nicht im Programm vorgesehen und kostete viel Zeit.
+				Doch nun besteht die Möglichkeit, eigene Messen (sog. <a
+						href="./wiki.html#Standardmesse">Standardmessen</a>) zu erstellen. Deshalb gibt es diese Website
+				und den Programmcode auf <a href="https://github.com/Aclrian/MessdienerPlanErsteller/">Github</a>.</p>
 
-            <h3>Wie funktioniert das Einteilen?</h3>
-            <p>Für jede Messe wird nach Messdienern gesucht, die zu der Messe dienen können
-                (also: Messdiener, die nicht abgemeldet sind und die Messe favorisieren). Diese werden nach der Anzahl
-                sortiert, wie viele Messen sie noch dienen können.
-                Davon werden die ersten genommen und überprüft, ob Geschwister und Freunde auch zu der Messe können.
-                Auch diese werden dann eingeteilt.
-                Dies geschieht solange, bis die Messe keine weiteren Messdiener mehr benötigt und schließlich alle
-                Messen genügend Messdiener haben.
-                Wenn zwischen der ersten und der letzten Messe mehr als 30 Tage liegen,
-                wird die <a href="./wiki.html#anzahl">Anzahl</a> wieder auf 0 gesetzt.</p>
+			<h3>Wie funktioniert das Einteilen?</h3>
+			<p>Für jede Messe wird nach Messdienern gesucht, die zu der Messe dienen können
+				(also: Messdiener, die nicht abgemeldet sind und die Messe favorisieren). Diese werden nach der Anzahl
+				sortiert, wie viele Messen sie noch dienen können.
+				Davon werden die ersten genommen und überprüft, ob Geschwister und Freunde auch zu der Messe können.
+				Auch diese werden dann eingeteilt.
+				Dies geschieht, solange bis die Messe keine weiteren Messdiener mehr benötigt und schließlich alle
+				Messen genügend Messdiener haben.
+				Wenn zwischen der ersten und der letzten Messe mehr als 30 Tage liegen,
+				wird die <a href="./wiki.html#anzahl">Anzahl</a> wieder auf 0 gesetzt.</p>
 
-            <h3>Wo werden die Dateien gespeichert?</h3>
-            <p>Die Dateien werden <strong>lokal</strong> an einen auswählbaren Ort gespeichert. Sie werden vom Programm
-                nirgendswo hochgeladen und erst recht nicht gespeichert. Das Prgramm verbindet sich nur dann mit dem
-                Internet, wenn es auf eine neue Version überprüft, und sonst nicht.</p>
-        </div>
-        <div id="footer">
-            <a href="./galerie.html">Galerie</a>
-            <a href="./wiki.html">Begriffserklärung</a>
-            <div><p style="font-size: min(2vw, 20px)">Diese Website und das gesamte Projekt steht unter der <a
-                    href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/LICENSE">MIT-Lizenz:</a><br>
-                Daher gilt u.a. für die Benutzung: "THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND" (dt.
-                "Die Software wird "so wie sie ist" bereitgestellt, ohne jeglicher Art der Garantie / ohne Gewähr"
-                [gültig ist nur die englische Version]).</p>
-                <p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p></div>
-            <p class="email">info@MessdienerplanErsteller.com</p>
-        </div>
-    </div>
+			<h3>Wo werden die Dateien gespeichert?</h3>
+			<p>Die Dateien werden <strong>lokal</strong> an einen auswählbaren Ort gespeichert. Sie werden vom Programm
+				nirgendswo hochgeladen und erst recht nicht gespeichert. Das Program verbindet sich nur dann mit dem
+				Internet, wenn es auf eine neue Version überprüft, und sonst nicht.</p>
+		</div>
+		<div id="footer">
+			<a href="./galerie.html">Galerie</a>
+			<a href="./wiki.html">Begriffserklärung</a>
+			<div><p class="footer">Diese Website und das gesamte Projekt steht unter der <a href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/LICENSE">MIT-Lizenz:</a><br/>
+				Daher gilt u.a. für die Benutzung: "THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND" (dt. "Die Software wird "so wie sie ist" bereitgestellt, ohne jeglicher Art der Garantie / ohne Gewähr" [gültig ist nur die englische Version]).</p>
+				<!-- djlint:off --><p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p></div> <!-- djlint:on -->
+			<p class="email">info@MessdienerplanErsteller.com</p>
+		</div>
+	</div>
 </body>
 </html>

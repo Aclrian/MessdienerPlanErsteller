@@ -1,15 +1,17 @@
 package net.aclrian.fx;
 
-import javafx.scene.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import net.aclrian.mpe.utils.*;
-import org.junit.*;
-import org.testfx.assertions.api.*;
-import org.testfx.framework.junit.*;
-import org.testfx.util.*;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import net.aclrian.mpe.utils.DateUtil;
+import org.junit.jupiter.api.Test;
+import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
 import java.time.*;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestTimeSpinner extends ApplicationTest {
 
@@ -24,22 +26,19 @@ public class TestTimeSpinner extends ApplicationTest {
     @Test
     public void testConversion() {
         LocalTime time = LocalTime.of(12, 59);
-        Assertions.assertThat(TimeSpinner.converter.toString(time)).isEqualTo("12:59");
-        Assertions.assertThat(TimeSpinner.converter.toString(LocalTime.of(0, 0, 0))).isEqualTo("00:00");
+        assertThat(TimeSpinner.CONVERTER.toString(time)).isEqualTo("12:59");
+        assertThat(TimeSpinner.CONVERTER.toString(LocalTime.of(0, 0, 0))).isEqualTo("00:00");
     }
 
-    @Test(expected = DateTimeException.class)
+    @Test
     public void testInitTime() {
-        LocalTime time = LocalTime.of(25, 60);
-        if (time != null) {
-            Assertions.fail("25 o'clock exists?");
-        }
+        assertThrows(DateTimeException.class, () -> LocalTime.of(25, 60));
     }
 
     @Test
     public void testFromString() {
-        Assertions.assertThat(TimeSpinner.converter.fromString("").format(DateUtil.TIME)).isEqualTo("00:00");
-        Assertions.assertThat(TimeSpinner.converter.fromString("13:50").format(DateUtil.TIME)).isEqualTo("13:50");
+        assertThat(TimeSpinner.CONVERTER.fromString("").format(DateUtil.TIME)).isEqualTo("00:00");
+        assertThat(TimeSpinner.CONVERTER.fromString("13:50").format(DateUtil.TIME)).isEqualTo("13:50");
     }
 
     @Test
@@ -48,16 +47,16 @@ public class TestTimeSpinner extends ApplicationTest {
         spinner.getValueFactory().setValue(LocalTime.of(12, 0));
         spinner.increment(2);
         WaitForAsyncUtils.waitForFxEvents();
-        Assertions.assertThat(DateUtil.TIME.format(spinner.getValue())).isEqualTo("12:30");
+        assertThat(DateUtil.TIME.format(spinner.getValue())).isEqualTo("12:30");
         spinner.decrement();
-        Assertions.assertThat(DateUtil.TIME.format(spinner.getValue())).isEqualTo("12:15");
+        assertThat(DateUtil.TIME.format(spinner.getValue())).isEqualTo("12:15");
     }
 
 
     @Test
     public void testConverter() {
         TimeSpinner spinner = new TimeSpinner();
-        Assertions.assertThat(spinner.getValueFactory().getConverter()).isSameAs(TimeSpinner.converter);
+        assertThat(spinner.getValueFactory().getConverter()).isSameAs(TimeSpinner.CONVERTER);
     }
 
 }

@@ -1,16 +1,17 @@
 package net.aclrian.fx;
 
+
 import javafx.scene.control.*;
 import javafx.util.*;
 import net.aclrian.mpe.utils.*;
+import net.aclrian.mpe.utils.DateUtil;
 
 import java.time.*;
 
 //exists because Spinner(@NamedArg("min") LocalTime min, @NamedArg("max") LocalTime max, @NamedArg("initialValue") LocalTime initialValue) is package private
 public class TimeSpinner extends Spinner<LocalTime> {
 
-
-    public static final StringConverter<LocalTime> converter = new StringConverter<>() {
+    public static final StringConverter<LocalTime> CONVERTER = new StringConverter<>() {
 
         @Override
         public String toString(LocalTime time) {
@@ -48,7 +49,7 @@ public class TimeSpinner extends Spinner<LocalTime> {
             }
         };
 
-        valueFactory.setConverter(converter);
+        valueFactory.setConverter(CONVERTER);
         this.setValueFactory(valueFactory);
     }
 }

@@ -1,10 +1,13 @@
 package net.aclrian.mpe.utils;
 
-import javafx.stage.*;
+
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
 import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public class Speicherort {
 
@@ -25,40 +28,39 @@ public class Speicherort {
     private void generateSpeicherort() {
         String homedir = System.getProperty("user.home");
         homedir = homedir + TEXTDATEI;
-        Log.getLogger().info("Das Home-Verzeichnis wurde gefunden: {}", homedir);
+        MPELog.getLogger().info("Das Home-Verzeichnis wurde gefunden: {}", homedir);
         File f = new File(homedir);
-        if (!f.exists()) {
-            createSaveFile(homedir);
+        if (f.exists()) {
+            readSaveFile(homedir, f);
         } else {
-            if (readSaveFile(homedir, f))
-                return;
+            createSaveFile(homedir);
         }
-        Log.getLogger().info("Der Speicherort liegt in: {}", speicherortString);
+        MPELog.getLogger().info("Der Speicherort liegt in: {}", speicherortString);
     }
 
-    private boolean readSaveFile(String homedir, File f) {
+    private void readSaveFile(String homedir, File f) {
+        String line = "";
         try (BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(homedir), StandardCharsets.UTF_8))) {
-            String line = bufferedReader.readLine();
+            line = bufferedReader.readLine();
             if (line == null) {
-                speicherortNotFound(f, null);
-                return true;
+                line = "";
             }
-            File saveFile = new File(line);
-            if (saveFile.exists()) {
-                setSpeicherortString(line);
-            } else {
-                speicherortNotFound(f, line);
-            }
-            if (this.speicherortString == null || this.speicherortString.equals("")) {
+        } catch (IOException ignored) { }
+        File saveFile = new File(line);
+        if (saveFile.exists()) {
+            speicherortString = line;
+        } else {
+            MPELog.getLogger().info("Der Speicherort aus '{}' ('{}') existiert nicht!", f, line);
+            try {
                 Files.delete(f.toPath());
-                getSpeicherortString();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(-1);
             }
-        } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Die Datei '" + homedir + "' konnte nicht gelesen werden.");
-        }
-        if (speicherortString == null) {
-            speicherortString = waehleOrdner();
+            do {
+                speicherortString = waehleOrdner();
+            } while (!new File(speicherortString).exists());
             try (FileWriter fileWriter = new FileWriter(homedir);
                  BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
                 if (speicherortString != null) {
@@ -69,11 +71,11 @@ public class Speicherort {
                     getSpeicherortString();
                 }
             } catch (IOException e) {
-                Log.getLogger().info("Auf den Speicherort '{}' kann nicht zugegriffen werden!", f);
+                MPELog.getLogger().info("Auf den Speicherort '{}' kann nicht zugegriffen werden!", f);
                 getSpeicherortString();
             }
+
         }
-        return false;
     }
 
     private void createSaveFile(String homedir) {
@@ -85,7 +87,7 @@ public class Speicherort {
         }
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(homedir))) {
             if (s != null) {
-                Log.getLogger().info(s);
+                MPELog.getLogger().info(s);
                 bufferedWriter.write(s);
                 setSpeicherortString(s);
             } else {
@@ -107,7 +109,14 @@ public class Speicherort {
         String s = "Ordner wählen, in dem alles gespeichert werden soll:";
         f.setTitle(s);
         File file = f.showDialog(window);
-        return file == null ? null : file.getPath();
+        return file == null ? "" : file.getPath();
+    }
+
+    public static File waehleDatei(Window window, FileChooser.ExtensionFilter filter, String title) {
+        FileChooser f = new FileChooser();
+        f.getExtensionFilters().add(filter);
+        f.setTitle(title);
+        return f.showOpenDialog(window);
     }
 
     public String getSpeicherortString() {
@@ -119,17 +128,6 @@ public class Speicherort {
 
     private void setSpeicherortString(String speicherortString) {
         this.speicherortString = speicherortString;
-    }
-
-    private void speicherortNotFound(File f, String line) {
-        Log.getLogger().info("Der Speicherort aus '{}' ('{}') existiert nicht!", f, line);
-        try {
-            Files.delete(f.toPath());
-            getSpeicherortString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
     }
 
     public void changeDir() {

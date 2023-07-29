@@ -7,13 +7,13 @@
 	<meta name="language" content="German, de, deutsch" />
 	<meta name="robots" content="index, follow"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/resources/images/title_32.png"/>
-	<link rel="stylesheet" href="./css/styles.css">
-	<script src="./js/main.js"></script>
+	<link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/mainApplication/resources/images/title_32.png"/>
+	<link rel="stylesheet" href="./css/styles.css"/>
+	<script src="./js/mainApplication.js"></script>
 	<title>Download | Messdienerplan erstellen</title>
 </head>
 <body onLoad="append()">
-	<div id="main">
+	<div id="mainApplication">
 		<div id="head3">
 			<a href="./"><h1>MessdienerplanErsteller</h1></a>
 			
@@ -25,7 +25,7 @@
 		</div>
 		<div id="inhalt">
 			<table>
-				<caption style="margin-bottom: 2vh;">Wählen Sie eine Datei zum Herunterladen aus:</caption>
+				<caption>Wählen Sie eine Datei zum Herunterladen aus:</caption>
 				<colgroup><col/><col/><col/></colgroup>
 					<tr>
 						<th scope="col">Plattform</th>
@@ -37,7 +37,7 @@
 					<td>Java Anwendung¹</td>
 					<td>
 						<a href="https://github.com/Aclrian/MessdienerPlanErsteller/releases/download/1.0.1/MessdienerplanErsteller-1.0.1.jar">
-							<div></div>
+
 							MessdienerplanErsteller-1.0.1.jar</a></td>
 				</tr>
 				<tr>
@@ -74,14 +74,14 @@
 				Aktuell kann man nur auf "Weitere Informationen" klicken und dann auf "Trotzdem ausführen", um die Datei
 				zu starten.</p>
 			<h2>Informationsverarbeitung</h2>
-			<p>Diese Programm arbeitet mit <strong>personenbezogenen Daten</strong>:<br>
+			<p>Diese Programm arbeitet mit <strong>personenbezogenen Daten</strong>:<br/>
 				Für das Verwalten der Messdiener-Dateien v.a. im Sinne der Datenschutz-Grundverordnung ist die jeweilige
 				Messdienergemeinschaft zuständig, die mit diesem Programm Messdienerpläne erstellt,
 				da diese vom Programm nur <strong>lokal</strong> ausgewertet werden.</p>
 			<p>Die Namen der Messdiener werden benötigt, um ein Alleinstellungsmerkmal für jeden Messdiener zu haben, um
 				sie im generierten Plan anzeigen zu lassen
 				und die Beziehung von Freunden und Geschwistern in den Dateien zu speichern.
-				Sie werden bevorzugt miteinander eingeteilt.<br>
+				Sie werden bevorzugt miteinander eingeteilt.<br/>
 				In dem Programm werden durch die Angaben zur welchen <a
 						href="./wiki.html#Standardmesse">Standardmessen</a> der Messdiener kann,
 				wann der Messdiener zum Messdiener wurde und ob dieser Leiter ist, ausgewertet, um zu überprüfen, wann
@@ -92,9 +92,9 @@
 			<a href="./index.html">Startseite</a>
 			<a href="./galerie.html">Galerie</a>
 			<a href="./wiki.html">Begriffserklärung</a>
-			<div><p style="font-size: min(2vw, 20px)">Diese Website und das gesamte Projekt steht unter der <a href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/LICENSE">MIT-Lizenz:</a><br>
+			<div><p class="footer">Diese Website und das gesamte Projekt steht unter der <a href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/LICENSE">MIT-Lizenz:</a><br/>
 			Daher gilt u.a. für die Benutzung: "THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND" (dt. "Die Software wird "so wie sie ist" bereitgestellt, ohne jeglicher Art der Garantie / ohne Gewähr" [gültig ist nur die englische Version]).</p>
-			<p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p></div>
+				<!-- djlint:off --><p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p></div> <!-- djlint:on -->
 			<p class="email">info@MessdienerplanErsteller.com</p>
 		</div>
 	</div>

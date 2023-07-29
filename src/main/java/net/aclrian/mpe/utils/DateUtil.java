@@ -1,8 +1,9 @@
 package net.aclrian.mpe.utils;
 
-import java.time.*;
-import java.time.format.*;
-import java.util.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class DateUtil {
     public static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd.MM.yyy");
@@ -41,5 +42,13 @@ public class DateUtil {
 
     public static LocalDate getPreviousDay(LocalDate date) {
         return date.plusDays(-1);
+    }
+
+    public static int getCurrentYear() {
+        return LocalDate.now().getYear();
+    }
+
+    public static int getYearCap() {
+        return DateUtil.getCurrentYear() - 18;
     }
 }

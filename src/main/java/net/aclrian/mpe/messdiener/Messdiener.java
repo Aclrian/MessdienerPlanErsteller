@@ -1,136 +1,49 @@
 package net.aclrian.mpe.messdiener;
 
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.utils.*;
+import javafx.application.Platform;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * Klasse, mit der Messdiener digital gespeichert werden können
  *
  * @author Aclrian
  */
-public class Messdiener {
+public class Messdiener extends Person {
     /**
      * Dies ist die Anzahl, wie viele Freunde ein Messdiener haben kann.
      */
-    public static final int LENGHT_GESCHWISTER = 3;
+    public static final int LENGTH_GESCHWISTER = 3;
     /**
      * Dies ist die Anzahl, wie viele Freunde ein Messdiener haben kann.
      */
-    public static final int LENGHT_FREUNDE = 5;
-    public static final Comparator<Messdiener> MESSDIENER_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
-    public static final Comparator<? super Messdiener> einteilen = (Comparator<Messdiener>) (o1, o2) -> {
-        double d1 = o1.getMessdaten().getSortierenDouble();// anz/max 0 kommt zuerst dann 0,5 --> 1
-        double d2 = o2.getMessdaten().getSortierenDouble();
-        if ((d1 == d2) && (d1 == 0)) {
-            int i1 = o1.getMessdaten().getMaxMessen();
-            int i2 = o2.getMessdaten().getMaxMessen();
-            return Integer.compare(i2, i1);
-        }
-        return Double.compare(d1, d2);
-    };
-    public static final Pattern EMAIL_PATTERN = Pattern.compile("(?:(?:\\r\\n)?[ \\t])*(?:(?:(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*|(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)*\\<(?:(?:\\r\\n)?[ \\t])*(?:@(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*(?:,@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*)*:(?:(?:\\r\\n)?[ \\t])*)?(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*\\>(?:(?:\\r\\n)?[ \\t])*)|(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)*:(?:(?:\\r\\n)?[ \\t])*(?:(?:(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*|(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)*\\<(?:(?:\\r\\n)?[ \\t])*(?:@(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*(?:,@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*)*:(?:(?:\\r\\n)?[ \\t])*)?(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*\\>(?:(?:\\r\\n)?[ \\t])*)(?:,\\s*(?:(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*|(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)*\\<(?:(?:\\r\\n)?[ \\t])*(?:@(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*(?:,@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*)*:(?:(?:\\r\\n)?[ \\t])*)?(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*\\>(?:(?:\\r\\n)?[ \\t])*))*)?;\\s*)");
-
-    private String vorname = "";
-    private String nachname = "";
-    private String email = "";
-    private String[] freunde = new String[LENGHT_FREUNDE];
-    private String[] geschwister = new String[LENGHT_GESCHWISTER];
-    private Messverhalten dienverhalten;
-    private int eintritt = 2000;
-    private boolean leiter = false;
+    public static final int LENGTH_FREUNDE = 5;
+    private String[] freunde;
+    private String[] geschwister;
+    private final Messverhalten dienverhalten;
+    private final int eintritt;
+    private final boolean leiter;
     private Messdaten daten;
     private File file;
 
-    /**
-     * Konstruktor
-     */
-    public Messdiener(File f) {
-        setDefault();
+    public Messdiener(File f, String vorname, String nachname, Email email, int eintritt, boolean istLeiter,
+                      Messverhalten dienverhalten) {
+        super(vorname, nachname, email);
         this.file = f;
-    }
-
-    @Override
-    public String toString() {
-        return nachname + ", " + vorname;
-    }
-
-    /**
-     * @param vorname       Vorname
-     * @param nachname      Nachname
-     * @param eintritt      Jahr des Einfuehrung Ist davon abhaengig, wie oft der
-     *                      Messdiener eingeteilt werden soll
-     * @param istLeiter     Leiter, Ist davon abhaengig, wie oft der Messdiener
-     *                      eingeteilt werden soll
-     * @param dienverhalten Wann kann er zu welchen Standard Messen (bspw. Sontag
-     *                      Morgen oder Dienstag Abend) dienen
-     * @param email         eine gültige Email-Addresse
-     * @throws NotValidException Wenn email nicht valid ist
-     */
-    public void setzeAllesNeu(String vorname, String nachname, int eintritt, boolean istLeiter,
-                              Messverhalten dienverhalten, String email) throws NotValidException {
-        this.vorname = vorname;
-        this.nachname = nachname;
         this.eintritt = eintritt;
         this.leiter = istLeiter;
         this.dienverhalten = dienverhalten;
-        setEmail(email);
-    }
-
-    /**
-     * @param vname         Vorname
-     * @param nname         Nachname
-     * @param eintritt      Jahr des Einfuehrung Ist davon abhaengig, wie oft der
-     *                      Messdiener eingeteilt werden soll
-     * @param istLeiter     Leiter, Ist davon abhaengig, wie oft der Messdiener
-     *                      eingeteilt werden soll
-     * @param dienverhalten Wann kann er zu welchen Standard Messen (bspw. Sontag
-     *                      Morgen oder Dienstag Abend) dienen
-     */
-    public void setzeAllesNeuUndMailLeer(String vname, String nname, int eintritt, boolean istLeiter,
-                                         Messverhalten dienverhalten) {
-        this.vorname = vname;
-        this.nachname = nname;
-        this.eintritt = eintritt;
-        this.leiter = istLeiter;
-        this.dienverhalten = dienverhalten;
-        email = "";
-    }
-
-    /**
-     * setzt Standard Werte
-     */
-    private void setDefault() {
-        try {
-            setzeAllesNeu("Vorname", "Nachname", 2000, this.leiter, new Messverhalten(), "");
-        } catch (NotValidException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < LENGHT_FREUNDE; i++) {
-            freunde[i] = "";
-        }
-        for (int i = 0; i < LENGHT_GESCHWISTER; i++) {
-            geschwister[i] = "";
-        }
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) throws NotValidException {
-        if (email.contentEquals("") || EMAIL_PATTERN.matcher(email).matches()) {
-            this.email = email;
-            return;
-        }
-        throw new NotValidException();
-    }
-
-    public void setEmailEmpty() {
-        email = "";
+        freunde = new String[Messdiener.LENGTH_FREUNDE];
+        Arrays.fill(freunde, "");
+        geschwister = new String[Messdiener.LENGTH_GESCHWISTER];
+        Arrays.fill(geschwister, "");
     }
 
     /**
@@ -139,9 +52,10 @@ public class Messdiener {
     public void makeXML() {
         WriteFile wf = new WriteFile(this);
         try {
-            wf.toXML();
+            file = wf.saveToXML();
+            DateienVerwalter.getInstance().reloadMessdiener();
         } catch (Exception e) {
-            Dialogs.getDialogs().error(e, "Der Messdiener '" + this + "' konnte nicht gespeichert werden.");
+            Platform.runLater(() -> Dialogs.getDialogs().error(e, "Der Messdiener '" + this + "' konnte nicht gespeichert werden."));
         }
     }
 
@@ -149,24 +63,8 @@ public class Messdiener {
         return this.leiter;
     }
 
-    public void setLeiter(boolean leiter) {
-        this.leiter = leiter;
-    }
-
-    public String getVorname() {
-        return this.vorname;
-    }
-
-    public void setVorname(String vorname) {
-        this.vorname = vorname;
-    }
-
     public int getEintritt() {
         return this.eintritt;
-    }
-
-    public void setEintritt(int eintritt) {
-        this.eintritt = eintritt;
     }
 
     public String[] getGeschwister() {
@@ -174,7 +72,7 @@ public class Messdiener {
     }
 
     public void setGeschwister(String[] geschwister) {
-        this.geschwister = geschwister;
+        this.geschwister = Arrays.stream(geschwister).limit(LENGTH_GESCHWISTER).toArray(String[]::new);
     }
 
     public String[] getFreunde() {
@@ -182,31 +80,76 @@ public class Messdiener {
     }
 
     public void setFreunde(String[] freunde) {
-        this.freunde = freunde;
-    }
-
-    public String getNachnname() {
-        return this.nachname;
-    }
-
-    public void setNachnname(String nachnname) {
-        this.nachname = nachnname;
+        this.freunde = Arrays.stream(freunde).limit(LENGTH_FREUNDE).toArray(String[]::new);
     }
 
     public Messverhalten getDienverhalten() {
         return this.dienverhalten;
     }
 
-    public void setDienverhalten(Messverhalten dienverhalten) {
-        this.dienverhalten = dienverhalten;
-    }
-
     public Messdaten getMessdaten() {
         return daten;
     }
 
-    public void setnewMessdatenDaten() {
+    public void setNewMessdatenDaten() {
         this.daten = new Messdaten(this);
+    }
+
+    public void addFreund(Messdiener freund) {
+        for (int i = 0; i < freunde.length; i++) {
+            if (freunde[i].equals("") || freunde[i].equals("LEER") || freunde[i].equals("Vorname, Nachname")) {
+                freunde[i] = freund.toString();
+                break;
+            }
+        }
+    }
+
+    public void addGeschwister(Messdiener geschwister) {
+        for (int i = 0; i < this.geschwister.length; i++) {
+            if (this.geschwister[i].equals("") || this.geschwister[i].equals("LEER") || this.geschwister[i].equals("Vorname, Nachname")) {
+                this.geschwister[i] = geschwister.toString();
+                break;
+            }
+        }
+    }
+
+    public static Messdiener alteLoeschen(Messdiener toDel, Messdiener toSearchIn) {
+        if (toDel.equals(toSearchIn)) {
+            return toDel;
+        }
+        Messdiener medi = null;
+        for (int i = 0; i < toSearchIn.getGeschwister().length; i++) {
+            if (toSearchIn.getGeschwister()[i].compareTo(toDel.toString()) == 0) {
+                toSearchIn.getGeschwister()[i] = "";
+                medi = toSearchIn;
+            }
+        }
+        for (int i = 0; i < toSearchIn.getFreunde().length; i++) {
+            if (toSearchIn.getFreunde()[i].compareTo(toDel.toString()) == 0) {
+                toSearchIn.getFreunde()[i] = "";
+                medi = toSearchIn;
+            }
+        }
+        return medi;
+    }
+    public void setFreundeFromList(List<Messdiener> freunde) {
+        this.freunde = getArrayString(freunde, LENGTH_FREUNDE);
+    }
+
+    public void setGeschwisterFromList(List<Messdiener> geschwister) {
+        this.geschwister = getArrayString(geschwister, LENGTH_GESCHWISTER);
+    }
+
+    private static String[] getArrayString(List<?> list, int lenght) {
+        String[] s = new String[lenght];
+        for (int i = 0; i < s.length; i++) {
+            try {
+                s[i] = list.get(i).toString();
+            } catch (IndexOutOfBoundsException | NullPointerException e) {
+                s[i] = "";
+            }
+        }
+        return s;
     }
 
     public File getFile() {
@@ -219,23 +162,52 @@ public class Messdiener {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Messdiener that = (Messdiener) o;
         return Objects.equals(file, that.file);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(vorname, nachname, email, dienverhalten, eintritt, leiter, daten, file);
+        int result = Objects.hash(getVorname(), getNachname(), getEmail(), dienverhalten, eintritt, leiter, daten, file);
         result = 31 * result + Arrays.hashCode(freunde);
         result = 31 * result + Arrays.hashCode(geschwister);
         return result;
     }
 
-    public static class NotValidException extends Exception {
-        public NotValidException() {
-            super("Keine gültige E-Mail Addresse");
+    public static class AnvertrauteHandler {
+        public static final AnvertrauteHandler FREUNDE = new AnvertrauteHandler("Freund", Messdiener::getFreunde, Messdiener::setFreunde);
+        public static final AnvertrauteHandler GESCHWISTER = new AnvertrauteHandler("Geschwister", Messdiener::getGeschwister, Messdiener::setGeschwister);
+
+        private final String name;
+        private final Function<Messdiener, String[]> get;
+        private final BiConsumer<Messdiener, String[]> set;
+
+        private AnvertrauteHandler(String name, Function<Messdiener, String[]> get, BiConsumer<Messdiener, String[]> set) {
+            this.name = name;
+            this.get = get;
+            this.set = set;
+        }
+
+        public String[] get(Messdiener messdiener) {
+            return get.apply(messdiener);
+        }
+
+        public void set(Messdiener messdiener, String[] array) {
+            set.accept(messdiener, array);
+        }
+
+        public void set(Messdiener messdiener, List<?> arrayList) {
+            set.accept(messdiener, getArrayString(arrayList, get.apply(messdiener).length));
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }

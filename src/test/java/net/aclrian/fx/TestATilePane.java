@@ -7,14 +7,16 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.utils.DateienVerwalter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestATilePane extends ApplicationTest {
 
@@ -56,22 +58,22 @@ public class TestATilePane extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Node n1 = instance.getChildrenUnmodifiable().get(0);
-        Assertions.assertThat(n1.getClass()).isEqualTo(ATilePane.ACheckBox.class);
+        assertThat(n1.getClass()).isEqualTo(ATilePane.ACheckBox.class);
         Node n2 = instance.getChildrenUnmodifiable().get(1);
-        Assertions.assertThat(n2.getClass()).isEqualTo(ATilePane.ACheckBox.class);
+        assertThat(n2.getClass()).isEqualTo(ATilePane.ACheckBox.class);
         Node n3 = instance.getChildrenUnmodifiable().get(2);
-        Assertions.assertThat(n3.getClass()).isEqualTo(ATilePane.ACheckBox.class);
+        assertThat(n3.getClass()).isEqualTo(ATilePane.ACheckBox.class);
         if (n1 instanceof ATilePane.ACheckBox && n2 instanceof ATilePane.ACheckBox && n3 instanceof ATilePane.ACheckBox) {
-            Assertions.assertThat(((ATilePane.ACheckBox) n1).getMessdiener()).isSameAs(medi3);
-            Assertions.assertThat(((ATilePane.ACheckBox) n2).getMessdiener()).isSameAs(medi2);
-            Assertions.assertThat(((ATilePane.ACheckBox) n3).getMessdiener()).isSameAs(medi1);
+            assertThat(((ATilePane.ACheckBox) n1).getMessdiener()).isSameAs(medi3);
+            assertThat(((ATilePane.ACheckBox) n2).getMessdiener()).isSameAs(medi2);
+            assertThat(((ATilePane.ACheckBox) n3).getMessdiener()).isSameAs(medi1);
 
             Platform.runLater(() -> {
                 ((ATilePane.ACheckBox) n1).setSelected(true);
                 ((ATilePane.ACheckBox) n3).setSelected(true);
             });
             WaitForAsyncUtils.waitForFxEvents();
-            Assertions.assertThat(instance.getSelected()).containsExactlyInAnyOrder(medi3, medi1);
+            assertThat(instance.getSelected()).containsExactlyInAnyOrder(medi3, medi1);
 
             Platform.runLater(() -> {
                 ((ATilePane.ACheckBox) n1).setSelected(false);
@@ -80,7 +82,7 @@ public class TestATilePane extends ApplicationTest {
             });
             WaitForAsyncUtils.waitForFxEvents();
 
-            Assertions.assertThat(instance.getSelected()).containsExactlyInAnyOrder(medi1, medi2, medi3);
+            assertThat(instance.getSelected()).containsExactlyInAnyOrder(medi1, medi2, medi3);
 
         } else {
             Assertions.fail("no ACheckBox");

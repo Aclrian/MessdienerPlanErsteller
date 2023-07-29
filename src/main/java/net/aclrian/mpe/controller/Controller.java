@@ -1,5 +1,6 @@
 package net.aclrian.mpe.controller;
 
+
 import javafx.stage.*;
 
 public interface Controller {

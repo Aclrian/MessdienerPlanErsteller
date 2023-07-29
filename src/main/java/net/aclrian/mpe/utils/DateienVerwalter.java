@@ -1,5 +1,6 @@
 package net.aclrian.mpe.utils;
 
+
 import javafx.stage.*;
 import net.aclrian.mpe.messdiener.*;
 import net.aclrian.mpe.pfarrei.*;
@@ -10,38 +11,45 @@ import java.nio.channels.*;
 import java.nio.file.*;
 import java.util.*;
 
-public class DateienVerwalter implements IDateienVerwalter {
+public class DateienVerwalter {
     public static final String PFARREI_DATEIENDUNG = ".xml.pfarrei";
     public static final String MESSDIENER_DATEIENDUNG = ".xml";
-    private static IDateienVerwalter instance;
+    private static DateienVerwalter instance;
     private final File dir;
     private Pfarrei pf;
     private List<Messdiener> medis;
     private FileOutputStream pfarreiFos;
     private FileLock lock;
+    private boolean messdienerAlreadyNull = false;
 
     public DateienVerwalter(String path) throws NoSuchPfarrei {
         this.dir = new File(path);
         lookForPfarreiFile();
         Thread thread = new Thread(() -> {
             try (WatchService service = dir.toPath().getFileSystem().newWatchService()) {
-                dir.toPath().register(service, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+                dir.toPath().register(
+                        service,
+                        StandardWatchEventKinds.ENTRY_CREATE,
+                        StandardWatchEventKinds.ENTRY_MODIFY,
+                        StandardWatchEventKinds.ENTRY_DELETE,
+                        StandardWatchEventKinds.OVERFLOW
+                );
                 while (true) {
                     useKey(service);
                 }
             } catch (IOException e) {
-                Dialogs.getDialogs().warn("");
+                MPELog.getLogger().error(e.getMessage(), e);
             }
         });
         thread.setDaemon(true);
         thread.start();
     }
 
-    public static IDateienVerwalter getInstance() {
+    public static DateienVerwalter getInstance() {
         return instance;
     }
 
-    public static void setInstance(IDateienVerwalter instance) {
+    public static void setInstance(DateienVerwalter instance) {
         DateienVerwalter.instance = instance;
     }
 
@@ -55,23 +63,23 @@ public class DateienVerwalter implements IDateienVerwalter {
         try {
             key = service.take();
             key.pollEvents();
-            reloadMessdiener();
+            if (!messdienerAlreadyNull) {
+                reloadMessdiener();
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     }
 
-    @Override
     public File getSavePath() {
         return dir;
     }
 
-    @Override
     public void reloadMessdiener() {
+        messdienerAlreadyNull = true;
         medis = null;
     }
 
-    @Override
     public List<Messdiener> getMessdiener() {
         if (medis == null) {
             ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{MESSDIENER_DATEIENDUNG.substring(1)}, true));
@@ -80,17 +88,21 @@ public class DateienVerwalter implements IDateienVerwalter {
                 ReadFile rf = new ReadFile();
                 medis.add(rf.getMessdiener(file));
             });
-            medis.forEach(Messdiener::setnewMessdatenDaten);
+            for (Messdiener m : medis) {
+                    m.setNewMessdatenDaten();
+            }
+            messdienerAlreadyNull = false;
         }
         return medis;
     }
-
 
     //Pfarrei
     private void lookForPfarreiFile() throws NoSuchPfarrei {
         ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREI_DATEIENDUNG.substring(1)}, true));
         File pfarreiFile;
-        if (files.size() != 1) {
+        if (files.size() == 1) {
+            pfarreiFile = files.get(0);
+        } else {
             if (files.size() > 1) {
                 Dialogs.getDialogs().warn("Es darf nur eine Datei mit der Endung: '" + PFARREI_DATEIENDUNG + "' in dem Ordner: "
                         + dir + " vorhanden sein.");
@@ -98,10 +110,8 @@ public class DateienVerwalter implements IDateienVerwalter {
             } else {
                 throw new NoSuchPfarrei(dir);
             }
-        } else {
-            pfarreiFile = files.get(0);
         }
-        Log.getLogger().info("Pfarrei gefunden in: {}", pfarreiFile);
+        MPELog.getLogger().info("Pfarrei gefunden in: {}", pfarreiFile);
         try {
             pf = ReadFilePfarrei.getPfarrei(pfarreiFile.getAbsolutePath());
             pfarreiFos = new FileOutputStream(pfarreiFile, true);
@@ -112,29 +122,26 @@ public class DateienVerwalter implements IDateienVerwalter {
         }
     }
 
-    @Override
     public FileLock getLock() {
         return lock;
     }
 
-    @Override
     public FileOutputStream getPfarreiFileOutputStream() {
         return pfarreiFos;
     }
 
-    @Override
     public void removeOldPfarrei(File neuePfarrei) {
         ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREI_DATEIENDUNG.substring(1)}, true));
         ArrayList<File> toDel = new ArrayList<>();
         boolean candel = false;
         for (File f : files) {
-            if (!f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())) {
-                toDel.add(f);
-            } else {
+            if (f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())) {
                 candel = true;
+            } else {
+                toDel.add(f);
             }
         }
-        if (candel)
+        if (candel) {
             toDel.forEach(file -> {
                 try {
                     Files.delete(file.toPath());
@@ -142,10 +149,23 @@ public class DateienVerwalter implements IDateienVerwalter {
                     e.printStackTrace();
                 }
             });
+        }
     }
 
-    @Override
     public Pfarrei getPfarrei() {
         return pf;
+    }
+
+    public static class NoSuchPfarrei extends Exception {
+        private final File savepath;
+
+        public NoSuchPfarrei(File savepath) {
+            super();
+            this.savepath = savepath;
+        }
+
+        public File getSavepath() {
+            return savepath;
+        }
     }
 }

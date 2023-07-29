@@ -61,9 +61,9 @@
             <Insets bottom="30.0" left="20.0" right="20.0" top="30.0"/>
         </GridPane.margin>
         <Button fx:id="zurueck" mnemonicParsing="false" text="Zurück"/>
-        <Button fx:id="mail" mnemonicParsing="false" text="E-Mail öffnen" onAction="#toEMAIL"/>
-        <Button fx:id="word" mnemonicParsing="false" onAction="#toWORD" text="Word-Dokument"/>
-        <Button fx:id="pdf" mnemonicParsing="false" onAction="#toPDF" text="PDF-Dokument"/>
+        <Button fx:id="mail" mnemonicParsing="false" text="E-Mail öffnen" onAction="#sendToEmail"/>
+        <Button fx:id="word" mnemonicParsing="false" onAction="#sendToWORD" text="Word-Dokument"/>
+        <Button fx:id="pdf" mnemonicParsing="false" onAction="#sendToPDF" text="PDF-Dokument"/>
         <Button fx:id="nichteingeteilte" mnemonicParsing="false" text="freie Messdiener"/>
     </FlowPane>
 </GridPane>
