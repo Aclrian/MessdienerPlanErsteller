@@ -57,7 +57,7 @@ public class TestConvertCSV {
         assertThat(m.getNachname()).isEqualTo("b");
         assertThat(m.istLeiter()).isTrue();
         assertThat(m.getEintritt()).isEqualTo(2000);
-        assertThat(m.getEmail().toString()).isEqualTo("a@a.de");
+        assertThat(m.getEmail().toString()).hasToString("a@a.de");
 
         columns = Arrays.asList(
                 ConvertCSV.Sortierung.NACHNAME_KOMMA_VORNAME, ConvertCSV.Sortierung.LEITER, ConvertCSV.Sortierung.EINTRITT,
@@ -95,6 +95,7 @@ public class TestConvertCSV {
                 ";", ",", Charset.defaultCharset(), true, false
         );
         m = parseLineToMessdiener("a b c;2023;x;", convertdata);
+        assertThat(m).isNotNull();
         assertThat(m.getVorname()).isEqualTo("a");
         assertThat(m.getNachname()).isEqualTo("b c");
 
@@ -103,6 +104,7 @@ public class TestConvertCSV {
                 ";", ",", Charset.defaultCharset(), true, false
         );
         m = parseLineToMessdiener("a b;2023;x;", convertdata);
+        assertThat(m).isNotNull();
         assertThat(m.getVorname()).isEqualTo("a");
         assertThat(m.getNachname()).isEqualTo("b");
 
@@ -131,6 +133,7 @@ public class TestConvertCSV {
                 standardMessen, ";", ",", Charset.defaultCharset(), true, false);
         Mockito.when(pf.getStandardMessen()).thenReturn(standardMessen);
         m = parseLineToMessdiener("a;b;x;;x;;", convertdata);
+        assertThat(m).isNotNull();
         assertThat(m.getDienverhalten().getBestimmtes(sm1)).isTrue();
         assertThat(m.getDienverhalten().getBestimmtes(sm2)).isFalse();
         assertThat(m.getDienverhalten().getBestimmtes(sm3)).isFalse();

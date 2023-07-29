@@ -82,7 +82,7 @@ public class TestFinishController extends ApplicationTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void cleanTest() throws FindMessdiener.CouldFindMessdiener {
+    public void cleanTest() {
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Mockito.when(pf.getSettings()).thenReturn(einst);
@@ -188,18 +188,18 @@ public class TestFinishController extends ApplicationTest {
     }
 
     @Test
-    public void testEinteilungWithoutDOCX() throws FindMessdiener.CouldFindMessdiener {
+    public void testEinteilungWithoutDOCX() {
         testEinteilung(false);
     }
 
     @Disabled("Run Test with conversion to docx")
     @Test
-    public void testEinteilungWithDOCX() throws FindMessdiener.CouldFindMessdiener {
+    public void testEinteilungWithDOCX() {
         testEinteilung(true);
     }
 
     //CHECKSTYLE:OFF: MethodLength
-    private void testEinteilung(boolean skipDOCX) throws FindMessdiener.CouldFindMessdiener { //NOPMD - suppressed NPathComplexity - test purpose
+    private void testEinteilung(boolean skipDOCX) { //NOPMD - suppressed NPathComplexity - test purpose
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
