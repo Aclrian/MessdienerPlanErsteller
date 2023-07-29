@@ -70,7 +70,7 @@ public class InfoController {
     public InfoController(Stage parent) throws IOException {
         stage = new Stage();
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/view/AInfo.fxml"));
+        loader.setLocation(getClass().getResource("/view/info.fxml"));
         loader.setController(this);
         Parent root = loader.load();
         Scene scene = new Scene(root);

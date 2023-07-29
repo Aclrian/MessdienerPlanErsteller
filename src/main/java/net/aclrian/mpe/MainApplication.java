@@ -33,7 +33,7 @@ public class MainApplication extends Application {
                 return;
             }
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));
+            loader.setLocation(getClass().getResource("/view/head.fxml"));
             loader.setController(new MainController(this, stage));
             Parent root = loader.load();
             Scene scene = new Scene(root);

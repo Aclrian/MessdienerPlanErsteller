@@ -89,7 +89,7 @@ public class TestMainController extends ApplicationTest {
 
         loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
-        loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
+        loader.setLocation(instance.getClass().getResource("/view/head.fxml"));
         try {
             pane = loader.load();
             Platform.runLater(() -> stage.show());
@@ -331,7 +331,7 @@ public class TestMainController extends ApplicationTest {
         instance.log(null);
         instance.workingdir(null);
         instance.savepath(null);
-        loader.setLocation(getClass().getResource("/view/AAhaupt.fxml"));
+        loader.setLocation(getClass().getResource("/view/head.fxml"));
         loader.load();
         ((MainController) loader.getController()).changePane(MainController.EnumPane.START);
         WaitForAsyncUtils.waitForFxEvents();
@@ -353,7 +353,7 @@ public class TestMainController extends ApplicationTest {
         FXMLLoader loader = new FXMLLoader();
         loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
-        loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
+        loader.setLocation(instance.getClass().getResource("/view/head.fxml"));
         try {
             pane = loader.load();
             Platform.runLater(() -> stage.show());
@@ -374,7 +374,7 @@ public class TestMainController extends ApplicationTest {
         loader = new FXMLLoader();
         loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
-        loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
+        loader.setLocation(instance.getClass().getResource("/view/head.fxml"));
         try {
             pane = loader.load();
             Platform.runLater(() -> stage.show());
@@ -423,7 +423,7 @@ public class TestMainController extends ApplicationTest {
 
         loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
-        loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
+        loader.setLocation(instance.getClass().getResource("/view/head.fxml"));
         try {
             pane = loader.load();
             Platform.runLater(() -> stage.show());
