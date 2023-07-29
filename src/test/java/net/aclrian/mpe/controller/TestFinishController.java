@@ -80,9 +80,9 @@ public class TestFinishController extends ApplicationTest {
         DateienVerwalter.setInstance(dv);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "PMD.ExcessiveMethodLength"})
     @Test
-    public void cleanTest() {
+    public void cleanTest() { //NOPMD - suppressed ExcessiveMethodLength - for test purpose
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Mockito.when(pf.getSettings()).thenReturn(einst);

@@ -79,7 +79,7 @@ public class TestSelect extends ApplicationTest {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "PMD.ExcessiveMethodLength"})
     @Test
     public void testMessdiener(@TempDir Path tempDir) {
         Dialogs.setDialogs(dialog);
