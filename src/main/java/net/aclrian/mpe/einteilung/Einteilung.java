@@ -130,17 +130,10 @@ public class Einteilung {
                 zwang(m, false, false, " einteilen ohne Standardmesse beachten");
             }
         }
-        if (m.istFertig()) {
-            return;
-        }
-        if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
+        if (!m.istFertig() && Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
                 + " werden benötigt.\nSollen Messdiener zwangsweise eingeteilt werden?")) {
             zwang(m, true, true, " einteilen ohne Standardmesse beachten");
         }
-        zuWenige(m);
-    }
-
-    private void zuWenige(Messe m) {
         if (!m.istFertig()) {
             Dialogs.getDialogs().error("Die Messe" + m.getID().replace("\t", "   ") + " wird zu wenige Messdiener haben.");
         }
