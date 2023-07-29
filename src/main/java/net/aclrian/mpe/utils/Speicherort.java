@@ -1,10 +1,13 @@
 package net.aclrian.mpe.utils;
 
-import javafx.stage.*;
+
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
 import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public class Speicherort {
 
@@ -25,14 +28,14 @@ public class Speicherort {
     private void generateSpeicherort() {
         String homedir = System.getProperty("user.home");
         homedir = homedir + TEXTDATEI;
-        Log.getLogger().info("Das Home-Verzeichnis wurde gefunden: {}", homedir);
+        MPELog.getLogger().info("Das Home-Verzeichnis wurde gefunden: {}", homedir);
         File f = new File(homedir);
-        if (!f.exists()) {
-            createSaveFile(homedir);
-        } else {
+        if (f.exists()) {
             readSaveFile(homedir, f);
+        } else {
+            createSaveFile(homedir);
         }
-        Log.getLogger().info("Der Speicherort liegt in: {}", speicherortString);
+        MPELog.getLogger().info("Der Speicherort liegt in: {}", speicherortString);
     }
 
     private void readSaveFile(String homedir, File f) {
@@ -40,13 +43,15 @@ public class Speicherort {
         try (BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(homedir), StandardCharsets.UTF_8))) {
             line = bufferedReader.readLine();
-            if (line == null){
+            if (line == null) {
                 line = "";
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) { }
         File saveFile = new File(line);
-        if (!saveFile.exists()) {
-            Log.getLogger().info("Der Speicherort aus '{}' ('{}') existiert nicht!", f, line);
+        if (saveFile.exists()) {
+            speicherortString = line;
+        } else {
+            MPELog.getLogger().info("Der Speicherort aus '{}' ('{}') existiert nicht!", f, line);
             try {
                 Files.delete(f.toPath());
             } catch (IOException e1) {
@@ -66,11 +71,10 @@ public class Speicherort {
                     getSpeicherortString();
                 }
             } catch (IOException e) {
-                Log.getLogger().info("Auf den Speicherort '{}' kann nicht zugegriffen werden!", f);
+                MPELog.getLogger().info("Auf den Speicherort '{}' kann nicht zugegriffen werden!", f);
                 getSpeicherortString();
             }
-        } else {
-            speicherortString = line;
+
         }
     }
 
@@ -83,7 +87,7 @@ public class Speicherort {
         }
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(homedir))) {
             if (s != null) {
-                Log.getLogger().info(s);
+                MPELog.getLogger().info(s);
                 bufferedWriter.write(s);
                 setSpeicherortString(s);
             } else {

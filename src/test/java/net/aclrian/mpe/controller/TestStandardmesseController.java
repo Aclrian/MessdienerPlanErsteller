@@ -1,4 +1,4 @@
-package net.aclrian.mpe.controller;
+package net.aclrian.mpe.controller; //NOPMD - suppressed ExcessiveImports - for test purpose
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -8,15 +8,18 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import net.aclrian.fx.ATilePane;
+import net.aclrian.mpe.TestUtil;
+import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messdiener.Messverhalten;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Pfarrei;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -26,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Arrays;
@@ -34,9 +38,9 @@ import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestStandardmesseController extends ApplicationTest {
+public class TestStandardmesseController extends ApplicationTest {
 
-    private final StandardMesse StandardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
+    private final StandardMesse standardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o", 2, "t");
     @Mock
     private DateienVerwalter dv;
     @Mock
@@ -61,21 +65,25 @@ class TestStandardmesseController extends ApplicationTest {
     }
 
     @Test
-    void test() {
+    public void test(@TempDir Path tempDir) {
         Dialogs.setDialogs(dialog);
         DateienVerwalter.setInstance(dv);
         Pfarrei pf = Mockito.mock(Pfarrei.class);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        File f = new File(System.getProperty("user.home"));
+        File f = new File(tempDir.toString());
         Mockito.when(dv.getSavePath()).thenReturn(f);
         Messdiener m1 = Mockito.mock(Messdiener.class);
         Messdiener m2 = Mockito.mock(Messdiener.class);
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
+        Mockito.when(m1.getEmail()).thenReturn(Email.EMPTY_EMAIL);
+        Mockito.when(m2.getEmail()).thenReturn(Email.EMPTY_EMAIL);
+        TestUtil.mockSaveToXML(m1);
+        TestUtil.mockSaveToXML(m2);
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         final Messverhalten mv1 = new Messverhalten();
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
         Mockito.when(m1.toString()).thenReturn("a");
         final Messverhalten mv2 = new Messverhalten();
-        mv2.editiereBestimmteMesse(StandardMesse, true);
+        mv2.editiereBestimmteMesse(standardMesse, true);
         Mockito.when(m2.getDienverhalten()).thenReturn(mv2);
         Mockito.when(m2.toString()).thenReturn("b");
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2));
@@ -87,12 +95,12 @@ class TestStandardmesseController extends ApplicationTest {
             URL u = getClass().getResource(MainController.EnumPane.STDMESSE.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
             try {
-                fl.setController(new StandardmesseController(StandardMesse));
+                fl.setController(new StandardmesseController(standardMesse));
                 pane.getChildren().add(fl.load());
                 instance = fl.getController();
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
@@ -114,6 +122,7 @@ class TestStandardmesseController extends ApplicationTest {
         assertThat(i).isEqualTo(2);
         assertThat(scene.lookup("#fertig")).isInstanceOf(Button.class);
         ((Button) scene.lookup("#fertig")).fire();
+        WaitForAsyncUtils.waitForFxEvents();
         final File aFile = new File(f.getAbsolutePath(), "a.xml");
         assertThat(aFile).exists();
         final File bFile = new File(f.getAbsolutePath(), "b.xml");
@@ -127,6 +136,8 @@ class TestStandardmesseController extends ApplicationTest {
         } catch (IOException e) {
             Assertions.fail(e.getMessage(), e);
         }
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
 }

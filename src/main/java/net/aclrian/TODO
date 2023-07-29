@@ -1,4 +1,4 @@
-CSVConverter Main.java:main
+CSVConverter Main.java:mainApplication
 darkmode
 wait for https://bugs.openjdk.java.net/browse/JDK-8090397
 

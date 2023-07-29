@@ -1,10 +1,12 @@
 package net.aclrian.mpe.controller;
 
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import javafx.stage.*;
-import net.aclrian.mpe.*;
-import net.aclrian.mpe.utils.*;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
+import javafx.stage.Window;
+import javafx.scene.control.Label;
+import net.aclrian.mpe.MainApplication;
+import net.aclrian.mpe.utils.DateienVerwalter;
 
 public class StartController implements Controller {
     @FXML
@@ -16,7 +18,7 @@ public class StartController implements Controller {
 
     public void initialize() {
         name.setText(DateienVerwalter.getInstance().getPfarrei().getName());
-        versionLabel.setText(Main.VERSION_ID);
+        versionLabel.setText(MainApplication.VERSION_ID);
     }
 
     @Override

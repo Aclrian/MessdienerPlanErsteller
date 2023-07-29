@@ -1,5 +1,5 @@
 #btn {          
-    -fx-background-size: 100%;
+    background-size: 100%;
     -fx-background-color: royalblue;
     -fx-background-repeat: no-repeat;
 }

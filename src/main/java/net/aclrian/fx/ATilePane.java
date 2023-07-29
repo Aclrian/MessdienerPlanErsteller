@@ -1,37 +1,43 @@
 package net.aclrian.fx;
 
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.utils.*;
 
-import java.util.*;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
+import javafx.scene.layout.TilePane;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.Person;
+import net.aclrian.mpe.utils.DateienVerwalter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ATilePane extends TilePane {
 
     public ATilePane() {
+        super();
         setAlignment(Pos.CENTER);
         setOrientation(Orientation.VERTICAL);
         setMaxHeight(Double.MAX_VALUE);
         setMaxWidth(Double.MAX_VALUE);
         setVgap(5d);
-            List<Messdiener> medis = DateienVerwalter.getInstance().getMessdiener();
-        medis.sort(Messdiener.MESSDIENER_COMPARATOR);
-            for (Messdiener messdiener : medis) {
-                ACheckBox cb = new ACheckBox(messdiener);
-                cb.setMaxWidth(Double.MAX_VALUE);
-                cb.setStyle("-fx-padding: 0 0 0 10");
-                getChildren().add(cb);
-            }
+        List<Messdiener>  medis = DateienVerwalter.getInstance().getMessdiener();
+        medis.sort(Person.PERSON_COMPARATOR);
+        for (Messdiener messdiener : medis) {
+            ACheckBox checkBox = new ACheckBox(messdiener);
+            checkBox.setMaxWidth(Double.MAX_VALUE);
+            checkBox.setStyle("-fx-padding: 0 0 0 10");
+            getChildren().add(checkBox);
+        }
     }
 
     public List<Messdiener> getSelected() {
         ArrayList<Messdiener> rtn = new ArrayList<>();
         for (Node n : getChildrenUnmodifiable()) {
-            if (n instanceof ACheckBox acb && acb.isSelected())
+            if (n instanceof ACheckBox acb && acb.isSelected()) {
                 rtn.add(acb.getMessdiener());
+            }
         }
         return rtn;
     }

@@ -84,10 +84,10 @@
     <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="8"
              GridPane.columnSpan="7" GridPane.rowIndex="4" GridPane.rowSpan="4">
         <Tab text="Freunde">
-            <ListView fx:id="freunde" prefHeight="200.0" prefWidth="200.0"/>
+            <ListView fx:id="freundeListView" prefHeight="200.0" prefWidth="200.0"/>
         </Tab>
         <Tab text="Geschwister">
-            <ListView fx:id="geschwie" prefHeight="200.0" prefWidth="200.0"/>
+            <ListView fx:id="geschwisterListView" prefHeight="200.0" prefWidth="200.0"/>
         </Tab>
     </TabPane>
     <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Name"

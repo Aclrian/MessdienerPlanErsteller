@@ -1,18 +1,28 @@
 package net.aclrian.mpe.controller;
 
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.utils.*;
 
-import java.time.*;
-import java.util.*;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Window;
+import net.aclrian.mpe.einteilung.Einteilung;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.Person;
+import net.aclrian.mpe.messe.Messe;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Select implements Controller {
     private final Selector selector;
@@ -39,39 +49,6 @@ public class Select implements Controller {
     public Select(Selector selector, MainController mc) {
         this.selector = selector;
         this.mc = mc;
-    }
-
-    public static List<Messe> generiereDefaultMessen(LocalDate anfang, LocalDate ende) {
-        ArrayList<Messe> rtn = new ArrayList<>();
-        for (StandardMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
-            if (!(sm instanceof Sonstiges)) {
-                // clone LocalDates
-                LocalDate start = LocalDate.now();
-                LocalDate end = LocalDate.now();
-                start = anfang;
-                end = ende;
-                List<Messe> m = optimieren(start, sm, end, new ArrayList<>());
-                rtn.addAll(m);
-            }
-        }
-        rtn.sort(Messe.MESSE_COMPARATOR);
-        Log.getLogger().info("DefaultMessen generiert");
-        return rtn;
-    }
-
-    public static List<Messe> optimieren(LocalDate start, StandardMesse sm, LocalDate end, List<Messe> mes) {
-        if (start.isBefore(end) && !(sm instanceof Sonstiges)) {
-            if (start.getDayOfWeek().compareTo(sm.getWochentag()) == 0) {
-                LocalDateTime messeTime = start.atTime(sm.getBeginnStunde(), sm.getBeginnMinute());
-                Messe m = new Messe(messeTime, sm);
-                mes.add(m);
-                start = start.plusDays(7);
-            } else {
-                start = start.plusDays(1);
-            }
-            mes = optimieren(start, sm, end, mes);
-        }
-        return mes;
     }
 
     @Override
@@ -102,18 +79,22 @@ public class Select implements Controller {
 
         updateMesse(mc.getMessen());
         list.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && (mouseEvent.getClickCount() == 2)) {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 int i = list.getSelectionModel().getSelectedIndex();
-                if (i >= 0 && i < messen.size()) mc.changePaneMesse(messen.get(i));
+                if (i >= 0 && i < messen.size()) {
+                    mc.changePane(messen.get(i));
+                }
             }
         });
         bearbeiten.setOnAction(e -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && i < messen.size()) mc.changePaneMesse(messen.get(i));
+            if (i >= 0 && i < messen.size()) {
+                mc.changePane(messen.get(i));
+            }
         });
         remove.setOnAction(arg0 -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && (list.getSelectionModel().getSelectedItem().getText().replace("\t\t", "\t").equals(messen.get(i).toString()))) {
+            if (i >= 0 && list.getSelectionModel().getSelectedItem().getText().replace("\t\t", "\t").equals(messen.get(i).toString())) {
                 messen.remove(i);
                 updateMesse(mc.getMessen());
             }
@@ -126,7 +107,7 @@ public class Select implements Controller {
                     VON, BIS);
             if (!daten.isEmpty()) {
                 try {
-                    messen.addAll(Select.generiereDefaultMessen(daten.get(0), daten.get(1)));
+                    messen.addAll(Einteilung.generiereDefaultMessen(daten.get(0), daten.get(1)));
                     messen.sort(Messe.MESSE_COMPARATOR);
                     ArrayList<Label> l = new ArrayList<>();
                     for (Messe m : messen) {
@@ -143,26 +124,28 @@ public class Select implements Controller {
 
     private void messdiener(Window window, MainController mc) {
         List<Messdiener> data = DateienVerwalter.getInstance().getMessdiener();
-        data.sort(Messdiener.MESSDIENER_COMPARATOR);
-        for (Messdiener datum : data) {
-            list.getItems().add(new Label(datum.toString()));
+        data.sort(Person.PERSON_COMPARATOR);
+        for (Messdiener messdiener : data) {
+            list.getItems().add(new Label(messdiener.toString()));
         }
         list.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && (mouseEvent.getClickCount() == 2)) {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 int i = list.getSelectionModel().getSelectedIndex();
-                if (i >= 0 && i < data.size())
-                    mc.changePaneMessdiener(data.get(i));
+                if (i >= 0 && i < data.size()) {
+                    mc.changePane(data.get(i));
+                }
             }
         });
         bearbeiten.setOnAction(e -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && i < data.size()) mc.changePaneMessdiener(data.get(i));
+            if (i >= 0 && i < data.size()) {
+                mc.changePane(data.get(i));
+            }
         });
         remove.setOnAction(arg0 -> {
             int i = list.getSelectionModel().getSelectedIndex();
-            if (i >= 0 && (list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString()))
-                    && MediController.remove(data.get(i))) {
-                DateienVerwalter.getInstance().reloadMessdiener();
+            if (i >= 0 && list.getSelectionModel().getSelectedItem().getText().equals(data.get(i).toString())
+                    && Dialogs.remove(data.get(i))) {
                 afterStartup(window, mc);
             }
         });
@@ -177,9 +160,11 @@ public class Select implements Controller {
     }
 
     public void neu() {
-        if (selector == Selector.MESSDIENER)
-            mc.changePaneMessdiener(null);
-        else if (selector == Selector.MESSE) mc.changePaneMesse(null);
+        if (selector == Selector.MESSDIENER) {
+            mc.changePane(MainController.EnumPane.MESSDIENER);
+        } else if (selector == Selector.MESSE) {
+            mc.changePane(MainController.EnumPane.MESSE);
+        }
     }
 
     @Override

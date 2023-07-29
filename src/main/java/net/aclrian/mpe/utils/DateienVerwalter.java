@@ -1,14 +1,24 @@
 package net.aclrian.mpe.utils;
 
-import javafx.stage.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.pfarrei.*;
-import org.apache.commons.io.*;
 
-import java.io.*;
-import java.nio.channels.*;
-import java.nio.file.*;
-import java.util.*;
+import javafx.stage.Stage;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.ReadFile;
+import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.pfarrei.ReadFilePfarrei;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.file.Files;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DateienVerwalter {
     public static final String PFARREI_DATEIENDUNG = ".xml.pfarrei";
@@ -26,12 +36,18 @@ public class DateienVerwalter {
         lookForPfarreiFile();
         Thread thread = new Thread(() -> {
             try (WatchService service = dir.toPath().getFileSystem().newWatchService()) {
-                dir.toPath().register(service, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+                dir.toPath().register(
+                        service,
+                        StandardWatchEventKinds.ENTRY_CREATE,
+                        StandardWatchEventKinds.ENTRY_MODIFY,
+                        StandardWatchEventKinds.ENTRY_DELETE,
+                        StandardWatchEventKinds.OVERFLOW
+                );
                 while (true) {
                     useKey(service);
                 }
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
         });
         thread.setDaemon(true);
@@ -56,7 +72,9 @@ public class DateienVerwalter {
         try {
             key = service.take();
             key.pollEvents();
-            if (!messdienerAlreadyNull) reloadMessdiener();
+            if (!messdienerAlreadyNull) {
+                reloadMessdiener();
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -91,7 +109,9 @@ public class DateienVerwalter {
     private void lookForPfarreiFile() throws NoSuchPfarrei {
         ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREI_DATEIENDUNG.substring(1)}, true));
         File pfarreiFile;
-        if (files.size() != 1) {
+        if (files.size() == 1) {
+            pfarreiFile = files.get(0);
+        } else {
             if (files.size() > 1) {
                 Dialogs.getDialogs().warn("Es darf nur eine Datei mit der Endung: '" + PFARREI_DATEIENDUNG + "' in dem Ordner: "
                         + dir + " vorhanden sein.");
@@ -99,10 +119,8 @@ public class DateienVerwalter {
             } else {
                 throw new NoSuchPfarrei(dir);
             }
-        } else {
-            pfarreiFile = files.get(0);
         }
-        Log.getLogger().info("Pfarrei gefunden in: {}", pfarreiFile);
+        MPELog.getLogger().info("Pfarrei gefunden in: {}", pfarreiFile);
         try {
             pf = ReadFilePfarrei.getPfarrei(pfarreiFile.getAbsolutePath());
             pfarreiFos = new FileOutputStream(pfarreiFile, true);
@@ -126,13 +144,13 @@ public class DateienVerwalter {
         ArrayList<File> toDel = new ArrayList<>();
         boolean candel = false;
         for (File f : files) {
-            if (!f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())) {
-                toDel.add(f);
-            } else {
+            if (f.getAbsolutePath().contentEquals(neuePfarrei.getAbsolutePath())) {
                 candel = true;
+            } else {
+                toDel.add(f);
             }
         }
-        if (candel)
+        if (candel) {
             toDel.forEach(file -> {
                 try {
                     Files.delete(file.toPath());
@@ -140,6 +158,7 @@ public class DateienVerwalter {
                     e.printStackTrace();
                 }
             });
+        }
     }
 
     public Pfarrei getPfarrei() {
@@ -150,6 +169,7 @@ public class DateienVerwalter {
         private final File savepath;
 
         public NoSuchPfarrei(File savepath) {
+            super();
             this.savepath = savepath;
         }
 

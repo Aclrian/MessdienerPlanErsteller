@@ -1,16 +1,24 @@
 package net.aclrian.mpe.controller;
 
-import javafx.fxml.*;
+
+import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.*;
-import net.aclrian.fx.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.utils.*;
+import javafx.stage.Window;
+import net.aclrian.fx.ASlider;
+import net.aclrian.fx.ATilePane;
+import net.aclrian.fx.TimeSpinner;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messe.Messe;
+import net.aclrian.mpe.messe.Sonstiges;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
-import static net.aclrian.mpe.utils.Log.*;
+import static net.aclrian.mpe.utils.MPELog.getLogger;
 
 public class MesseController implements Controller {
     public static final String STANDARDMESSE_AUSWAEHLEN = "Standardmesse ändern:";
@@ -62,13 +70,15 @@ public class MesseController implements Controller {
         slider.setMin(1);
         cancel.setOnAction(e -> {
             locked = false;
-            if (moben != null) mc.getMessen().add(moben);
+            if (moben != null) {
+                mc.getMessen().add(moben);
+            }
             mc.changePane(MainController.EnumPane.SELECT_MESSE);
         });
         saveNew.setOnAction(e -> {
             if (saveMesse(mc)) {
                 locked = false;
-                mc.changePaneMesse(null);
+                mc.changePane(MainController.EnumPane.MESSDIENER);
             } else {
                 Dialogs.getDialogs().warn("Bitte einen Titel, Ort, Datum und Uhrzeit eingeben.");
             }
@@ -112,7 +122,9 @@ public class MesseController implements Controller {
     }
 
     public void setMesse(Messe messe) {
-        if (messe == null) return;
+        if (messe == null) {
+            return;
+        }
         standardMesse = messe.getStandardMesse();
         smesse.setText(messe.getStandardMesse().toLangerBenutzerfreundlichenString());
         moben = messe;
@@ -134,7 +146,8 @@ public class MesseController implements Controller {
 
     @FXML
     private void standardmesseBearbeiten() {
-        StandardMesse s = (StandardMesse) Dialogs.getDialogs().singleSelect(DateienVerwalter.getInstance().getPfarrei().getStandardMessen(), STANDARDMESSE_AUSWAEHLEN);
+        List<StandardMesse> standardMessen = DateienVerwalter.getInstance().getPfarrei().getStandardMessen();
+        StandardMesse s = (StandardMesse) Dialogs.getDialogs().singleSelect(standardMessen, STANDARDMESSE_AUSWAEHLEN);
         if (s != null) {
             smesse.setText(s.toLangerBenutzerfreundlichenString());
             this.standardMesse = s;

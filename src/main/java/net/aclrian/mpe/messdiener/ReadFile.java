@@ -1,14 +1,22 @@
 package net.aclrian.mpe.messdiener;
 
-import net.aclrian.mpe.messdiener.Messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.utils.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
 
-import javax.xml.*;
-import javax.xml.parsers.*;
-import java.io.*;
+import net.aclrian.mpe.messe.Sonstiges;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.utils.DateUtil;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.MPELog;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 
 /**
  * liest aus einer xml-Datei den Messdiener und gibt diesen zurück
@@ -34,23 +42,7 @@ public class ReadFile {
                 for (int temp = 0; temp < nList.getLength(); temp++) {
                     Node nNode = nList.item(temp);
                     if (nNode.getNodeType() == 1) {
-                        Element eElement = (Element) nNode;
-                        String mail;
-                        String vname = eElement.getElementsByTagName("Vorname").item(0).getTextContent();
-                        String nname = eElement.getElementsByTagName("Nachname").item(0).getTextContent();
-                        mail = readMail(eElement);
-                        int eintritt = readEintritt(eElement);
-                        boolean istLeiter = Boolean.parseBoolean(eElement.getElementsByTagName("Leiter").item(0).getTextContent());
-                        // Messverhalten
-                        Messverhalten dienverhalten = readMessverhalten(eElement);
-                        String[] freunde = new String[5];
-                        String[] geschwister = new String[3];
-                        readFreunde(xmlFile, eElement, freunde);
-                        readGeschwister(xmlFile, eElement, geschwister);
-
-                        me = toMessdiener(xmlFile, mail, vname, nname, eintritt, istLeiter, dienverhalten);
-                        me.setFreunde(freunde);
-                        me.setGeschwister(geschwister);
+                        me = getMessdiener(xmlFile, (Element) nNode);
                     }
                 }
             }
@@ -60,36 +52,42 @@ public class ReadFile {
         return me;
     }
 
-    private Messdiener toMessdiener(File fXmlFile, String mail, String vname, String nname, int eintritt, boolean istLeiter, Messverhalten dienverhalten) {
-        Messdiener me;
-        me = new Messdiener(fXmlFile);
-        try {
-            me.setzeAllesNeu(vname, nname, eintritt, istLeiter, dienverhalten, mail);
-        } catch (Exception e) {
-            fixEmail(me, mail, vname, nname, eintritt, istLeiter, dienverhalten);
-        }
-        return me;
-    }
+    private Messdiener getMessdiener(File xmlFile, Element eElement) {
+        String vname = eElement.getElementsByTagName("Vorname").item(0).getTextContent();
+        String nname = eElement.getElementsByTagName("Nachname").item(0).getTextContent();
+        int eintritt = readEintritt(eElement);
+        boolean istLeiter = Boolean.parseBoolean(eElement.getElementsByTagName("Leiter").item(0).getTextContent());
+        Messverhalten dienverhalten = readMessverhalten(eElement);
 
-    private String readMail(Element eElement) {
-        String mail;
+        String[] freunde = new String[5];
+        String[] geschwister = new String[3];
+        readFreunde(xmlFile, eElement, freunde);
+        readGeschwister(xmlFile, eElement, geschwister);
+
+        String mailString;
         try {
-            mail = eElement.getElementsByTagName("Email").item(0).getTextContent();
+            mailString = eElement.getElementsByTagName("Email").item(0).getTextContent();
         } catch (NullPointerException e) {
-            mail = "";
+            mailString = "";
         }
-        return mail;
+        Email mail;
+        try {
+            mail = new Email(mailString);
+        } catch (Email.NotValidException e) {
+            MPELog.getLogger().warn(mailString);
+            mail = fixEmail(mailString, vname, nname);
+        }
+        Messdiener messdiener = new Messdiener(xmlFile, vname, nname, mail, eintritt, istLeiter, dienverhalten);
+        messdiener.setGeschwister(geschwister);
+        messdiener.setFreunde(freunde);
+        return messdiener;
     }
 
     private int readEintritt(Element eElement) {
         int eintritt = Integer
                 .parseInt(eElement.getElementsByTagName("Eintritt").item(0).getTextContent());
-        if (eintritt < Messdaten.getMinYear()) {
-            eintritt = Messdaten.getMinYear();
-        }
-        if (eintritt > Messdaten.getMaxYear()) {
-            eintritt = Messdaten.getMaxYear();
-        }
+        eintritt = Math.max(eintritt, DateUtil.getYearCap());
+        eintritt = Math.min(eintritt, DateUtil.getCurrentYear());
         return eintritt;
     }
 
@@ -105,7 +103,7 @@ public class ReadFile {
                 String value = eElement.getElementsByTagName(sname).item(0).getTextContent();
                 kann = value.equals("true");
             } catch (Exception e) {
-                Log.getLogger().warn(e.getMessage(), e);
+                MPELog.getLogger().warn(e.getMessage(), e);
             }
             dienverhalten.editiereBestimmteMesse(sm, kann);
         }
@@ -113,39 +111,39 @@ public class ReadFile {
     }
 
     private void readGeschwister(File fXmlFile, Element eElement, String[] geschwister) {
-        String g1 = "LEER";
-        String g2 = "LEER";
-        String g3 = "LEER";
+        String g1 = "";
+        String g2 = "";
+        String g3 = "";
         try {
             g1 = eElement.getElementsByTagName("g1").item(0).getTextContent();
             g2 = eElement.getElementsByTagName("g2").item(0).getTextContent();
             g3 = eElement.getElementsByTagName("g3").item(0).getTextContent();
         } catch (NullPointerException e) {
-            Log.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
+            MPELog.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
         }
-        if (!g1.equals("LEER")) {
-            geschwister[0] = g1;
-        } else {
+        if (g1.equals("LEER")) {
             geschwister[0] = "";
-        }
-        if (!g2.equals("LEER")) {
-            geschwister[1] = g2;
         } else {
+            geschwister[0] = g1;
+        }
+        if (g2.equals("LEER")) {
             geschwister[1] = "";
-        }
-        if (!g3.equals("LEER")) {
-            geschwister[2] = g3;
         } else {
+            geschwister[1] = g2;
+        }
+        if (g3.equals("LEER")) {
             geschwister[2] = "";
+        } else {
+            geschwister[2] = g3;
         }
     }
 
     private void readFreunde(File fXmlFile, Element eElement, String[] freunde) {
-        String f1 = "LEER";
-        String f2 = "LEER";
-        String f3 = "LEER";
-        String f4 = "LEER";
-        String f5 = "LEER";
+        String f1 = "";
+        String f2 = "";
+        String f3 = "";
+        String f4 = "";
+        String f5 = "";
         try {
             f1 = eElement.getElementsByTagName("F1").item(0).getTextContent();
             f2 = eElement.getElementsByTagName("F2").item(0).getTextContent();
@@ -153,44 +151,51 @@ public class ReadFile {
             f4 = eElement.getElementsByTagName("F4").item(0).getTextContent();
             f5 = eElement.getElementsByTagName("F5").item(0).getTextContent();
         } catch (NullPointerException e) {
-            Log.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
+            MPELog.getLogger().info("Es wurde eine alte Version von Messdiener-Dateien gefunden! {}", fXmlFile.getName());
         }
-        if (!f1.equals("LEER")) {
-            freunde[0] = f1;
-        } else {
+        if (f1.equals("LEER")) {
             freunde[0] = "";
-        }
-        if (!f2.equals("LEER")) {
-            freunde[1] = f2;
         } else {
+            freunde[0] = f1;
+        }
+        if (f2.equals("LEER")) {
             freunde[1] = "";
-        }
-        if (!f3.equals("LEER")) {
-            freunde[2] = f3;
         } else {
+            freunde[1] = f2;
+        }
+        if (f3.equals("LEER")) {
             freunde[2] = "";
-        }
-        if (!f4.equals("LEER")) {
-            freunde[3] = f4;
         } else {
+            freunde[2] = f3;
+        }
+        if (f4.equals("LEER")) {
             freunde[3] = "";
-        }
-        if (!f5.equals("LEER")) {
-            freunde[4] = f5;
         } else {
+            freunde[3] = f4;
+        }
+        if (f5.equals("LEER")) {
             freunde[4] = "";
+        } else {
+            freunde[4] = f5;
         }
     }
 
-    private void fixEmail(Messdiener me, String mail, String vorname, String nachname, int eintritt, boolean leiter, Messverhalten dienverhalten) {
-        if (Dialogs.getDialogs().frage("Die E-Mail-Addresse '" + mail + "' von " + me + " ist ungültig und wird gelöscht.\nSoll eine neue eingegeben werden?")) {
-            String s = Dialogs.getDialogs().text("Neue E-Mail-Adresse von " + me + " eingeben:\nWenn keine vorhanden ist, soll das Feld leer bleiben.", "E-Mail:");
-            if (!s.equals("")) me.setEmailEmpty();
+    private Email fixEmail(String mailString, String vorname, String nachname) {
+        boolean frage = Dialogs.getDialogs().frage(
+                "Die E-Mail-Addresse %s von %s, %s ist ungültig und wird gelöscht.%nSoll eine neue eingegeben werden?"
+                        .formatted(mailString, nachname, vorname));
+        if (frage) {
+            String newEmail = Dialogs.getDialogs().text(
+                    "Neue E-Mail-Adresse von %s, %s eingeben:".formatted(nachname, vorname),
+                    "E-Mail:"
+            );
             try {
-                me.setEmail(s);
-            } catch (NotValidException e) {
-                fixEmail(me, s + "' bzw. '" + mail, vorname, nachname, eintritt, leiter, dienverhalten);
+                return new Email(newEmail);
+            } catch (Email.NotValidException e) {
+                return fixEmail(newEmail, vorname, nachname);
             }
-        } else me.setzeAllesNeuUndMailLeer(vorname, nachname, eintritt, leiter, dienverhalten);
+        } else {
+            return Email.EMPTY_EMAIL;
+        }
     }
 }

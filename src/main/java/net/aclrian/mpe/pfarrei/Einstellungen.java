@@ -1,9 +1,10 @@
 package net.aclrian.mpe.pfarrei;
 
-import net.aclrian.mpe.pfarrei.Setting.*;
-import net.aclrian.mpe.utils.*;
 
-import java.util.*;
+import net.aclrian.mpe.utils.MPELog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Einstellungen {
 
@@ -11,10 +12,10 @@ public class Einstellungen {
     private final Setting[] settings = new Setting[LENGTH];
 
     public Einstellungen() {
-        settings[0] = new Setting(Attribut.MAX, 0, 0);
-        settings[1] = new Setting(Attribut.MAX, 1, 0);
+        settings[0] = new Setting(Setting.Attribut.MAX, 0, 0);
+        settings[1] = new Setting(Setting.Attribut.MAX, 1, 0);
         for (int i = 2; i < settings.length; i++) {
-            settings[i] = new Setting(Attribut.YEAR, i - 2, 0);
+            settings[i] = new Setting(Setting.Attribut.YEAR, i - 2, 0);
         }
     }
 
@@ -23,11 +24,13 @@ public class Einstellungen {
         if (i >= LENGTH) {
             return;
         }
-        settings[i] = new Setting(Attribut.YEAR, eintrittAbstandZumAktuellemJahr, anzMaxDienen);
+        settings[i] = new Setting(Setting.Attribut.YEAR, eintrittAbstandZumAktuellemJahr, anzMaxDienen);
         if (anzMaxDienen > settings[0].anzahlDienen()) {
-            Log.getLogger().warn("Die Anzahl ({}) von der ID: {}"
-                    + " ist größer als der maximale Standardwert von allen nicht Leitern. Dieser max. Wert wird somit neu gesetzt.", anzMaxDienen, eintrittAbstandZumAktuellemJahr);
-            settings[0] = new Setting(Attribut.MAX, 0, anzMaxDienen);
+            MPELog.getLogger().warn(
+                    "Die Anzahl ({}) von der ID: {} ist größer als der maximale Standardwert von allen nicht Leitern."
+                    + " Dieser max. Wert wird somit neu gesetzt.",
+                    anzMaxDienen, eintrittAbstandZumAktuellemJahr);
+            settings[0] = new Setting(Setting.Attribut.MAX, 0, anzMaxDienen);
         }
     }
 
@@ -36,13 +39,13 @@ public class Einstellungen {
         if (leiter) {
             id++;
         }
-        settings[id] = new Setting(Attribut.MAX, id, anzMaxDienen);
+        settings[id] = new Setting(Setting.Attribut.MAX, id, anzMaxDienen);
     }
 
     public List<Setting> getSettings() {
         List<Setting> rtn = new ArrayList<>();
         for (Setting setting : settings) {
-            if (setting.attribut() != Attribut.MAX) {
+            if (setting.attribut() != Setting.Attribut.MAX) {
                 rtn.add(setting);
             }
         }
@@ -51,7 +54,7 @@ public class Einstellungen {
 
     public Setting getDaten(int index) {
         if (index > LENGTH) {
-            //if a medi has an older year of entry
+            //if a messdiener has an older year of entry
             return settings[LENGTH];
         }
         return settings[index];

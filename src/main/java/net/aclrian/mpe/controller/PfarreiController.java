@@ -1,26 +1,33 @@
 package net.aclrian.mpe.controller;
 
-import javafx.beans.property.*;
+
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.image.*;
-import javafx.scene.input.*;
-import javafx.stage.*;
-import net.aclrian.fx.*;
-import net.aclrian.mpe.*;
-import net.aclrian.mpe.messe.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+import net.aclrian.fx.ASlider;
+import net.aclrian.mpe.MainApplication;
+import net.aclrian.mpe.messe.Sonstiges;
+import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.*;
 import net.aclrian.mpe.utils.*;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Objects;
 
-import static net.aclrian.mpe.utils.Log.*;
+import static net.aclrian.mpe.utils.MPELog.getLogger;
 
 public class PfarreiController {
 
@@ -30,12 +37,12 @@ public class PfarreiController {
     public static final String VERSTANDEN = "Verstanden";
     private static final String CENTERED = "-fx-alignment: CENTER;";
     private final Stage stage;
-    private final Main main;
+    private final MainApplication mainApplication;
     // ----------------------------------------------------------------------
     @FXML
-    private TableView<Setting> settingTableView = new TableView<>();
+    private TableView<Setting> settingTableView = new TableView<>(); //NOPMD - suppressed ImmutableField - need to be immutable for javafx
     @FXML
-    private /*NOT final!*/ TableView<StandardMesse> table = new TableView<>();
+    private TableView<StandardMesse> table = new TableView<>(); //NOPMD - suppressed ImmutableField - need to be immutable for fxml
     private String nameS = null;
     private int mediI;
     private int leiterI;
@@ -75,9 +82,9 @@ public class PfarreiController {
     @FXML
     private Button zurueckbtn;
 
-    public PfarreiController(Stage stage, Main m, Stage old) {
+    public PfarreiController(Stage stage, MainApplication m, Stage old) {
         this.stage = stage;
-        this.main = m;
+        this.mainApplication = m;
         this.old = old;
         Pfarrei pf = DateienVerwalter.getInstance().getPfarrei();
         stage.getIcons().add(new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/title_32.png"))));
@@ -91,15 +98,15 @@ public class PfarreiController {
         hochamtB = pf.zaehlenHochaemterMit();
     }
 
-    public PfarreiController(Stage stage, String savepath, Main main) {
+    public PfarreiController(Stage stage, String savepath, MainApplication mainApplication) {
         this.savepath = savepath;
         this.stage = stage;
-        this.main = main;
+        this.mainApplication = mainApplication;
     }
 
-    public static void start(Stage stage, String savepath, Main main) {
+    public static void start(Stage stage, String savepath, MainApplication mainApplication) {
         FXMLLoader loader = new FXMLLoader();
-        PfarreiController cont = new PfarreiController(stage, savepath, main);
+        PfarreiController cont = new PfarreiController(stage, savepath, mainApplication);
         loader.setLocation(cont.getClass().getResource(STANDARDMESSE_FXML));
         loader.setController(cont);
         Parent root;
@@ -107,7 +114,7 @@ public class PfarreiController {
             root = loader.load();
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setTitle(Log.PROGRAMM_NAME);
+            stage.setTitle(MPELog.PROGRAMM_NAME);
             stage.setResizable(false);
             stage.show();
             cont.afterStartup();
@@ -122,7 +129,7 @@ public class PfarreiController {
         }
     }
 
-    public static void start(Stage stage, Main m, Stage old) {
+    public static void start(Stage stage, MainApplication m, Stage old) {
         FXMLLoader loader = new FXMLLoader();
         PfarreiController cont = new PfarreiController(stage, m, old);
         loader.setLocation(cont.getClass().getResource(STANDARDMESSE_FXML));
@@ -132,7 +139,7 @@ public class PfarreiController {
             root = loader.load();
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setTitle(Log.PROGRAMM_NAME);
+            stage.setTitle(MPELog.PROGRAMM_NAME);
             stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
@@ -235,8 +242,9 @@ public class PfarreiController {
         ArrayList<StandardMesse> sm = new ArrayList<>(ol);
         Pfarrei pf = new Pfarrei(einst, sm, name.getText(), hochamt.isSelected());
         Window s = ((Button) e.getSource()).getParent().getScene().getWindow();
-        if (nameS != null)
+        if (nameS != null) {
             WriteFilePfarrei.writeFile(pf);
+        }
         WriteFilePfarrei.writeFile(pf, savepath);
         if (old != null) {
             try {
@@ -244,12 +252,12 @@ public class PfarreiController {
                 ((Stage) s).close();
                 return;
             } catch (DateienVerwalter.NoSuchPfarrei e1) {
-                Log.getLogger().error(e1.getMessage());
+                getLogger().error(e1.getMessage());
             }
         }
         try {
             ((Stage) s).close();
-            main.main(new Stage());
+            mainApplication.main(new Stage());
         } catch (Exception ex) {
             Dialogs.getDialogs().info("Das Programm muss nun neu gestartet werden.");
             System.exit(0);

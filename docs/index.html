@@ -7,14 +7,14 @@
   <meta name="language" content="German, de, deutsch" />
   <meta name="robots" content="index, follow"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="canonical" href="https://aclrian.github.io/MessdienerPlanErsteller/">
-  <link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/main/resources/images/title_32.png"/>
-  <link rel="stylesheet" href="./css/styles.css">
-  <script src="./js/main.js"></script>
+  <link rel="canonical" href="https://aclrian.github.io/MessdienerPlanErsteller/"/>
+  <link rel="icon" href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/src/mainApplication/resources/images/title_32.png"/>
+  <link rel="stylesheet" href="./css/styles.css"/>
+  <script src="./js/mainApplication.js"></script>
 	<title>Messdienerplan kostenlos erstellen | MpE</title>
 </head>
 <body onLoad="append()">
-	<div id="main">
+	<div id="mainApplication">
         <div id="head">
             <h1>MessdienerplanErsteller</h1>
             <div id="uheader">
@@ -34,7 +34,7 @@
                 den generierten Messdienerplan in Pdf- und Word-Dokument zu speichern und als E-Mail zu versenden.
                 Auch können Messdiener manuell im Programm in Messen eingetragen werden, um sie für bestimmte Tage
                 (Ferien) abzumelden.</p>
-            <a href="./galerie.html" style="margin: auto;display: flex;justify-content: center;"><img
+            <a href="./galerie.html" id="vorschau-parent"><img
                     alt="ein fertig generierter Plan"
                     id="vorschau"
                     src="./data/programmbild.jpg"/></a>
@@ -54,25 +54,22 @@
                 sortiert, wie viele Messen sie noch dienen können.
                 Davon werden die ersten genommen und überprüft, ob Geschwister und Freunde auch zu der Messe können.
                 Auch diese werden dann eingeteilt.
-                Dies geschieht solange, bis die Messe keine weiteren Messdiener mehr benötigt und schließlich alle
+                Dies geschieht, solange bis die Messe keine weiteren Messdiener mehr benötigt und schließlich alle
                 Messen genügend Messdiener haben.
                 Wenn zwischen der ersten und der letzten Messe mehr als 30 Tage liegen,
                 wird die <a href="./wiki.html#anzahl">Anzahl</a> wieder auf 0 gesetzt.</p>
 
             <h3>Wo werden die Dateien gespeichert?</h3>
             <p>Die Dateien werden <strong>lokal</strong> an einen auswählbaren Ort gespeichert. Sie werden vom Programm
-                nirgendswo hochgeladen und erst recht nicht gespeichert. Das Prgramm verbindet sich nur dann mit dem
+                nirgendswo hochgeladen und erst recht nicht gespeichert. Das Program verbindet sich nur dann mit dem
                 Internet, wenn es auf eine neue Version überprüft, und sonst nicht.</p>
         </div>
         <div id="footer">
             <a href="./galerie.html">Galerie</a>
             <a href="./wiki.html">Begriffserklärung</a>
-            <div><p style="font-size: min(2vw, 20px)">Diese Website und das gesamte Projekt steht unter der <a
-                    href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/LICENSE">MIT-Lizenz:</a><br>
-                Daher gilt u.a. für die Benutzung: "THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND" (dt.
-                "Die Software wird "so wie sie ist" bereitgestellt, ohne jeglicher Art der Garantie / ohne Gewähr"
-                [gültig ist nur die englische Version]).</p>
-                <p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p></div>
+            <div><p class="footer">Diese Website und das gesamte Projekt steht unter der <a href="https://raw.githubusercontent.com/Aclrian/MessdienerPlanErsteller/master/LICENSE">MIT-Lizenz:</a><br/>
+                Daher gilt u.a. für die Benutzung: "THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND" (dt. "Die Software wird "so wie sie ist" bereitgestellt, ohne jeglicher Art der Garantie / ohne Gewähr" [gültig ist nur die englische Version]).</p>
+                <!-- djlint:off --><p class="versteckt" style="text-align: right">mⓞc𐤟lⓞa (ⓉⒶ) nairlca</p></div> <!-- djlint:on -->
             <p class="email">info@MessdienerplanErsteller.com</p>
         </div>
     </div>

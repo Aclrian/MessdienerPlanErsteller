@@ -1,26 +1,37 @@
-package net.aclrian.mpe.controller;
+package net.aclrian.mpe.controller; //NOPMD - suppressed ExcessiveImports - processes and adds data to the view
 
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.scene.*;
-import javafx.scene.control.Button;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.input.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.*;
-import javafx.stage.*;
-import net.aclrian.mpe.*;
-import net.aclrian.mpe.utils.*;
-import org.apache.commons.io.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import net.aclrian.mpe.MainApplication;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.MPELog;
+import org.apache.commons.io.IOUtils;
 
 import java.awt.*;
-import java.io.*;
-import java.net.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class InfoController {
     private static final String KONNTE = "Konnte ";
@@ -94,19 +105,23 @@ public class InfoController {
         pane.setExpanded(true);
         quellcode.setOnAction(browse(quellcode));
         mpeWebsite.setOnAction(browse(mpeWebsite));
-        version.setText(Main.VERSION_ID);
-        folder.setOnAction(open(Log.getWorkingDir()));
+        version.setText(MainApplication.VERSION_ID);
+        folder.setOnAction(open(MPELog.getWorkingDir()));
         log.setOnAction(e -> {
             try {
-                Desktop.getDesktop().open(Log.getLogFile());
+                Desktop.getDesktop().open(MPELog.getLogFile());
             } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.getDialogs().error(ex, KONNTE + MPELog.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         });
         ArrayList<String[]> entries = new ArrayList<>();
         try {
-            ArrayList<String> csv = new ArrayList<>(Arrays.asList(IOUtils.toString(Objects.requireNonNull(this.getClass().getResourceAsStream("/abhängigkeiten.csv")),
-                    StandardCharsets.UTF_8).split(System.lineSeparator())));
+            ArrayList<String> csv = new ArrayList<>(
+                    Arrays.asList(
+                            IOUtils.toString(Objects.requireNonNull(this.getClass().getResourceAsStream("/abhängigkeiten.csv")), StandardCharsets.UTF_8)
+                                    .split(System.lineSeparator())
+                    )
+            );
             for (String entry : csv) {
                 entries.add(entry.split(Pattern.quote(",")));
             }
@@ -132,7 +147,9 @@ public class InfoController {
                 sel.add(table.getSelectionModel().getSelectedItem()[4]);
                 Object o = Dialogs.getDialogs().singleSelect(sel, "Wähle eine Website zum Öffnen:");
                 try {
-                    if (o != null) Desktop.getDesktop().browse(new URI(o.toString()));
+                    if (o != null) {
+                        Desktop.getDesktop().browse(new URI(o.toString()));
+                    }
                 } catch (IOException | URISyntaxException e) {
                     Dialogs.getDialogs().error(e, "Konnte die Website nicht öffnen.");
                 }
@@ -146,7 +163,7 @@ public class InfoController {
             try {
                 Desktop.getDesktop().browse(new URI(link.getText()));
             } catch (IOException | URISyntaxException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.getDialogs().error(ex, KONNTE + MPELog.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         };
     }
@@ -156,7 +173,7 @@ public class InfoController {
             try {
                 Desktop.getDesktop().open(file);
             } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + Log.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
+                Dialogs.getDialogs().error(ex, KONNTE + MPELog.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         };
     }

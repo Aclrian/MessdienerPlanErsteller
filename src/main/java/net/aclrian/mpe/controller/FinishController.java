@@ -1,28 +1,29 @@
 package net.aclrian.mpe.controller;
 
-import com.itextpdf.html2pdf.*;
-import javafx.event.*;
-import javafx.fxml.*;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.web.*;
+import javafx.scene.web.HTMLEditor;
 import javafx.stage.Window;
-import javafx.util.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
+import javafx.util.Pair;
+import net.aclrian.mpe.einteilung.Einteilung;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.utils.*;
-import org.jodconverter.core.document.*;
-import org.jodconverter.core.office.*;
-import org.jodconverter.local.*;
-import org.jodconverter.local.office.*;
-import org.springframework.web.util.*;
+import net.aclrian.mpe.utils.export.PDFExport;
+import net.aclrian.mpe.utils.export.WORDExport;
+import org.springframework.web.util.UriUtils;
 
 import java.awt.*;
-import java.io.*;
-import java.net.*;
-import java.nio.charset.*;
-import java.time.*;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.List;
 
 public class FinishController implements Controller {
 
@@ -31,8 +32,7 @@ public class FinishController implements Controller {
     private final String fertig;
     private final MainController.EnumPane pane;
     private final List<Messe> messen;
-    private final List<Messdiener> hauptarray;
-    private final ArrayList<Messdiener> nichtEingeteile;
+    private final List<Messdiener> nichtEingeteile;
     private boolean locked = true;
     private String titel;
     private File pdfgen;
@@ -50,9 +50,10 @@ public class FinishController implements Controller {
 
     public FinishController(MainController.EnumPane old, List<Messe> messen) {
         this.pane = old;
-        this.hauptarray = DateienVerwalter.getInstance().getMessdiener();
+        List<Messdiener> messdiener = DateienVerwalter.getInstance().getMessdiener();
         this.messen = messen;
-        neuerAlgorythmus();
+        Einteilung einteilung = new Einteilung(messdiener, messen);
+        einteilung.einteilen();
         StringBuilder s = new StringBuilder("<html>");
         for (int i = 0; i < messen.size(); i++) {
             Messe messe = messen.get(i);
@@ -70,17 +71,17 @@ public class FinishController implements Controller {
         s.append("</html>");
         fertig = s.toString();
         nichtEingeteile = new ArrayList<>();
-        for (Messdiener medi : hauptarray) {
+        for (Messdiener medi : messdiener) {
             if (medi.getMessdaten().getInsgesamtEingeteilt() == 0) {
                 nichtEingeteile.add(medi);
             }
         }
-        nichtEingeteile.sort(Messdiener.MESSDIENER_COMPARATOR);
+        nichtEingeteile.sort(Messdiener.PERSON_COMPARATOR);
 
-        final String office_home = System.getenv("OFFICE_HOME");
-        if (office_home != null && !office_home.isEmpty()) {
-            Log.getLogger().info("alternatives OfficeHome gefunden bei: {}", office_home);
-            System.setProperty("office.home", office_home);
+        final String officeHome = System.getenv("OFFICE_HOME");
+        if (officeHome != null && !officeHome.isEmpty()) {
+            MPELog.getLogger().info("alternatives OfficeHome gefunden bei: {}", officeHome);
+            System.setProperty("office.home", officeHome);
         }
     }
 
@@ -102,7 +103,7 @@ public class FinishController implements Controller {
     }
 
     private void zurueck(MainController mc) {
-        Dialogs.YesNoCancelEnum delete = Dialogs.getDialogs().yesNoCancel("Ja", "Nein", "Hier bleiben",
+        Dialogs.YesNoCancelEnum delete = Dialogs.getDialogs().yesNoCancel("Hier bleiben",
                 "Soll die aktuelle Einteilung gelöscht werden, um einen neuen Plan mit ggf. geänderten Messen generieren zu können?");
         if (delete.equals(Dialogs.YesNoCancelEnum.CANCEL)) {
             return;
@@ -128,12 +129,12 @@ public class FinishController implements Controller {
     }
 
     @FXML
-    public void toEMAIL() {
+    public void sendToEmail() {
         Pair<List<Messdiener>, StringBuilder> pair = getResourcesForEmail();
         try {
             URI uri = new URI(pair.getValue().toString());
             Desktop.getDesktop().mail(uri);
-            Log.getLogger().info(pair.getValue());
+            MPELog.getLogger().info(pair.getValue());
             if (!pair.getKey().isEmpty()) {
                 Dialogs.getDialogs().show(pair.getKey(), "Messdiener ohne E-Mail-Addresse:");
             }
@@ -148,10 +149,10 @@ public class FinishController implements Controller {
         StringBuilder sb = new StringBuilder("mailto:?");
         ArrayList<Messdiener> noemail = new ArrayList<>();
         for (Messdiener medi : medis) {
-            if (medi.getEmail().equals("")) {
+            if (medi.getEmail().toString().equals("")) {
                 noemail.add(medi);
             } else {
-                sb.append("bcc=").append(medi.getEmail()).append("&");
+                sb.append("bcc=").append(medi.getEmail().toString()).append("&");
             }
         }
         sb.append("subject=").append(UriUtils.encode(titel, StandardCharsets.UTF_8));
@@ -170,21 +171,9 @@ public class FinishController implements Controller {
     }
 
     @FXML
-    public void toPDF(ActionEvent actionEvent) {
+    public void sendToPDF(ActionEvent actionEvent) {
         try {
-            if (LocalOfficeUtils.getDefaultOfficeHome() != null) {
-                Log.getLogger().info("Converting HTML to PDF with JODConverter");
-                convert(false);
-            } else {
-                Log.getLogger().info("Converting HTML to PDF with iText");
-                ConverterProperties converterProperties = new ConverterProperties();
-                converterProperties.setCharset("UTF-8");
-
-                File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + ".pdf");
-                HtmlConverter.convertToPdf(new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "<br>").replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8)),
-                        new FileOutputStream(out), converterProperties);
-                pdfgen = out;
-            }
+            pdfgen = new PDFExport(editor.getHtmlText(), titel).generateFile();
             if (actionEvent != null) {
                 Desktop.getDesktop().open(pdfgen);
             }
@@ -193,47 +182,10 @@ public class FinishController implements Controller {
         }
     }
 
-    private void convert(boolean isToDocx) {
-        String fileEnd = ".pdf";
-        DocumentFormat format = DefaultDocumentFormatRegistry.HTML;
-        if (isToDocx) {
-            fileEnd = ".docx";
-            format = DefaultDocumentFormatRegistry.DOCX;
-        }
-        final LocalOfficeManager officeManager = LocalOfficeManager.install();
-        File out = new File(Log.getWorkingDir().getAbsolutePath(), titel + fileEnd);
-        try {
-            officeManager.start();
-        } catch (OfficeException e) {
-            Dialogs.getDialogs().error(e, "Fehler beim Konvertieren");
-        }
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(editor.getHtmlText().replace("<p></p>", "")
-                .replace("</br>", "")
-                .replace("<br>", "<br></br>")
-                .replace("</p><p><font></font></p><p><font><b>", "</p><br/><p><font></font></p><p><font><b>")
-                .replace("\u2003", "    ").getBytes(StandardCharsets.UTF_8))) {
-            JodConverter.convert(bais).as(format).to(out).execute();
-            if (isToDocx) {
-                wordgen = out;
-            } else {
-                pdfgen = out;
-            }
-        } catch (Exception e) {
-            Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu " + fileEnd + " konvertieren.");
-        } finally {
-            OfficeUtils.stopQuietly(officeManager);
-        }
-    }
-
     @FXML
-    public void toWORD(ActionEvent actionEvent) {
+    public void sendToWORD(ActionEvent actionEvent) {
         try {
-            if (LocalOfficeUtils.getDefaultOfficeHome() == null) {
-                Dialogs.getDialogs().info("Für die Konvertierung wird LibreOffice (oder Openoffice) benötigt.", "Wenn es trotz Installation nicht erkannt wird, kann dafür eine Systemvariable OFFICE_HOME angelegt werden, die den Installationspfad von der Officeanwendung enthält.");
-                return;
-            }
-            Log.getLogger().info("Converting PDF to WORD with JODConverter");
-            convert(true);
+            wordgen = new WORDExport(editor.getHtmlText(), titel).generateFile();
             if (actionEvent != null) {
                 Desktop.getDesktop().open(pdfgen);
             }
@@ -242,146 +194,7 @@ public class FinishController implements Controller {
         }
     }
 
-    private void neuerAlgorythmus() {
-        hauptarray.sort(Messdiener.einteilen);
-        if (messen.isEmpty()) {
-            return;
-        }
-        // neuer Monat:
-        LocalDate nextMonth = messen.get(0).getDate().toLocalDate();
-        nextMonth = nextMonth.plusMonths(1);
-        if (Log.getLogger().isDebugEnabled()) {
-            Log.getLogger().info("nächster Monat bei: {}", DateUtil.DATE.format(nextMonth));
-        }
-        // EIGENTLICHER ALGORYTHMUS
-        for (Messe me : messen) {
-            if (me.getDate().toLocalDate().isAfter(nextMonth)) {
-                nextMonth = nextMonth.plusMonths(1);
-                if (Log.getLogger().isDebugEnabled()) {
-                    Log.getLogger().info("nächster Monat: Es ist {}", DateUtil.DATE.format(me.getDate().toLocalDate()));
-                }
-                for (Messdiener messdiener : hauptarray) {
-                    messdiener.getMessdaten().naechsterMonat();
-                }
-            }
-            Log.getLogger().info("Messe dran: {}", me.getID());
-            if (me.getStandardMesse() instanceof Sonstiges) {
-                this.einteilen(me, EnumAction.EINFACH_EINTEILEN);
-            } else {
-                this.einteilen(me, EnumAction.TYPE_BEACHTEN);
-            }
-            Log.getLogger().info("Messe fertig: {}", me.getID());
-        }
-    }
-
-    private void einteilen(Messe m, EnumAction act) {
-        List<Messdiener> medis;
-        if (act == EnumAction.EINFACH_EINTEILEN) {
-            medis = get(new Sonstiges(), m, false, false);
-        } else {//EnumAction.TYPE_BEACHTEN
-            medis = get(m.getStandardMesse(), m, false, false);
-        }
-        if (Log.getLogger().isDebugEnabled()) {
-            Log.getLogger().info("{} für {}", medis.size(), m.getNochBenoetigte());
-        }
-        for (Messdiener medi : medis) {
-            einteilen(m, medi, false, false);
-        }
-        if (!m.istFertig()) {
-            zwang(m);
-        }
-    }
-
-    public void zwang(Messe m, boolean zangDate, boolean zwangAnz, String loggerOutput) {
-        List<Messdiener> medis = get(m.getStandardMesse(), m, zangDate, zwangAnz);
-        if (Log.getLogger().isDebugEnabled()) {
-            Log.getLogger().warn("{} {}", m, loggerOutput);
-        }
-        for (Messdiener medi : medis) {
-            einteilen(m, medi, false, true);
-        }
-    }
-
-    private void zwang(Messe m) {
-        if (m.istFertig())
-            return;
-        final String start = "Die Messe ";
-        String secondPart = " hat zu wenige Messdiener.\nNoch ";
-
-        if (!(m.getStandardMesse() instanceof Sonstiges)) {
-            if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
-                    + " werden benötigt.\nSollen Messdiener eingeteilt werden, die standardmäßig die Messe \n'"
-                    + m.getStandardMesse().toKurzerBenutzerfreundlichenString()
-                    + "' dienen können, aber deren Anzahl schon zu hoch ist?")) {
-                zwang(m, false, true, " einteilen ohne Anzahl beachten");
-            }
-
-            if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
-                    + " werden benötigt.\nSollen Messdiener eingeteilt werden, die an dem Tag \n'"
-                    + DateUtil.DATE.format(m.getDate()) + "' dienen können?")) {
-                zwang(m, false, false, " einteilen ohne Standardmesse beachten");
-            }
-        }
-        if (m.istFertig()) {
-            return;
-        }
-        if (Dialogs.getDialogs().frage(start + m.getID().replace("\t", "   ") + secondPart + m.getNochBenoetigte()
-                + " werden benötigt.\nSollen Messdiener zwangsweise eingeteilt werden?")) {
-            zwang(m, true, true, " einteilen ohne Standardmesse beachten");
-        }
-        zuWenige(m);
-    }
-
-    private void zuWenige(Messe m) {
-        if (!m.istFertig())
-            Dialogs.getDialogs().error("Die Messe" + m.getID().replace("\t", "   ") + " wird zu wenige Messdiener haben.");
-    }
-
-    private void einteilen(Messe m, Messdiener medi, boolean zwangdate, boolean zwanganz) {
-        boolean d;
-        if (m.istFertig()) {
-            return;
-        } else {
-            d = m.einteilen(medi, zwangdate, zwanganz);
-        }
-        if (!m.istFertig() && d) {
-            List<Messdiener> anv = medi.getMessdaten()
-                    .getAnvertraute(DateienVerwalter.getInstance().getMessdiener());
-            RemoveDoppelte<Messdiener> rd = new RemoveDoppelte<>();
-            anv = rd.removeDuplicatedEntries(anv);
-            if (!anv.isEmpty()) {
-                anv.sort(Messdiener.einteilen);
-                for (Messdiener messdiener : anv) {
-                    boolean b = messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse());
-                    if (messdiener.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz) && b) {
-                        Log.getLogger().info("{} dient mit {}?", messdiener, medi);
-                        einteilen(m, messdiener, zwangdate, zwanganz);
-                    }
-                }
-            }
-        }
-    }
-
-    public List<Messdiener> get(StandardMesse sm, Messe m, boolean zwangdate, boolean zwanganz) {
-        ArrayList<Messdiener> allForSMesse = new ArrayList<>();
-        for (Messdiener medi : hauptarray) {
-            int id = medi.istLeiter() ? 1 : 0;
-            if (medi.getDienverhalten().getBestimmtes(sm)
-                    && DateienVerwalter.getInstance().getPfarrei().getSettings().getDaten(id).anzahlDienen() != 0
-                    && medi.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz)) {
-                allForSMesse.add(medi);
-            }
-        }
-        Collections.shuffle(allForSMesse);
-        allForSMesse.sort(Messdiener.einteilen);
-        return allForSMesse;
-    }
-
     public String getTitle() {
         return titel;
-    }
-
-    private enum EnumAction {
-        EINFACH_EINTEILEN, TYPE_BEACHTEN
     }
 }

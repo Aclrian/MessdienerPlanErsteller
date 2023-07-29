@@ -1,22 +1,41 @@
 package net.aclrian.mpe.controller;
 
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
-import javafx.stage.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.utils.*;
 
-import java.time.*;
-import java.time.format.*;
-import java.util.*;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.stage.Window;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messe.Messe;
+import net.aclrian.mpe.utils.DateUtil;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.RemoveDoppelte;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 public class FerienplanController implements Controller {
 
+    private static final String HILFE_STRING = """
+            Hier können Messdiener für bestimmte Tage abgemeldet werden:
+
+            Ein Hacken in einem Kasten heißt, dass der Messdiener an dem Tag nicht eingeteilt wird.
+            Mit den Pfeiltasten kann die Zelle gewechselt werden und mit dem Leerzeichen der Hacken gesetzt und entfernt werden.
+
+            Änderungen werden sofort umgesetzt und können nur durch Leeren komplett zurückgesetzt werden.
+            """;
     private List<String> dates = new ArrayList<>();
     @FXML
     private TableColumn<Datentraeger, String> name;
@@ -33,7 +52,7 @@ public class FerienplanController implements Controller {
 
     @Override
     public void initialize() {
-        //no operation
+        // no operation
     }
 
     @Override
@@ -89,7 +108,7 @@ public class FerienplanController implements Controller {
                 table.getItems().forEach(dt -> dt.get(d).property().set(false));
             }
         });
-        hilfe.setOnAction(e -> Dialogs.getDialogs().info("Hier können Messdiener für bestimmte Tage abgemeldet werden:\n\nEin Hacken in einem Kasten heißt, dass der Messdiener an dem Tag nicht eingeteilt wird.\nMit den Pfeiltasten kann die Zelle gewechselt werden und mit dem Leerzeichen der Hacken gesetzt und entfernt werden.\n\nÄnderungen werden sofort umgesetzt und können nur durch Leeren komplett zurückgesetzt werden."));
+        hilfe.setOnAction(e -> Dialogs.getDialogs().info(HILFE_STRING));
     }
 
     public List<String> getDates() {
@@ -118,7 +137,7 @@ public class FerienplanController implements Controller {
                         if (neu) {
                             messdiener.getMessdaten().austeilen(date);
                         } else {
-                            messdiener.getMessdaten().ausausteilen(date);
+                            messdiener.getMessdaten().ausAusteilenEntfernen(date);
                         }
                     }
                 });

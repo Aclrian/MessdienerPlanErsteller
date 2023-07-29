@@ -1,6 +1,7 @@
 package net.aclrian.mpe.messe;
 
-import java.time.*;
+
+import java.time.DayOfWeek;
 
 public class Sonstiges extends StandardMesse {
 

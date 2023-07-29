@@ -1,9 +1,14 @@
-package net.aclrian.mpe.messe;
+package net.aclrian.mpe.messdiener;
 
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.utils.*;
+import net.aclrian.mpe.messe.Sonstiges;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.MPELog;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Speicher das Messverhalten eines Messdieners
@@ -11,12 +16,13 @@ import java.util.*;
  * @author Aclrian
  */
 public class Messverhalten {
-    private ArrayList<KannWelcheMesse> messen = new ArrayList<>();
+    private final ArrayList<KannWelcheMesse> messen;
 
     public Messverhalten() {
-        for (StandardMesse StandardMesse : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
-            if (!(StandardMesse instanceof Sonstiges)) {
-                this.messen.add(new KannWelcheMesse(StandardMesse, false));
+        messen = new ArrayList<>();
+        for (StandardMesse standardMesse : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
+            if (!(standardMesse instanceof Sonstiges)) {
+                this.messen.add(new KannWelcheMesse(standardMesse, false));
             }
         }
     }
@@ -47,7 +53,7 @@ public class Messverhalten {
                 return;
             }
         }
-        Log.getLogger().warn("Standardmesse nicht gefunden: {}", messe);
+        MPELog.getLogger().warn("Standardmesse nicht gefunden: {}", messe);
     }
 
     /**
@@ -80,5 +86,48 @@ public class Messverhalten {
             }
         }
         return mv;
+    }
+
+    /**
+     * Klasse für das {@link Messverhalten}
+     */
+    public static class KannWelcheMesse {
+        public static final Comparator<KannWelcheMesse> SORT = (o1, o2) -> {
+            StandardMesse sm1 = o1.messe;
+            StandardMesse sm2 = o2.messe;
+            return sm1.toString().compareToIgnoreCase(sm2.toString());
+        };
+        private StandardMesse messe;
+        private boolean kannDann;
+
+        public KannWelcheMesse(StandardMesse messe, boolean kann) {
+            setMesse(messe);
+            setKannDann(kann);
+        }
+
+        public StandardMesse getMesse() {
+            return this.messe;
+        }
+
+        public void setMesse(StandardMesse messe) {
+            this.messe = messe;
+        }
+
+        public boolean kannDann() {
+            return kannDann;
+        }
+
+        public void setKannDann(boolean kannDann) {
+            this.kannDann = kannDann;
+        }
+
+        @Override
+        public String toString() {
+            return messe.toString() + ":" + kannDann;
+        }
+
+        public String getString() {
+            return messe.toKurzerBenutzerfreundlichenString();
+        }
     }
 }

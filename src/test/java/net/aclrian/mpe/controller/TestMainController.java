@@ -1,4 +1,4 @@
-package net.aclrian.mpe.controller;
+package net.aclrian.mpe.controller; //NOPMD - suppressed ExcessiveImports - for test purpose
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -11,16 +11,17 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import net.aclrian.fx.TimeSpinner;
-import net.aclrian.mpe.Main;
-import net.aclrian.mpe.messdiener.KannWelcheMesse;
+import net.aclrian.mpe.MainApplication;
+import net.aclrian.mpe.messdiener.Email;
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Messverhalten;
+import net.aclrian.mpe.messdiener.Messverhalten;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.utils.DateUtil;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.Speicherort;
@@ -45,18 +46,18 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestMainController extends ApplicationTest {
+public class TestMainController extends ApplicationTest {
 
     @Mock
-    Dialogs dialogs;
+    private Dialogs dialogs;
     @Mock
-    DateienVerwalter dv;
+    private DateienVerwalter dv;
     @Mock
-    Pfarrei pf;
+    private Pfarrei pf;
     private Pane pane;
     private MainController instance;
     @Mock
-    private Main main;
+    private MainApplication mainApplication;
     private Stage stage;
 
     @Override
@@ -66,16 +67,18 @@ class TestMainController extends ApplicationTest {
         stage.setScene(scene);
         stage.setResizable(true);
         this.stage = stage;
+        stage.setWidth(10);
+        stage.setHeight(10);
 
-        main = Mockito.mock(Main.class);
+        mainApplication = Mockito.mock(MainApplication.class);
         dialogs = Mockito.mock(Dialogs.class);
         dv = Mockito.mock(DateienVerwalter.class);
         pf = Mockito.mock(Pfarrei.class);
     }
 
-    @Test
-    @RetryingTest(value = 5)
-    void testEachEnumPane() {
+    //CHECKSTYLE:OFF: MethodLength
+    @RetryingTest(5)
+    public void testEachEnumPane() { //NOPMD - suppressed NPathComplexity - for test purpose
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -84,7 +87,7 @@ class TestMainController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandardMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
         FXMLLoader loader = new FXMLLoader();
 
-        loader.setController(new MainController(main, stage));
+        loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
         try {
@@ -125,15 +128,19 @@ class TestMainController extends ApplicationTest {
                 items.stream().filter(menuItem -> menuItem.getId().equals("cancel")).findFirst().orElseThrow().fire();
                 Messdiener messdiener = Mockito.mock(Messdiener.class);
                 Mockito.when(messdiener.getVorname()).thenReturn("v");
-                Mockito.when(messdiener.getNachnname()).thenReturn("n");
+                Mockito.when(messdiener.getNachname()).thenReturn("n");
                 Mockito.when(messdiener.getGeschwister()).thenReturn(new String[0]);
                 Mockito.when(messdiener.getFreunde()).thenReturn(new String[0]);
-                Mockito.when(messdiener.getEintritt()).thenReturn(Messdaten.getMaxYear());
+                Mockito.when(messdiener.getEintritt()).thenReturn(DateUtil.getCurrentYear());
                 Mockito.when(messdiener.istLeiter()).thenReturn(false);
-                Mockito.when(messdiener.getEmail()).thenReturn("a@a.de");
+                try {
+                    Mockito.when(messdiener.getEmail()).thenReturn(new Email("a@a.de"));
+                } catch (Email.NotValidException e) {
+                    Assertions.fail(e);
+                }
                 Messverhalten mv = new Messverhalten();
                 Mockito.when(messdiener.getDienverhalten()).thenReturn(mv);
-                instance.changePaneMessdiener(messdiener);
+                instance.changePane(messdiener);
 
                 Mockito.when(dv.getMessdiener()).thenReturn(Collections.singletonList(messdiener));
                 final Messdaten md = Mockito.mock(Messdaten.class);
@@ -143,12 +150,12 @@ class TestMainController extends ApplicationTest {
                 assertThat(((TextField) scene.lookup("#vorname")).getText()).isEqualTo("v");
                 assertThat(scene.lookup("#name")).isInstanceOf(TextField.class);
                 assertThat(((TextField) scene.lookup("#name")).getText()).isEqualTo("n");
-                assertThat(scene.lookup("#geschwie")).isInstanceOf(ListView.class);
-                assertThat(((ListView<?>) scene.lookup("#geschwie")).getItems()).hasSize(1);
-                assertThat(scene.lookup("#freunde")).isInstanceOf(ListView.class);
-                assertThat(((ListView<?>) scene.lookup("#freunde")).getItems()).hasSize(1);
+                assertThat(scene.lookup("#geschwisterListView")).isInstanceOf(ListView.class);
+                assertThat(((ListView<?>) scene.lookup("#geschwisterListView")).getItems()).hasSize(1);
+                assertThat(scene.lookup("#freundeListView")).isInstanceOf(ListView.class);
+                assertThat(((ListView<?>) scene.lookup("#freundeListView")).getItems()).hasSize(1);
                 assertThat(scene.lookup("#eintritt")).isInstanceOf(Slider.class);
-                assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(Messdaten.getMaxYear());
+                assertThat(((Slider) scene.lookup("#eintritt")).getValue()).isEqualTo(DateUtil.getCurrentYear());
                 assertThat(scene.lookup("#leiter")).isInstanceOf(CheckBox.class);
                 assertThat(((CheckBox) scene.lookup("#leiter")).isSelected()).isFalse();
                 assertThat(scene.lookup("#email")).isInstanceOf(TextField.class);
@@ -156,7 +163,7 @@ class TestMainController extends ApplicationTest {
                 assertThat(scene.lookup("#table")).isInstanceOf(TableView.class);
                 final TableView<?> table = (TableView<?>) scene.lookup("#table");
                 assertThat(table.getItems()).hasSize(1);
-                assertThat(((KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
+                assertThat(((Messverhalten.KannWelcheMesse) table.getItems().get(0)).kannDann()).isFalse();
 
                 assertThat(instance.getControl().isLocked()).isTrue();
 
@@ -185,7 +192,7 @@ class TestMainController extends ApplicationTest {
                 Mockito.when(m.getStandardMesse()).thenReturn(new Sonstiges());
                 Mockito.when(m.htmlAusgeben()).thenReturn("123456</html>");
 
-                instance.changePaneMesse(m);
+                instance.changePane(m);
             } else {
                 Assertions.fail("could not find cancel");
             }
@@ -305,18 +312,20 @@ class TestMainController extends ApplicationTest {
             assertThat(this.listTargetWindows()).isNotEmpty();
         });
         WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
+    //CHECKSTYLE:ON: MethodLength
 
     @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "should not run on ci")
     @Test
-    void testAwtDesktop() throws IOException {
+    public void testAwtDesktop() throws IOException {
         DateienVerwalter.setInstance(dv);
         final File file = new File(System.getProperty("user.dir"));
         Mockito.when(dv.getSavePath()).thenReturn(file);
         Mockito.when(pf.getName()).thenReturn("");
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         FXMLLoader loader = new FXMLLoader();
-        loader.setController(new MainController(main, stage));
+        loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
 
         instance.log(null);
@@ -327,11 +336,13 @@ class TestMainController extends ApplicationTest {
         ((MainController) loader.getController()).changePane(MainController.EnumPane.START);
         WaitForAsyncUtils.waitForFxEvents();
         assertThat(instance.getEnumPane()).isEqualTo(MainController.EnumPane.START);
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "Robotcontext should not run on ci")
     @Test
-    void testChangeSpeicherort() {
+    public void testChangeSpeicherort() {
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -340,7 +351,7 @@ class TestMainController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandardMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setController(new MainController(main, stage));
+        loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
         try {
@@ -361,7 +372,7 @@ class TestMainController extends ApplicationTest {
         assertThat(stage.focusedProperty().getValue()).isTrue();
 
         loader = new FXMLLoader();
-        loader.setController(new MainController(main, stage));
+        loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
         try {
@@ -396,10 +407,12 @@ class TestMainController extends ApplicationTest {
         }
         assertThat(stage.focusedProperty().getValue()).isFalse();
         robotContext().getKeyboardRobot().press(KeyCode.ESCAPE);
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @Test
-    void testPfarrei() {
+    public void testPfarrei() {
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
@@ -408,7 +421,7 @@ class TestMainController extends ApplicationTest {
         Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(new StandardMesse(DayOfWeek.MONDAY, 9, "00", "o", 0, "t")));
         FXMLLoader loader = new FXMLLoader();
 
-        loader.setController(new MainController(main, stage));
+        loader.setController(new MainController(mainApplication, stage));
         instance = loader.getController();
         loader.setLocation(instance.getClass().getResource("/view/AAhaupt.fxml"));
         try {
@@ -435,5 +448,7 @@ class TestMainController extends ApplicationTest {
         final Node lookup = this.listWindows().get(1).getScene().lookup("#table");
         assertThat(lookup).isInstanceOf(TableView.class);
         assertThat(((TableView<?>) lookup).getItems().get(0)).hasToString(pf.getStandardMessen().get(0).toString());
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 }

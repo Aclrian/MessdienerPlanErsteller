@@ -1,4 +1,4 @@
-package net.aclrian.mpe.controller;
+package net.aclrian.mpe.controller; //NOPMD - suppressed ExcessiveImports - for test purpose
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -10,17 +10,11 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Pair;
-import net.aclrian.mpe.messdiener.Messdaten;
-import net.aclrian.mpe.messdiener.Messdiener;
-import net.aclrian.mpe.messe.Messe;
-import net.aclrian.mpe.messe.Messverhalten;
-import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.messdiener.*;
+import net.aclrian.mpe.messe.*;
 import net.aclrian.mpe.pfarrei.Einstellungen;
 import net.aclrian.mpe.pfarrei.Pfarrei;
-import net.aclrian.mpe.utils.DateUtil;
-import net.aclrian.mpe.utils.DateienVerwalter;
-import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -47,24 +41,24 @@ import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestFinishController extends ApplicationTest {
+public class TestFinishController extends ApplicationTest {
 
     @Mock
-    MainController mc;
+    private MainController mc;
     @Mock
-    DateienVerwalter dv;
+    private DateienVerwalter dv;
     @Mock
-    Messdiener m1;
+    private Messdiener m1;
     @Mock
-    Messdiener m2;
+    private  Messdiener m2;
     @Mock
-    Messdiener m3;
+    private Messdiener m3;
     @Mock
-    Einstellungen einst = new Einstellungen();
+    private final Einstellungen einst = new Einstellungen();
     @Mock
-    Dialogs dialogs;
+    private Dialogs dialogs;
     @Mock
-    Pfarrei pf;
+    private Pfarrei pf;
 
     private Pane pane;
     private FinishController instance;
@@ -86,13 +80,14 @@ class TestFinishController extends ApplicationTest {
         DateienVerwalter.setInstance(dv);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "PMD.ExcessiveMethodLength"})
     @Test
-    void cleanTest() throws Messdaten.CouldFindMessdiener {
+    public void cleanTest() { //NOPMD - suppressed ExcessiveMethodLength - for test purpose
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
+        einst.editiereYear(0, 10);
 
         Mockito.when(m1.toString()).thenReturn("m1");
         Mockito.when(m2.toString()).thenReturn("m2");
@@ -109,9 +104,9 @@ class TestFinishController extends ApplicationTest {
         Mockito.when(m2.getFreunde()).thenReturn(new String[0]);
         Mockito.when(m3.getFreunde()).thenReturn(new String[0]);
 
-        Mockito.when(m1.getEintritt()).thenReturn(Messdaten.getMaxYear());
-        Mockito.when(m1.getEintritt()).thenReturn(Messdaten.getMaxYear());
-        Mockito.when(m1.getEintritt()).thenReturn(Messdaten.getMaxYear());
+        Mockito.when(m1.getEintritt()).thenReturn(DateUtil.getCurrentYear());
+        Mockito.when(m1.getEintritt()).thenReturn(DateUtil.getCurrentYear());
+        Mockito.when(m1.getEintritt()).thenReturn(DateUtil.getCurrentYear());
         Messdaten md1 = new Messdaten(m1);
         Mockito.when(m1.getMessdaten()).thenReturn(md1);
         Messdaten md2 = new Messdaten(m2);
@@ -129,17 +124,17 @@ class TestFinishController extends ApplicationTest {
                 pane.getChildren().add(fl.load());
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
 
         LocalDate date = DateUtil.getToday();
-        m1.getMessdaten().einteilenVorzeitig(date, false);
+        m1.getMessdaten().vorzeitigEinteilen(date, false);
 
 
-        Platform.runLater(() -> Mockito.when(dialogs.yesNoCancel(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+        Platform.runLater(() -> Mockito.when(dialogs.yesNoCancel(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(Dialogs.YesNoCancelEnum.CANCEL, Dialogs.YesNoCancelEnum.YES));
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> {
@@ -148,7 +143,7 @@ class TestFinishController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
-        assertThat(m1.getMessdaten().kanndann(date, false)).isFalse();
+        assertThat(m1.getMessdaten().kann(date, false, false)).isFalse();
         Platform.runLater(() -> {
             if (pane.lookup("#zurueck") instanceof Button zurueck) {
                 zurueck.fire();
@@ -162,7 +157,7 @@ class TestFinishController extends ApplicationTest {
                 Assertions.fail("Not all Messdaten are zero");
             }
         }
-        assertThat(m1.getMessdaten().kanndann(date, false)).isTrue();
+        assertThat(m1.getMessdaten().kann(date, false, false)).isTrue();
         assertThat(instance.getNichtEingeteilteMessdiener()).contains(m1);
         assertThat(instance.getNichtEingeteilteMessdiener()).contains(m2);
         assertThat(instance.getNichtEingeteilteMessdiener()).contains(m3);
@@ -189,25 +184,27 @@ class TestFinishController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @Test
-    void testEinteilungWithoutDOCX() throws Messdaten.CouldFindMessdiener {
+    public void testEinteilungWithoutDOCX() {
         testEinteilung(false);
     }
 
-    @Disabled(value = "Run Test with conversion to docx")
+    @Disabled("Run Test with conversion to docx")
     @Test
-    void testEinteilungWithDOCX() throws Messdaten.CouldFindMessdiener {
+    public void testEinteilungWithDOCX() {
         testEinteilung(true);
     }
 
-    private void testEinteilung(boolean skipDOCX) throws Messdaten.CouldFindMessdiener {
+    //CHECKSTYLE:OFF: MethodLength
+    private void testEinteilung(boolean skipDOCX) { //NOPMD - suppressed NPathComplexity - test purpose
         Messdiener m1Freund = Mockito.mock(Messdiener.class);
         Mockito.when(dv.getMessdiener()).thenReturn(Arrays.asList(m1, m2, m3, m1Freund));
         Mockito.when(dv.getPfarrei()).thenReturn(pf);
-        StandardMesse StandardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o1", 2, "t1");
-        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(StandardMesse));
+        StandardMesse standardMesse = new StandardMesse(DayOfWeek.MONDAY, 8, "00", "o1", 2, "t1");
+        Mockito.when(pf.getStandardMessen()).thenReturn(Collections.singletonList(standardMesse));
         Mockito.when(pf.getSettings()).thenReturn(einst);
         einst.editMaxDienen(false, 10);
         einst.editMaxDienen(true, 10);
@@ -223,10 +220,14 @@ class TestFinishController extends ApplicationTest {
         Mockito.when(m2.istLeiter()).thenReturn(true);
         Mockito.when(m3.istLeiter()).thenReturn(false);
 
-        Mockito.when(m1.getEmail()).thenReturn("");
-        Mockito.when(m2.getEmail()).thenReturn("");
-        Mockito.when(m3.getEmail()).thenReturn("a@w.de");
-        Mockito.when(m1Freund.getEmail()).thenReturn("");
+        Mockito.when(m1.getEmail()).thenReturn(Email.EMPTY_EMAIL);
+        Mockito.when(m2.getEmail()).thenReturn(Email.EMPTY_EMAIL);
+        try {
+            Mockito.when(m3.getEmail()).thenReturn(new Email("a@w.de"));
+        } catch (Email.NotValidException e) {
+            Assertions.fail("Email was not valid");
+        }
+        Mockito.when(m1Freund.getEmail()).thenReturn(Email.EMPTY_EMAIL);
 
         Mockito.when(m1.getGeschwister()).thenReturn(new String[0]);
         Mockito.when(m2.getGeschwister()).thenReturn(new String[0]);
@@ -238,10 +239,10 @@ class TestFinishController extends ApplicationTest {
         Mockito.when(m3.getFreunde()).thenReturn(new String[0]);
         Mockito.when(m1Freund.getFreunde()).thenReturn(new String[]{"m1"});
 
-        Mockito.when(m1.getEintritt()).thenReturn(Messdaten.getMaxYear());
-        Mockito.when(m2.getEintritt()).thenReturn(Messdaten.getMaxYear());
-        Mockito.when(m3.getEintritt()).thenReturn(Messdaten.getMaxYear());
-        Mockito.when(m1Freund.getEintritt()).thenReturn(Messdaten.getMaxYear());
+        Mockito.when(m1.getEintritt()).thenReturn(DateUtil.getCurrentYear());
+        Mockito.when(m2.getEintritt()).thenReturn(DateUtil.getCurrentYear());
+        Mockito.when(m3.getEintritt()).thenReturn(DateUtil.getCurrentYear());
+        Mockito.when(m1Freund.getEintritt()).thenReturn(DateUtil.getCurrentYear());
         Messdaten md1 = new Messdaten(m1);
         Mockito.when(m1.getMessdaten()).thenReturn(md1);
         Messdaten md2 = new Messdaten(m2);
@@ -255,9 +256,9 @@ class TestFinishController extends ApplicationTest {
         Messverhalten mv3 = new Messverhalten();
         Messverhalten mv1F = new Messverhalten();
 
-        mv1.editiereBestimmteMesse(StandardMesse, true);
+        mv1.editiereBestimmteMesse(standardMesse, true);
         md1.austeilen(DateUtil.getYesterdaysYesterday());
-        mv1F.editiereBestimmteMesse(StandardMesse, true);
+        mv1F.editiereBestimmteMesse(standardMesse, true);
         md1F.austeilen(DateUtil.getYesterdaysYesterday());
 
         Mockito.when(m1.getDienverhalten()).thenReturn(mv1);
@@ -266,15 +267,15 @@ class TestFinishController extends ApplicationTest {
         Mockito.when(m1Freund.getDienverhalten()).thenReturn(mv1F);
 
         Messe me1 = new Messe(false, 1, DateUtil.getYesterdaysYesterday().atTime(0, 0), "o1", "t1");
-        Messe me2 = new Messe(DateUtil.getToday().atTime(0, 0), StandardMesse);
+        Messe me2 = new Messe(DateUtil.getToday().atTime(0, 0), standardMesse);
         Messe me3 = new Messe(false, 1, DateUtil.getTomorrow().atTime(0, 0), "o3", "t3");
 
         Mockito.doCallRealMethod().when(dialogs).show(Mockito.anyList(), Mockito.eq(FinishController.NICHT_EINGETEILTE_MESSDIENER));
 
-        assertThat(m1.getMessdaten().kann(me1.getDate(), false, false)).isFalse();
-        assertThat(m1Freund.getMessdaten().kann(me1.getDate(), false, false)).isFalse();
-        assertThat(m1.getMessdaten().kann(me2.getDate(), false, false)).isTrue();
-        assertThat(m1Freund.getMessdaten().kann(me2.getDate(), false, false)).isTrue();
+        assertThat(m1.getMessdaten().kann(me1.getDate().toLocalDate(), false, false)).isFalse();
+        assertThat(m1Freund.getMessdaten().kann(me1.getDate().toLocalDate(), false, false)).isFalse();
+        assertThat(m1.getMessdaten().kann(me2.getDate().toLocalDate(), false, false)).isTrue();
+        assertThat(m1Freund.getMessdaten().kann(me2.getDate().toLocalDate(), false, false)).isTrue();
         Platform.runLater(() -> {
             URL u = getClass().getResource(MainController.EnumPane.PLAN.getLocation());
             FXMLLoader fl = new FXMLLoader(u);
@@ -285,7 +286,7 @@ class TestFinishController extends ApplicationTest {
                 pane.getChildren().add(fl.load());
                 instance.afterStartup(pane.getScene().getWindow(), mc);
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail("Could not open " + MainController.EnumPane.FERIEN.getLocation() + e.getLocalizedMessage(), e);
             }
         });
@@ -293,38 +294,38 @@ class TestFinishController extends ApplicationTest {
         assertThat(me1.istFertig() && me2.istFertig() && me3.istFertig()).isTrue();
         assertThat(!me1.getEingeteilte().contains(m1) && !me1.getEingeteilte().contains(m1Freund)).isTrue();
         assertThat(!me3.getEingeteilte().contains(m1) && !me3.getEingeteilte().contains(m1Freund)).isTrue();
-        assertThat(md1.kanndann(DateUtil.getToday(), false)).isFalse();
-        assertThat(md1F.kanndann(DateUtil.getToday(), false)).isFalse();
+        assertThat(md1.kann(DateUtil.getToday(), false, false)).isFalse();
+        assertThat(md1F.kann(DateUtil.getToday(), false, false)).isFalse();
         assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
 
-        File out = new File(Log.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");
+        File out = new File(MPELog.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");
         try {
             if (out.exists()) {
                 Files.delete(out.toPath());
             }
-            instance.toPDF(null);
+            instance.sendToPDF(null);
             assertThat(out).exists();
             Files.delete(out.toPath());
         } catch (IOException e) {
-            Log.getLogger().error(e.getMessage(), e);
+            MPELog.getLogger().error(e.getMessage(), e);
             Assertions.fail(e.getMessage(), e);
         }
         if (skipDOCX) {
-            out = new File(Log.getWorkingDir(), instance.getTitle() + ".docx");
+            out = new File(MPELog.getWorkingDir(), instance.getTitle() + ".docx");
             try {
                 if (out.exists()) {
                     Files.delete(out.toPath());
                 }
-                instance.toWORD(null);
+                instance.sendToWORD(null);
                 assertThat(out).exists();
                 Files.delete(out.toPath());
             } catch (IOException e) {
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
                 Assertions.fail(e.getMessage(), e);
             }
         }
 
-        Platform.runLater(() -> Mockito.when(dialogs.yesNoCancel(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+        Platform.runLater(() -> Mockito.when(dialogs.yesNoCancel(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(Dialogs.YesNoCancelEnum.YES));
         WaitForAsyncUtils.waitForFxEvents();
         Platform.runLater(() -> {
@@ -349,7 +350,10 @@ class TestFinishController extends ApplicationTest {
         String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        assertThat(pair.getValue()).hasToString("mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20" + from + ".%20" + UriUtils.encode(fromMonth, StandardCharsets.UTF_8) + "%20bis%20" + to + ".%20" + UriUtils.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
+        assertThat(pair.getValue()).hasToString(
+                "mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20"
+                        + from + ".%20" + UriUtils.encode(fromMonth, StandardCharsets.UTF_8) + "%20"
+                        + "bis%20" + to + ".%20" + UriUtils.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {
@@ -357,5 +361,8 @@ class TestFinishController extends ApplicationTest {
         }
 
         assertThat(pair.getKey()).hasSize(3).containsAll(Arrays.asList(m1, m2, m1Freund));
+        WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
+    //CHECKSTYLE:ON: MethodLength
 }

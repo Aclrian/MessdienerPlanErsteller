@@ -1,18 +1,23 @@
 package net.aclrian.mpe.pfarrei;
 
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.messe.*;
-import net.aclrian.mpe.pfarrei.Setting.*;
-import net.aclrian.mpe.utils.*;
-import org.w3c.dom.*;
 
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
-import java.io.*;
-import java.time.format.*;
-import java.util.*;
+import net.aclrian.mpe.messdiener.WriteFile;
+import net.aclrian.mpe.messe.Sonstiges;
+import net.aclrian.mpe.messe.StandardMesse;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.MPELog;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.time.format.TextStyle;
+import java.util.List;
+import java.util.Locale;
 
 public class WriteFilePfarrei {
 
@@ -68,45 +73,14 @@ public class WriteFilePfarrei {
                 standardmessen.appendChild(stdm);
             }
 
-            // Einstellungen
-            Element einst = doc.createElement("Einstellungen");
-            xml.appendChild(einst);
-
-            Element hochamt = doc.createElement("hochaemter");
-            int hochamtInt = 0;
-            if (pf.zaehlenHochaemterMit()) {
-                hochamtInt++;
-            }
-            hochamt.appendChild(doc.createTextNode(String.valueOf(hochamtInt)));
-            einst.appendChild(hochamt);
-
-            // Settings
-            for (int i = 0; i < Einstellungen.LENGTH; i++) {
-                Setting s = pf.getSettings().getDaten(i);
-                Attribut a = s.attribut();
-                int anz = s.anzahlDienen();
-                String val = String.valueOf(anz);
-                int id = s.id();
-                String idS = String.valueOf(id);
-                if (a == Attribut.YEAR) {
-                    Element year = doc.createElement("setting");
-                    year.setAttribute("year", idS);
-                    year.appendChild(doc.createTextNode(val));
-                    einst.appendChild(year);
-                } else {
-                    Element max = doc.createElement("setting");
-                    max.setAttribute("Lleiter", idS);
-                    max.appendChild(doc.createTextNode(val));
-                    einst.appendChild(max);
-                }
-            }
+            appendSettingsNodes(pf, doc, xml);
 
             DOMSource domSource = new DOMSource(doc);
             String datei = pf.getName();
             datei = datei.replace(" ", "_");
             savepath = savepath == null ? DateienVerwalter.getInstance().getSavePath().getAbsolutePath() : savepath;
             File f = new File(savepath, datei + DateienVerwalter.PFARREI_DATEIENDUNG);
-            Log.getLogger()
+            MPELog.getLogger()
                     .info("Pfarrei wird gespeichert in: {}", f);
             StreamResult streamResult = new StreamResult(f);
             c.transformer().transform(domSource, streamResult);
@@ -116,6 +90,39 @@ public class WriteFilePfarrei {
             }
         } catch (ParserConfigurationException | TransformerException exception) {
             Dialogs.getDialogs().error(exception, "Fehler bei Speichern der Pfarrei:");
+        }
+    }
+
+    private static void appendSettingsNodes(Pfarrei pf, Document doc, Element xml) {
+        Element einst = doc.createElement("Einstellungen");
+        xml.appendChild(einst);
+
+        Element hochamt = doc.createElement("hochaemter");
+        int hochamtInt = 0;
+        if (pf.zaehlenHochaemterMit()) {
+            hochamtInt++;
+        }
+        hochamt.appendChild(doc.createTextNode(String.valueOf(hochamtInt)));
+        einst.appendChild(hochamt);
+
+        for (int i = 0; i < Einstellungen.LENGTH; i++) {
+            Setting s = pf.getSettings().getDaten(i);
+            Setting.Attribut a = s.attribut();
+            int anz = s.anzahlDienen();
+            String val = String.valueOf(anz);
+            int id = s.id();
+            String idS = String.valueOf(id);
+            if (a == Setting.Attribut.YEAR) {
+                Element year = doc.createElement("setting");
+                year.setAttribute("year", idS);
+                year.appendChild(doc.createTextNode(val));
+                einst.appendChild(year);
+            } else {
+                Element max = doc.createElement("setting");
+                max.setAttribute("Lleiter", idS);
+                max.appendChild(doc.createTextNode(val));
+                einst.appendChild(max);
+            }
         }
     }
 

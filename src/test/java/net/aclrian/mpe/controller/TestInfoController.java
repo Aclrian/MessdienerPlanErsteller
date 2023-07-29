@@ -12,12 +12,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
-import net.aclrian.mpe.utils.Log;
+import net.aclrian.mpe.utils.MPELog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testfx.assertions.api.Assertions;
@@ -28,12 +26,8 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestInfoController extends ApplicationTest {
+public class TestInfoController extends ApplicationTest {
 
-    @Mock
-    private DateienVerwalter dv;
-    @Mock
-    private MainController mc;
     @Mock
     private Dialogs dialog;
     private InfoController instance;
@@ -41,24 +35,21 @@ class TestInfoController extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         Pane pane = new Pane();
-        Scene scene = new Scene(pane, 1000, 1000);
+        Scene scene = new Scene(pane, 10, 10);
         stage.setScene(scene);
         stage.setResizable(true);
-
-        mc = Mockito.mock(MainController.class);
-        dv = Mockito.mock(DateienVerwalter.class);
         dialog = Mockito.mock(Dialogs.class);
     }
 
     @Test
-    void test() {
+    public void test() {
         Dialogs.setDialogs(dialog);
         Platform.runLater(() -> {
             try {
                 instance = new InfoController(new Stage());
             } catch (IOException e) {
                 Assertions.fail(e.getMessage(), e);
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
             instance.start();
         });
@@ -92,7 +83,10 @@ class TestInfoController extends ApplicationTest {
 
             if (table instanceof TableView<?>) {
                 ((TableView<?>) table).getSelectionModel().select(0);
-                table.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, false, false, false, false, false, false, false, false, false, false, null));
+                table.fireEvent(new MouseEvent(
+                        MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY,
+                        2, false, false, false, false, false, false,
+                        false, false, false, false, null));
                 Mockito.verify(dialog, Mockito.times(1)).singleSelect(
                         Mockito.anyList(), Mockito.anyString());
             } else {
@@ -100,17 +94,18 @@ class TestInfoController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 
     @DisabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*hostedtoolcache.*", disabledReason = "should not run on ci")
     @Test
-    void testAwtDesktop() {
+    public void testAwtDesktop() {
         Platform.runLater(() -> {
             try {
                 instance = new InfoController(new Stage());
             } catch (IOException e) {
                 Assertions.fail(e.getMessage(), e);
-                Log.getLogger().error(e.getMessage(), e);
+                MPELog.getLogger().error(e.getMessage(), e);
             }
             instance.start();
         });
@@ -137,5 +132,6 @@ class TestInfoController extends ApplicationTest {
             }
         });
         WaitForAsyncUtils.waitForFxEvents();
+        Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
 }

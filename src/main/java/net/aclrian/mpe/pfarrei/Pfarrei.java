@@ -1,8 +1,9 @@
 package net.aclrian.mpe.pfarrei;
 
-import net.aclrian.mpe.messe.*;
 
-import java.util.*;
+import net.aclrian.mpe.messe.StandardMesse;
+
+import java.util.List;
 
 public class Pfarrei {
     private final String name;

@@ -14,7 +14,7 @@ import java.time.LocalTime;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestTimeSpinner extends ApplicationTest {
+public class TestTimeSpinner extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
@@ -25,25 +25,25 @@ class TestTimeSpinner extends ApplicationTest {
     }
 
     @Test
-    void testConversion() {
+    public void testConversion() {
         LocalTime time = LocalTime.of(12, 59);
-        assertThat(TimeSpinner.converter.toString(time)).isEqualTo("12:59");
-        assertThat(TimeSpinner.converter.toString(LocalTime.of(0, 0, 0))).isEqualTo("00:00");
+        assertThat(TimeSpinner.CONVERTER.toString(time)).isEqualTo("12:59");
+        assertThat(TimeSpinner.CONVERTER.toString(LocalTime.of(0, 0, 0))).isEqualTo("00:00");
     }
 
     @Test
-    void testInitTime() {
+    public void testInitTime() {
         assertThrows(DateTimeException.class, () -> LocalTime.of(25, 60));
     }
 
     @Test
-    void testFromString() {
-        assertThat(TimeSpinner.converter.fromString("").format(DateUtil.TIME)).isEqualTo("00:00");
-        assertThat(TimeSpinner.converter.fromString("13:50").format(DateUtil.TIME)).isEqualTo("13:50");
+    public void testFromString() {
+        assertThat(TimeSpinner.CONVERTER.fromString("").format(DateUtil.TIME)).isEqualTo("00:00");
+        assertThat(TimeSpinner.CONVERTER.fromString("13:50").format(DateUtil.TIME)).isEqualTo("13:50");
     }
 
     @Test
-    void testDeInkrement() {
+    public void testDeInkrement() {
         TimeSpinner spinner = new TimeSpinner();
         spinner.getValueFactory().setValue(LocalTime.of(12, 0));
         spinner.increment(2);
@@ -55,9 +55,9 @@ class TestTimeSpinner extends ApplicationTest {
 
 
     @Test
-    void testConverter() {
+    public void testConverter() {
         TimeSpinner spinner = new TimeSpinner();
-        assertThat(spinner.getValueFactory().getConverter()).isSameAs(TimeSpinner.converter);
+        assertThat(spinner.getValueFactory().getConverter()).isSameAs(TimeSpinner.CONVERTER);
     }
 
 }
