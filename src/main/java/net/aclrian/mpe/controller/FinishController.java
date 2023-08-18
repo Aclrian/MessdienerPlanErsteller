@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Window;
 import javafx.util.Pair;
-import net.aclrian.mpe.einteilung.Einteilung;
+import net.aclrian.mpe.algorithms.Einteilung;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.utils.*;

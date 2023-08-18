@@ -279,9 +279,7 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         typ.setPromptText("Typ:");
         List<String> dayOfWeeks = Arrays.stream(DayOfWeek.values())
                 .map(dow -> dow.getDisplayName(TextStyle.FULL, Locale.getDefault()))
-                .map(dow ->
-                        // fix ci error
-                        Objects.requireNonNullElse(dow, "")
+                .map(dow -> Objects.requireNonNullElse(dow, "") // fix ci error
                 ).toList();
         ComboBox<String> wochentag = new ComboBox<>(
                 FXCollections.observableArrayList(dayOfWeeks));
@@ -315,35 +313,13 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         List<CheckBox> monthlyCheckboxes = List.of(monthlyWeek1, monthlyWeek2, monthlyWeek3, monthlyWeek4, monthlyWeek5);
         VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz, monthlyWeek1, monthlyWeek2, monthlyWeek3, monthlyWeek4, monthlyWeek5);
         v.setSpacing(20);
-        Alert a = alertBuilder(Alert.AlertType.INFORMATION, "Neue Standardmesse erstellen:");
+        Alert alert = alertBuilder(Alert.AlertType.INFORMATION, "Neue Standardmesse erstellen:");
 
-        ChangeListener<Object> e = (arg0, arg1, arg2) -> {
-            try {
-                boolean okDisabled = ort.getText().equals("") || typ.getText().equals("") || wochentag.getValue().isBlank();
-                a.getDialogPane().lookupButton(ButtonType.OK).setDisable(okDisabled);
-            } catch (NullPointerException e2) {
-                a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-            }
-        };
-        typ.textProperty().addListener(e);
-        typ.focusedProperty().addListener(e);
-        ort.textProperty().addListener(e);
-        ort.focusedProperty().addListener(e);
-        wochentag.valueProperty().addListener(e);
-        wochentag.focusedProperty().addListener(e);
-        ChangeListener<String> dayOfWeekChange = (observableValue, oldValue, newValue) -> {
-            for (CheckBox monthlyCheckbox : monthlyCheckboxes) {
-                if (newValue != null && !newValue.isEmpty()) {
-                    monthlyCheckbox.setText(monthlyCheckbox.getText()
-                            .replace(Objects.requireNonNullElse(oldValue, defaultValueRepetition), newValue));
-                }
-            }
-        };
-        wochentag.valueProperty().addListener(dayOfWeekChange);
-        a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-        a.getDialogPane().setExpandableContent(v);
-        a.getDialogPane().setExpanded(true);
-        a.setOnShown(arg0 -> {
+        addListenersForStandardMesseDialog(ort, typ, wochentag, defaultValueRepetition, monthlyCheckboxes, alert);
+        alert.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+        alert.getDialogPane().setExpandableContent(v);
+        alert.getDialogPane().setExpanded(true);
+        alert.setOnShown(arg0 -> {
             ASlider.makeASlider("Stunde", stunde, null);
             ASlider.makeASlider(d -> {
                 String as;
@@ -376,29 +352,59 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
                 anz.setValue(5);
             }
         });
-        Optional<ButtonType> o = a.showAndWait();
+        Optional<ButtonType> o = alert.showAndWait();
         if (o.isPresent() && o.get().equals(ButtonType.OK)) {
-            String min = String.valueOf((int) minute.getValue());
-            if (((int) minute.getValue()) < 10) {
-                min = "0" + min;
-            }
-            TemporalAccessor accessor = DateUtil.DAY_OF_WEEK_LONG.parse(wochentag.getValue());
-
-            List<Integer> nonDefaultWeeklyRepetition = new ArrayList<>();
-            int i = 1;
-            for (CheckBox monthlyCheckbox : monthlyCheckboxes) {
-                if (monthlyCheckbox.isSelected()) {
-                    nonDefaultWeeklyRepetition.add(i);
-                }
-                i++;
-            }
-            if (nonDefaultWeeklyRepetition.size() == StandardMesse.ALLOWED_REPETITION_NUMBERS.size()) {
-                nonDefaultWeeklyRepetition = new ArrayList<>();
-            }
-            return new StandardMesse(DayOfWeek.from(accessor), (int) stunde.getValue(), min, ort.getText(),
-                    (int) anz.getValue(), typ.getText(), nonDefaultWeeklyRepetition);
+            return getStandardMesseFromDialog(ort, typ, wochentag, stunde, minute, anz, monthlyCheckboxes);
         }
         return null;
+    }
+
+    private static StandardMesse getStandardMesseFromDialog(TextField ort, TextField typ, ComboBox<String> wochentag, Slider stunde, Slider minute, Slider anz, List<CheckBox> monthlyCheckboxes) {
+        String min = String.valueOf((int) minute.getValue());
+        if (((int) minute.getValue()) < 10) {
+            min = "0" + min;
+        }
+        TemporalAccessor accessor = DateUtil.DAY_OF_WEEK_LONG.parse(wochentag.getValue());
+        List<Integer> nonDefaultWeeklyRepetition = new ArrayList<>();
+        int i = 1;
+        for (CheckBox monthlyCheckbox : monthlyCheckboxes) {
+            if (monthlyCheckbox.isSelected()) {
+                nonDefaultWeeklyRepetition.add(i);
+            }
+            i++;
+        }
+        if (nonDefaultWeeklyRepetition.size() == StandardMesse.ALLOWED_REPETITION_NUMBERS.size()) {
+            nonDefaultWeeklyRepetition = new ArrayList<>();
+        }
+        return new StandardMesse(DayOfWeek.from(accessor), (int) stunde.getValue(), min, ort.getText(),
+                (int) anz.getValue(), typ.getText(), nonDefaultWeeklyRepetition);
+    }
+
+    private static void addListenersForStandardMesseDialog(TextField ort, TextField typ, ComboBox<String> wochentag,
+                                                           String defaultValueRepetition, List<CheckBox> monthlyCheckboxes, Alert a) {
+        ChangeListener<Object> e = (arg0, arg1, arg2) -> {
+            try {
+                boolean okDisabled = ort.getText().equals("") || typ.getText().equals("") || wochentag.getValue().isBlank();
+                a.getDialogPane().lookupButton(ButtonType.OK).setDisable(okDisabled);
+            } catch (NullPointerException e2) {
+                a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+            }
+        };
+        typ.textProperty().addListener(e);
+        typ.focusedProperty().addListener(e);
+        ort.textProperty().addListener(e);
+        ort.focusedProperty().addListener(e);
+        wochentag.valueProperty().addListener(e);
+        wochentag.focusedProperty().addListener(e);
+        ChangeListener<String> dayOfWeekChange = (observableValue, oldValue, newValue) -> {
+            for (CheckBox monthlyCheckbox : monthlyCheckboxes) {
+                if (newValue != null && !newValue.isEmpty()) {
+                    monthlyCheckbox.setText(monthlyCheckbox.getText()
+                            .replace(Objects.requireNonNullElse(oldValue, defaultValueRepetition), newValue));
+                }
+            }
+        };
+        wochentag.valueProperty().addListener(dayOfWeekChange);
     }
 
     public String text(String string, String kurz) {

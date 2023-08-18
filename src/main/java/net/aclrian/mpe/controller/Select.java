@@ -13,7 +13,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Window;
-import net.aclrian.mpe.einteilung.Einteilung;
+import net.aclrian.mpe.algorithms.Einteilung;
+import net.aclrian.mpe.algorithms.Generation;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.Person;
 import net.aclrian.mpe.messe.Messe;
@@ -107,7 +108,7 @@ public class Select implements Controller {
                     VON, BIS);
             if (!daten.isEmpty()) {
                 try {
-                    messen.addAll(Einteilung.generiereDefaultMessen(daten.get(0), daten.get(1)));
+                    messen.addAll(Generation.generiereDefaultMessen(daten.get(0), daten.get(1)));
                     messen.sort(Messe.MESSE_COMPARATOR);
                     ArrayList<Label> l = new ArrayList<>();
                     for (Messe m : messen) {

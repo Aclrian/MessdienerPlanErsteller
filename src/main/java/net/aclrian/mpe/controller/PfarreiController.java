@@ -1,4 +1,4 @@
-package net.aclrian.mpe.controller;
+package net.aclrian.mpe.controller; //NOPMD - suppressed ExcessiveImports - Controller for multiple connected views
 
 
 import javafx.beans.property.SimpleStringProperty;

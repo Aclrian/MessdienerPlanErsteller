@@ -52,40 +52,9 @@ public class ReadFilePfarrei {
             boolean hochaemter;
             ArrayList<StandardMesse> standardMessen = new ArrayList<>();
             Einstellungen einst = new Einstellungen();
-
-            // Standardmessen
-                NodeList nL = doc.getElementsByTagName("std_messe");
-                for (int j = 0; j < nL.getLength(); j++) {
-                    Node nsm = nL.item(j);
-                    if (nsm.getNodeType() == 1) {
-                        Element eElement = (Element) nsm;
-                        String tag = eElement.getElementsByTagName("tag").item(0).getTextContent();
-
-                        TemporalAccessor accessor = DateUtil.SHORT_STANDALONE.parse(tag);
-                        DayOfWeek dow = DayOfWeek.from(accessor);
-                        int std = Integer.parseInt(eElement.getElementsByTagName("std").item(0).getTextContent());
-                        String min = eElement.getElementsByTagName("min").item(0).getTextContent();
-                        String ort = eElement.getElementsByTagName("ort").item(0).getTextContent();
-                        int anz = Integer.parseInt(eElement.getElementsByTagName("anz").item(0).getTextContent());
-                        String typ = eElement.getElementsByTagName("typ").item(0).getTextContent();
-
-                        // non-weekly repetition
-                        List<Integer> nonDefaultWeeklyRepetition = new ArrayList<>();
-                        NodeList repetitionTag = eElement.getElementsByTagName("wdh");
-                        if (repetitionTag.getLength() == 1 && !repetitionTag.item(0).getTextContent().isEmpty()) {
-                            String[] listOfRepetition = repetitionTag.item(0).getTextContent().split(",");
-                            for (Integer i : StandardMesse.ALLOWED_REPETITION_NUMBERS) {
-                                if (Arrays.stream(listOfRepetition).anyMatch(rep -> rep.equals(i.toString()))) {
-                                    nonDefaultWeeklyRepetition.add(i);
-                                }
-                            }
-                        }
-
-                        StandardMesse sm = new StandardMesse(dow, std, min, ort, anz, typ, nonDefaultWeeklyRepetition);
-                        standardMessen.add(sm);
-                    }
-                }
+            readStandardMessen(doc, standardMessen);
             hochaemter = readEinstellungen(einst, doc);
+
             String[] s2 = pfadMitDateiundmitEndung.split(Pattern.quote(File.separator));
             name = s2[s2.length - 1];
             name = name.substring(0, name.length() - DateienVerwalter.PFARREI_DATEIENDUNG.length());
@@ -94,6 +63,41 @@ public class ReadFilePfarrei {
             pf = new Pfarrei(einst, standardMessen, name, hochaemter);
         }
         return pf;
+    }
+
+    private static void readStandardMessen(Document doc, ArrayList<StandardMesse> standardMessen) {
+        NodeList nL = doc.getElementsByTagName("std_messe");
+        for (int j = 0; j < nL.getLength(); j++) {
+            Node nsm = nL.item(j);
+            if (nsm.getNodeType() != 1) {
+                continue;
+            }
+            Element eElement = (Element) nsm;
+            String tag = eElement.getElementsByTagName("tag").item(0).getTextContent();
+
+            TemporalAccessor accessor = DateUtil.SHORT_STANDALONE.parse(tag);
+            DayOfWeek dow = DayOfWeek.from(accessor);
+            int std = Integer.parseInt(eElement.getElementsByTagName("std").item(0).getTextContent());
+            String min = eElement.getElementsByTagName("min").item(0).getTextContent();
+            String ort = eElement.getElementsByTagName("ort").item(0).getTextContent();
+            int anz = Integer.parseInt(eElement.getElementsByTagName("anz").item(0).getTextContent());
+            String typ = eElement.getElementsByTagName("typ").item(0).getTextContent();
+
+            // non-weekly repetition
+            List<Integer> nonDefaultWeeklyRepetition = new ArrayList<>();
+            NodeList repetitionTag = eElement.getElementsByTagName("wdh");
+            if (repetitionTag.getLength() == 1 && !repetitionTag.item(0).getTextContent().isEmpty()) {
+                String[] listOfRepetition = repetitionTag.item(0).getTextContent().split(",");
+                for (Integer i : StandardMesse.ALLOWED_REPETITION_NUMBERS) {
+                    if (Arrays.stream(listOfRepetition).anyMatch(rep -> rep.equals(i.toString()))) {
+                        nonDefaultWeeklyRepetition.add(i);
+                    }
+                }
+            }
+
+            StandardMesse sm = new StandardMesse(dow, std, min, ort, anz, typ, nonDefaultWeeklyRepetition);
+            standardMessen.add(sm);
+        }
     }
 
     private static boolean readEinstellungen(Einstellungen einst, Document doc) {
