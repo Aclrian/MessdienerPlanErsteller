@@ -13,7 +13,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Window;
-import net.aclrian.mpe.algorithms.Einteilung;
 import net.aclrian.mpe.algorithms.Generation;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messdiener.Person;

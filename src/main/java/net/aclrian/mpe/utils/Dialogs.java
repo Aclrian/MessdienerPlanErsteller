@@ -359,7 +359,8 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         return null;
     }
 
-    private static StandardMesse getStandardMesseFromDialog(TextField ort, TextField typ, ComboBox<String> wochentag, Slider stunde, Slider minute, Slider anz, List<CheckBox> monthlyCheckboxes) {
+    private static StandardMesse getStandardMesseFromDialog(TextField ort, TextField typ, ComboBox<String> wochentag,
+                                                            Slider stunde, Slider minute, Slider anz, List<CheckBox> monthlyCheckboxes) {
         String min = String.valueOf((int) minute.getValue());
         if (((int) minute.getValue()) < 10) {
             min = "0" + min;

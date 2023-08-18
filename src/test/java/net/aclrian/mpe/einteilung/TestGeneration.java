@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TestGeneration {
 
     @Test
-    void generiereDefaultMessen() {
+    public void generiereDefaultMessen() {
         StandardMesse sm = new StandardMesse(DayOfWeek.MONDAY, 12, "00", "o", 1, "t", Collections.singletonList(1));
         LocalDate startDate = LocalDate.of(2023, 1, 1);
         LocalDate endDate = LocalDate.of(2023, 1, 31);
