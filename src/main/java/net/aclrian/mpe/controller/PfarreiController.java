@@ -2,11 +2,14 @@ package net.aclrian.mpe.controller;
 
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.*;
-import javafx.event.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.*;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -19,8 +22,13 @@ import net.aclrian.fx.ASlider;
 import net.aclrian.mpe.MainApplication;
 import net.aclrian.mpe.messe.Sonstiges;
 import net.aclrian.mpe.messe.StandardMesse;
-import net.aclrian.mpe.pfarrei.*;
-import net.aclrian.mpe.utils.*;
+import net.aclrian.mpe.pfarrei.Einstellungen;
+import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.pfarrei.Setting;
+import net.aclrian.mpe.pfarrei.WriteFilePfarrei;
+import net.aclrian.mpe.utils.DateienVerwalter;
+import net.aclrian.mpe.utils.Dialogs;
+import net.aclrian.mpe.utils.MPELog;
 
 import java.io.IOException;
 import java.net.URI;
@@ -61,6 +69,8 @@ public class PfarreiController {
     private TableColumn<StandardMesse, String> typ;
     @FXML
     private TableColumn<StandardMesse, String> anz;
+    @FXML
+    private TableColumn<StandardMesse, String> wdh;
     @FXML
     private TableColumn<Setting, Integer> eintritt;
     @FXML
@@ -187,6 +197,8 @@ public class PfarreiController {
             typ.setStyle(CENTERED);
             anz.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMessdienerAnzahl()));
             anz.setStyle(CENTERED);
+            wdh.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRepetitionString()));
+            wdh.setStyle(CENTERED);
             table.setItems(ol);
             table.setOnMouseClicked(getMouseEventEventHandlerForTable());
         }
@@ -219,6 +231,9 @@ public class PfarreiController {
     @FXML
     public void neu(ActionEvent e) {
         StandardMesse sm = Dialogs.getDialogs().standardmesse(null);
+        if (sm == null) {
+            return;
+        }
         if (ol.isEmpty()) {
             ol = FXCollections.observableArrayList(sm);
             table.setItems(ol);

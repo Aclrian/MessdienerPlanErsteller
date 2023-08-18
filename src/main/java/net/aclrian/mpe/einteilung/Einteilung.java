@@ -11,6 +11,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,10 +42,29 @@ public class Einteilung {
     public static List<Messe> generiereDefaultMesseFuerStandardmesse(StandardMesse sm, LocalDate start, LocalDate end) {
         List<Messe> generatedMessen = new ArrayList<>();
         if (!(sm instanceof Sonstiges)) {
-            for (LocalDate date = start.with(sm.getWochentag()); date.isBefore(end); date = date.plusDays(7)) {
-                LocalDateTime messeTime = start.atTime(sm.getBeginnStunde(), sm.getBeginnMinute());
+            for (LocalDate date = start.with(TemporalAdjusters.next(sm.getWochentag())); date.isBefore(end); date = date.plusDays(7)) {
+                LocalDateTime messeTime = date.atTime(sm.getBeginnStunde(), sm.getBeginnMinute());
                 Messe m = new Messe(messeTime, sm);
                 generatedMessen.add(m);
+            }
+            if (!sm.getNonDefaultWeeklyRepetition().isEmpty()) {
+                // make sure that only the 1st, 2nd, 3rd, 4th or last Messe of a month will be returned
+                List<Messe> selectMessen = new ArrayList<>();
+                for (Messe messe : generatedMessen) {
+                    int generatedMesseOnDayOfWeek = messe.getDate().get(ChronoField.ALIGNED_WEEK_OF_MONTH);
+                    boolean atLastElement = generatedMessen.indexOf(messe) == generatedMessen.size() - 1;
+                    boolean noFiveElementsGenerated = generatedMessen.size() < 5;
+                    boolean pickLastElementInsteadOfNotExisting5thElement = (
+                            sm.getNonDefaultWeeklyRepetition().contains(5)
+                                    && atLastElement
+                                    && noFiveElementsGenerated
+                    );
+                    if (sm.getNonDefaultWeeklyRepetition().contains(generatedMesseOnDayOfWeek)
+                            || pickLastElementInsteadOfNotExisting5thElement) {
+                        selectMessen.add(messe);
+                    }
+                }
+                generatedMessen = selectMessen;
             }
         }
         return generatedMessen;
@@ -60,15 +81,15 @@ public class Einteilung {
         if (MPELog.getLogger().isDebugEnabled()) {
             MPELog.getLogger().info("nächster Monat bei: {}", DateUtil.DATE.format(nextMonth));
         }
-        // EIGENTLICHER ALGORYTHMUS
+        // EIGENTLICHER ALGORITHMUS
         for (Messe me : messen) {
             if (me.getDate().toLocalDate().isAfter(nextMonth)) {
                 nextMonth = nextMonth.plusMonths(1);
                 if (MPELog.getLogger().isDebugEnabled()) {
                     MPELog.getLogger().info("nächster Monat: Es ist {}", DateUtil.DATE.format(me.getDate().toLocalDate()));
                 }
-                for (Messdiener messdiener : messdiener) {
-                    messdiener.getMessdaten().naechsterMonat();
+                for (Messdiener medi : messdiener) {
+                    medi.getMessdaten().naechsterMonat();
                 }
             }
             MPELog.getLogger().info("Messe dran: {}", me.getID());
@@ -150,14 +171,14 @@ public class Einteilung {
             anvertraute.addAll(medi.getMessdaten().getFreunde());
             anvertraute = rd.removeDuplicatedEntries(anvertraute);
             anvertraute.sort(Messdaten.MESSDIENER_EINTEILEN_COMPARATOR);
-            for (Messdiener messdiener : anvertraute) {
+            for (Messdiener anvertrauter : anvertraute) {
                 if (m.istFertig()) {
                     break;
                 }
-                kannStandardMesse = messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse());
-                if (messdiener.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz) && kannStandardMesse) {
-                    MPELog.getLogger().info("{} dient mit {}?", messdiener, medi);
-                    einteilen(m, messdiener, zwangdate, zwanganz);
+                kannStandardMesse = anvertrauter.getDienverhalten().getBestimmtes(m.getStandardMesse());
+                if (anvertrauter.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz) && kannStandardMesse) {
+                    MPELog.getLogger().info("{} dient mit {}?", anvertrauter, medi);
+                    einteilen(m, anvertrauter, zwangdate, zwanganz);
                 }
             }
         }

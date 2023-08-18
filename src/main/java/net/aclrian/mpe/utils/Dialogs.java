@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -278,14 +279,10 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         typ.setPromptText("Typ:");
         List<String> dayOfWeeks = Arrays.stream(DayOfWeek.values())
                 .map(dow -> dow.getDisplayName(TextStyle.FULL, Locale.getDefault()))
-                .map(dow -> {
-                    // fix ci error
-                    if (dow == null) {
-                        return "";
-                    } else {
-                        return dow;
-                    }
-                }).toList();
+                .map(dow ->
+                        // fix ci error
+                        Objects.requireNonNullElse(dow, "")
+                ).toList();
         ComboBox<String> wochentag = new ComboBox<>(
                 FXCollections.observableArrayList(dayOfWeeks));
         wochentag.setPromptText("Wochentag:");
@@ -304,7 +301,19 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         anz.setMax(40);
         anz.setBlockIncrement(1);
 
-        VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz);
+        String defaultValueRepetition = "angewählten Wochentag";
+        CheckBox monthlyWeek1 = new CheckBox("monatlich zum 1. " + defaultValueRepetition);
+        monthlyWeek1.setPadding(new Insets(0, 0, 0, 30));
+        CheckBox monthlyWeek2 = new CheckBox("monatlich zum 2. " + defaultValueRepetition);
+        monthlyWeek2.setPadding(new Insets(0, 0, 0, 30));
+        CheckBox monthlyWeek3 = new CheckBox("monatlich zum 3. " + defaultValueRepetition);
+        monthlyWeek3.setPadding(new Insets(0, 0, 0, 30));
+        CheckBox monthlyWeek4 = new CheckBox("monatlich zum 4. " + defaultValueRepetition);
+        monthlyWeek4.setPadding(new Insets(0, 0, 0, 30));
+        CheckBox monthlyWeek5 = new CheckBox("monatlich zum letzten " + defaultValueRepetition);
+        monthlyWeek5.setPadding(new Insets(0, 0, 0, 30));
+        List<CheckBox> monthlyCheckboxes = List.of(monthlyWeek1, monthlyWeek2, monthlyWeek3, monthlyWeek4, monthlyWeek5);
+        VBox v = new VBox(wochentag, ort, typ, stunde, minute, anz, monthlyWeek1, monthlyWeek2, monthlyWeek3, monthlyWeek4, monthlyWeek5);
         v.setSpacing(20);
         Alert a = alertBuilder(Alert.AlertType.INFORMATION, "Neue Standardmesse erstellen:");
 
@@ -322,6 +331,15 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         ort.focusedProperty().addListener(e);
         wochentag.valueProperty().addListener(e);
         wochentag.focusedProperty().addListener(e);
+        ChangeListener<String> dayOfWeekChange = (observableValue, oldValue, newValue) -> {
+            for (CheckBox monthlyCheckbox : monthlyCheckboxes) {
+                if (newValue != null && !newValue.isEmpty()) {
+                    monthlyCheckbox.setText(monthlyCheckbox.getText()
+                            .replace(Objects.requireNonNullElse(oldValue, defaultValueRepetition), newValue));
+                }
+            }
+        };
+        wochentag.valueProperty().addListener(dayOfWeekChange);
         a.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
         a.getDialogPane().setExpandableContent(v);
         a.getDialogPane().setExpanded(true);
@@ -346,6 +364,11 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
                 minute.setValue(1);
                 minute.setValue(sm.getBeginnMinute());
                 anz.setValue(sm.getAnzMessdiener());
+                int i = 1;
+                for (CheckBox monthlyCheckbox : monthlyCheckboxes) {
+                    monthlyCheckbox.setSelected(sm.getNonDefaultWeeklyRepetition().contains(i));
+                    i++;
+                }
             } else {
                 stunde.setValue(10);
                 minute.setValue(1);
@@ -360,8 +383,20 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
                 min = "0" + min;
             }
             TemporalAccessor accessor = DateUtil.DAY_OF_WEEK_LONG.parse(wochentag.getValue());
+
+            List<Integer> nonDefaultWeeklyRepetition = new ArrayList<>();
+            int i = 1;
+            for (CheckBox monthlyCheckbox : monthlyCheckboxes) {
+                if (monthlyCheckbox.isSelected()) {
+                    nonDefaultWeeklyRepetition.add(i);
+                }
+                i++;
+            }
+            if (nonDefaultWeeklyRepetition.size() == StandardMesse.ALLOWED_REPETITION_NUMBERS.size()) {
+                nonDefaultWeeklyRepetition = new ArrayList<>();
+            }
             return new StandardMesse(DayOfWeek.from(accessor), (int) stunde.getValue(), min, ort.getText(),
-                    (int) anz.getValue(), typ.getText());
+                    (int) anz.getValue(), typ.getText(), nonDefaultWeeklyRepetition);
         }
         return null;
     }
@@ -374,10 +409,7 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         dialog.setHeaderText(string);
         dialog.setContentText(kurz + ":");
         Optional<String> result = dialog.showAndWait();
-        if (result.isEmpty()) {
-            return "";
-        }
-        return result.get();
+        return result.orElse("");
     }
 
     public Setting chance(Setting s) {

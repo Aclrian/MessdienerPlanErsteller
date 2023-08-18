@@ -226,6 +226,7 @@ public class TestPfarreiController extends ApplicationTest {
                                     <ort>o</ort>
                                     <anz>9</anz>
                                     <typ>t</typ>
+                                    <wdh/>
                                 </std_messe>
                             </Standardmessen>
                         </Body>

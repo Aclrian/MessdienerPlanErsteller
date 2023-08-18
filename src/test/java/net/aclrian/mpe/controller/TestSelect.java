@@ -240,7 +240,8 @@ public class TestSelect extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Locale.setDefault(tmp);
         WaitForAsyncUtils.waitForFxEvents();
-        assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(4);
+        System.out.println(((ListView<?>) scene.lookup("#list")).getItems());
+        assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(3);
         WaitForAsyncUtils.waitForFxEvents();
         Mockito.verify(dialog, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
