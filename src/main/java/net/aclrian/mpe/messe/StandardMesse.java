@@ -11,9 +11,10 @@ public class StandardMesse {
     public static final Comparator<StandardMesse> STANDARD_MESSE_COMPARATOR = (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString());
     /**
      * The elements that are allowed in nonDefaultWeeklyRepetition.
-     * If the list ist not empty and a number n in that list included,
+     * If the list is not empty and a number n in that list included,
      * only the Messe of nth week of a month will be generated.
      * If there is no 5th week of one day of week, the 4th will be picked instead.
+     * Thereby, the number 5 ensures the selection of the last week of a month.
      */
     public static final List<Integer> ALLOWED_REPETITION_NUMBERS = List.of(1, 2, 3, 4, 5);
     private final int beginnStunde;

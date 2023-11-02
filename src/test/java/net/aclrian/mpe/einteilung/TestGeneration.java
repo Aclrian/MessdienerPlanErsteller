@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,7 +37,6 @@ class TestGeneration {
         assertThat(list).hasSize(1);
         assertThat(list.get(0).getDate()).isEqualToIgnoringHours(LocalDate.of(2023, 1, 23).atStartOfDay());
 
-
         sm = new StandardMesse(DayOfWeek.MONDAY, 12, "00", "o", 1, "t", Collections.singletonList(5));
         list = Generation.generiereDefaultMesseFuerStandardmesse(sm, startDate, endDate);
         assertThat(list).hasSize(1);
@@ -49,5 +49,11 @@ class TestGeneration {
         assertThat(list).hasSize(1);
         assertThat(list.get(0).getDate()).isEqualToIgnoringHours(LocalDate.of(2023, 1, 25).atStartOfDay());
         assertThat(list.get(0).getDate()).isEqualToIgnoringHours(listDuplicate.get(0).getDate());
+
+        sm = new StandardMesse(DayOfWeek.MONDAY, 12, "00", "o", 1, "t", List.of(2, 3));
+        list = Generation.generiereDefaultMesseFuerStandardmesse(sm, startDate, endDate);
+        assertThat(list).hasSize(2);
+        assertThat(list.get(0).getDate()).isEqualToIgnoringHours(LocalDate.of(2023, 1, 9).atStartOfDay());
+        assertThat(list.get(1).getDate()).isEqualToIgnoringHours(LocalDate.of(2023, 1, 16).atStartOfDay());
     }
 }
