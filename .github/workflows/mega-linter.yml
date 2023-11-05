@@ -54,10 +54,8 @@ jobs:
           # ADD YOUR CUSTOM ENV VARIABLES HERE TO OVERRIDE VALUES OF .mega-linter.yml AT THE ROOT OF YOUR REPOSITORY
 
       # Upload MegaLinter artifacts
-      # https://github.com/rhysd/actionlint/issues/367
-      # shellcheck disable
       - name: Archive production artifacts
-        if: ${{ success() }} || ${{ failure() }}
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: MegaLinter reports
