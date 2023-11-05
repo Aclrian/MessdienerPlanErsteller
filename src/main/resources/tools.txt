@@ -1,5 +1,5 @@
-Java 11
-JAVAFX 11 / OpenJDK 11
+Java 17
+JAVAFX 17 / OpenJDK 17
 Eclipse
 IntelliJ Ultimate
 GIT / GITHUB

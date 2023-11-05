@@ -1,4 +1,4 @@
-JAVAFX 11,Benutzerinterface,https://openjfx.io/,GNU GPLv2,https://openjdk.java.net/legal/gplv2+ce.html,
+JAVAFX 17,Benutzerinterface,https://openjfx.io/,GNU GPLv2,https://openjdk.java.net/legal/gplv2+ce.html,
 gson,JSON-Datei lesen,https://github.com/google/gson,Apache License Version 2.0,http://www.apache.org/licenses/LICENSE-2.0.txt,
 iText7 html2pdf,Plan in PDF konvertieren,https://github.com/itext/i7j-pdfhtml,AGPL,https://www.gnu.org/licenses/,
 log4j 2,Protokollierung,https://logging.apache.org/log4j/2.x/,Apache License Version 2.0,http://www.apache.org/licenses/LICENSE-2.0.txt,
