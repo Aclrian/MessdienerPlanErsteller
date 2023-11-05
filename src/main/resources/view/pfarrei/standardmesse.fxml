@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -57,6 +52,7 @@
           <TableColumn fx:id="ort" editable="false" prefWidth="135.0" text="Ort" />
           <TableColumn fx:id="typ" editable="false" prefWidth="135.0" text="Typ" />
           <TableColumn fx:id="anz" editable="false" prefWidth="90.0" text="Anzahl" />
+          <TableColumn fx:id="wdh" editable="false" prefWidth="90.0" text="Wiederholungen"/>
       </columns>
         <GridPane.margin>
           <Insets bottom="20.0" left="20.0" right="20.0" />

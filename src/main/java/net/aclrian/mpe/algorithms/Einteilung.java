@@ -1,4 +1,4 @@
-package net.aclrian.mpe.einteilung;
+package net.aclrian.mpe.algorithms;
 
 import net.aclrian.mpe.messdiener.Messdaten;
 import net.aclrian.mpe.messdiener.Messdiener;
@@ -10,7 +10,6 @@ import net.aclrian.mpe.utils.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,30 +24,6 @@ public class Einteilung {
         this.messen = messen;
     }
 
-    public static List<Messe> generiereDefaultMessen(LocalDate anfang, LocalDate ende) {
-        ArrayList<Messe> generatedMessen = new ArrayList<>();
-        for (StandardMesse sm : DateienVerwalter.getInstance().getPfarrei().getStandardMessen()) {
-            if (!(sm instanceof Sonstiges)) {
-                generatedMessen.addAll(generiereDefaultMesseFuerStandardmesse(sm, anfang, ende));
-            }
-        }
-        generatedMessen.sort(Messe.MESSE_COMPARATOR);
-        MPELog.getLogger().info("DefaultMessen generiert");
-        return generatedMessen;
-    }
-
-    public static List<Messe> generiereDefaultMesseFuerStandardmesse(StandardMesse sm, LocalDate start, LocalDate end) {
-        List<Messe> generatedMessen = new ArrayList<>();
-        if (!(sm instanceof Sonstiges)) {
-            for (LocalDate date = start.with(sm.getWochentag()); date.isBefore(end); date = date.plusDays(7)) {
-                LocalDateTime messeTime = start.atTime(sm.getBeginnStunde(), sm.getBeginnMinute());
-                Messe m = new Messe(messeTime, sm);
-                generatedMessen.add(m);
-            }
-        }
-        return generatedMessen;
-    }
-
     public void einteilen() {
         messdiener.sort(Messdaten.MESSDIENER_EINTEILEN_COMPARATOR);
         if (messen.isEmpty()) {
@@ -60,15 +35,15 @@ public class Einteilung {
         if (MPELog.getLogger().isDebugEnabled()) {
             MPELog.getLogger().info("nächster Monat bei: {}", DateUtil.DATE.format(nextMonth));
         }
-        // EIGENTLICHER ALGORYTHMUS
+        // EIGENTLICHER ALGORITHMUS
         for (Messe me : messen) {
             if (me.getDate().toLocalDate().isAfter(nextMonth)) {
                 nextMonth = nextMonth.plusMonths(1);
                 if (MPELog.getLogger().isDebugEnabled()) {
                     MPELog.getLogger().info("nächster Monat: Es ist {}", DateUtil.DATE.format(me.getDate().toLocalDate()));
                 }
-                for (Messdiener messdiener : messdiener) {
-                    messdiener.getMessdaten().naechsterMonat();
+                for (Messdiener medi : messdiener) {
+                    medi.getMessdaten().naechsterMonat();
                 }
             }
             MPELog.getLogger().info("Messe dran: {}", me.getID());
@@ -150,14 +125,14 @@ public class Einteilung {
             anvertraute.addAll(medi.getMessdaten().getFreunde());
             anvertraute = rd.removeDuplicatedEntries(anvertraute);
             anvertraute.sort(Messdaten.MESSDIENER_EINTEILEN_COMPARATOR);
-            for (Messdiener messdiener : anvertraute) {
+            for (Messdiener anvertrauter : anvertraute) {
                 if (m.istFertig()) {
                     break;
                 }
-                kannStandardMesse = messdiener.getDienverhalten().getBestimmtes(m.getStandardMesse());
-                if (messdiener.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz) && kannStandardMesse) {
-                    MPELog.getLogger().info("{} dient mit {}?", messdiener, medi);
-                    einteilen(m, messdiener, zwangdate, zwanganz);
+                kannStandardMesse = anvertrauter.getDienverhalten().getBestimmtes(m.getStandardMesse());
+                if (anvertrauter.getMessdaten().kann(m.getDate().toLocalDate(), zwangdate, zwanganz) && kannStandardMesse) {
+                    MPELog.getLogger().info("{} dient mit {}?", anvertrauter, medi);
+                    einteilen(m, anvertrauter, zwangdate, zwanganz);
                 }
             }
         }

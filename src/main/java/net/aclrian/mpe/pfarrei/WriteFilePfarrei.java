@@ -7,8 +7,10 @@ import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.MPELog;
+import org.apache.logging.log4j.util.Strings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -70,6 +72,11 @@ public class WriteFilePfarrei {
                 typ.appendChild(doc.createTextNode(m.getTyp()));
                 stdm.appendChild(typ);
 
+                Element weeklyRepetition = doc.createElement("wdh");
+                Text repetitions = doc.createTextNode(Strings.join(m.getNonDefaultWeeklyRepetition(), ','));
+                weeklyRepetition.appendChild(repetitions);
+                stdm.appendChild(weeklyRepetition);
+
                 standardmessen.appendChild(stdm);
             }
 
@@ -80,8 +87,7 @@ public class WriteFilePfarrei {
             datei = datei.replace(" ", "_");
             savepath = savepath == null ? DateienVerwalter.getInstance().getSavePath().getAbsolutePath() : savepath;
             File f = new File(savepath, datei + DateienVerwalter.PFARREI_DATEIENDUNG);
-            MPELog.getLogger()
-                    .info("Pfarrei wird gespeichert in: {}", f);
+            MPELog.getLogger().info("Pfarrei wird gespeichert in: {}", f);
             StreamResult streamResult = new StreamResult(f);
             c.transformer().transform(domSource, streamResult);
             boolean notYetStarted = DateienVerwalter.getInstance() != null;
