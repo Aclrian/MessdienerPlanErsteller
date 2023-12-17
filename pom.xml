@@ -222,7 +222,7 @@
                 <version>3.1.2</version>
                 <configuration>
                     <argLine>
-                        --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+                        --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
                     </argLine>
                 </configuration>
             </plugin>
