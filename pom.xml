@@ -58,7 +58,7 @@
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>html2pdf</artifactId>
-            <version>3.0.5</version>
+            <version>5.0.2</version>
         </dependency>
         <!-- URI encode -->
         <dependency>
