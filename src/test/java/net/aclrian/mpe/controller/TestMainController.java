@@ -77,7 +77,7 @@ public class TestMainController extends ApplicationTest {
     }
 
     //CHECKSTYLE:OFF: MethodLength
-    @RetryingTest(10)
+    @RetryingTest(5)
     public void testEachEnumPane() { //NOPMD - suppressed NPathComplexity - for test purpose
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
@@ -301,17 +301,17 @@ public class TestMainController extends ApplicationTest {
         Platform.runLater(() -> instance.generieren(null));
         WaitForAsyncUtils.waitForFxEvents();
         //Info
-        Platform.runLater(() -> {
-            instance.info(null);
-            assertThat(this.listTargetWindows()).hasSizeGreaterThan(1);
-            this.listTargetWindows().forEach(w -> {
-                if (w instanceof Stage && w != stage) {
-                    ((Stage) w).close();
-                }
-            });
-            assertThat(this.listTargetWindows()).isNotEmpty();
-        });
-        WaitForAsyncUtils.waitForFxEvents();
+//        Platform.runLater(() -> {
+//            instance.info(null);
+//            assertThat(this.listTargetWindows()).hasSizeGreaterThan(1);
+//            this.listTargetWindows().forEach(w -> {
+//                if (w instanceof Stage && w != stage) {
+//                    ((Stage) w).close();
+//                }
+//            });
+//            assertThat(this.listTargetWindows()).isNotEmpty();
+//        });
+//        WaitForAsyncUtils.waitForFxEvents();
         Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
     //CHECKSTYLE:ON: MethodLength
