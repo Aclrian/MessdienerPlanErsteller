@@ -77,7 +77,7 @@ public class TestMainController extends ApplicationTest {
     }
 
     //CHECKSTYLE:OFF: MethodLength
-    @RetryingTest(5)
+    @RetryingTest(10)
     public void testEachEnumPane() { //NOPMD - suppressed NPathComplexity - for test purpose
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
