@@ -8,5 +8,5 @@
     }
   ],
   "stabilityDays": 30,
-  "baseBranches": ["develop"]
+  "baseBranches": ["main"]
 }
