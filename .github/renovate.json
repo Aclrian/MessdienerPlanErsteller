@@ -1,6 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "matchPackageNames": ["org.openjfx:javafx-controls", "org.openjfx:javafx-web", "org.openjfx:javafx-base", "org.openjfx:javafx-fxml"],
+      "allowedVersions": "!/ea/"
+    }
+  ],
   "stabilityDays": 30,
   "baseBranches": ["develop"]
 }

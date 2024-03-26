@@ -37,7 +37,6 @@ import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -347,8 +346,8 @@ public class TestFinishController extends ApplicationTest {
 
         String from = String.format("%02d", DateUtil.getYesterdaysYesterday().getDayOfMonth());
         String to = String.format("%02d", DateUtil.getTomorrow().getDayOfMonth());
-        String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
-        String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+        String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, DateUtil.DATE_SHORT.getLocale());
+        String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, DateUtil.DATE_SHORT.getLocale());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
         assertThat(pair.getValue()).hasToString(
                 "mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20"

@@ -13,6 +13,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <javafx.version>17.0.6</javafx.version>
         <log4j.version>2.22.1</log4j.version>
+        <argLine>-Duser.language=de</argLine>
     </properties>
 
     <repositories>
@@ -222,7 +223,7 @@
                 <version>3.2.5</version>
                 <configuration>
                     <argLine>
-                        --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+                        --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
                     </argLine>
                 </configuration>
             </plugin>

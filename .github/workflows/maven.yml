@@ -33,4 +33,4 @@ jobs:
       - name: Test with Maven
         run: xvfb-run mvn -B package --file pom.xml
         env:
-          JAVA_TOOL_OPTIONS: "-Duser.language=en -Duser.country=uk -Djdk.gtk.verbose=true -Djdk.gtk.version=3"
+          JAVA_TOOL_OPTIONS: "-Duser.language=de -Duser.country=de -Djdk.gtk.verbose=true -Djdk.gtk.version=3"
