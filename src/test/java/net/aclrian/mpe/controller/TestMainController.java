@@ -298,20 +298,20 @@ public class TestMainController extends ApplicationTest {
         Einstellungen einstellungen = new Einstellungen();
         Mockito.when(pf.getSettings()).thenReturn(einstellungen);
 
-        Platform.runLater(() -> instance.generieren(null));
+//        Platform.runLater(() -> instance.generieren(null));
         WaitForAsyncUtils.waitForFxEvents();
         //Info
-//        Platform.runLater(() -> {
-//            instance.info(null);
-//            assertThat(this.listTargetWindows()).hasSizeGreaterThan(1);
-//            this.listTargetWindows().forEach(w -> {
-//                if (w instanceof Stage && w != stage) {
-//                    ((Stage) w).close();
-//                }
-//            });
-//            assertThat(this.listTargetWindows()).isNotEmpty();
-//        });
-//        WaitForAsyncUtils.waitForFxEvents();
+        Platform.runLater(() -> {
+            instance.info(null);
+            assertThat(this.listTargetWindows()).hasSizeGreaterThan(1);
+            this.listTargetWindows().forEach(w -> {
+                if (w instanceof Stage && w != stage) {
+                    ((Stage) w).close();
+                }
+            });
+            assertThat(this.listTargetWindows()).isNotEmpty();
+        });
+        WaitForAsyncUtils.waitForFxEvents();
         Mockito.verify(dialogs, Mockito.times(0)).error(Mockito.any(), Mockito.anyString());
     }
     //CHECKSTYLE:ON: MethodLength
