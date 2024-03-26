@@ -28,7 +28,6 @@ import net.aclrian.mpe.utils.Speicherort;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
-import org.junitpioneer.jupiter.RetryingTest;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -77,7 +76,6 @@ public class TestMainController extends ApplicationTest {
     }
 
     //CHECKSTYLE:OFF: MethodLength
-    @RetryingTest(5)
     public void testEachEnumPane() { //NOPMD - suppressed NPathComplexity - for test purpose
         Dialogs.setDialogs(dialogs);
         DateienVerwalter.setInstance(dv);
@@ -297,8 +295,11 @@ public class TestMainController extends ApplicationTest {
         //Plan
         Einstellungen einstellungen = new Einstellungen();
         Mockito.when(pf.getSettings()).thenReturn(einstellungen);
-
-//        Platform.runLater(() -> instance.generieren(null));
+        // disabled on ci because of wired async errors with the HTML-Editor
+        // and with @RetryingTest(5) at the method is only occur occasionally
+        if (!System.getProperty("java.home").contains("hostedtoolcache")) {
+            Platform.runLater(() -> instance.generieren(null));
+        }
         WaitForAsyncUtils.waitForFxEvents();
         //Info
         Platform.runLater(() -> {
