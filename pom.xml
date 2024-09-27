@@ -11,7 +11,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
-        <javafx.version>17.0.12</javafx.version>
+        <javafx.version>23</javafx.version>
         <log4j.version>2.23.1</log4j.version>
         <argLine>-Duser.language=de</argLine>
     </properties>
