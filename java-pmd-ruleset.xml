@@ -29,16 +29,10 @@
         <exclude name="ExcessivePublicCount" />
         <exclude name="TooManyFields" />
         <exclude name="CyclomaticComplexity" />
-        <exclude name="LocalVariableCouldBeFinal"/>
         <exclude name="LawOfDemeter"/>
         <exclude name="LongVariable"/>
         <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
         <exclude name="AvoidCatchingGenericException"/>
-        <exclude name="AtLeastOneConstructor"/>
-        <exclude name="ShortVariable"/>
-        <exclude name="OnlyOneReturn"/>
-        <exclude name="MethodArgumentCouldBeFinal"/>
-        <exclude name="UnnecessaryImport"/>
     </rule>
     <rule ref="category/java/codestyle.xml">
         <exclude name="ExcessiveParameterList" />
@@ -54,16 +48,8 @@
         <exclude name="ShortVariable"/>
         <exclude name="OnlyOneReturn"/>
         <exclude name="MethodArgumentCouldBeFinal"/>
-        <exclude name="DataClass" />
-        <exclude name="ExcessiveParameterList" />
-        <exclude name="ExcessivePublicCount" />
-        <exclude name="TooManyFields" />
-        <exclude name="CyclomaticComplexity" />
         <exclude name="LocalVariableCouldBeFinal"/>
-        <exclude name="LawOfDemeter"/>
         <exclude name="LongVariable"/>
-        <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
-        <exclude name="AvoidCatchingGenericException"/>
         <exclude name="AtLeastOneConstructor"/>
         <exclude name="ShortVariable"/>
         <exclude name="OnlyOneReturn"/>

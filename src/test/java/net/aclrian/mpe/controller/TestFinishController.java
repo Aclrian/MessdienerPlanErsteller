@@ -294,12 +294,12 @@ public class TestFinishController extends ApplicationTest {
         assertThat(md1F.kann(DateUtil.getToday(), false, false)).isFalse();
         assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
 
-        File tmp_file = new File(System.getProperty("java.io.tmpdir"));
-        assertThat(tmp_file.isDirectory()).isTrue();
-        assertThat(tmp_file.listFiles()).isNotNull();
-        int number_of_files = tmp_file.listFiles().length;
+        File tmpFile = new File(System.getProperty("java.io.tmpdir"));
+        assertThat(tmpFile.isDirectory()).isTrue();
+        assertThat(tmpFile.listFiles()).isNotNull();
+        int numberOfFiles = tmpFile.listFiles().length;
         instance.openHTML(null);
-        assertThat(tmp_file.listFiles().length).isEqualTo(number_of_files + 1);
+        assertThat(tmpFile.listFiles().length).isEqualTo(numberOfFiles + 1);
         if (skipDOCX) {
             File out = new File(MPELog.getWorkingDir(), instance.getTitle() + ".docx");
             try {
@@ -340,13 +340,11 @@ public class TestFinishController extends ApplicationTest {
         String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, DateUtil.DATE_SHORT.getLocale());
         String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, DateUtil.DATE_SHORT.getLocale());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        System.out.println(URLDecoder.decode(String.valueOf(pair.getValue())));
-        String expected_uri_pattern = "mailto:\\?bcc=a@w\\.de\\&subject=" +
+        String expectedUriPattern = "mailto:\\?bcc=a@w\\.de\\&subject=" +
                 "Messdienerplan vom " + from + ". " + fromMonth + " "
                 + "bis " + to + ". " + toMonth + "\\&body=[\\s.]*";
-        System.out.println(expected_uri_pattern);
         assertThat(URLDecoder.decode(String.valueOf(pair.getValue()), StandardCharsets.UTF_8))
-                .matches(expected_uri_pattern);
+                .matches(expectedUriPattern);
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {
