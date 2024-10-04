@@ -112,10 +112,10 @@ public class VersionIDHandler {
     }
 
     private static class Version {
-        private String tagName;
+        private String tag_name;
 
         public String getVersion() {
-            return tagName;
+            return tag_name;
         }
     }
 }

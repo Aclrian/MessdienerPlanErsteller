@@ -28,7 +28,7 @@ public class WORDExport implements IExporter {
                     + "die den Installationspfad von der Officeanwendung enthält.");
         }
         MPELog.getLogger().info("Converting PDF to WORD with JODConverter");
-        file = convert(DefaultDocumentFormatRegistry.DOCX, html, titel);
+        file = convert(DefaultDocumentFormatRegistry.ODT, html, titel);
     }
 
     @Override

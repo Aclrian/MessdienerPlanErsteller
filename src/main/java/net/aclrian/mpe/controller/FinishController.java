@@ -156,7 +156,9 @@ public class FinishController implements Controller {
                 sb.append("bcc=").append(medi.getEmail().toString()).append("&");
             }
         }
-        sb.append("subject=").append(URLEncoder.encode(titel, StandardCharsets.UTF_8));
+        sb.append("subject=").append(URLEncoder.encode(titel, StandardCharsets.UTF_8)
+                .replace("+", "%20") // quickfix: I'll not fix this properly
+        );
         sb.append("&body=%0D%0A");
         return new Pair<>(noemail, sb);
     }
