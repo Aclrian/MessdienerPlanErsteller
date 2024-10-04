@@ -340,8 +340,8 @@ public class TestFinishController extends ApplicationTest {
         String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, DateUtil.DATE_SHORT.getLocale());
         String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, DateUtil.DATE_SHORT.getLocale());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        String expectedUriPattern = "mailto:\\?bcc=a@w\\.de\\&subject=" +
-                "Messdienerplan vom " + from + ". " + fromMonth + " "
+        String expectedUriPattern = "mailto:\\?bcc=a@w\\.de\\&subject="
+                + "Messdienerplan vom " + from + ". " + fromMonth + " "
                 + "bis " + to + ". " + toMonth + "\\&body=[\\s.]*";
         assertThat(URLDecoder.decode(String.valueOf(pair.getValue()), StandardCharsets.UTF_8))
                 .matches(expectedUriPattern);
