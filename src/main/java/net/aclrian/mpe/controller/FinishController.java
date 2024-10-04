@@ -152,18 +152,14 @@ public class FinishController implements Controller {
         StringBuilder sb = new StringBuilder("mailto:?");
         ArrayList<Messdiener> noemail = new ArrayList<>();
         for (Messdiener medi : medis) {
-            if (medi.getEmail().toString().equals("")) {
+            if (medi.getEmail().toString().isEmpty()) {
                 noemail.add(medi);
             } else {
                 sb.append("bcc=").append(medi.getEmail().toString()).append("&");
             }
         }
         sb.append("subject=").append(URLEncoder.encode(titel, StandardCharsets.UTF_8));
-        StringBuilder sbb = new StringBuilder();
-        StringBuilder ssb = new StringBuilder();
-        sb.append("&body=").append(URLEncoder.encode(sbb.toString(), StandardCharsets.UTF_8))
-                .append("%0D%0A")
-                .append(URLEncoder.encode(ssb.toString(), StandardCharsets.UTF_8));
+        sb.append("&body=%0D%0A");
         return new Pair<>(noemail, sb);
     }
 

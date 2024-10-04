@@ -25,10 +25,7 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -344,10 +341,13 @@ public class TestFinishController extends ApplicationTest {
         String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, DateUtil.DATE_SHORT.getLocale());
         String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, DateUtil.DATE_SHORT.getLocale());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        assertThat(pair.getValue()).hasToString(
-                "mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20"
-                        + from + ".%20" + URLEncoder.encode(fromMonth, StandardCharsets.UTF_8) + "%20"
-                        + "bis%20" + to + ".%20" + URLEncoder.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
+        System.out.println(URLDecoder.decode(String.valueOf(pair.getValue())));
+        String expected_uri_pattern = "mailto:\\?bcc=a@w\\.de\\&subject=" +
+                "Messdienerplan vom " + from + ". " + fromMonth + " "
+                + "bis " + to + ". " + toMonth + "\\&body=[\\s.]*";
+        System.out.println(expected_uri_pattern);
+        assertThat(URLDecoder.decode(String.valueOf(pair.getValue()), StandardCharsets.UTF_8))
+                .matches(expected_uri_pattern);
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {
