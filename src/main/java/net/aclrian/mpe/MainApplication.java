@@ -47,7 +47,7 @@ public class MainApplication extends Application {
                         DateienVerwalter.getInstance().getLock().release();
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    Dialogs.getDialogs().error(e, e.getMessage());
                 }
             });
             stage.show();
