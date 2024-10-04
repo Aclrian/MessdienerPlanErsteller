@@ -29,8 +29,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -297,20 +299,14 @@ public class TestFinishController extends ApplicationTest {
         assertThat(md1F.kann(DateUtil.getToday(), false, false)).isFalse();
         assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
 
-        File out = new File(MPELog.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");
-        try {
-            if (out.exists()) {
-                Files.delete(out.toPath());
-            }
-            instance.sendToPDF(null);
-            assertThat(out).exists();
-            Files.delete(out.toPath());
-        } catch (IOException e) {
-            MPELog.getLogger().error(e.getMessage(), e);
-            Assertions.fail(e.getMessage(), e);
-        }
+        File tmp_file = new File(System.getProperty("java.io.tmpdir"));
+        assertThat(tmp_file.isDirectory()).isTrue();
+        assertThat(tmp_file.listFiles()).isNotNull();
+        int number_of_files = tmp_file.listFiles().length;
+        instance.openHTML(null);
+        assertThat(tmp_file.listFiles().length).isEqualTo(number_of_files + 1);
         if (skipDOCX) {
-            out = new File(MPELog.getWorkingDir(), instance.getTitle() + ".docx");
+            File out = new File(MPELog.getWorkingDir(), instance.getTitle() + ".docx");
             try {
                 if (out.exists()) {
                     Files.delete(out.toPath());
@@ -351,8 +347,8 @@ public class TestFinishController extends ApplicationTest {
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
         assertThat(pair.getValue()).hasToString(
                 "mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20"
-                        + from + ".%20" + UriUtils.encode(fromMonth, StandardCharsets.UTF_8) + "%20"
-                        + "bis%20" + to + ".%20" + UriUtils.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
+                        + from + ".%20" + URLEncoder.encode(fromMonth, StandardCharsets.UTF_8) + "%20"
+                        + "bis%20" + to + ".%20" + URLEncoder.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {
