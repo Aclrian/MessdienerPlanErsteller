@@ -16,12 +16,9 @@
         <exclude name="ExcessivePublicCount" />
         <exclude name="TooManyFields" />
         <exclude name="CyclomaticComplexity" />
-        <exclude name="LocalVariableCouldBeFinal"/>
         <exclude name="LawOfDemeter"/>
-        <exclude name="LongVariable"/>
         <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
         <exclude name="AvoidCatchingGenericException"/>
-        <exclude name="OnlyOneReturn"/>
         <exclude name="ExcessiveParameterList" />
         <exclude name="ExcessivePublicCount" />
         <exclude name="TooManyFields" />
