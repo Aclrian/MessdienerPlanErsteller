@@ -13,7 +13,6 @@ import net.aclrian.mpe.utils.*;
 import net.aclrian.mpe.utils.export.WORDExport;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,7 +20,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -55,8 +53,8 @@ public class FinishController implements Controller {
         Einteilung einteilung = new Einteilung(messdiener, messen);
         einteilung.einteilen();
         StringBuilder s = new StringBuilder("<html lang=\"de\"><head>PLACEHOLDER")
-            .append("<style>body{font-family: sans-serif;}</style>")
-            .append("</head></body>");
+                .append("<style>body{font-family: sans-serif;}</style>")
+                .append("</head></body>");
         for (int i = 0; i < messen.size(); i++) {
             Messe messe = messen.get(i);
             String m1 = messe.htmlAusgeben();
@@ -165,7 +163,7 @@ public class FinishController implements Controller {
 
     @FXML
     public void openHTML(ActionEvent actionEvent) {
-        Path htmlFile = Path.of(System.getProperty("java.io.tmpdir"), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))+".html");
+        Path htmlFile = Path.of(System.getProperty("java.io.tmpdir"), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + ".html");
         try {
             Files.writeString(htmlFile, editor.getHtmlText());
             if (actionEvent != null) {

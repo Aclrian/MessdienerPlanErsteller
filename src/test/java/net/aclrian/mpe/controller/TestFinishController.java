@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -47,7 +46,7 @@ public class TestFinishController extends ApplicationTest {
     @Mock
     private Messdiener m1;
     @Mock
-    private  Messdiener m2;
+    private Messdiener m2;
     @Mock
     private Messdiener m3;
     @Mock
