@@ -14,12 +14,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public interface IExporter {
-    File generateFile() throws IOException;
+    void generateFile() throws IOException;
 
-    default File convert(DocumentFormat fileFormat, String html, String titel) {
+    default File convert(DocumentFormat fileFormat, String html, String title) {
 
         final LocalOfficeManager officeManager = LocalOfficeManager.install();
-        File out = new File(MPELog.getWorkingDir().getAbsolutePath(), titel + "." + fileFormat.getExtension());
+        File out = new File(MPELog.getWorkingDir().getAbsolutePath(), title + "." + fileFormat.getExtension());
         try {
             officeManager.start();
         } catch (OfficeException e) {
@@ -38,4 +38,6 @@ public interface IExporter {
         }
         return out;
     }
+
+    boolean openFile();
 }

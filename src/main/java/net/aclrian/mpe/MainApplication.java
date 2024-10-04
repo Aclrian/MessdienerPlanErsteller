@@ -12,6 +12,7 @@ import net.aclrian.mpe.utils.DateienVerwalter;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.VersionIDHandler;
 
+import java.io.IOException;
 import java.util.Objects;
 
 import static net.aclrian.mpe.utils.MPELog.getLogger;
@@ -40,6 +41,15 @@ public class MainApplication extends Application {
             stage.setScene(scene);
 
             stage.setTitle("MessdienerplanErsteller");
+            stage.onCloseRequestProperty().addListener(observable -> {
+                try {
+                    if (DateienVerwalter.getInstance().getLock().isValid()) {
+                        DateienVerwalter.getInstance().getLock().release();
+                    }
+                } catch (IOException e) {
+                    Dialogs.getDialogs().error(e, e.getMessage());
+                }
+            });
             stage.show();
             ((MainController) loader.getController()).changePane(MainController.EnumPane.START);
             getLogger().info("Startbildschirm geladen");

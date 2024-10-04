@@ -19,16 +19,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.springframework.web.util.UriUtils;
 import org.mockito.Mockito;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.DayOfWeek;
@@ -49,7 +46,7 @@ public class TestFinishController extends ApplicationTest {
     @Mock
     private Messdiener m1;
     @Mock
-    private  Messdiener m2;
+    private Messdiener m2;
     @Mock
     private Messdiener m3;
     @Mock
@@ -297,20 +294,14 @@ public class TestFinishController extends ApplicationTest {
         assertThat(md1F.kann(DateUtil.getToday(), false, false)).isFalse();
         assertThat(me2.getEingeteilte().contains(m1) && me2.getEingeteilte().contains(m1)).isTrue();
 
-        File out = new File(MPELog.getWorkingDir().getAbsolutePath(), instance.getTitle() + ".pdf");
-        try {
-            if (out.exists()) {
-                Files.delete(out.toPath());
-            }
-            instance.sendToPDF(null);
-            assertThat(out).exists();
-            Files.delete(out.toPath());
-        } catch (IOException e) {
-            MPELog.getLogger().error(e.getMessage(), e);
-            Assertions.fail(e.getMessage(), e);
-        }
+        File tmpFile = new File(System.getProperty("java.io.tmpdir"));
+        assertThat(tmpFile.isDirectory()).isTrue();
+        assertThat(tmpFile.listFiles()).isNotNull();
+        int numberOfFiles = tmpFile.listFiles().length;
+        instance.openHTML(null);
+        assertThat(tmpFile.listFiles().length).isEqualTo(numberOfFiles + 1);
         if (skipDOCX) {
-            out = new File(MPELog.getWorkingDir(), instance.getTitle() + ".docx");
+            File out = new File(MPELog.getWorkingDir(), instance.getTitle() + ".docx");
             try {
                 if (out.exists()) {
                     Files.delete(out.toPath());
@@ -349,10 +340,11 @@ public class TestFinishController extends ApplicationTest {
         String fromMonth = DateUtil.getYesterdaysYesterday().getMonth().getDisplayName(TextStyle.FULL, DateUtil.DATE_SHORT.getLocale());
         String toMonth = DateUtil.getTomorrow().getMonth().getDisplayName(TextStyle.FULL, DateUtil.DATE_SHORT.getLocale());
         Pair<List<Messdiener>, StringBuilder> pair = instance.getResourcesForEmail();
-        assertThat(pair.getValue()).hasToString(
-                "mailto:?bcc=a@w.de&subject=Messdienerplan%20vom%20"
-                        + from + ".%20" + UriUtils.encode(fromMonth, StandardCharsets.UTF_8) + "%20"
-                        + "bis%20" + to + ".%20" + UriUtils.encode(toMonth, StandardCharsets.UTF_8) + "&body=%0D%0A");
+        String expectedUriPattern = "mailto:\\?bcc=a@w\\.de\\&subject="
+                + "Messdienerplan vom " + from + ". " + fromMonth + " "
+                + "bis " + to + ". " + toMonth + "\\&body=[\\s.]*";
+        assertThat(URLDecoder.decode(String.valueOf(pair.getValue()), StandardCharsets.UTF_8))
+                .matches(expectedUriPattern);
         try {
             new URI(pair.getValue().toString());
         } catch (URISyntaxException e) {

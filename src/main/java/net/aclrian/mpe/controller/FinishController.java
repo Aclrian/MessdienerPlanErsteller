@@ -10,18 +10,18 @@ import net.aclrian.mpe.algorithms.Einteilung;
 import net.aclrian.mpe.messdiener.Messdiener;
 import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.utils.*;
-import net.aclrian.mpe.utils.export.PDFExport;
 import net.aclrian.mpe.utils.export.WORDExport;
-import org.springframework.web.util.UriUtils;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -35,8 +35,6 @@ public class FinishController implements Controller {
     private final List<Messdiener> nichtEingeteile;
     private boolean locked = true;
     private String titel;
-    private File pdfgen;
-    private File wordgen;
     @FXML
     private HTMLEditor editor;
     @FXML
@@ -54,7 +52,9 @@ public class FinishController implements Controller {
         this.messen = messen;
         Einteilung einteilung = new Einteilung(messdiener, messen);
         einteilung.einteilen();
-        StringBuilder s = new StringBuilder("<html>");
+        StringBuilder s = new StringBuilder("<html lang=\"de\"><head>PLACEHOLDER")
+                .append("<style>body{font-family: sans-serif;}</style>")
+                .append("</head></body>");
         for (int i = 0; i < messen.size(); i++) {
             Messe messe = messen.get(i);
             String m1 = messe.htmlAusgeben();
@@ -69,6 +69,7 @@ public class FinishController implements Controller {
             s.append("<p>").append(m1).append("</p>");
         }
         s.append("</html>");
+        s.replace(22, 33, "<title>" + titel + "</title>");
         fertig = s.toString();
         nichtEingeteile = new ArrayList<>();
         for (Messdiener medi : messdiener) {
@@ -149,48 +150,36 @@ public class FinishController implements Controller {
         StringBuilder sb = new StringBuilder("mailto:?");
         ArrayList<Messdiener> noemail = new ArrayList<>();
         for (Messdiener medi : medis) {
-            if (medi.getEmail().toString().equals("")) {
+            if (medi.getEmail().toString().isEmpty()) {
                 noemail.add(medi);
             } else {
                 sb.append("bcc=").append(medi.getEmail().toString()).append("&");
             }
         }
-        sb.append("subject=").append(UriUtils.encode(titel, StandardCharsets.UTF_8));
-        StringBuilder sbb = new StringBuilder();
-        StringBuilder ssb = new StringBuilder();
-        if (pdfgen != null && pdfgen.exists()) {
-            sbb.append("Als Anhang hinzufügen: ").append(pdfgen.getAbsolutePath()).append(" ?");
-        }
-        if (wordgen != null && wordgen.exists()) {
-            ssb.append("Als Anhang hinzufügen: ").append(wordgen.getAbsolutePath()).append(" ?");
-        }
-        sb.append("&body=").append(UriUtils.encode(sbb.toString(), StandardCharsets.UTF_8))
-                .append("%0D%0A")
-                .append(UriUtils.encode(ssb.toString(), StandardCharsets.UTF_8));
+        sb.append("subject=").append(URLEncoder.encode(titel, StandardCharsets.UTF_8));
+        sb.append("&body=%0D%0A");
         return new Pair<>(noemail, sb);
     }
 
     @FXML
-    public void sendToPDF(ActionEvent actionEvent) {
+    public void openHTML(ActionEvent actionEvent) {
+        Path htmlFile = Path.of(System.getProperty("java.io.tmpdir"), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + ".html");
         try {
-            pdfgen = new PDFExport(editor.getHtmlText(), titel).generateFile();
+            Files.writeString(htmlFile, editor.getHtmlText());
             if (actionEvent != null) {
-                Desktop.getDesktop().open(pdfgen);
+                Desktop.getDesktop().open(htmlFile.toFile());
             }
         } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu PDF konvertieren.");
+            Dialogs.getDialogs().error(e, "Konnte die HTML-Datei nicht erstellen oder öffnen");
         }
     }
 
     @FXML
     public void sendToWORD(ActionEvent actionEvent) {
-        try {
-            wordgen = new WORDExport(editor.getHtmlText(), titel).generateFile();
-            if (actionEvent != null) {
-                Desktop.getDesktop().open(pdfgen);
-            }
-        } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Konnte den Messdienerplan nicht zu DOCX konvertieren.");
+        WORDExport wordExporter = new WORDExport(editor.getHtmlText(), titel);
+        wordExporter.generateFile();
+        if (!wordExporter.openFile() && actionEvent != null) {
+            Dialogs.getDialogs().error("Konnte den Messdienerplan nicht zu DOCX konvertieren.");
         }
     }
 
