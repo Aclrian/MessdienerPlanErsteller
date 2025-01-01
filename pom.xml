@@ -4,7 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.aclrian.messdiener</groupId>
     <artifactId>MessdienerplanErsteller</artifactId>
-    <version>1.0.5</version>
+    <!--Remember the uber-jar-->
+    <version>1.0.6</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,9 +39,9 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>${javafx.version}</version>
-            <classifier>win</classifier>
+            <!--<classifier>win</classifier>-->
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>${javafx.version}</version>
@@ -51,14 +52,14 @@
             <artifactId>javafx-base</artifactId>
             <version>${javafx.version}</version>
             <classifier>mac</classifier>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
             <version>${javafx.version}</version>
-            <classifier>win</classifier>
+            <!--<classifier>win</classifier>-->
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
             <version>${javafx.version}</version>
@@ -69,14 +70,14 @@
             <artifactId>javafx-web</artifactId>
             <version>${javafx.version}</version>
             <classifier>mac</classifier>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
-            <classifier>win</classifier>
+            <!--<classifier>win</classifier>-->
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
@@ -106,7 +107,7 @@
             <artifactId>javafx-graphics</artifactId>
             <version>${javafx.version}</version>
             <classifier>mac</classifier>
-        </dependency>
+        </dependency>-->
         <!--Zum Lesen der Version von Github -->
         <dependency>
             <groupId>com.google.code.gson</groupId>

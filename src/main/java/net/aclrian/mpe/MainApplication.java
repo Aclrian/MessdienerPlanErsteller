@@ -18,7 +18,7 @@ import java.util.Objects;
 import static net.aclrian.mpe.utils.MPELog.getLogger;
 
 public class MainApplication extends Application {
-    public static final String VERSION_ID = "1.0.5";
+    public static final String VERSION_ID = "1.0.6";
 
     public static void main(String[] args) {
         Application.launch(MainApplication.class, args);
