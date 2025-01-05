@@ -428,6 +428,43 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         return result.orElse("");
     }
 
+    public static boolean remove(Messdiener m) {
+        if (getDialogs().frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
+                "Löschen")) {
+            File file = m.getFile();
+            try {
+                Files.delete(file.toPath());
+            } catch (IOException e) {
+                return false;
+            }
+            DateienVerwalter.getInstance().reloadMessdiener();
+            ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
+            for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
+                ueberarbeitete.add(Messdiener.alteLoeschen(m, messdiener));
+            }
+            ueberarbeitete.removeIf(Objects::isNull);
+            for (Messdiener medi : ueberarbeitete) {
+                if (medi.toString().equals(m.toString())) {
+                    continue;
+                }
+                medi.makeXML();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void show(List<?> list, String string) {
+        ListView<?> lv = new ListView<>(FXCollections.observableArrayList(list));
+        lv.setId("list");
+        alertBuilder(Alert.AlertType.INFORMATION, string, lv).showAndWait();
+    }
+
+    public List<Messdiener> select(List<Messdiener> data, Messdiener without, List<Messdiener> freund, String s) {
+        data.remove(without);
+        return select(data, freund, s);
+    }
+
     public Setting chance(Setting s) {
         TextInputDialog dialog = new TextInputDialog();
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
@@ -442,25 +479,14 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
         try {
             int anz = Integer.parseInt(result.get());
             if (anz < 0 || anz > 32) {
-                Dialogs.getDialogs().warn("Bitte eine Zahl zwischen 0 und 31 eingeben.");
-                return Dialogs.getDialogs().chance(s);
+                getDialogs().warn("Bitte eine Zahl zwischen 0 und 31 eingeben.");
+                return getDialogs().chance(s);
             }
             return new Setting(s.attribut(), s.id(), anz);
         } catch (Exception e) {
-            Dialogs.getDialogs().warn(result.get() + " ist keine gültige Ganzzahl");
+            getDialogs().warn(result.get() + " ist keine gültige Ganzzahl");
             return s;
         }
-    }
-
-    public void show(List<?> list, String string) {
-        ListView<?> lv = new ListView<>(FXCollections.observableArrayList(list));
-        lv.setId("list");
-        alertBuilder(Alert.AlertType.INFORMATION, string, lv).showAndWait();
-    }
-
-    public List<Messdiener> select(List<Messdiener> data, Messdiener without, List<Messdiener> freund, String s) {
-        data.remove(without);
-        return select(data, freund, s);
     }
 
     public ConvertCSV.ConvertData importDialog(Window window) {
@@ -487,36 +513,10 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
             return null;
         }
         if (!controller.isValid()) {
-            Dialogs.getDialogs().error("Ein Eingabefeld ist leer oder es sind mehr Standartmessen angegeben als im System sind");
+            getDialogs().error("Ein Eingabefeld ist leer oder es sind mehr Standartmessen angegeben als im System sind");
             return importDialog(window);
         }
         return controller.getData();
-    }
-
-    public static boolean remove(Messdiener m) {
-        if (Dialogs.getDialogs().frage("Soll der Messdiener '" + m + "' wirklich gelöscht werden?", ButtonType.CANCEL.getText(),
-                "Löschen")) {
-            File file = m.getFile();
-            try {
-                Files.delete(file.toPath());
-            } catch (IOException e) {
-                return false;
-            }
-            DateienVerwalter.getInstance().reloadMessdiener();
-            ArrayList<Messdiener> ueberarbeitete = new ArrayList<>();
-            for (Messdiener messdiener : DateienVerwalter.getInstance().getMessdiener()) {
-                ueberarbeitete.add(Messdiener.alteLoeschen(m, messdiener));
-            }
-            ueberarbeitete.removeIf(Objects::isNull);
-            for (Messdiener medi : ueberarbeitete) {
-                if (medi.toString().equals(m.toString())) {
-                    continue;
-                }
-                medi.makeXML();
-            }
-            return true;
-        }
-        return false;
     }
 
     public enum YesNoCancelEnum {
