@@ -285,16 +285,25 @@ public class Dialogs { //NOPMD - suppressed TooManyMethods - Utility class canno
                 FXCollections.observableArrayList(dayOfWeeks));
         wochentag.setPromptText("Wochentag:");
         Slider stunde = new Slider();
+        stunde.setMajorTickUnit(1);
+        stunde.setMinorTickCount(0);
+        stunde.setSnapToTicks(true);
         stunde.setMin(0);
         stunde.setMax(24);
         stunde.setBlockIncrement(1);
 
         Slider minute = new Slider();
+        minute.setMajorTickUnit(1);
+        minute.setMinorTickCount(0);
+        minute.setSnapToTicks(true);
         minute.setMin(0);
         minute.setMax(59);
         minute.setBlockIncrement(1);
 
         Slider anz = new Slider();
+        minute.setMajorTickUnit(1);
+        minute.setMinorTickCount(0);
+        minute.setSnapToTicks(true);
         anz.setMin(0);
         anz.setMax(40);
         anz.setBlockIncrement(1);

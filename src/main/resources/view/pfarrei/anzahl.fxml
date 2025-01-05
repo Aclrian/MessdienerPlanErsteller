@@ -54,8 +54,8 @@
           <Insets bottom="20.0"/>
         </GridPane.margin>
     </TableView>
-    <Slider fx:id="leiter" blockIncrement="1.0" majorTickUnit="5.0" max="10.0" minorTickCount="1" value="4.0"
-            GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="3"/>
+    <Slider fx:id="leiter" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" value="4.0"
+            GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="3" snapToTicks="true"/>
     <Button fx:id="zurueckbtn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
             mnemonicParsing="false" onAction="#zurueck" text="Zurück" GridPane.columnIndex="1" GridPane.columnSpan="3"
             GridPane.halignment="CENTER">
@@ -90,8 +90,8 @@
           <Insets left="20.0"/>
         </GridPane.margin>
     </Label>
-    <Slider fx:id="medi" blockIncrement="1.0" majorTickUnit="5.0" max="10.0" minorTickCount="1" value="4.0"
-            GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="2"/>
+    <Slider fx:id="medi" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" value="4.0"
+            GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="2" snapToTicks="true"/>
     <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Anzahl nach Eintrittsjahr:"
            GridPane.columnIndex="7" GridPane.columnSpan="7" GridPane.rowIndex="1">
         <font>

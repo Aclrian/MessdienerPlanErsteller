@@ -57,7 +57,7 @@
                 <Insets left="20.0" right="20.0" />
             </GridPane.margin></TextField>
         <TextField fx:id="ort" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Ort" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="1" />
-        <Slider fx:id="slider" maxHeight="1.7976931348623157E308" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="2" />
+        <Slider fx:id="slider" maxHeight="1.7976931348623157E308" GridPane.columnIndex="7" GridPane.columnSpan="5" GridPane.rowIndex="2" snapToTicks="true" majorTickUnit="1" minorTickCount="0"/>
         <DatePicker fx:id="datum" promptText="Datum" GridPane.columnSpan="4" GridPane.rowIndex="2">
             <GridPane.margin>
                 <Insets left="20.0" />
