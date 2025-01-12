@@ -1,15 +1,24 @@
 package net.aclrian.mpe.utils;
 
 
-import javafx.stage.*;
-import net.aclrian.mpe.messdiener.*;
-import net.aclrian.mpe.pfarrei.*;
-import org.apache.commons.io.*;
+import javafx.stage.Stage;
+import net.aclrian.mpe.messdiener.Messdiener;
+import net.aclrian.mpe.messdiener.ReadFile;
+import net.aclrian.mpe.pfarrei.Pfarrei;
+import net.aclrian.mpe.pfarrei.ReadFilePfarrei;
+import org.apache.commons.io.FileUtils;
 
-import java.io.*;
-import java.nio.channels.*;
-import java.nio.file.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.file.Files;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DateienVerwalter {
     public static final String PFARREI_DATEIENDUNG = ".xml.pfarrei";
@@ -18,7 +27,6 @@ public class DateienVerwalter {
     private final File dir;
     private Pfarrei pf;
     private List<Messdiener> medis;
-    private FileOutputStream pfarreiFos;
     private FileLock lock;
     private boolean messdienerAlreadyNull = false;
 
@@ -114,7 +122,7 @@ public class DateienVerwalter {
         MPELog.getLogger().info("Pfarrei gefunden in: {}", pfarreiFile);
         try {
             pf = ReadFilePfarrei.getPfarrei(pfarreiFile.getAbsolutePath());
-            pfarreiFos = new FileOutputStream(pfarreiFile, true);
+            FileOutputStream pfarreiFos = new FileOutputStream(pfarreiFile, true);
             FileChannel channel = pfarreiFos.getChannel();
             lock = channel.lock();
         } catch (Exception e) {
@@ -126,11 +134,7 @@ public class DateienVerwalter {
         return lock;
     }
 
-    public FileOutputStream getPfarreiFileOutputStream() {
-        return pfarreiFos;
-    }
-
-    public void removeOldPfarrei(File neuePfarrei) {
+    public void removeOldPfarrei(File neuePfarrei) throws IOException {
         ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(dir, new String[]{PFARREI_DATEIENDUNG.substring(1)}, true));
         ArrayList<File> toDel = new ArrayList<>();
         boolean candel = false;
@@ -142,11 +146,12 @@ public class DateienVerwalter {
             }
         }
         if (candel) {
+            DateienVerwalter.getInstance().getLock().release();
             toDel.forEach(file -> {
                 try {
                     Files.delete(file.toPath());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    MPELog.getLogger().error(e);
                 }
             });
         }

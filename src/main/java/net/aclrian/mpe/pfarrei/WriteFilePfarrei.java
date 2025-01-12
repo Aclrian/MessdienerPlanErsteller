@@ -17,6 +17,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.io.IOException;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
@@ -89,12 +90,11 @@ public class WriteFilePfarrei {
             File f = new File(savepath, datei + DateienVerwalter.PFARREI_DATEIENDUNG);
             MPELog.getLogger().info("Pfarrei wird gespeichert in: {}", f);
             StreamResult streamResult = new StreamResult(f);
-            c.transformer().transform(domSource, streamResult);
-            boolean notYetStarted = DateienVerwalter.getInstance() != null;
-            if (notYetStarted) {
+            if (DateienVerwalter.getInstance() != null) {
                 DateienVerwalter.getInstance().removeOldPfarrei(f);
             }
-        } catch (ParserConfigurationException | TransformerException exception) {
+            c.transformer().transform(domSource, streamResult);
+        } catch (ParserConfigurationException | TransformerException | IOException exception) {
             Dialogs.getDialogs().error(exception, "Fehler bei Speichern der Pfarrei:");
         }
     }
