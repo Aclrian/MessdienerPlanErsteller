@@ -146,7 +146,7 @@ public class DateienVerwalter {
             }
         }
         if (candel) {
-            DateienVerwalter.getInstance().getLock().release();
+            getInstance().getLock().release();
             toDel.forEach(file -> {
                 try {
                     Files.delete(file.toPath());
