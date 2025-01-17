@@ -22,7 +22,7 @@ import static net.aclrian.mpe.utils.MPELog.getLogger;
  * Hauptapplikationsklasse einer JavaFX - Anwendung.
  */
 public class MainApplication extends Application {
-    public static final String VERSION_ID = "1.0.7";
+    public static final String VERSION_ID = "1.0.8";
 
     /**
      * Funktion gibt die Aufrufparameter an launch() weiter.
