@@ -11,6 +11,11 @@ import java.util.regex.*;
 
 import static net.aclrian.mpe.utils.MPELog.*;
 
+/**
+ * Prüft ob eine neuere Version der Software vorhanden ist.
+ * Von dieser Klasse wird keine Instanz erstellt, sondern es sollte
+ * die Methode versionCheck() aufgerufen werden.
+ */
 public class VersionIDHandler {
     private static final URI URL_TO_LATEST_RELEASE_JSON_FILE = URI.create("https://api.github.com/repos/Aclrian/MessdienerPlanErsteller/releases/latest");
     private static final URI ALTERNATIVE_DOWNLOAD_URL = URI.create("https://github.com/Aclrian/MessdienerPlanErsteller/releases/latest");
@@ -21,9 +26,17 @@ public class VersionIDHandler {
 
     }
 
+    /**
+     * Holt die letzte Version aus dem Internet und vergleicht diese
+     * mit der aktuellen Version
+     * @return EnumVersionHandling was anzeigt, ob die Version aktuell,
+     *  zu alt oder zu neu (Entwicklerversion) ist.
+     */
     private static EnumVersionHandling rankingVersionID() {
+    	//Versuche Version der letzten Version zu ermitteln.
         try (InputStream is = URL_TO_LATEST_RELEASE_JSON_FILE.toURL().openStream()) {
             Gson gson = new Gson();
+            //Internet version holen
             internetId = gson.fromJson(new String(is.readAllBytes(), StandardCharsets.UTF_8), Version.class).getVersion();
             getLogger().info("Running with: {} found: {}", MainApplication.VERSION_ID, internetId);
             if (!internetId.contains(".")) {
@@ -32,6 +45,7 @@ public class VersionIDHandler {
             if (internetId.equals(MainApplication.VERSION_ID)) {
                 return EnumVersionHandling.IS_THE_LATEST;
             }
+            //Version aus dem Internet genauer prüfen.
             return getEnumVersionHandling();
         } catch (Exception e) {
             getLogger().error(e);
@@ -39,10 +53,15 @@ public class VersionIDHandler {
         }
     }
 
+    /**
+     * Vergleich die Internet-Version und die aktuelle Version.
+     * @return Ergebnis des Vergleichs als EnumVersionHandling
+     */
     private static EnumVersionHandling getEnumVersionHandling() {
         String[] inumbers = internetId.split(Pattern.quote("."));
         String[] lnumbers = MainApplication.VERSION_ID.split(Pattern.quote("."));
         int i = 0;
+        //Die durch Punkt getrennten Zahlen von Links nach Rechts vergleichen.
         while (i < inumbers.length && i < lnumbers.length) {
             int inet = Integer.parseInt(inumbers[i]);
             int loc = Integer.parseInt(lnumbers[i]);
@@ -60,14 +79,25 @@ public class VersionIDHandler {
                 return EnumVersionHandling.IS_TOO_NEW;
             }
         }
+        //Wenn der Code hier ankommt, müssen die Versionen
+        //gleich sein.
         return EnumVersionHandling.IS_THE_LATEST;
     }
 
+    /**
+     * Getter - Methode für internetId()
+     * @return internetId
+     */
     private static String getInternetId() {
         return internetId;
     }
 
+    /**
+     * Überprüft die aktuelle Version der Software gegen die Version im Internet.
+     * @param showAll Wenn true, wird jede erkannte Version angezeigt.
+     */
     public static void versionCheck(boolean showAll) {
+    	//Versionen vergleichen und Ergebnis in eh speichern.
         EnumVersionHandling eh = rankingVersionID();
         switch (eh) {
             case IS_OLD:
@@ -97,6 +127,9 @@ public class VersionIDHandler {
         getLogger().info(eh.getMessage());
     }
 
+    /**
+     * EnumVersionHandling - Klasse, welche das Ergebnis eines Versionsvergleichs darstellt.
+     */
     private enum EnumVersionHandling {
         IS_THE_LATEST("Es wurde keine neuere Version gefunden"), IS_OLD("Es wurde eine neuere Version gefunden"),
         IS_TOO_NEW("Neuere Version"), ERROR("Bei der Versionsüberprüfung kam es zu einem Fehler");

@@ -8,9 +8,19 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 
+/**
+ * Die Klasse prüft ob die JAVAFX - Komponenten gefunden werden.
+ * Wenn ja, startet sie die MainApplication - Klasse
+ * Wenn nein, zeigt sie eine Fehlermeldung an und öffnet wenn
+ * gewünscht die Hilfe - Seite.
+ */
 public class ApplikationStarter { //NOPMD - suppressed UseUtilityClass - contains only main method
     private static final URI WIKI = URI.create("https://github.com/Aclrian/MessdienerPlanErsteller/wiki/Installationshinweise");
 
+    /**
+     * Die main Funktion der Klasse ApplikationStarter
+     * @param args Die übergebenen Parameter
+     */
     public static void main(String[] args) {
         try {
             Class.forName("javafx.application.Application");
