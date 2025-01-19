@@ -30,7 +30,7 @@ public class ASlider {
      * @param e Das ScrollEvent
      */
     public static void scrollValue(Slider s, javafx.scene.input.ScrollEvent e) {
-    	double delta = s.getOrientation().equals(Orientation.HORIZONTAL) ? e.getDeltaY() : e.getDeltaX();
+        double delta = s.getOrientation().equals(Orientation.HORIZONTAL) ? e.getDeltaY() : e.getDeltaX();
         int amount = 0;
         if (delta < 0) {
             amount = -1;

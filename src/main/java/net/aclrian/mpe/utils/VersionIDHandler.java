@@ -33,7 +33,7 @@ public class VersionIDHandler {
      *  zu alt oder zu neu (Entwicklerversion) ist.
      */
     private static EnumVersionHandling rankingVersionID() {
-    	//Versuche Version der letzten Version zu ermitteln.
+        //Versuche Version der letzten Version zu ermitteln.
         try (InputStream is = URL_TO_LATEST_RELEASE_JSON_FILE.toURL().openStream()) {
             Gson gson = new Gson();
             //Internet version holen
@@ -85,28 +85,20 @@ public class VersionIDHandler {
     }
 
     /**
-     * Getter - Methode für internetId()
-     * @return internetId
-     */
-    private static String getInternetId() {
-        return internetId;
-    }
-
-    /**
      * Überprüft die aktuelle Version der Software gegen die Version im Internet.
      * @param showAll Wenn true, wird jede erkannte Version angezeigt.
      */
     public static void versionCheck(boolean showAll) {
-    	//Versionen vergleichen und Ergebnis in eh speichern.
+        //Versionen vergleichen und Ergebnis in eh speichern.
         EnumVersionHandling eh = rankingVersionID();
         switch (eh) {
             case IS_OLD:
                 try {
-                    Dialogs.getDialogs().open(new URI(VersionIDHandler.URL_WITH_TAG + getInternetId()),
+                    Dialogs.getDialogs().open(new URI(URL_WITH_TAG + internetId),
                             eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
                 } catch (IOException | URISyntaxException e) {
                     try {
-                        Dialogs.getDialogs().open(VersionIDHandler.ALTERNATIVE_DOWNLOAD_URL,
+                        Dialogs.getDialogs().open(ALTERNATIVE_DOWNLOAD_URL,
                                 eh.getMessage() + "!\nSoll die Download-Website geöffnet werden?");
                     } catch (IOException e1) {
                         getLogger().warn("Die Download-Url konnte nicht aufgelöst werden.");
@@ -145,10 +137,13 @@ public class VersionIDHandler {
     }
 
     private static class Version {
+        //CHECKSTYLE:OFF: MemberName
+        @SuppressWarnings("PMD")
         private String tag_name;
 
         public String getVersion() {
             return tag_name;
         }
+        //CHECKSTYLE:ON: MemberName
     }
 }
