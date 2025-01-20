@@ -25,8 +25,8 @@ public class MainApplication extends Application {
     public static final String VERSION_ID = "1.0.8";
 
     /**
-     * Funktion gibt die Aufrufparameter an launch() weiter.
-     * @param args Dei Aufrufparameter
+     * Startet die JavaFx-Umgebung für MainApplication
+     * @param args Aufrufparameter
      */
     public static void main(String[] args) {
         Application.launch(MainApplication.class, args);
@@ -42,7 +42,7 @@ public class MainApplication extends Application {
             getLogger().info("MpE: Version: " + VERSION_ID);
             getLogger().info("MpE-fx is starting");
             stage.getIcons().add(new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/title_32.png"))));
-            //Prüfe ob neue Version vorhanden ist und zeige nur Fenster,
+            //Prüfe ob neue Version vorhanden ist und zeige dann einen Dialog,
             //wenn Version im Internet höher ist als die verwendete.
             VersionIDHandler.versionCheck(false);
             if (startPfarrei(stage)) {
@@ -83,9 +83,6 @@ public class MainApplication extends Application {
         return false;
     }
 
-    /**
-     * Leiten den Aufruf von start(Stage stage) nach main(Stage stage) um.
-     */
     @Override
     public void start(Stage stage) {
         main(stage);

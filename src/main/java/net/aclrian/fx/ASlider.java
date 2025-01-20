@@ -7,7 +7,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 
 /**
- * Die Klasse ist ein spezieller Schieberegler, der etwas größer ist.
+ * Die Klasse zum Hinzufügen von Text in den Drehknopf eines Schiebereglers.
  */
 public class ASlider {
     public static final String THUMB = ".thumb";
@@ -17,8 +17,8 @@ public class ASlider {
     }
 
     /**
-     * Privater Konstruktor, damit auf diesem Weg keine Instanz der Klasse erzeugt
-     * werden kann und nur über die Funktion makeASlider()
+     * Privater Konstruktor, damit keine Instanz der Klasse erzeugt werden kann.
+     * Stattdessen die Funktion makeASlider() verwenden
      */
     private ASlider() {
 
@@ -26,8 +26,8 @@ public class ASlider {
 
     /**
      * Berechnet den nächsten Wert beim Scrollen des Schiebereglers
-     * @param s Der Scheiberegler der gescrollt wird
-     * @param e Das ScrollEvent
+     * @param s Scheiberegler, der gescrollt wird
+     * @param e ScrollEvent
      */
     public static void scrollValue(Slider s, javafx.scene.input.ScrollEvent e) {
         double delta = s.getOrientation().equals(Orientation.HORIZONTAL) ? e.getDeltaY() : e.getDeltaX();
@@ -41,10 +41,10 @@ public class ASlider {
     }
 
     /**
-     * Erzeugt eine Instanz von ASlider
-     * @param value => Name des Schiebereglers
-     * @param s Slider der 
-     * @param tooltip
+     * Fügt Text in den Drehknopf eines Schiebereglers ein
+     * @param value Text des Drehknopf zum Bezeichnen des eingestellten Werts
+     * @param s Slider
+     * @param tooltip ToolTip - Text
      */
     public static void makeASlider(String value, Slider s, Tooltip tooltip) {
         makeASlider(d -> {

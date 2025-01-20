@@ -45,8 +45,7 @@ public class VersionIDHandler {
             if (internetId.equals(MainApplication.VERSION_ID)) {
                 return EnumVersionHandling.IS_THE_LATEST;
             }
-            //Version aus dem Internet genauer prüfen.
-            return getEnumVersionHandling();
+            return compareVersions();
         } catch (Exception e) {
             getLogger().error(e);
             return EnumVersionHandling.ERROR;
@@ -57,7 +56,7 @@ public class VersionIDHandler {
      * Vergleich die Internet-Version und die aktuelle Version.
      * @return Ergebnis des Vergleichs als EnumVersionHandling
      */
-    private static EnumVersionHandling getEnumVersionHandling() {
+    private static EnumVersionHandling compareVersions() {
         String[] inumbers = internetId.split(Pattern.quote("."));
         String[] lnumbers = MainApplication.VERSION_ID.split(Pattern.quote("."));
         int i = 0;
