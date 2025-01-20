@@ -16,8 +16,6 @@ import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.*;
 
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -227,32 +225,14 @@ public class MainController { //NOPMD - suppressed TooManyMethods - needed for f
         }
     }
 
-    private void desktopOpen(File file) {
-        String errorMessage = "Ihr Destkop unterstützt leider das Öffen nicht.\n" +
-                "Es sollte der Pfad:\n" + file + "\ngeöffnet werden.";
-
-        if(Desktop.isDesktopSupported()) {
-            new Thread(() -> {
-                try {
-                    Desktop.getDesktop().open(file);
-                }
-                catch (IOException e) {
-                        Dialogs.getDialogs().error(e, errorMessage);
-                }
-            }).start();
-        } else {
-            Dialogs.getDialogs().error(errorMessage);
-        }
-    }
-
     @FXML
     public void log(ActionEvent event) {
-        desktopOpen(MPELog.getLogFile());
+        DesktopWrapper.open(MPELog.getLogFile());
     }
 
     @FXML
     public void savepath(ActionEvent event) {
-        desktopOpen(DateienVerwalter.getInstance().getSavePath());
+        DesktopWrapper.open(DateienVerwalter.getInstance().getSavePath());
     }
 
     @FXML
@@ -262,7 +242,7 @@ public class MainController { //NOPMD - suppressed TooManyMethods - needed for f
 
     @FXML
     public void workingdir(ActionEvent event) {
-        desktopOpen(MPELog.getWorkingDir());
+        DesktopWrapper.open(MPELog.getWorkingDir());
     }
 
     @FXML

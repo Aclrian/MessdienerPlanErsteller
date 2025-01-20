@@ -15,6 +15,7 @@ import javafx.scene.text.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.aclrian.mpe.MainApplication;
+import net.aclrian.mpe.utils.DesktopWrapper;
 import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.MPELog;
 import org.apache.commons.io.IOUtils;
@@ -101,11 +102,7 @@ public class InfoController {
         version.setText(MainApplication.VERSION_ID);
         folder.setOnAction(open(MPELog.getWorkingDir()));
         log.setOnAction(e -> {
-            try {
-                Desktop.getDesktop().open(MPELog.getLogFile());
-            } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + MPELog.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
-            }
+            DesktopWrapper.open(MPELog.getLogFile());
         });
         ArrayList<String[]> entries = new ArrayList<>();
         try {
@@ -142,9 +139,9 @@ public class InfoController {
                 Object o = Dialogs.getDialogs().singleSelect(sel, "Wähle eine Website zum Öffnen:");
                 try {
                     if (o != null) {
-                        Desktop.getDesktop().browse(new URI(o.toString()));
+                        DesktopWrapper.browse(new URI(o.toString()));
                     }
-                } catch (IOException | URISyntaxException e) {
+                } catch (URISyntaxException e) {
                     Dialogs.getDialogs().error(e, "Konnte die Website nicht öffnen.");
                 }
 
@@ -155,8 +152,8 @@ public class InfoController {
     public EventHandler<ActionEvent> browse(Hyperlink link) {
         return event -> {
             try {
-                Desktop.getDesktop().browse(new URI(link.getText()));
-            } catch (IOException | URISyntaxException ex) {
+                DesktopWrapper.browse(new URI(link.getText()));
+            } catch (URISyntaxException ex) {
                 Dialogs.getDialogs().error(ex, KONNTE + MPELog.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
             }
         };
@@ -164,11 +161,7 @@ public class InfoController {
 
     public EventHandler<ActionEvent> open(File file) {
         return event -> {
-            try {
-                Desktop.getDesktop().open(file);
-            } catch (IOException ex) {
-                Dialogs.getDialogs().error(ex, KONNTE + MPELog.getLogFile().getAbsolutePath() + NICHT_OEFFNEN);
-            }
+            DesktopWrapper.open(file);
         };
     }
 }
