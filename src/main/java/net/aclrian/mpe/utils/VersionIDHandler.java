@@ -12,7 +12,7 @@ import java.util.regex.*;
 import static net.aclrian.mpe.utils.MPELog.*;
 
 /**
- * Prüft ob eine neuere Version der Software vorhanden ist.
+ * Prüft, ob eine neuere Version der Software vorhanden ist.
  * Von dieser Klasse wird keine Instanz erstellt, sondern es sollte
  * die Methode versionCheck() aufgerufen werden.
  */
@@ -53,7 +53,7 @@ public class VersionIDHandler {
     }
 
     /**
-     * Vergleich die Internet-Version und die aktuelle Version.
+     * Vergleicht die Internet-Version und die aktuelle Version.
      * @return Ergebnis des Vergleichs als EnumVersionHandling
      */
     private static EnumVersionHandling compareVersions() {
