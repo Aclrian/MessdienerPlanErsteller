@@ -31,8 +31,6 @@ import java.util.List;
 import static net.aclrian.mpe.utils.DateUtil.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import static net.aclrian.mpe.utils.DateUtil.*;
-
 public class TestFerienplanController extends ApplicationTest {
 
     @Mock

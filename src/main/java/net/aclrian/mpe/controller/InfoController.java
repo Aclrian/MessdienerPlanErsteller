@@ -19,7 +19,6 @@ import net.aclrian.mpe.utils.Dialogs;
 import net.aclrian.mpe.utils.MPELog;
 import org.apache.commons.io.IOUtils;
 
-import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
