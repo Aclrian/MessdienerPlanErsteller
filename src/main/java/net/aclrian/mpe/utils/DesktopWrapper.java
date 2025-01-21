@@ -15,6 +15,13 @@ public class DesktopWrapper {
     }
 
     /**
+     * Privater Konstruktor, damit keine Instanz der Klasse erzeugt werden kann.
+     */
+    private DesktopWrapper() {
+
+    }
+
+    /**
      * Öffnet eine Datei oder einen Ordner mit dem Standardprogramm es Betriebssystems.
      * @param file Pfad zur Datei oder zum Ordner
      */
