@@ -129,10 +129,8 @@ public class StandardMesse {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof StandardMesse sm) {
-            return this.toLangerBenutzerfreundlichenString().equals(sm.toLangerBenutzerfreundlichenString());
-        }
-        return false;
+        return (obj instanceof StandardMesse sm) &&
+                this.toLangerBenutzerfreundlichenString().equals(sm.toLangerBenutzerfreundlichenString());
     }
 
     @Override

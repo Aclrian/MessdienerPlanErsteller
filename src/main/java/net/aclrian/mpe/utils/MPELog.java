@@ -36,7 +36,7 @@ public class MPELog {
             }
             LOGGER.info("-------------------------------");
         } catch (IOException e) {
-            MPELog.getLogger().error(e.getMessage(), e);
+            getLogger().error(e.getMessage(), e);
         }
     }
 
