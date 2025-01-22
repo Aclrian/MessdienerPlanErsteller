@@ -51,7 +51,6 @@ public class TestPfarreiController extends ApplicationTest {
     private MainApplication mainApplication;
     @Mock
     private Dialogs dialog;
-    private PfarreiController instance;
     private Scene scene;
     private Stage stage;
     private AutoCloseable openMocks;

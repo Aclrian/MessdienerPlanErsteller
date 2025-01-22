@@ -16,7 +16,6 @@ import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandardMesse;
 import net.aclrian.mpe.utils.*;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -228,20 +227,12 @@ public class MainController { //NOPMD - suppressed TooManyMethods - needed for f
 
     @FXML
     public void log(ActionEvent event) {
-        try {
-            Desktop.getDesktop().open(MPELog.getLogFile());
-        } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Konnte das Protokoll nicht öffnen:");
-        }
+        DesktopWrapper.open(MPELog.getLogFile());
     }
 
     @FXML
     public void savepath(ActionEvent event) {
-        try {
-            Desktop.getDesktop().open(DateienVerwalter.getInstance().getSavePath());
-        } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Konnte den Ordner nicht öffnen:");
-        }
+        DesktopWrapper.open(DateienVerwalter.getInstance().getSavePath());
     }
 
     @FXML
@@ -251,11 +242,7 @@ public class MainController { //NOPMD - suppressed TooManyMethods - needed for f
 
     @FXML
     public void workingdir(ActionEvent event) {
-        try {
-            Desktop.getDesktop().open(MPELog.getWorkingDir());
-        } catch (IOException e) {
-            Dialogs.getDialogs().error(e, "Konnte den Ordner nicht öffnen:");
-        }
+        DesktopWrapper.open(MPELog.getWorkingDir());
     }
 
     @FXML

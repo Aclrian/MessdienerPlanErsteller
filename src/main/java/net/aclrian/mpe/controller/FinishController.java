@@ -134,12 +134,12 @@ public class FinishController implements Controller {
         Pair<List<Messdiener>, StringBuilder> pair = getResourcesForEmail();
         try {
             URI uri = new URI(pair.getValue().toString());
-            Desktop.getDesktop().mail(uri);
+            DesktopWrapper.mail(uri);
             MPELog.getLogger().info(pair.getValue());
             if (!pair.getKey().isEmpty()) {
                 Dialogs.getDialogs().show(pair.getKey(), "Messdiener ohne E-Mail-Addresse:");
             }
-        } catch (IOException | URISyntaxException | IllegalArgumentException e) {
+        } catch (URISyntaxException | IllegalArgumentException e) {
             Dialogs.getDialogs().error(e, "Konnte den mailto-Link (" + URLEncoder.encode(pair.getValue().toString(), StandardCharsets.UTF_8)
                     + ") nicht öffnen");
         }
@@ -169,7 +169,7 @@ public class FinishController implements Controller {
         try {
             Files.writeString(htmlFile, editor.getHtmlText());
             if (actionEvent != null) {
-                Desktop.getDesktop().open(htmlFile.toFile());
+                DesktopWrapper.open(htmlFile.toFile());
             }
         } catch (IOException e) {
             Dialogs.getDialogs().error(e, "Konnte die HTML-Datei nicht erstellen oder öffnen");

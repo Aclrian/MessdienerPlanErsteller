@@ -1,17 +1,18 @@
 module MessdienerplanErsteller.main {
-
+    
     requires java.desktop;
     requires java.sql;
-    requires java.xml;
+    requires transitive java.xml;
 
-    requires javafx.controls;
+    requires transitive javafx.graphics;
+    requires transitive javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
 
     requires jodconverter.local;
     requires jodconverter.core; //these are the only two direct dependencies that are non-modular
     requires org.apache.commons.io;
-    requires org.apache.logging.log4j;
+    requires transitive org.apache.logging.log4j;
     requires com.google.gson;
     requires org.apache.logging.log4j.core;
 

@@ -31,7 +31,6 @@ import static net.aclrian.mpe.utils.MPELog.getLogger;
 
 public class MediController implements Controller {
 
-    private static final String KONNTE = "Konnte den Messdiener '";
     public static final String FREUNDE_AUSWAEHLEN = "Freunde auswählen:";
     public static final String GESCHWISTER_AUSWAEHLEN = "Geschwister auswählen:";
     private List<Messdiener> freundeArray;

@@ -17,18 +17,33 @@ import java.util.Objects;
 
 import static net.aclrian.mpe.utils.MPELog.getLogger;
 
+/**
+ * MainApplication - Klasse
+ * Hauptapplikationsklasse einer JavaFX - Anwendung.
+ */
 public class MainApplication extends Application {
     public static final String VERSION_ID = "1.0.8";
 
+    /**
+     * Startet die JavaFx-Umgebung für MainApplication
+     * @param args Aufrufparameter
+     */
     public static void main(String[] args) {
         Application.launch(MainApplication.class, args);
     }
 
+    /**
+     * Eigentlich die start() - Methode von MainApplikation. Wurde direkt
+     * von start() aufgerufen.
+     * @param stage Stage die von start() an main() weitergeleitet wird.
+     */
     public void main(Stage stage) {
         try {
             getLogger().info("MpE: Version: " + VERSION_ID);
             getLogger().info("MpE-fx is starting");
             stage.getIcons().add(new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/title_32.png"))));
+            //Prüfe ob neue Version vorhanden ist und zeige dann einen Dialog,
+            //wenn Version im Internet höher ist als die verwendete.
             VersionIDHandler.versionCheck(false);
             if (startPfarrei(stage)) {
                 return;
