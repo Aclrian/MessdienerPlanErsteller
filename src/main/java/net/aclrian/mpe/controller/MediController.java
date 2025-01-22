@@ -1,4 +1,4 @@
-package net.aclrian.mpe.controller;
+package net.aclrian.mpe.controller;  //NOPMD
 
 
 import javafx.beans.property.SimpleBooleanProperty;
@@ -26,8 +26,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.aclrian.mpe.utils.MPELog.getLogger;
 import static net.aclrian.mpe.messdiener.Messverhalten.KannWelcheMesse;
+import static net.aclrian.mpe.utils.MPELog.getLogger;
 
 public class MediController implements Controller {
 
@@ -204,7 +204,7 @@ public class MediController implements Controller {
     }
 
     public boolean saveMessdiener() {
-        if (name.getText().equals("") || vorname.getText().equals("")) {
+        if (name.getText().isEmpty() || vorname.getText().isEmpty()) {
             Dialogs.getDialogs().warn("Bitte einen Namen eintragen!");
         } else {
             try {
