@@ -234,7 +234,7 @@ public class TestSelect extends ApplicationTest {
 
         assertThat(scene.lookup("#" + Select.GENERIEREN_ID)).isInstanceOf(Button.class);
         assertThat(((ListView<?>) scene.lookup("#list")).getItems()).hasSize(2);
-        var tmp = Locale.getDefault();
+        Locale tmp = Locale.getDefault();
         Locale.setDefault(Locale.GERMANY);
         Platform.runLater(() -> ((Button) scene.lookup("#" + Select.GENERIEREN_ID)).fire());
         WaitForAsyncUtils.waitForFxEvents();

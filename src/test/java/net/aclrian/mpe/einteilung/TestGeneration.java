@@ -1,6 +1,7 @@
 package net.aclrian.mpe.einteilung;
 
 import net.aclrian.mpe.algorithms.Generation;
+import net.aclrian.mpe.messe.Messe;
 import net.aclrian.mpe.messe.StandardMesse;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ class TestGeneration {
         StandardMesse sm = new StandardMesse(DayOfWeek.MONDAY, 12, "00", "o", 1, "t", Collections.singletonList(1));
         LocalDate startDate = LocalDate.of(2023, 1, 1);
         LocalDate endDate = LocalDate.of(2023, 1, 31);
-        var list = Generation.generiereDefaultMesseFuerStandardmesse(sm, startDate, endDate);
+        List<Messe> list = Generation.generiereDefaultMesseFuerStandardmesse(sm, startDate, endDate);
         assertThat(list).hasSize(1);
         assertThat(list.get(0).getDate()).isEqualToIgnoringHours(LocalDate.of(2023, 1, 2).atStartOfDay());
 
@@ -45,7 +46,7 @@ class TestGeneration {
         sm = new StandardMesse(DayOfWeek.WEDNESDAY, 12, "00", "o", 1, "t", Collections.singletonList(5));
         list = Generation.generiereDefaultMesseFuerStandardmesse(sm, startDate, endDate);
         sm = new StandardMesse(DayOfWeek.WEDNESDAY, 12, "00", "o", 1, "t", Collections.singletonList(4));
-        var listDuplicate = Generation.generiereDefaultMesseFuerStandardmesse(sm, startDate, endDate);
+        List<Messe> listDuplicate = Generation.generiereDefaultMesseFuerStandardmesse(sm, startDate, endDate);
         assertThat(list).hasSize(1);
         assertThat(list.get(0).getDate()).isEqualToIgnoringHours(LocalDate.of(2023, 1, 25).atStartOfDay());
         assertThat(list.get(0).getDate()).isEqualToIgnoringHours(listDuplicate.get(0).getDate());

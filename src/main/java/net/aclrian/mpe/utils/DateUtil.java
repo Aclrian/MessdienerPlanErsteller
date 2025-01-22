@@ -49,6 +49,6 @@ public class DateUtil {
     }
 
     public static int getYearCap() {
-        return DateUtil.getCurrentYear() - 18;
+        return getCurrentYear() - 18;
     }
 }

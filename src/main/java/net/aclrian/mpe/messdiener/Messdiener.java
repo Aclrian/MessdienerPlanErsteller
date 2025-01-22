@@ -40,9 +40,9 @@ public class Messdiener extends Person {
         this.eintritt = eintritt;
         this.leiter = istLeiter;
         this.dienverhalten = dienverhalten;
-        freunde = new String[Messdiener.LENGTH_FREUNDE];
+        freunde = new String[LENGTH_FREUNDE];
         Arrays.fill(freunde, "");
-        geschwister = new String[Messdiener.LENGTH_GESCHWISTER];
+        geschwister = new String[LENGTH_GESCHWISTER];
         Arrays.fill(geschwister, "");
     }
 
@@ -97,7 +97,7 @@ public class Messdiener extends Person {
 
     public void addFreund(Messdiener freund) {
         for (int i = 0; i < freunde.length; i++) {
-            if (freunde[i].equals("") || freunde[i].equals("LEER") || freunde[i].equals("Vorname, Nachname")) {
+            if (freunde[i].isEmpty() || freunde[i].equals("LEER") || freunde[i].equals("Vorname, Nachname")) {
                 freunde[i] = freund.toString();
                 break;
             }
@@ -106,7 +106,7 @@ public class Messdiener extends Person {
 
     public void addGeschwister(Messdiener geschwister) {
         for (int i = 0; i < this.geschwister.length; i++) {
-            if (this.geschwister[i].equals("") || this.geschwister[i].equals("LEER") || this.geschwister[i].equals("Vorname, Nachname")) {
+            if (this.geschwister[i].isEmpty() || this.geschwister[i].equals("LEER") || this.geschwister[i].equals("Vorname, Nachname")) {
                 this.geschwister[i] = geschwister.toString();
                 break;
             }
